@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"struct":["ExecutionFailure","ExecutionSuccess","Init","ModelLoaded"],"trait":["SolverState"]};

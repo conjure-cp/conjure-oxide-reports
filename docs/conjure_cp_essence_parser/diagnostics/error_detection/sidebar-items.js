@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"mod":["semantic_errors","syntactic_errors"]};

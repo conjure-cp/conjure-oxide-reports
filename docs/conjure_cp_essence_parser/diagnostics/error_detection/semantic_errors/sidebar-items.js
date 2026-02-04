@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["detect_semantic_errors","error_to_diagnostic"]};

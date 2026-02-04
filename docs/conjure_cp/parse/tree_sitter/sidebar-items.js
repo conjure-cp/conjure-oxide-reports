@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["EssenceParseError"],"fn":["parse_essence","parse_essence_file","parse_essence_file_native","parse_essence_with_context","parse_expr","parse_exprs","parse_literal"],"macro":["child","field","named_child"],"mod":["diagnostics","errors","parser","parser_legacy"]};

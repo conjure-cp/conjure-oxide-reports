@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["parse_domain","parse_set_domain"]};

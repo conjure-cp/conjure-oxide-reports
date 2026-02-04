@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["init_context","init_solver","parse","rewrite","run_solve_command","run_solver"],"struct":["Args"]};

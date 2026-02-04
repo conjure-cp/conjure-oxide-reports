@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"mod":["diagnostics_api","error_detection"]};

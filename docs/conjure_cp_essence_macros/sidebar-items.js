@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"macro":["essence_expr","essence_vec"]};

@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"attr":["register_rule"],"macro":["register_rule_set"]};

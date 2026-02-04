@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["select_first","select_panic","select_random","select_smallest_subtree","select_user_input"],"type":["SelectorFn"]};

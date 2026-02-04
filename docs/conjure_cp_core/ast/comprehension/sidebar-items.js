@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"static":["USE_OPTIMISED_REWRITER_FOR_COMPREHENSIONS"],"struct":["Comprehension","ComprehensionBuilder"]};

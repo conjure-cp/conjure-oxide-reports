@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["IntTheory","MatrixTheory"],"struct":["IntTheoryIter","MatrixTheoryIter","Smt","TheoryConfig"]};

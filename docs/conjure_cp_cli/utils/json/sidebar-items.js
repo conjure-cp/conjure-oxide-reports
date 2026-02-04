@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["sort_json_object","sort_json_variables"]};

@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":["run_pretty_command"],"struct":["Args"]};

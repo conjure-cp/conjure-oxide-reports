@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"macro":["rule_fns"],"struct":["Update"]};
