@@ -90,9 +90,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
         <h1>Diff Coverage</h1>
         <p>Diff: upstream/main...HEAD, staged and unstaged changes</p>
         <ul>
-            <li><b>Total</b>: 30 lines</li>
-            <li><b>Missing</b>: 1 line</li>
-            <li><b>Coverage</b>: 96%</li>
+            <li><b>Total</b>: 272 lines</li>
+            <li><b>Missing</b>: 25 lines</li>
+            <li><b>Coverage</b>: 90%</li>
         </ul>
         <table border="1">
             <tr>
@@ -101,46 +101,305 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
                 <th>Missing Lines</th>
             </tr>
             <tr>
-                <td>crates/conjure-cp-rules/src/representation/sat_direct_int.rs</td>
+                <td>crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs</td>
                 <td>100%</td>
                 <td>&nbsp;</td>
             </tr>
             <tr>
-                <td>crates/conjure-cp-rules/src/representation/sat_log_int.rs</td>
-                <td>100%</td>
-                <td>&nbsp;</td>
+                <td>crates/conjure-cp-rules/src/representation/sat_order_int.rs</td>
+                <td>80.6%</td>
+                <td>42,46,67-69,71-74,97,106,112,115,139-140,146,149-150,154-155</td>
             </tr>
             <tr>
-                <td>crates/conjure-cp-rules/src/sat/direct_int_ops.rs</td>
-                <td>94.1%</td>
-                <td>278</td>
+                <td>crates/conjure-cp-rules/src/sat/encoding_rules.rs</td>
+                <td>100%</td>
+                <td>&nbsp;</td>
             </tr>
             <tr>
                 <td>crates/conjure-cp-rules/src/sat/integer_repr.rs</td>
                 <td>100%</td>
                 <td>&nbsp;</td>
             </tr>
+            <tr>
+                <td>crates/conjure-cp-rules/src/sat/order_int_ops.rs</td>
+                <td>95.6%</td>
+                <td>25,36,40,135,186</td>
+            </tr>
+            <tr>
+                <td>tests-integration/tests/integration_tests.rs</td>
+                <td>100%</td>
+                <td>&nbsp;</td>
+            </tr>
         </table>
         <div class="src-snippet">
-            <div class="src-name">crates/conjure-cp-rules/src/sat/direct_int_ops.rs</div>
+            <div class="src-name">crates/conjure-cp-rules/src/representation/sat_order_int.rs</div>
             <div class="snippets">
-            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">274</span>
-<span class="normal">275</span>
-<span class="normal">276</span>
-<span class="normal">277</span>
-<span class="normal">278</span>
-<span class="normal">279</span>
-<span class="normal">280</span>
-<span class="normal">281</span>
-<span class="normal">282</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-274" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-274"></a><span class="w">    </span><span class="p">};</span>
-<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-275" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-275"></a>
-<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-276" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-276"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="p">(</span><span class="n">binding</span><span class="p">,</span><span class="w"> </span><span class="n">old_min</span><span class="p">,</span><span class="w"> </span><span class="n">old_max</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">validate_direct_int_operands</span><span class="p">(</span><span class="fm">vec!</span><span class="p">[</span><span class="n">value</span><span class="p">.</span><span class="n">as_ref</span><span class="p">().</span><span class="n">clone</span><span class="p">()])</span><span class="o">?</span><span class="p">;</span>
-<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-277" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-277"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="p">[</span><span class="n">val_bits</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">binding</span><span class="p">.</span><span class="n">as_slice</span><span class="p">()</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
-<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-278" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-278"></a><span class="hll"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">RuleNotApplicable</span><span class="p">);</span>
-</span><a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-279" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-279"></a><span class="w">    </span><span class="p">};</span>
-<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-280" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-280"></a>
-<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-281" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-281"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">new_min</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="n">old_max</span><span class="p">;</span>
-<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-282" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-282"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">new_max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">-</span><span class="n">old_min</span><span class="p">;</span>
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-38" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-38"></a><span class="w">    </span><span class="k">fn</span><span class="w"> </span><span class="nf">init</span><span class="p">(</span><span class="n">name</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">Name</span><span class="p">,</span><span class="w"> </span><span class="n">symtab</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">SymbolTable</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nb">Option</span><span class="o">&lt;</span><span class="bp">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-39" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-39"></a><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">domain</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">symtab</span><span class="p">.</span><span class="n">resolve_domain</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-40" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-40"></a>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-41" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-41"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="o">!</span><span class="n">domain</span><span class="p">.</span><span class="n">is_finite</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-42" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-42"></a><span class="hll"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="nb">None</span><span class="p">;</span>
+</span><a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-43" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-43"></a><span class="w">        </span><span class="p">}</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-44" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-44"></a>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-45" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-45"></a><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">GroundDomain</span><span class="p">::</span><span class="n">Int</span><span class="p">(</span><span class="n">ranges</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">domain</span><span class="p">.</span><span class="n">as_ref</span><span class="p">()</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-46" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-46"></a><span class="hll"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="nb">None</span><span class="p">;</span>
+</span><a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-47" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-47"></a><span class="w">        </span><span class="p">};</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-48" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-48"></a>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-49" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-49"></a><span class="w">        </span><span class="c1">// Determine min/max and return None if range is unbounded</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-50" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-50"></a><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="p">(</span><span class="n">min</span><span class="p">,</span><span class="w"> </span><span class="n">max</span><span class="p">)</span><span class="w"> </span><span class="o">=</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-63" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-63"></a><span class="w">        </span><span class="p">})</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-64" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-64"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-65" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-65"></a>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-66" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-66"></a><span class="w">    </span><span class="sd">/// The variable being represented.</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-67" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-67"></a><span class="hll"><span class="w">    </span><span class="k">fn</span><span class="w"> </span><span class="nf">variable_name</span><span class="p">(</span><span class="o">&amp;</span><span class="bp">self</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">Name</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-68" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-68"></a><span class="hll"><span class="w">        </span><span class="o">&amp;</span><span class="bp">self</span><span class="p">.</span><span class="n">src_var</span>
+</span><a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-69" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-69"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-70" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-70"></a>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-71" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-71"></a><span class="hll"><span class="w">    </span><span class="k">fn</span><span class="w"> </span><span class="nf">value_down</span><span class="p">(</span>
+</span><a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-72" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-72"></a><span class="hll"><span class="w">        </span><span class="o">&amp;</span><span class="bp">self</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-73" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-73"></a><span class="hll"><span class="w">        </span><span class="n">_value</span><span class="p">:</span><span class="w"> </span><span class="nc">Literal</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-74" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-74"></a><span class="hll"><span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nb">Result</span><span class="o">&lt;</span><span class="n">std</span><span class="p">::</span><span class="n">collections</span><span class="p">::</span><span class="n">BTreeMap</span><span class="o">&lt;</span><span class="n">Name</span><span class="p">,</span><span class="w"> </span><span class="n">Literal</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">ApplicationError</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-75" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-75"></a><span class="w">        </span><span class="c1">// NOTE: It&#39;s unclear where and when `value_down` would be called for</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-76" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-76"></a><span class="w">        </span><span class="c1">// order encoding. This is also never called in log encoding, so we</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-77" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-77"></a><span class="w">        </span><span class="c1">// deliberately fail here to surface unexpected usage.</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-78" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-78"></a><span class="w">        </span><span class="n">bug</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;value_down is not implemented for order encoding and should not be called&quot;</span><span class="p">)</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-93" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-93"></a>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-94" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-94"></a><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="n">is_true</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">match</span><span class="w"> </span><span class="n">value_literal</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-95" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-95"></a><span class="w">                </span><span class="n">Literal</span><span class="p">::</span><span class="n">Int</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Literal</span><span class="p">::</span><span class="n">Bool</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-96" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-96"></a><span class="w">                </span><span class="n">Literal</span><span class="p">::</span><span class="n">Int</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Literal</span><span class="p">::</span><span class="n">Bool</span><span class="p">(</span><span class="kc">false</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-97" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-97"></a><span class="hll"><span class="w">                </span><span class="n">_</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">ApplicationError</span><span class="p">::</span><span class="n">RuleNotApplicable</span><span class="p">),</span>
+</span><a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-98" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-98"></a><span class="w">            </span><span class="p">};</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-99" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-99"></a>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-100" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-100"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="o">!</span><span class="n">is_true</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">first_false_candidate</span><span class="p">.</span><span class="n">is_none</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-101" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-101"></a><span class="w">                </span><span class="n">first_false_candidate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">value_candidate</span><span class="p">);</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-102" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-102"></a><span class="w">            </span><span class="p">}</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-103" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-103"></a>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-104" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-104"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="n">is_true</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">first_false_candidate</span><span class="p">.</span><span class="n">is_some</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-105" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-105"></a><span class="w">                </span><span class="c1">// we have a true after a false</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-106" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-106"></a><span class="hll"><span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">ApplicationError</span><span class="p">::</span><span class="n">RuleNotApplicable</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-107" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-107"></a><span class="w">            </span><span class="p">}</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-108" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-108"></a><span class="w">        </span><span class="p">}</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-109" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-109"></a>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-110" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-110"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">first_false</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">first_false_candidate</span><span class="w"> </span><span class="p">{</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-108" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-108"></a><span class="w">        </span><span class="p">}</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-109" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-109"></a>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-110" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-110"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">first_false</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">first_false_candidate</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-111" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-111"></a><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="nb">Ok</span><span class="p">(</span><span class="n">Literal</span><span class="p">::</span><span class="n">Int</span><span class="p">(</span><span class="n">first_false</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">));</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-112" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-112"></a><span class="hll"><span class="w">        </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-113" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-113"></a>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-114" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-114"></a><span class="w">        </span><span class="c1">// if we are here, all are true. So the value is the last one.</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-115" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-115"></a><span class="hll"><span class="w">        </span><span class="nb">Ok</span><span class="p">(</span><span class="n">Literal</span><span class="p">::</span><span class="n">Int</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">upper_bound</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span>
+</span><a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-116" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-116"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-117" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-117"></a>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-118" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-118"></a><span class="w">    </span><span class="sd">/// Returns [`Expression`]s representing each boolean representation variable.</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-119" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-119"></a><span class="w">    </span><span class="k">fn</span><span class="w"> </span><span class="nf">expression_down</span><span class="p">(</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-135" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-135"></a><span class="w">                </span><span class="p">)</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-136" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-136"></a><span class="w">            </span><span class="p">})</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-137" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-137"></a><span class="w">            </span><span class="p">.</span><span class="n">collect</span><span class="p">())</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-138" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-138"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-139" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-139"></a><span class="hll">
+</span><a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-140" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-140"></a><span class="hll"><span class="w">    </span><span class="sd">/// Creates declarations for the boolean representation variables of `self`.</span>
+</span><a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-141" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-141"></a><span class="w">    </span><span class="k">fn</span><span class="w"> </span><span class="nf">declaration_down</span><span class="p">(</span><span class="o">&amp;</span><span class="bp">self</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nb">Result</span><span class="o">&lt;</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="n">DeclarationPtr</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">ApplicationError</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-142" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-142"></a><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">temp_a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="bp">self</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-143" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-143"></a><span class="w">            </span><span class="p">.</span><span class="n">names</span><span class="p">()</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-144" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-144"></a><span class="w">            </span><span class="p">.</span><span class="n">map</span><span class="p">(</span><span class="o">|</span><span class="n">name</span><span class="o">|</span><span class="w"> </span><span class="n">DeclarationPtr</span><span class="p">::</span><span class="n">new_var</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">Domain</span><span class="p">::</span><span class="kt">bool</span><span class="p">()))</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-142" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-142"></a><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">temp_a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="bp">self</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-143" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-143"></a><span class="w">            </span><span class="p">.</span><span class="n">names</span><span class="p">()</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-144" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-144"></a><span class="w">            </span><span class="p">.</span><span class="n">map</span><span class="p">(</span><span class="o">|</span><span class="n">name</span><span class="o">|</span><span class="w"> </span><span class="n">DeclarationPtr</span><span class="p">::</span><span class="n">new_var</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">Domain</span><span class="p">::</span><span class="kt">bool</span><span class="p">()))</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-145" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-145"></a><span class="w">            </span><span class="p">.</span><span class="n">collect</span><span class="p">();</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-146" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-146"></a><span class="hll">
+</span><a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-147" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-147"></a><span class="w">        </span><span class="nb">Ok</span><span class="p">(</span><span class="n">temp_a</span><span class="p">)</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-148" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-148"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-149" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-149"></a><span class="hll">
+</span><a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-150" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-150"></a><span class="hll"><span class="w">    </span><span class="sd">/// The rule name for this representation.</span>
+</span><a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-151" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-151"></a><span class="w">    </span><span class="k">fn</span><span class="w"> </span><span class="nf">repr_name</span><span class="p">(</span><span class="o">&amp;</span><span class="bp">self</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="kp">&amp;</span><span class="kt">str</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-152" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-152"></a><span class="w">        </span><span class="s">&quot;sat_order_int&quot;</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-153" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-153"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-154" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-154"></a><span class="hll">
+</span><a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-155" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-155"></a><span class="hll"><span class="w">    </span><span class="sd">/// Makes a clone of `self` into a `Representation` trait object.</span>
+</span><a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-156" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-156"></a><span class="w">    </span><span class="k">fn</span><span class="w"> </span><span class="nf">box_clone</span><span class="p">(</span><span class="o">&amp;</span><span class="bp">self</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nb">Box</span><span class="o">&lt;</span><span class="k">dyn</span><span class="w"> </span><span class="n">Representation</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-157" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-157"></a><span class="w">        </span><span class="nb">Box</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">clone</span><span class="p">())</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">_</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-158" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-158"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/conjure-cp-rules/src/representation/sat_order_int.rs-159" name="crates/conjure-cp-rules/src/representation/sat_order_int.rs-159"></a><span class="p">}</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/conjure-cp-rules/src/sat/order_int_ops.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-rules/src/sat/order_int_ops.rs-21" name="crates/conjure-cp-rules/src/sat/order_int_ops.rs-21"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">global_max</span><span class="p">:</span><span class="w"> </span><span class="kt">i32</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">i32</span><span class="p">::</span><span class="n">MIN</span><span class="p">;</span>
+<a id="crates/conjure-cp-rules/src/sat/order_int_ops.rs-22" name="crates/conjure-cp-rules/src/sat/order_int_ops.rs-22"></a>
+<a id="crates/conjure-cp-rules/src/sat/order_int_ops.rs-23" name="crates/conjure-cp-rules/src/sat/order_int_ops.rs-23"></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">operand</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="o">&amp;</span><span class="n">exprs</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-rules/src/sat/order_int_ops.rs-24" name="crates/conjure-cp-rules/src/sat/order_int_ops.rs-24"></a><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">Expr</span><span class="p">::</span><span class="n">SATInt</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">SATIntEncoding</span><span class="p">::</span><span class="n">Order</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">local_min</span><span class="p">,</span><span class="w"> </span><span class="n">local_max</span><span class="p">))</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">operand</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-rules/src/sat/order_int_ops.rs-25" name="crates/conjure-cp-rules/src/sat/order_int_ops.rs-25"></a><span class="hll"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">RuleNotApplicable</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-rules/src/sat/order_int_ops.rs-26" name="crates/conjure-cp-rules/src/sat/order_int_ops.rs-26"></a><span class="w">        </span><span class="p">};</span>
+<a id="crates/conjure-cp-rules/src/sat/order_int_ops.rs-27" name="crates/conjure-cp-rules/src/sat/order_int_ops.rs-27"></a><span class="w">        </span><span class="n">global_min</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">global_min</span><span class="p">.</span><span class="n">min</span><span class="p">(</span><span class="o">*</span><span class="n">local_min</span><span class="p">);</span>
+<a id="crates/conjure-cp-rules/src/sat/order_int_ops.rs-28" name="crates/conjure-cp-rules/src/sat/order_int_ops.rs-28"></a><span class="w">        </span><span class="n">global_max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">global_max</span><span class="p">.</span><span class="n">max</span><span class="p">(</span><span class="o">*</span><span class="n">local_max</span><span class="p">);</span>
+<a id="crates/conjure-cp-rules/src/sat/order_int_ops.rs-29" name="crates/conjure-cp-rules/src/sat/order_int_ops.rs-29"></a><span class="w">    </span><span class="p">}</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-rules/src/sat/order_int_ops.rs-32" name="crates/conjure-cp-rules/src/sat/order_int_ops.rs-32"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">out</span><span class="p">:</span><span class="w"> </span><span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="n">Expr</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">exprs</span>
+<a id="crates/conjure-cp-rules/src/sat/order_int_ops.rs-33" name="crates/conjure-cp-rules/src/sat/order_int_ops.rs-33"></a><span class="w">        </span><span class="p">.</span><span class="n">into_iter</span><span class="p">()</span>
+<a id="crates/conjure-cp-rules/src/sat/order_int_ops.rs-34" name="crates/conjure-cp-rules/src/sat/order_int_ops.rs-34"></a><span class="w">        </span><span class="p">.</span><span class="n">map</span><span class="p">(</span><span class="o">|</span><span class="n">expr</span><span class="o">|</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-rules/src/sat/order_int_ops.rs-35" name="crates/conjure-cp-rules/src/sat/order_int_ops.rs-35"></a><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="n">Expr</span><span class="p">::</span><span class="n">SATInt</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">SATIntEncoding</span><span class="p">::</span><span class="n">Order</span><span class="p">,</span><span class="w"> </span><span class="n">inner</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">local_min</span><span class="p">,</span><span class="w"> </span><span class="n">local_max</span><span class="p">))</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">expr</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-rules/src/sat/order_int_ops.rs-36" name="crates/conjure-cp-rules/src/sat/order_int_ops.rs-36"></a><span class="hll"><span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">RuleNotApplicable</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-rules/src/sat/order_int_ops.rs-37" name="crates/conjure-cp-rules/src/sat/order_int_ops.rs-37"></a><span class="w">            </span><span class="p">};</span>
+<a id="crates/conjure-cp-rules/src/sat/order_int_ops.rs-38" name="crates/conjure-cp-rules/src/sat/order_int_ops.rs-38"></a>
+<a id="crates/conjure-cp-rules/src/sat/order_int_ops.rs-39" name="crates/conjure-cp-rules/src/sat/order_int_ops.rs-39"></a><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">inner</span><span class="p">.</span><span class="n">as_ref</span><span class="p">().</span><span class="n">clone</span><span class="p">().</span><span class="n">unwrap_list</span><span class="p">()</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-rules/src/sat/order_int_ops.rs-40" name="crates/conjure-cp-rules/src/sat/order_int_ops.rs-40"></a><span class="hll"><span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">RuleNotApplicable</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-rules/src/sat/order_int_ops.rs-41" name="crates/conjure-cp-rules/src/sat/order_int_ops.rs-41"></a><span class="w">            </span><span class="p">};</span>
+<a id="crates/conjure-cp-rules/src/sat/order_int_ops.rs-42" name="crates/conjure-cp-rules/src/sat/order_int_ops.rs-42"></a>
+<a id="crates/conjure-cp-rules/src/sat/order_int_ops.rs-43" name="crates/conjure-cp-rules/src/sat/order_int_ops.rs-43"></a><span class="w">            </span><span class="c1">// calulcate how many trues/falses to prepend/append</span>
+<a id="crates/conjure-cp-rules/src/sat/order_int_ops.rs-44" name="crates/conjure-cp-rules/src/sat/order_int_ops.rs-44"></a><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="n">prefix_len</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">local_min</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">global_min</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">usize</span><span class="p">;</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-rules/src/sat/order_int_ops.rs-131" name="crates/conjure-cp-rules/src/sat/order_int_ops.rs-131"></a>
+<a id="crates/conjure-cp-rules/src/sat/order_int_ops.rs-132" name="crates/conjure-cp-rules/src/sat/order_int_ops.rs-132"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="p">(</span><span class="n">binding</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=</span>
+<a id="crates/conjure-cp-rules/src/sat/order_int_ops.rs-133" name="crates/conjure-cp-rules/src/sat/order_int_ops.rs-133"></a><span class="w">        </span><span class="n">validate_order_int_operands</span><span class="p">(</span><span class="fm">vec!</span><span class="p">[</span><span class="n">lhs</span><span class="p">.</span><span class="n">as_ref</span><span class="p">().</span><span class="n">clone</span><span class="p">(),</span><span class="w"> </span><span class="n">rhs</span><span class="p">.</span><span class="n">as_ref</span><span class="p">().</span><span class="n">clone</span><span class="p">()])</span><span class="o">?</span><span class="p">;</span>
+<a id="crates/conjure-cp-rules/src/sat/order_int_ops.rs-134" name="crates/conjure-cp-rules/src/sat/order_int_ops.rs-134"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="p">[</span><span class="n">lhs_bits</span><span class="p">,</span><span class="w"> </span><span class="n">rhs_bits</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">binding</span><span class="p">.</span><span class="n">as_slice</span><span class="p">()</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-rules/src/sat/order_int_ops.rs-135" name="crates/conjure-cp-rules/src/sat/order_int_ops.rs-135"></a><span class="hll"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">RuleNotApplicable</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-rules/src/sat/order_int_ops.rs-136" name="crates/conjure-cp-rules/src/sat/order_int_ops.rs-136"></a><span class="w">    </span><span class="p">};</span>
+<a id="crates/conjure-cp-rules/src/sat/order_int_ops.rs-137" name="crates/conjure-cp-rules/src/sat/order_int_ops.rs-137"></a>
+<a id="crates/conjure-cp-rules/src/sat/order_int_ops.rs-138" name="crates/conjure-cp-rules/src/sat/order_int_ops.rs-138"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">bit_count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lhs_bits</span><span class="p">.</span><span class="n">len</span><span class="p">();</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-rules/src/sat/order_int_ops.rs-182" name="crates/conjure-cp-rules/src/sat/order_int_ops.rs-182"></a>
+<a id="crates/conjure-cp-rules/src/sat/order_int_ops.rs-183" name="crates/conjure-cp-rules/src/sat/order_int_ops.rs-183"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="p">(</span><span class="n">binding</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=</span>
+<a id="crates/conjure-cp-rules/src/sat/order_int_ops.rs-184" name="crates/conjure-cp-rules/src/sat/order_int_ops.rs-184"></a><span class="w">        </span><span class="n">validate_order_int_operands</span><span class="p">(</span><span class="fm">vec!</span><span class="p">[</span><span class="n">lhs</span><span class="p">.</span><span class="n">as_ref</span><span class="p">().</span><span class="n">clone</span><span class="p">(),</span><span class="w"> </span><span class="n">rhs</span><span class="p">.</span><span class="n">as_ref</span><span class="p">().</span><span class="n">clone</span><span class="p">()])</span><span class="o">?</span><span class="p">;</span>
+<a id="crates/conjure-cp-rules/src/sat/order_int_ops.rs-185" name="crates/conjure-cp-rules/src/sat/order_int_ops.rs-185"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="p">[</span><span class="n">lhs_bits</span><span class="p">,</span><span class="w"> </span><span class="n">rhs_bits</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">binding</span><span class="p">.</span><span class="n">as_slice</span><span class="p">()</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-rules/src/sat/order_int_ops.rs-186" name="crates/conjure-cp-rules/src/sat/order_int_ops.rs-186"></a><span class="hll"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">RuleNotApplicable</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-rules/src/sat/order_int_ops.rs-187" name="crates/conjure-cp-rules/src/sat/order_int_ops.rs-187"></a><span class="w">    </span><span class="p">};</span>
+<a id="crates/conjure-cp-rules/src/sat/order_int_ops.rs-188" name="crates/conjure-cp-rules/src/sat/order_int_ops.rs-188"></a>
+<a id="crates/conjure-cp-rules/src/sat/order_int_ops.rs-189" name="crates/conjure-cp-rules/src/sat/order_int_ops.rs-189"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">new_symbols</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">symbols</span><span class="p">.</span><span class="n">clone</span><span class="p">();</span>
+<a id="crates/conjure-cp-rules/src/sat/order_int_ops.rs-190" name="crates/conjure-cp-rules/src/sat/order_int_ops.rs-190"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">new_clauses</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="fm">vec!</span><span class="p">[];</span>
 </pre></div></td></tr></table></div>
 
             </div>
