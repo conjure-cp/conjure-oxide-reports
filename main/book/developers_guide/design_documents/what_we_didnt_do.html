@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Creating Documentation - Conjure Oxide</title>
+        <title>What we didn&#x27;t do - Conjure Oxide</title>
 
 
         <!-- Custom HTML head -->
@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../searchindex-1d0c25f1.js";
+            window.path_to_searchindex_js = "../../searchindex-c4e34754.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-72bc647e.js"></script>
+        <script src="../../toc-b9ef563d.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -176,77 +176,113 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="creating-documentation"><a class="header" href="#creating-documentation">Creating Documentation</a></h1>
-<p>As an organisation, we want Conjure Oxide to be thoroughly documented so that new members of our growing team can integrate smoothly. Whether you are currently on a project or not, contributing to our documentation is essential to achieving this goal.</p>
-<p>To make creating and implementing documentation as smooth as possible, we ask that you follow the workflow as outlined below.</p>
-<h2 id="documentation-work-flow"><a class="header" href="#documentation-work-flow">Documentation Work Flow</a></h2>
-<ol>
-<li>
-<p>Identify the documentation you will write.</p>
-<p>In many cases, documentation contributors will be writing about projects they are currently working on or have already completed.
-However, there are still plenty of opportunities to contribute to documentation, even if you are not actively involved in a project or are seeking a small side project.
-In such cases, please refer to <a href="https://github.com/conjure-cp/conjure-oxide/issues/1334">issue #1334</a>, which tracks all documentation writing tasks.
-All unassigned child issues are available for anyone to work on!</p>
-<p>You may come across instances where important or useful documentation is missing from this book. If you notice such gaps and would like to address them as a side project, we encourage you to do so!</p>
-</li>
-<li>
-<p>If the issue is not already present, open a child issue on our documentation tracking issue <a href="https://github.com/conjure-cp/conjure-oxide/issues/1334">#1334</a>.</p>
-<p>Make the title of this issue the name of the documentation you will be writing.</p>
-</li>
-<li>
-<p>Link your child issue to a pr request.</p>
-<h4 id="file-type-and-naming-convention"><a class="header" href="#file-type-and-naming-convention">File type and naming convention:</a></h4>
-<p>All documentation for the Conjure Oxide book should be written in markdown. If you’re unfamiliar with markdown or need a refresher on its syntax, we recommend reviewing <a href="https://www.markdownguide.org/getting-started/">this guide</a>.</p>
-<p>When naming your documentation file, match the file name as closely as possible to the heading of the documentation and use underscores (‘_’) to replace spaces. For example, if your documentation page is titled “Creating Documentation,” name the file <code>creating_documentation.md</code>.</p>
-<h4 id="where-to-place-documentation"><a class="header" href="#where-to-place-documentation">Where to place documentation:</a></h4>
-<p>Place all documentation files in an appropriate location within the <code>/docs/src</code> directory. Each markdown file should be stored in the directory that matches its section in the documentation structure. For example, this file is located at <code>/docs/src/developers_guide/contributors_guide/</code>.</p>
-<p>If you know where your documentation belongs in the book, please place it in the appropriate directory. However, it’s not required to know the exact location—moving files is quick and easy. If you’re unsure where your documentation should go, place the file in <code>/docs/src/misc</code> so it can be relocated later to a more suitable section.</p>
-<h4 id="viewing-documentation-on-the-book"><a class="header" href="#viewing-documentation-on-the-book">Viewing documentation on the book:</a></h4>
-<p>You must ensure that the documentation you write formats as expected in the book. To do so, follow these steps:</p>
-<ul>
-<li>Open <code>/docs/src/SUMMARY.md</code>.</li>
-<li>If you have a definite location for your documentation, link the documentation in the appropriate section using the following format: <code>[ Section title ](path/to/file)</code>.</li>
-<li>If you are unsure where your documentation should reside, place the documentation at any location, <strong>but remember to delete this link once you’re happy with your document’s formatting</strong>.</li>
-<li>In your terminal, ensure that you are in the <code>/docs</code> directory and type in the following command <code>mdbooks serve --open</code></li>
-</ul>
-<blockquote>
-<p><strong>Important</strong></p>
-<p>Be sure to assign yourself and any other contributors working on the documentation to your child issue and pull request. This helps us keep track of who is responsible for each piece of documentation and ensures proper assignment.</p>
-</blockquote>
-</li>
-<li>
-<p>Once you are happy with your documentation, request a review from one or more other members of your team.</p>
-<blockquote>
-<p><strong>Important</strong></p>
-<p>Place any contributors to the documentation and the date where the documentation was last updated in a comment on the first and second lines of the file.
-For instance:</p>
-<p><code>[//]: # (Author: Jamie Melton)</code></p>
-<p><code>[//]: # (Last Updated: 09/12/2025)</code></p>
-<p>has been placed at the top of this file.</p>
-</blockquote>
-</li>
-<li>
-<p>When your team is happy with this documentation, request a review from the current book editors.</p>
-<p>The current book editors are: <em>JamieASM</em> and <em>HKhan-5</em>.</p>
-</li>
-<li>
-<p>Assuming no adjustments are required, the documentation will then be merged in, and the child issue will be closed.</p>
-</li>
-</ol>
+                        <h1 id="what-we-didnt-do"><a class="header" href="#what-we-didnt-do">What we didn’t do</a></h1>
+<p>The intention of this page is to chronicle decisions made during the development of conjure-oxide. There have been many situations where we have thought of something interesting that ends up not being the best solution to a problem and we believe others may come up with the same ideas. This page should be read before contributing so that potential contributors do not go down rabbit holes that have already been thoroughly searched.</p>
+<details>
+<summary>
+<h2>Nested expressions within the polymorphic metadata field </h2>
+</summary>
+<h3 id="background"><a class="header" href="#background">Background</a></h3>
+<p>As discussed in <a href="https://github.com/conjure-cp/conjure-oxide/issues/182">Issue 182</a>, we wanted to create a polymorphic metadata field that would be contained within the expression struct and that could be changed on a case-by-case basis as metadata might only be needed for a single module for example.</p>
+<h3 id="what-we-thought-of"><a class="header" href="#what-we-thought-of">What we thought of</a></h3>
+<p>One interesting idea that was suggested as a structure like this:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// Define a trait for metadata in each module.
+pub trait Metadata {
+    // Define methods specific to the metadata.
+    fn print_metadata(&amp;self);
+    // Add other methods as needed.
+}
+
+// Module-specific metadata types.
+pub mod module1 {
+    pub struct Metadata1 {
+        // Define fields specific to this metadata.
+        pub clean: bool,
+        // Add other fields as needed.
+    }
+
+    impl super::Metadata for Metadata1 {
+        fn print_metadata(&amp;self) {
+            println!("Metadata1: Clean - {}", self.clean);
+        }
+    }
+}
+
+pub mod module2 {
+    pub struct Metadata2 {
+        // Define fields specific to this metadata.
+        pub status: String,
+        // Add other fields as needed.
+    }
+
+    impl super::Metadata for Metadata2 {
+        fn print_metadata(&amp;self) {
+            println!("Metadata2: Status - {}", self.status);
+        }
+    }
+}
+
+// Modify the Expression enum to hold a trait object for metadata.
+#[derive(Clone, Debug)]
+pub enum Expression {
+    // Existing enum variants here...
+    WithMetadata(Box&lt;Expression&gt;, Option&lt;Box&lt;dyn Metadata&gt;&gt;),
+}
+
+impl Expression {
+    // Create a new expression with metadata.
+    pub fn with_metadata(expr: Expression, metadata: Option&lt;Box&lt;dyn Metadata&gt;&gt;) -&gt; Expression {
+        Expression::WithMetadata(Box::new(expr), metadata)
+    }
+
+    // Extract the expression and metadata.
+    pub fn extract_metadata(self) -&gt; (Expression, Option&lt;Box&lt;dyn Metadata&gt;&gt;) {
+        match self {
+            Expression::WithMetadata(expr, metadata) =&gt; (*expr, metadata),
+            _ =&gt; (self, None),
+        }
+    }
+
+    // Set metadata for an expression.
+    pub fn set_metadata(&amp;mut self, metadata: Option&lt;Box&lt;dyn Metadata&gt;&gt;) {
+        if let Expression::WithMetadata(_, ref mut existing_metadata) = *self {
+            *existing_metadata = metadata;
+        }
+    }
+
+    // Get metadata for an expression.
+    pub fn get_metadata(&amp;self) -&gt; Option&lt;&amp;dyn Metadata&gt; {
+        if let Expression::WithMetadata(_, Some(metadata)) = self {
+            Some(metadata.as_ref())
+        } else {
+            None
+        }
+    }
+
+    // Existing methods here...
+}
+
+<span class="boring">}</span></code></pre>
+<h3 id="why-we-didnt-do-it"><a class="header" href="#why-we-didnt-do-it">Why we didn’t do it</a></h3>
+<p>This is nice in the sense that there is less “ugliness” when creating expressions as there is no need to have metadata in every enum variant. However, this severely effects the way that the rewriter traverses the AST as there is now WithMetadata objects sprinkled throughout the AST which would require some way to traverse up the tree while saving the context of nodes below the metadata object. This image shows the differences in a basic AST:</p>
+<img src="https://github.com/conjure-cp/conjure-oxide/assets/27870413/09726bf0-c2ef-4056-b7c3-e011f148774b" width="300" height="600">
+<h3 id="what-we-did-do"><a class="header" href="#what-we-did-do">What we did do</a></h3>
+<p>Due to this issue we decided that a simpler implementation where metadata is explicitly required every time but could be set to some empty metadata object was more practical. More details on this implementation can found in <a href="https://github.com/conjure-cp/conjure-oxide/pull/233">Near Future PR</a></p>
+</details>
 <hr>
-<h2 id="still-unsure"><a class="header" href="#still-unsure">Still unsure?</a></h2>
-<p>If you have any questions or concerns, please post them on the documentation discussion board. A book editor will respond to you promptly.
-Likewise, if you have suggestions for improving or streamlining this process, feel free to share your ideas with the book editors! Your feedback is always welcome.</p>
+<p><em>This section had been adapted from the ‘What we didn’t do’ page of the conjure-oxide wiki</em></p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../developers_guide/contributors_guide/set-dev-env.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../developers_guide/design_documents/semantics-of-rewriting-expressions.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../developers_guide/coding_resources/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../developers_guide/ci_cd/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -256,11 +292,11 @@ Likewise, if you have suggestions for improving or streamlining this process, fe
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../developers_guide/contributors_guide/set-dev-env.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../developers_guide/design_documents/semantics-of-rewriting-expressions.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../developers_guide/coding_resources/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../developers_guide/ci_cd/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

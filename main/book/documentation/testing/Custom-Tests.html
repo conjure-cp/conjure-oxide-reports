@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Github Actions: Cookbook - Conjure Oxide</title>
+        <title>Creating Custom Tests - Conjure Oxide</title>
 
 
         <!-- Custom HTML head -->
@@ -176,128 +176,42 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <!-- TODO: Edit this -->
-<h1 id="github-actions-cookbook"><a class="header" href="#github-actions-cookbook">Github Actions Cookbook</a></h1>
-<ul>
-<li>This document lists common patterns and issues we’ve had in our Github actions, and practical solutions to them.</li>
-<li>The first point of reference should be the official documentation, but if that is ever unclear, here would be a good place to look!</li>
-</ul>
-<p>Terminology used in this document:</p>
-<ul>
-<li>A <em>workflow</em> contains multiple independently ran <em>tasks</em>. Each task runs a series of <em>steps</em>. Steps can call predefined <em>actions</em>, or run shell commands.</li>
-</ul>
-<h2 id="i-want-to-have-a-step-output-multilined--complex-text"><a class="header" href="#i-want-to-have-a-step-output-multilined--complex-text">I want to have a step output multilined / complex text</a></h2>
-<pre><code class="language-yml">- name: Calculate PR doc coverage
-  id: prddoc
-  run: |
-    RUSTDOCFLAGS='-Z unstable-options --show-coverage' cargo +nightly doc --workspace --no-deps &gt; coverage.md
-    echo 'coverage&lt;&lt;EOFABC' &gt;&gt; $GITHUB_OUTPUT
-    echo "$(cat coverage.md)" &gt;&gt; $GITHUB_OUTPUT
-    echo 'EOFABC' &gt;&gt; $GITHUB_OUTPUT```
+                        <h1 id="overview"><a class="header" href="#overview">Overview</a></h1>
+<p>Custom tests were created as a solution to the problem that integration tests do not allow for testing of error messages, which automatically return from the integration test method and therefore cannot be analyzed. The custom tests, however, work for both erroneous and non-erroneous code. Each test contains an input, a <code>run.sh</code> file to execute the test, and an expected standard output/error (or both) to compare against. Conjure Oxide is set up to automatically create and execute a test for each test folder in the <code>tests/custom </code>directory when <code>cargo test</code> is ran so to add a test case, all one must do is add a folder in the directory which contains the necessary components.</p>
+<h1 id="how-to-add-a-test-case"><a class="header" href="#how-to-add-a-test-case">How to add a test case</a></h1>
+<p>Adding a test case is simple. First add a folder with the test case name to the <code>tests/custom</code> directory. Tests can be organized within folders in the directory–only folders with a <code>run.sh</code> file will be treated as a test case. Within the test folder, add these components:</p>
+<ol>
+<li>
+<p><code>run.sh</code> file: This will typically be in the format <code>conjure_oxide &lt;options&gt; &lt;command&gt;</code> with the command being <code>solve model.eprime</code> (assuming the input file is named <code>model.eprime</code>). The <code>conjure_oxide</code> executable path is added to the PATH environment variable, so the script can invoke <code>conjure_oxide</code> as a command (i.e., just by name, without the full path).</p>
+<p>ex) <code>conjure_oxide --solver Minion --enable-native-parser solve model.eprime</code></p>
+</li>
+<li>
+<p>input file: This file will be the Essence code that is inputted into Conjure Oxide. It can be named anything but be sure to reference it correctly in the <code>run.sh</code> file.</p>
+<p>ex) <code>find x : bool</code></p>
+</li>
+<li>
+<p><code>stdout.expected</code>/<code>stderr.expected</code>: These files will be what the output is compared against. They will also be what is overwritten if the test is run with <code>ACCEPT=true</code>. Avoid creating empty files: if there is no expected error from the input, do not create a <code>stderr.expected</code> file and if there is no output, do not create a <code>stdout.expected</code> file.</p>
+</li>
+</ol>
+<p>The custom tests are run automatically when <code>cargo test</code> is run. You can run just the custom tests with <code>cargo test custom</code> and a specific test with <code>cargo test custom_&lt;test_path&gt;</code>. To overwrite the expected output/error with the actual output/error, run the tests with <code>ACCEPT=true</code>.</p>
+<h1 id="code-structure"><a class="header" href="#code-structure">Code structure</a></h1>
+<p>The code to run the custom tests is integrated into the <code>build.rs</code> file. Much like for the integration tests, the custom tests directory is traversed and a test is dynamically written at compile time for any folder containing a <code>run.sh</code> file. Tests are based on a custom test template (shown below) which calls the <code>custom_test</code> function (passing in the test folder path). They are written into a generated file, which is included at the bottom of the <code>custom_tests.rs</code> file (which contains the <code>custom_test</code> function).</p>
+<pre><code>#[test]
+fn {test_name}() -&gt; Result&lt;(), Box&lt;dyn Error&gt;&gt; {{
+    custom_test("{test_dir}")
+}}
 </code></pre>
-<p>The entire output of <code>cargo doc</code> can be substituted into later jobs by using <code>${{ steps.prdoc.outputs.coverage }}</code></p>
-<h2 id="workflow_run-i-want-a-workflow-that-runs-on-a-pr-and-can-write-to-the-repo"><a class="header" href="#workflow_run-i-want-a-workflow-that-runs-on-a-pr-and-can-write-to-the-repo">workflow_run: I want a workflow that runs on a PR and can write to the repo</a></h2>
-<p>PR branches and their workflows typically live in on a branch on an external fork. Therefore, they cannot write to the repository. The solution is to split things into two workflows - one that runs on the PR with read-only permissions, and one that runs on main and can write to the repository. This is called a <code>workflow_run</code> workflow. Read <a href="https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_run">the docs</a>.</p>
-<p><strong>The workflow_run workflow should not run any user provided code as it has secrets in scope.</strong></p>
-<h2 id="i-want-to-access-the-calling-pr-in-a-workflow_run-workflow"><a class="header" href="#i-want-to-access-the-calling-pr-in-a-workflow_run-workflow">I want to access the calling PR in a workflow_run workflow</a></h2>
-<p><code>workflow_run</code> jobs do not get access to the calling workflows detail. While one can access some things via the Github API such as head_sha, head_repo, this may not give any PR information. <a href="https://securitylab.github.com/research/github-actions-preventing-pwn-requests/">Github</a> recommends saving the PR number to an artifact, and using this number to fetch the PR info through the API:</p>
-<p>Example from <a href="https://securitylab.github.com/research/github-actions-preventing-pwn-requests/">this github blog post</a> - see this for more explanation and details!</p>
-<pre><code class="language-yml">name: Receive PR
-
-# read-only repo token
-# no access to secrets
-on:
-  pull_request:
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:        
-      - uses: actions/checkout@v2
-
-      # imitation of a build process
-      - name: Build
-        run: /bin/bash ./build.sh
-
-      - name: Save PR number
-        run: |
-          mkdir -p ./pr
-          echo ${{ github.event.number }} &gt; ./pr/NR
-      - uses: actions/upload-artifact@v2
-        with:
-          name: pr
-          path: pr/
-</code></pre>
-<pre><code class="language-yml">name: Comment on the pull request
-
-# read-write repo token
-# access to secrets
-on:
-  workflow_run:
-    workflows: ["Receive PR"]
-    types:
-      - completed
-
-jobs:
-  upload:
-    runs-on: ubuntu-latest
-    if: &gt;
-      github.event.workflow_run.event == 'pull_request' &amp;&amp;
-      github.event.workflow_run.conclusion == 'success'
-    steps:
-      - name: 'Download artifact'
-        uses: actions/github-script@v3.1.0
-        with:
-          script: |
-            var artifacts = await github.actions.listWorkflowRunArtifacts({
-               owner: context.repo.owner,
-               repo: context.repo.repo,
-               run_id: ${{github.event.workflow_run.id }},
-            });
-            var matchArtifact = artifacts.data.artifacts.filter((artifact) =&gt; {
-              return artifact.name == "pr"
-            })[0];
-            var download = await github.actions.downloadArtifact({
-               owner: context.repo.owner,
-               repo: context.repo.repo,
-               artifact_id: matchArtifact.id,
-               archive_format: 'zip',
-            });
-            var fs = require('fs');
-            fs.writeFileSync('${{github.workspace}}/pr.zip', Buffer.from(download.data));
-      - run: unzip pr.zip
-
-      - name: 'Comment on PR'
-        uses: actions/github-script@v3
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            var fs = require('fs');
-            var issue_number = Number(fs.readFileSync('./NR'));
-            await github.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: issue_number,
-              body: 'Everything is OK. Thank you for the PR!'
-            });
-
-</code></pre>
-<h2 id="how-do-i-get-x-commit-inside-a-pr-workflow-what-do-all-the-different-github-shas-mean"><a class="header" href="#how-do-i-get-x-commit-inside-a-pr-workflow-what-do-all-the-different-github-shas-mean">How do I get x commit inside a PR workflow? What do all the different github sha’s mean?</a></h2>
-<p><strong>If you are running in a workflow_run workflow, you will need to get the calling PR first. See <a href="https://github.com/conjure-cp/conjure-oxide/wiki/_new#i-want-to-access-the-calling-pr-in-a-workflow_run-workflow">I want to access the calling PR in a workflow_run workflow</a> instead.</strong></p>
-<p>The default <code>github.sha</code> is a temporary commit representing the state of the repo should the PR be merged now. You probably want <code>github.event.pull_request.head.sha</code>. Read <a href="https://www.kenmuse.com/blog/the-many-shas-of-a-github-pull-request/">The many SHAs of a github pull request</a>.</p>
-<hr>
-<p><em>This section had been taken from the ‘Github Actions’ page of the conjure-oxide wiki</em></p>
+<p>The <code>custom_test</code> function takes the test directory as a parameter. It adds the <code>conjure_oxide</code> executable to the PATH environment variable and runs the commands from the <code>run.sh</code> file, saving the produced output. It then overwrites the expected output and error if accept was set to true and compares the actual and expected outputs/errors if not. If either does not match, the expected and actual output are printed and the test fails. Otherwise, the test passes.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../developers_guide/ci_cd/coverage.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../documentation/testing/ideal-scenario-of-testing.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../documentation/Essence-Parser.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../documentation/Implementing-Uniplates-and-Biplates-with-Structure-Preserving-Trees.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -307,11 +221,11 @@ jobs:
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../developers_guide/ci_cd/coverage.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../documentation/testing/ideal-scenario-of-testing.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../documentation/Essence-Parser.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../documentation/Implementing-Uniplates-and-Biplates-with-Structure-Preserving-Trees.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

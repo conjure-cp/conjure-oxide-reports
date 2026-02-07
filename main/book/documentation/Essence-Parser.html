@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Github Actions: Cookbook - Conjure Oxide</title>
+        <title>Essence Parser - Conjure Oxide</title>
 
 
         <!-- Custom HTML head -->
@@ -12,20 +12,20 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="../../favicon-de23e50b.svg">
-        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
-        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
-        <link rel="stylesheet" href="../../css/general-2459343d.css">
-        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
-        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+        <link rel="icon" href="../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../css/general-2459343d.css">
+        <link rel="stylesheet" href="../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
-        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
-        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
 
         <!-- Custom theme stylesheets -->
 
@@ -34,13 +34,13 @@
 
         <!-- Provide site root and default themes to javascript -->
         <script>
-            const path_to_root = "../../";
+            const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../searchindex-c4e34754.js";
+            window.path_to_searchindex_js = "../searchindex-c4e34754.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-b9ef563d.js"></script>
+        <script src="../toc-b9ef563d.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -107,7 +107,7 @@
             <!-- populated by js -->
             <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
             <noscript>
-                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
             </noscript>
             <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -142,7 +142,7 @@
                     <h1 class="menu-title">Conjure Oxide</h1>
 
                     <div class="right-buttons">
-                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
                             <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
                         </a>
 
@@ -176,128 +176,94 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <!-- TODO: Edit this -->
-<h1 id="github-actions-cookbook"><a class="header" href="#github-actions-cookbook">Github Actions Cookbook</a></h1>
+                        <h1 id="overview"><a class="header" href="#overview">Overview</a></h1>
+<p>The parser converts incoming Essence programs to Conjure Oxide to the <a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_core/ast/struct.Model.html">Model Object</a> that the rule engine takes in. The relevant parts of the Model object are the SymbolTable and Expression objects. The symbol table is essentially a list of the variables and their corresponding domains. The Expression object is a recursive object that hold all the constraints of the problem, nested into one object. The parser has two main parts. The first the <code>tree-sitter-essence</code> crate, which is a general Essence parser using the library tree-sitter. The second part is the <code>conjure_essence_parser</code> crate which is Rust code that uses the grammar to parse Essence programs and convert them into the above-mentioned Model object.</p>
+<h1 id="tree-sitter-grammar"><a class="header" href="#tree-sitter-grammar">Tree Sitter Grammar</a></h1>
+<p><a href="https://tree-sitter.github.io/tree-sitter/">Tree-sitter</a> is a parsing library that creates concrete syntax trees from programs in various languages. It contains many languages already, but Essence is unfortunately not one of them. Therefore, this crate contains a JavaScript grammar for Essence, which tree-sitter uses to create a parser. The parser is not specific to Conjure Oxide as the grammar merely describes the general Essence language, but it is used in Conjure Oxide and currently covers only parts of the Essence language that Conjure Oxide deals with and has tests written for. Therefore, it is not extensive and relatively simple in structure.</p>
+<h2 id="general-structure"><a class="header" href="#general-structure">General Structure</a></h2>
+<p>At the top level, there can be either find statements, letting statements, and constraint statements. Find statements consist of the keyword <code>find</code>, one or more variables, and then a domain of either type boolean or integer. Letting statements have the keyword <code>letting</code>, one or more variables, and an expression or domain to assign to those variables. Constraints contain the keyword <code>such that</code> and one or more logical or numerical expressions which include variables and constants.</p>
+<h2 id="expression-hierarchy"><a class="header" href="#expression-hierarchy">Expression Hierarchy</a></h2>
+<p>Expressions in the grammar are broken down into boolean expressions, comparison expressions, and arithmetic expressions. This separation helps enforce semantic constraints inherent to the language. For example, expressions like <code>x + 3 = y</code> are allowed because an arithmetic expression is permitted on either side of a comparison, but chained comparisons like <code>x = y = 3</code> are disallowed, since a comparison expression cannot itself contain another comparison expression as an operand. This also helps ensure the top-most expression in a constraint evaluates to a boolean (so <code>such that x + 3</code> wouldn’t be valid). There are also <code>atom</code> expressions such as constants, identifiers, and structured values (tuples, matrices, or slices), which are allowed as operands to most expressions since they might be booleans. This does mean, however, that a constraint like <code>such that y</code> would be valid even though <code>y</code> might be an integer. Quantifier expressions are also separated into boolean and arithmetic quantifiers for this reason (so <code>such that allDif{[a, b]}</code> is valid but <code>such that min{[a,b]}</code> isn’t).</p>
+<p>The precedence levels throughout the grammar are based on the Essence prime operator precedence table found in Appendix B of the <a href="https://arxiv.org/pdf/2201.03472">Savile Row Manual</a>. This is important to ensure that nested or complicated expressions such as <code>(2*x) + (3*y) = 12</code> are parsed in the correct order, as this will determine the structure of the Expression object in the Model.</p>
+<h2 id="issue-763"><a class="header" href="#issue-763"><a href="https://github.com/conjure-cp/conjure-oxide/issues/763">Issue #763</a></a></h2>
+<p>Currently, the grammar allows for any combination of letters, numbers, and underscores to be parsed as a variable identifiers. This includes reserved keywords of the Essence language such as ‘find’ or ‘letting’. This is incorrect and such keyword shouldn’t be allowed as variables. A solution to this problem hasn’t been found. Below are notes about possible solutions.</p>
 <ul>
-<li>This document lists common patterns and issues we’ve had in our Github actions, and practical solutions to them.</li>
-<li>The first point of reference should be the official documentation, but if that is ever unclear, here would be a good place to look!</li>
+<li>Tree-sitter doesn’t support lookahead assertions so grammar rules cannot exclude specific patterns or words.</li>
+<li>Defining rules for each keyword (with higher precedence than the identifier rule) has been brought up but it doesn’t stop keywords from being parsed as variables within a rule searching for identifiers (more detail in linked issue).</li>
+<li>It is possible to manually check all identifier nodes in the parse tree within the Rust program against a list of keywords (or by defining rules for keywords and allowing identifiers to be parsed as them or a valid identifier). This would allow for rejecting Essence programs that merely use a keyword as an identifier and have no other errors but wouldn’t allow for correct parsing of errors such as the one in line 2 of the program below. The extra ‘=’ in line two causes ‘such’ in line 3 to be parsed as an identifier and thus the whole of line 3 is parsed as an error, even though it is valid. If ‘such’ could be excluded as a valid identifier, the error would be only in line 2.</li>
 </ul>
-<p>Terminology used in this document:</p>
-<ul>
-<li>A <em>workflow</em> contains multiple independently ran <em>tasks</em>. Each task runs a series of <em>steps</em>. Steps can call predefined <em>actions</em>, or run shell commands.</li>
-</ul>
-<h2 id="i-want-to-have-a-step-output-multilined--complex-text"><a class="header" href="#i-want-to-have-a-step-output-multilined--complex-text">I want to have a step output multilined / complex text</a></h2>
-<pre><code class="language-yml">- name: Calculate PR doc coverage
-  id: prddoc
-  run: |
-    RUSTDOCFLAGS='-Z unstable-options --show-coverage' cargo +nightly doc --workspace --no-deps &gt; coverage.md
-    echo 'coverage&lt;&lt;EOFABC' &gt;&gt; $GITHUB_OUTPUT
-    echo "$(cat coverage.md)" &gt;&gt; $GITHUB_OUTPUT
-    echo 'EOFABC' &gt;&gt; $GITHUB_OUTPUT```
+<pre><code class="language-Essence">find x,y,z : int(0..5)
+such that x = y =
+such that z = 3
 </code></pre>
-<p>The entire output of <code>cargo doc</code> can be substituted into later jobs by using <code>${{ steps.prdoc.outputs.coverage }}</code></p>
-<h2 id="workflow_run-i-want-a-workflow-that-runs-on-a-pr-and-can-write-to-the-repo"><a class="header" href="#workflow_run-i-want-a-workflow-that-runs-on-a-pr-and-can-write-to-the-repo">workflow_run: I want a workflow that runs on a PR and can write to the repo</a></h2>
-<p>PR branches and their workflows typically live in on a branch on an external fork. Therefore, they cannot write to the repository. The solution is to split things into two workflows - one that runs on the PR with read-only permissions, and one that runs on main and can write to the repository. This is called a <code>workflow_run</code> workflow. Read <a href="https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_run">the docs</a>.</p>
-<p><strong>The workflow_run workflow should not run any user provided code as it has secrets in scope.</strong></p>
-<h2 id="i-want-to-access-the-calling-pr-in-a-workflow_run-workflow"><a class="header" href="#i-want-to-access-the-calling-pr-in-a-workflow_run-workflow">I want to access the calling PR in a workflow_run workflow</a></h2>
-<p><code>workflow_run</code> jobs do not get access to the calling workflows detail. While one can access some things via the Github API such as head_sha, head_repo, this may not give any PR information. <a href="https://securitylab.github.com/research/github-actions-preventing-pwn-requests/">Github</a> recommends saving the PR number to an artifact, and using this number to fetch the PR info through the API:</p>
-<p>Example from <a href="https://securitylab.github.com/research/github-actions-preventing-pwn-requests/">this github blog post</a> - see this for more explanation and details!</p>
-<pre><code class="language-yml">name: Receive PR
-
-# read-only repo token
-# no access to secrets
-on:
-  pull_request:
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:        
-      - uses: actions/checkout@v2
-
-      # imitation of a build process
-      - name: Build
-        run: /bin/bash ./build.sh
-
-      - name: Save PR number
-        run: |
-          mkdir -p ./pr
-          echo ${{ github.event.number }} &gt; ./pr/NR
-      - uses: actions/upload-artifact@v2
-        with:
-          name: pr
-          path: pr/
+<h1 id="rust-parser"><a class="header" href="#rust-parser">Rust Parser</a></h1>
+<p>This is the second part of the parser and is contained in the <a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_essence_parser/index.html">conjure_essence_parser</a> crate. The primary function is <code>parse_essence_file_native</code>, shown below, which takes in the path to the input and the context and returns the Model or an error.</p>
+<pre><code class="language-Rust">pub fn parse_essence_file_native(
+    path: &amp;str,
+    context: Arc&lt;RwLock&lt;Context&lt;'static&gt;&gt;&gt;,
+) -&gt; Result&lt;Model, EssenceParseError&gt; {...}
 </code></pre>
-<pre><code class="language-yml">name: Comment on the pull request
-
-# read-write repo token
-# access to secrets
-on:
-  workflow_run:
-    workflows: ["Receive PR"]
-    types:
-      - completed
-
-jobs:
-  upload:
-    runs-on: ubuntu-latest
-    if: &gt;
-      github.event.workflow_run.event == 'pull_request' &amp;&amp;
-      github.event.workflow_run.conclusion == 'success'
-    steps:
-      - name: 'Download artifact'
-        uses: actions/github-script@v3.1.0
-        with:
-          script: |
-            var artifacts = await github.actions.listWorkflowRunArtifacts({
-               owner: context.repo.owner,
-               repo: context.repo.repo,
-               run_id: ${{github.event.workflow_run.id }},
-            });
-            var matchArtifact = artifacts.data.artifacts.filter((artifact) =&gt; {
-              return artifact.name == "pr"
-            })[0];
-            var download = await github.actions.downloadArtifact({
-               owner: context.repo.owner,
-               repo: context.repo.repo,
-               artifact_id: matchArtifact.id,
-               archive_format: 'zip',
-            });
-            var fs = require('fs');
-            fs.writeFileSync('${{github.workspace}}/pr.zip', Buffer.from(download.data));
-      - run: unzip pr.zip
-
-      - name: 'Comment on PR'
-        uses: actions/github-script@v3
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            var fs = require('fs');
-            var issue_number = Number(fs.readFileSync('./NR'));
-            await github.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: issue_number,
-              body: 'Everything is OK. Thank you for the PR!'
-            });
-
+<p>Within that function, the source code is read from the input and the tree-sitter grammar is used to parse that code and produce a parse tree. From there, a Model object is created and the <code>SymbolTable</code> and <code>Expression</code> fields are populated by traversing and extracting information from the parse tree.</p>
+<h2 id="general-structure-and-utils"><a class="header" href="#general-structure-and-utils">General Structure and utils</a></h2>
+<p>The top level nodes (children of the root node), are either extras (comments or language labels), find statements, letting statements, or constraints. Find and letting statements provide info that is added to the SymbolTable while constraints are added to the Expression.</p>
+<p>In general, <code>kind()</code> is used to determine which rule a node represents and the corresponding function or logic is then applied to that node. Child nodes are found using their field names or indexes and the <code>named_children()</code> function is used to iterate over the named child nodes of a node. The function <code>child_expr</code> returns the Expression parsed from the first named child of the given node.</p>
+<h3 id="extracting-from-the-source-code-identifiers-and-constants"><a class="header" href="#extracting-from-the-source-code-identifiers-and-constants">Extracting from the source code (identifiers and constants)</a></h3>
+<p>The tree-sitter nodes have a start and end byte indicating where the node corresponds to in the source code. For variable identifiers, constants, and operators, these bytes are necessary to extract the actual values from the source code.</p>
+<p>For example, the following code appears in the <code>parse_find_statement</code> function and is used to extract the specific variable name from the source code, which is represented simply by a tree-sitter node (named <code>variable</code> in this case).</p>
+<pre><code class="language-Rust">let variable_name = &amp;source_code[variable.start_byte()..variable.end_byte()];
 </code></pre>
-<h2 id="how-do-i-get-x-commit-inside-a-pr-workflow-what-do-all-the-different-github-shas-mean"><a class="header" href="#how-do-i-get-x-commit-inside-a-pr-workflow-what-do-all-the-different-github-shas-mean">How do I get x commit inside a PR workflow? What do all the different github sha’s mean?</a></h2>
-<p><strong>If you are running in a workflow_run workflow, you will need to get the calling PR first. See <a href="https://github.com/conjure-cp/conjure-oxide/wiki/_new#i-want-to-access-the-calling-pr-in-a-workflow_run-workflow">I want to access the calling PR in a workflow_run workflow</a> instead.</strong></p>
-<p>The default <code>github.sha</code> is a temporary commit representing the state of the repo should the PR be merged now. You probably want <code>github.event.pull_request.head.sha</code>. Read <a href="https://www.kenmuse.com/blog/the-many-shas-of-a-github-pull-request/">The many SHAs of a github pull request</a>.</p>
-<hr>
-<p><em>This section had been taken from the ‘Github Actions’ page of the conjure-oxide wiki</em></p>
+<p>Another example is when parsing expressions, the node representing the operator is not always ‘named’, meaning it is not its own rule in the grammar and rather specified directly in the rule (ex. <code>exponent: $ =&gt; seq($.arithmetic_expr, "**", $.arithmetic_expr)</code> (simplified)), or the operator one of multiple choices in a rule (ex. <code>mulitcative_op: $ =&gt; choice("*", "/", "%")</code>). In this situation, the same method as for the variable identifiers is used:</p>
+<pre><code class="language-Rust">let op = constraint.child_by_field_name("operator").ok_or(format!(
+        "Missing operator in expression {}",
+        constraint.kind()
+    ))?;
+let op_type = &amp;source_code[op.start_byte()..op.end_byte()];
+</code></pre>
+<h2 id="find-and-letting-statements"><a class="header" href="#find-and-letting-statements">Find and Letting Statements</a></h2>
+<p>Find and letting statements are parsed relatively intuitively. For find statements, the list of variables is iterated over and each is added to a hash map as the key. Then, the domain is parsed and added as the value for each variable it applies to. Once all variables and domains are parsed, the hash map is returned and the caller function iterates over it and adds each pair to the <code>SymbolTable</code>. For letting statements, a new <code>SymbolTable</code> is created. The variables are again iterated over and added to the table. Letting statements can either specify a domain or an expression for the variables so the type of node is checked and either parsed as an expression or domain before being added to the table. The <code>SymbolTable</code> is returned and the caller function adds it to the existing <code>SymbolTable</code> of the <code>Model</code>.</p>
+<h2 id="constraints"><a class="header" href="#constraints">Constraints</a></h2>
+<p>Adding constraints to the overall constraints <code>Expression</code> requires nesting <code>Expression</code> objects in a consistent and clear manner. Each constraint is parsed using the <code>parse_expression</code> function, which returns an <code>Expression</code> object, and is then added to the model using the <code>add_constraints</code> function. The <code>parse_expression</code> function takes a node as a parameter and is recursive. It matches the node to its ‘kind’, recursively parses the children of the node, then returns an <code>Expression</code> object that correctly packages up the expressions returned from the parsing of the children nodes.</p>
+<p>This structure allows for easy addition of more complex constraints as the grammar evolves. As more rules are added to the grammar, the corresponding code block must be added to the match statement in the <code>parse_expression</code> function.</p>
+<h3 id="example"><a class="header" href="#example">Example</a></h3>
+<p>The constraint <code>x = 3</code> would be represented by a <code>comparison_expr</code> node, which is defined in the grammar as:</p>
+<pre><code class="language-Javascript">comparison_expr: $ =&gt; prec(0, prec.left(seq(
+      field("left", choice($.boolean_expr, $.arithmetic_expr)), 
+      field("operator", $.comparative_op),
+      field("right", choice($.boolean_expr, $.arithmetic_expr))
+    ))),
+</code></pre>
+<p>In the parse_expression function, the left expression is parsed using the <code>child_expr</code> function. The returned Expression would represent the variable <code>x</code> and be saved as <code>expr1</code>. The operator is extracted from the source code and saved as <code>op_type</code>. The right expression node is then found using its field name ‘right’ and parsed. The returned Expression would represent the integer <code>3</code> and be saved as <code>expr2</code>.</p>
+<pre><code class="language-Rust">let expr1 = child_expr(constraint, source_code, root)?;
+            let op = constraint.child_by_field_name("operator").ok_or(format!(
+                "Missing operator in expression {}",
+                constraint.kind()
+            ))?;
+            let op_type = &amp;source_code[op.start_byte()..op.end_byte()];
+            let expr2_node = constraint.child_by_field_name("right").ok_or(format!(
+                "Missing second operand in expression {}",
+                constraint.kind()
+            ))?;
+            let expr2 = parse_expression(expr2_node, source_code, root)?;
+
+            match op_type {...}
+</code></pre>
+<p>Depending on the operator type (in this case <code>=</code>), the left and right expressions are added to an Expression of the relevant type (in this case <code>Eq</code>), which is returned.</p>
+<pre><code class="language-Rust">"=" =&gt; Ok(Expression::Eq(
+                    Metadata::new(),
+                    Box::new(expr1),
+                    Box::new(expr2),
+                )),
+</code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../developers_guide/ci_cd/coverage.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../developers_guide/ci_cd/github_actions.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../documentation/Essence-Parser.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../documentation/tree_morph_benchmarking.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -307,11 +273,11 @@ jobs:
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../developers_guide/ci_cd/coverage.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../developers_guide/ci_cd/github_actions.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../documentation/Essence-Parser.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../documentation/tree_morph_benchmarking.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>
@@ -331,13 +297,13 @@ jobs:
         </script>
 
 
-        <script src="../../elasticlunr-ef4e11c1.min.js"></script>
-        <script src="../../mark-09e88c2c.min.js"></script>
-        <script src="../../searcher-c2a407aa.js"></script>
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-c2a407aa.js"></script>
 
-        <script src="../../clipboard-1626706a.min.js"></script>
-        <script src="../../highlight-abc7f01d.js"></script>
-        <script src="../../book-a0b12cfe.js"></script>
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
 

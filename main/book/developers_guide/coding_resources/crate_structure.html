@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../searchindex-1d0c25f1.js";
+            window.path_to_searchindex_js = "../../searchindex-c4e34754.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-72bc647e.js"></script>
+        <script src="../../toc-b9ef563d.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -176,144 +176,75 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <!-- TODO: Edit this -->
-<blockquote>
-<p><em>“Omit needless words”</em></p>
-<p>(c) William Strunk</p>
-</blockquote>
-<h1 id="key-points"><a class="header" href="#key-points">Key Points</a></h1>
-<h2 id="resources"><a class="header" href="#resources">Resources</a></h2>
-<p>See:</p>
-<ul>
-<li>the <a href="https://github.com/rust-lang/rfcs/blob/master/text/1574-more-api-documentation-conventions.md">Rust doc style conventions</a></li>
-</ul>
-<h2 id="dos"><a class="header" href="#dos">Do’s</a></h2>
-<p>Our documentation is inline with the code. The reader is likely to skim it while scrolling through the file and trying to understand what it does. So, our doc strings should:</p>
-<ul>
-<li>Be as brief and clear as possible</li>
-<li>Ideally, fit comfortably on a standard monitor without obscuring the code</li>
-<li>Contain key information about the method / structure, such as:
-<ul>
-<li>A single sentence explaining its purpose</li>
-<li>A brief overview of arguments / return types</li>
-<li>Example snippets for non-trivial methods</li>
-</ul>
-</li>
-<li>Explain any details that are <strong>not</strong> obvious from the method signature, such as:
-<ul>
-<li>Details of the method’s “contract” that can’t be easily encoded in the type system
-<blockquote>
-<p>(E.g: <em>“The input must be a sorted slice of positive integers”</em>; <em>“The given expression will be modified in-place”</em>)</p>
-</blockquote>
-</li>
-<li>Non-trivial situations where the method may <code>panic!</code> or cause unintended behaviour
-<blockquote>
-<p>(E.g: <em>“Panics if the connection terminates while the stream is being read”</em>)</p>
-</blockquote>
-</li>
-<li>Any <code>unsafe</code> things a method does
-<blockquote>
-<p>(E.g: <em>“We type-cast the given pointer with <code>mem::transmute</code>. This is safe because…”</em>)</p>
-</blockquote>
-</li>
-<li>Special cases</li>
-</ul>
-</li>
-</ul>
-<h2 id="donts"><a class="header" href="#donts">Don’ts</a></h2>
-<p>Documentation generally should <strong>not</strong>:</p>
-<ul>
-<li>Repeat itself</li>
-<li>Use long, vague, or overly complex sentences</li>
-<li>Re-state things that are obvious from the types / signature of the method</li>
-<li>Explain implementation details</li>
-<li>Explain high-level architectural decisions
-(Consider making a wiki page or opening an RFC issue instead!)</li>
-</ul>
-<p>And finally…
-Please, don’t ask ChatGPT to document your code for you!
-I know that writing documentation can be tedious, but you can always:</p>
-<ul>
-<li>Write a one-sentence doc string for now and come back to it later</li>
-<li>Ask others if you don’t quite understand what a method does</li>
-</ul>
-<h1 id="types-and-tests-are-documentation"><a class="header" href="#types-and-tests-are-documentation">Types and Tests are Documentation</a></h1>
-<p>Documentation is great, but we should also use the type system and other rust features to our advantage!</p>
+                        <h1 id="crate-structure"><a class="header" href="#crate-structure">Crate Structure</a></h1>
+<h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
+<p>We follow a “monorepo” approach; That is, a number of related modules are developed in a single repository.
+This makes it easier to integrate them and test our entire project all at once.</p>
+<p>Our repository can be broken down into four key components:</p>
+<ol>
+<li>The user-facing <code>conjure-oxide</code> command line tool and library, and its integration tests.
+This is stored in <code>conjure-oxide/conjure_oxide</code>.</li>
+<li>The AST type definitions, rewrite engine, and related implementation code.
+These are broken up into separate crates and stored in <code>conjure-oxide/crates/</code>.</li>
+<li>Rust bindings for solvers; That is, wrapper code and build files that enable us to:
 <ul>
 <li>
-<p>A lot of things (e.g: error conditions, thread safety, state) can be encoded in the types of arguments / return values.
-This is usually better than just <code>panic!</code>-ing and adding a doc string to explain why.</p>
+<p>Compile solvers (which are developed outside of this project and written in other languages, such as C++) together with our project</p>
 </li>
 <li>
-<p>Tests are also a great way to illustrate the behaviour of your code and any special cases - and they also help with catching bugs!</p>
+<p>“Hook into” solver methods and call them from inside our Rust code</p>
+<p>These are stored in <code>conjure-oxide/solvers/</code> on a per-solver basis.</p>
 </li>
 </ul>
-<h1 id="example-snippets"><a class="header" href="#example-snippets">Example Snippets</a></h1>
-<p>For non-trivial methods and user-facing API’s, it may be useful to include an example.
-Examples should be minimal but complete snippets of code that illustrate a method’s behaviour.</p>
-<p>If you wrap your example in a code block:</p>
-<pre><code class="language-markdown">```rust ... ```
-</code></pre>
-<p>Our CI will even run it and complain if the example does not compile / contains an error!</p>
-<p>However, don’t feel obliged to include an example for every method!
-For simple methods they may not be necessary.</p>
-<h1 id="examples"><a class="header" href="#examples">Examples</a></h1>
-<p>⚠️ Good but a bit wordy:</p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>/// Checks if the OPTIMIZATIONS environment variable is set to "1".
-///
-/// # Returns
-/// - true if the environment variable is set to "1".
-/// - false if the environment variable is not set or set to any other value.
-fn optimizations_enabled() -&gt; bool {
-    match env::var("OPTIMIZATIONS") {
-        Ok(val) =&gt; val == "1",
-        Err(_) =&gt; false, // Assume optimizations are disabled if the environment variable is not set
-    }
-}
-<span class="boring">}</span></code></pre>
-<p>✅ Since everything else is obvious from the signature, we can just say:</p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>/// Checks if the OPTIMIZATIONS environment variable is set to "1"
-fn optimizations_enabled() -&gt; bool { ... }
-<span class="boring">}</span></code></pre>
-<p>⚠️ Not bad, but sounds a bit robotic</p>
-<pre><code class="language-markdown"># Side-Effects
-- When the model is rewritten, related data structures such as the symbol table (which tracks variable names and types)
-  or other top-level constraints may also be updated to reflect these changes. These updates are applied to the returned model,
-  ensuring that all related components stay consistent and aligned with the changes made during the rewrite.
-- The function collects statistics about the rewriting process, including the number of rule applications
-  and the total runtime of the rewriter. These statistics are then stored in the model's context for
-  performance monitoring and analysis.
-</code></pre>
-<p>✅ Same idea but shorter</p>
-<pre><code class="language-markdown"># Side-Effects
-- Rules can apply side-effects to the model (e.g. adding new constraints or variables).
-  The original model is cloned and a modified copy is returned.
-- Rule engine statistics (e.g. number of rule applications, run time) are collected and stored in the new model's context.
-</code></pre>
-<p>⚠️ A bit too detailed</p>
-<pre><code class="language-markdown"># Parameters
-- `expression`: A reference to the [`Expression`] that will be evaluated against the given rules. This is the main
-   target for rule transformations and is expected to remain unchanged during the function execution.
-- `model`: A reference to the [`Model`] that provides context for rule evaluation, such as constraints and symbols.
-  Rules may depend on information in the model to determine if they can be applied.
-- `rules`: A vector of references to [`Rule`]s that define the transformations to be applied to the expression.
-  Each rule is applied independently, and all applicable rules are collected.
-- `stats`: A mutable reference to [`RewriterStats`] used to track statistics about rule application, such as
-  the number of attempts and successful applications.
-</code></pre>
-<p>✅ Just describing the meaning of arguments will do</p>
-<p>(Details of the rewriting process belong on the wiki, and details of underlying types such as <code>Model</code> or <code>Expression</code> are already documented next to their implementations)</p>
-<pre><code class="language-markdown">- `expression`: A reference to the [`Expression`] to evaluate.
-- `model`: A reference to the [`Model`] for access to the symbol table and context.
-- `rules`: A vector of references to [`Rule`]s to try.
-- `stats`: A mutable reference to [`RewriterStats`] used to track the number of rule applications and other statistics.
-</code></pre>
-<hr>
-<p><em>This section had been taken from the ‘Crate Structure’ page of the conjure-oxide wiki</em></p>
+</li>
+<li>Various other scripts and tools that we use to build, document and test our project.
+These are stored in <code>conjure-oxide/tools/</code>.</li>
+</ol>
+<h2 id="cli-tool"><a class="header" href="#cli-tool">CLI Tool</a></h2>
+<p>The command-line <code>conjure-oxide</code> tool is the final product we ship to users.
+All logic related to the CLI, parsing user input, and displaying solutions is implemented in <code>conjure-oxide/conjure_oxide/src</code>.</p>
+<p>This module (called a “crate” in Rust) also re-exports some type definitions and functions from <code>conjure_core</code> and other crates.
+This is our public, user-facing API that could eventually be used by other people in their projects. At the moment, our project is under development and there is no stable API specification.</p>
+<p>There are some <code>examples/</code> illustrating how various parts of the project are used.
+Finally, for historical reasons, this folder contains some utility code that may be refactored or moved elsewhere in the future.</p>
+<h2 id="tests"><a class="header" href="#tests">Tests</a></h2>
+<p>Our suite of integration tests runs automatically on every commit to the main repository.
+It tests <code>conjure-oxide</code> end-to-end: parsing an example Essence file, running the rewriter, calling the solver, and validating the solution.</p>
+<p>The test files are stored in <code>conjure_oxide/tests/integration/</code>, sorted into sub-directories.
+Code to run our project on these files is contained in <code>integration_tests.rs</code>.</p>
+<h2 id="crates"><a class="header" href="#crates">Crates</a></h2>
+<p>Most of our implementation is contained in the <code>crates/</code> directory. Here is an overview of what each crate does:</p>
+<ul>
+<li><code>conjure_core</code> contains:
+<ul>
+<li>Our rule engine implementation (<code>conjure_core/src/rule_engine/</code>)</li>
+<li>The definition of our Abstract Syntax Tree (AST) for Essence; That is, the Rust representation of an Essence program (<code>conjure_core/src/ast</code>)</li>
+<li>The generic <code>SolverAdaptor</code> interface for interacting with solvers (<code>conjure_core/src/solver</code>)</li>
+<li>Concrete implementations of <code>SolverAdaptor</code> for each solver we support, such as Minion or RustSAT (<code>conjure_core/src/solver/adaptors</code>)</li>
+<li>Other miscellaneous types and utilities</li>
+</ul>
+</li>
+<li><code>conjure_rules</code> defines rules and rule sets for our rewrite engine to use.
+Rules are grouped into files and directories based on their purpose: for example, all rules for normalising boolean expressions are in <code>conjure_rules/src/normalisers/bool.rs</code></li>
+<li><code>conjure_rule_macros</code> implements the <code>#[register_rule(...)]</code> and <code>#[register_rule_set(...)]</code> procedural macros. See also: <a href="https://github.com/conjure-cp/conjure-oxide/wiki/Expression-rewriting%2C-Rules-and-RuleSets">Wiki - Rules and RuleSets</a>.</li>
+<li><code>conjure_essence_parser</code> implements the native Rust parser for Essence.
+It uses our Treesitter grammar, which is defined <em>separately</em> in<code>tree-sitter-essence</code></li>
+<li><code>conjure_essence_macros</code> implements the <code>essence_expr!</code> procedural macro.</li>
+<li><code>enum_compatability_macro</code> is a macro that allows us to indicate whether certain features of Essence are compatible with certain solvers, for documentation purposes.</li>
+<li><code>randicheck</code> is a somewhat separate project developed by Ty (@TAswan) and others.
+It aims to use Conjure to automatically validate Haskell code and generate minimal failing tests. (TODO is this accurate?)</li>
+<li><code>tree_morph</code> is a generic library for tree transformations.
+In the future, it will replace our current rule engine implementation.</li>
+</ul>
+<p>Also:</p>
+<ul>
+<li>The <code>uniplate</code> crate, which we use to traverse the AST, used to be part of this repository.
+It is now maintained separately at https://github.com/conjure-cp/uniplate.</li>
+</ul>
+<h2 id="dependencies"><a class="header" href="#dependencies">Dependencies</a></h2>
+<p>The dependencies between crates are shown bellow.</p>
+<p><img src="https://github.com/user-attachments/assets/ffda823b-b5f9-4fa8-b66e-e74d2c08a75b" alt="graphviz(3)"></p>
+<p>An arrow <code>A -&gt; B</code> means that <code>A</code> imports from <code>B</code>. The diagram is made using Graphviz, and its source code is located TODO.</p>
 
                     </main>
 
@@ -323,7 +254,7 @@ fn optimizations_enabled() -&gt; bool { ... }
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../developers_guide/design_documents/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../developers_guide/coding_resources/benchmarking-guide.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -337,7 +268,7 @@ fn optimizations_enabled() -&gt; bool { ... }
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../developers_guide/design_documents/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../developers_guide/coding_resources/benchmarking-guide.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

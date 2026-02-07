@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Github Actions: Cookbook - Conjure Oxide</title>
+        <title>Benchmarking Guide - Conjure Oxide</title>
 
 
         <!-- Custom HTML head -->
@@ -176,128 +176,183 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <!-- TODO: Edit this -->
-<h1 id="github-actions-cookbook"><a class="header" href="#github-actions-cookbook">Github Actions Cookbook</a></h1>
-<ul>
-<li>This document lists common patterns and issues we’ve had in our Github actions, and practical solutions to them.</li>
-<li>The first point of reference should be the official documentation, but if that is ever unclear, here would be a good place to look!</li>
-</ul>
-<p>Terminology used in this document:</p>
-<ul>
-<li>A <em>workflow</em> contains multiple independently ran <em>tasks</em>. Each task runs a series of <em>steps</em>. Steps can call predefined <em>actions</em>, or run shell commands.</li>
-</ul>
-<h2 id="i-want-to-have-a-step-output-multilined--complex-text"><a class="header" href="#i-want-to-have-a-step-output-multilined--complex-text">I want to have a step output multilined / complex text</a></h2>
-<pre><code class="language-yml">- name: Calculate PR doc coverage
-  id: prddoc
-  run: |
-    RUSTDOCFLAGS='-Z unstable-options --show-coverage' cargo +nightly doc --workspace --no-deps &gt; coverage.md
-    echo 'coverage&lt;&lt;EOFABC' &gt;&gt; $GITHUB_OUTPUT
-    echo "$(cat coverage.md)" &gt;&gt; $GITHUB_OUTPUT
-    echo 'EOFABC' &gt;&gt; $GITHUB_OUTPUT```
-</code></pre>
-<p>The entire output of <code>cargo doc</code> can be substituted into later jobs by using <code>${{ steps.prdoc.outputs.coverage }}</code></p>
-<h2 id="workflow_run-i-want-a-workflow-that-runs-on-a-pr-and-can-write-to-the-repo"><a class="header" href="#workflow_run-i-want-a-workflow-that-runs-on-a-pr-and-can-write-to-the-repo">workflow_run: I want a workflow that runs on a PR and can write to the repo</a></h2>
-<p>PR branches and their workflows typically live in on a branch on an external fork. Therefore, they cannot write to the repository. The solution is to split things into two workflows - one that runs on the PR with read-only permissions, and one that runs on main and can write to the repository. This is called a <code>workflow_run</code> workflow. Read <a href="https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_run">the docs</a>.</p>
-<p><strong>The workflow_run workflow should not run any user provided code as it has secrets in scope.</strong></p>
-<h2 id="i-want-to-access-the-calling-pr-in-a-workflow_run-workflow"><a class="header" href="#i-want-to-access-the-calling-pr-in-a-workflow_run-workflow">I want to access the calling PR in a workflow_run workflow</a></h2>
-<p><code>workflow_run</code> jobs do not get access to the calling workflows detail. While one can access some things via the Github API such as head_sha, head_repo, this may not give any PR information. <a href="https://securitylab.github.com/research/github-actions-preventing-pwn-requests/">Github</a> recommends saving the PR number to an artifact, and using this number to fetch the PR info through the API:</p>
-<p>Example from <a href="https://securitylab.github.com/research/github-actions-preventing-pwn-requests/">this github blog post</a> - see this for more explanation and details!</p>
-<pre><code class="language-yml">name: Receive PR
+                        <h1 id="why-benchmark"><a class="header" href="#why-benchmark">Why benchmark?</a></h1>
+<p>Benchmarking is an essential part of any coding project, especially when it is performance-oriented. While it can be a little daunting when first getting started, this guide aims to show that benchmarking can be integrated into conjure-oxide and its workflows with a little work.</p>
+<h1 id="criterion"><a class="header" href="#criterion"><code>criterion</code></a></h1>
+<p>By far, the most popular benchmarking tool currently available for <code>Rust</code> is the <code>criterion</code> <a href="https://bheisler.github.io/criterion.rs/book/">crate</a>. Based off the <code>Haskell</code> library of the same name, it is a statistics-based tool which aims to measure <em>wall-clock time</em> for individual functions. To get started on <code>criterion</code> benching in a rust project <code>my_project</code>, you first need to make a directory called <code>benches</code>, which <code>Rust</code> will recognise as holding all benchmarking files. Let’s now make a benchmark called <code>my_bench.rs</code> inside of <code>my_project/benches</code></p>
+<p>We now add the following changes to the crate’s <code>cargo.toml</code> file</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>[dev-dependencies]
+criterion = "0.3"
 
-# read-only repo token
-# no access to secrets
+[[bench]]
+name = "my_bench"
+harness = false
+<span class="boring">}</span></code></pre>
+<p>Suppose that we now want to create function to benchmark the addition of two numbers (which, as expected should be very fast!). We add the following to <code>my_bench</code>.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use criterion::{Criterion, black_box, criterion_group, criterion_main};
+
+pub fn add(x: u64, y: u64) -&gt; u64 {
+    x + y
+}
+
+pub fn criterion_benchmark(c: &amp;mut Criterion) {
+    c.bench_function("add 20 + 20", |b| {
+        b.iter(|| add(black_box(20), black_box(20)))
+    });
+}
+
+criterion_group!(benches, criterion_benchmark);
+criterion_main!(benches);
+<span class="boring">}</span></code></pre>
+<p>The <code>.bench_function</code> method creates an instance of a benchmark. Then the <code>.iter</code> method tells Criterion to repeatedly execute the provided closure. Finally, black_box is used to prevent the compiler from optimising away the code being benchmarked. To run the benchmark simply run <code>cargo bench</code>. Among other things, your terminal should show something alone the lines of:
+<img width="1322" alt="image" src="https://github.com/user-attachments/assets/53565407-11fc-43b0-afe1-2e3b582d41c5" />
+Which shows the average wall-clock time, as well as providing some information on outliers and performance against previous benchmarks. For the full details, see <code>\target\criterion</code>. The <code>.html</code> reports are especially good.</p>
+<p><code>criterion</code> is usually the right tool for most benchmarks, althought there are issues. Due to the statistics-driven ethos of <code>criterion</code>, there is currently no one-shot support, with 10 samples being the minimum number of samples for a benchmark. Wall-clock time also gives little insight into where things are slowing in your code, and will not catch things like poor memory locality. Even more crucially, however, is how <code>criterion</code> performs in CI pipelines. The developer’s themselves say the following:</p>
+<p><em>”You probably shouldn’t (or, if you do, don’t rely on the results). The virtualization used by</em>
+<em>Cloud-CI providers like Travis-CI and Github Actions introduces a great deal of noise into the</em>
+<em>benchmarking process, and Criterion.rs’ statistical analysis can only do so much to mitigate</em>
+<em>that. This can result in the appearance of large changes in the measured performance even</em>
+<em>if the actual performance of the code is not changing.“</em></p>
+<p>As such, we need some other metric apart from wall-clock time to use in order to still run benchmarks in a CI pipeline. This is where the <code>iai-callgrind</code> crate comes in.</p>
+<h1 id="iai-callgrind"><a class="header" href="#iai-callgrind"><code>iai-callgrind</code></a></h1>
+<p>Iai-Callgrind is a benchmarking framework which uses <a href="https://valgrind.org/docs/manual/cl-manual.html">Valgrind’s Callgrind</a> and other to provide extremely accurate and consistent measurements of Rust code. It does <strong>not</strong> provide information on wall-clock time, instead focussing on metrics like instruction count and memory hit rates. It is important to note that this will only run on <code>linux</code>, due to the valgrind dependancy. Let us create a benchmark called <code>iai-bench</code> in the <code>benches</code> folder. We add the following to <code>cargo.toml</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>[profile.bench]
+debug = true
+
+[dev-dependencies]
+iai-callgrind = "0.14.0"
+criterion = "0.3"
+
+[[bench]]
+name = "iai-bench"
+harness = false
+<span class="boring">}</span></code></pre>
+<p>To get the benchmarking runner, we can quickly compile from source with <code>cargo install --version 0.14.0 iai-callgrind-runner</code>. To benchmark <code>add</code> using <code>iai-callgrind</code> we add the following to <code>benches/iai-bench.rs</code>.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use iai_callgrind::{main, library_benchmark_group, library_benchmark};
+use std::hint::black_box;
+
+fn add(x: u64, y:u64) -&gt; u64 {
+   x+y
+}
+
+#[library_benchmark]
+#[bench::name(20,20)]
+fn bench_add(x: u64,y:u64) -&gt; u64 {
+    black_box(add(x,y))
+}
+
+library_benchmark_group!(
+    name = bench_fibonacci_group;
+    benchmarks = bench_add
+);
+
+main!(library_benchmark_groups = bench_fibonacci_group);
+<span class="boring">}</span></code></pre>
+<p>And again run using <code>cargo bench</code>. To specify only running this benchmark we can instead do <code>cargo bench --bench iai-bench</code>. Upon running, you should see something like the following.</p>
+<p><img src="https://github.com/user-attachments/assets/8db29f54-0558-435e-a8ae-844bbfd3f312" alt="image">
+As you can see, <code>iai</code> is lightweight, fast and can provide some really accurate statistics on instruction count and memory hits. This makes <code>iai</code> perfect for benching in CI workflows!</p>
+<h1 id="workflows"><a class="header" href="#workflows">Workflows</a></h1>
+<p>Once benchmarking is established, workflows are not too difficult to add too. As discussed before, for CI workflows <code>iai</code> should be used, and not <code>criterion</code>. Take the following example from the <code>tree-morph</code> crate. I will put the code below and then briefly explain each portion. It should not be too difficult to adapt to other benchmarks.</p>
+<pre><code class="language-yaml">name: "iai tree-morph Benchmarks"
+
 on:
+  push:
+    branches:
+      - main 
+      - auto-bench 
+    paths:
+      - conjure_oxide/**
+      - solvers/**
+      - crates/**
+      - Cargo.*
+      - conjure_oxide/tests/**
+      - .github/workflows/iai-tree-morph-benches.yml
   pull_request:
+    paths:
+      - conjure_oxide/**
+      - solvers/**
+      - crates/**
+      - Cargo.*
+      - conjure_oxide/tests/**
+      - .github/workflows/iai-tree-morph-benches.yml
+  workflow_dispatch:
+
+
 
 jobs:
-  build:
+  benches:
+    name: "Run iai tree-morph benchmarks"
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
-    steps:        
-      - uses: actions/checkout@v2
-
-      # imitation of a build process
-      - name: Build
-        run: /bin/bash ./build.sh
-
-      - name: Save PR number
-        run: |
-          mkdir -p ./pr
-          echo ${{ github.event.number }} &gt; ./pr/NR
-      - uses: actions/upload-artifact@v2
-        with:
-          name: pr
-          path: pr/
-</code></pre>
-<pre><code class="language-yml">name: Comment on the pull request
-
-# read-write repo token
-# access to secrets
-on:
-  workflow_run:
-    workflows: ["Receive PR"]
-    types:
-      - completed
-
-jobs:
-  upload:
-    runs-on: ubuntu-latest
-    if: &gt;
-      github.event.workflow_run.event == 'pull_request' &amp;&amp;
-      github.event.workflow_run.conclusion == 'success'
+    strategy:
+      # run all combinations of the matrix even if one combination fails.
+      fail-fast: false
+      matrix:
+        rust_release:
+          - stable
+          - nightly
     steps:
-      - name: 'Download artifact'
-        uses: actions/github-script@v3.1.0
-        with:
-          script: |
-            var artifacts = await github.actions.listWorkflowRunArtifacts({
-               owner: context.repo.owner,
-               repo: context.repo.repo,
-               run_id: ${{github.event.workflow_run.id }},
-            });
-            var matchArtifact = artifacts.data.artifacts.filter((artifact) =&gt; {
-              return artifact.name == "pr"
-            })[0];
-            var download = await github.actions.downloadArtifact({
-               owner: context.repo.owner,
-               repo: context.repo.repo,
-               artifact_id: matchArtifact.id,
-               archive_format: 'zip',
-            });
-            var fs = require('fs');
-            fs.writeFileSync('${{github.workspace}}/pr.zip', Buffer.from(download.data));
-      - run: unzip pr.zip
+      - uses: actions/checkout@v4
 
-      - name: 'Comment on PR'
-        uses: actions/github-script@v3
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            var fs = require('fs');
-            var issue_number = Number(fs.readFileSync('./NR'));
-            await github.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: issue_number,
-              body: 'Everything is OK. Thank you for the PR!'
-            });
+          toolchain: ${{ matrix.rust_release }}
 
+      - name: "Cache Rust dependencies"
+        uses: actions/cache@v4
+        with:
+            path: |
+              ~/.cargo/registry
+              ~/.cargo/git
+              target
+            key: ${{ runner.os }}-cargo-${{ matrix.rust_release }}-${{ hashFiles('**/Cargo.lock') }}
+            restore-keys: |
+              ${{ runner.os }}-cargo-${{ matrix.rust_release }}-
+      - name: Install Valgrind
+        run: sudo apt-get update &amp;&amp; sudo apt-get install -y valgrind
+
+      - name: Install iai-callgrind-runner
+        run: cargo install --version 0.14.0 iai-callgrind-runner
+
+      - name: Run tree-morph benchmarks with iai-callgrind
+        run: cargo bench --manifest-path crates/tree_morph/Cargo.toml --bench iai-factorial --bench iai-identity --bench iai-modify_leafs &gt; iai_callgrind_output.txt
+
+      - name: Upload artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: iai-callgrind-results-${{ matrix.rust_release }}
+          path: iai_callgrind_output.txt
 </code></pre>
-<h2 id="how-do-i-get-x-commit-inside-a-pr-workflow-what-do-all-the-different-github-shas-mean"><a class="header" href="#how-do-i-get-x-commit-inside-a-pr-workflow-what-do-all-the-different-github-shas-mean">How do I get x commit inside a PR workflow? What do all the different github sha’s mean?</a></h2>
-<p><strong>If you are running in a workflow_run workflow, you will need to get the calling PR first. See <a href="https://github.com/conjure-cp/conjure-oxide/wiki/_new#i-want-to-access-the-calling-pr-in-a-workflow_run-workflow">I want to access the calling PR in a workflow_run workflow</a> instead.</strong></p>
-<p>The default <code>github.sha</code> is a temporary commit representing the state of the repo should the PR be merged now. You probably want <code>github.event.pull_request.head.sha</code>. Read <a href="https://www.kenmuse.com/blog/the-many-shas-of-a-github-pull-request/">The many SHAs of a github pull request</a>.</p>
-<hr>
-<p><em>This section had been taken from the ‘Github Actions’ page of the conjure-oxide wiki</em></p>
+<p>Some comments:</p>
+<ul>
+<li><code>name</code> just tells GitHub what to call the workflows</li>
+<li><code>on</code> tells GitHub <strong>when</strong> to run the workflow</li>
+<li><code>jobs</code> is the core of the workflow:
+<ul>
+<li><code>strategy</code> specifies that we want to run both nightly and stable rust</li>
+<li>In <code>steps</code>, we first check out the repository code and set up a specific stable Rust toolchain based on a matrix variable, and then cache Rust dependencies. Next we install the necessary things for valgrind to run, before running benchmarks. We tell the virtual machine to an <code>.txt</code> file and upload it as an artefact.</li>
+</ul>
+</li>
+</ul>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../developers_guide/ci_cd/coverage.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../developers_guide/coding_resources/crate_structure.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../documentation/Essence-Parser.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../developers_guide/design_documents/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -307,11 +362,11 @@ jobs:
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../developers_guide/ci_cd/coverage.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../developers_guide/coding_resources/crate_structure.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../documentation/Essence-Parser.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../developers_guide/design_documents/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

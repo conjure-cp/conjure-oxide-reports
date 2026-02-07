@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Github Actions: Cookbook - Conjure Oxide</title>
+        <title>Writing Documentation in Code - Conjure Oxide</title>
 
 
         <!-- Custom HTML head -->
@@ -176,128 +176,151 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <!-- TODO: Edit this -->
-<h1 id="github-actions-cookbook"><a class="header" href="#github-actions-cookbook">Github Actions Cookbook</a></h1>
+                        <blockquote>
+<p><em>“Omit needless words”</em></p>
+<p>(c) William Strunk</p>
+</blockquote>
+<h1 id="key-points"><a class="header" href="#key-points">Key Points</a></h1>
+<h2 id="resources"><a class="header" href="#resources">Resources</a></h2>
+<p>See:</p>
 <ul>
-<li>This document lists common patterns and issues we’ve had in our Github actions, and practical solutions to them.</li>
-<li>The first point of reference should be the official documentation, but if that is ever unclear, here would be a good place to look!</li>
+<li>the <a href="https://github.com/rust-lang/rfcs/blob/master/text/1574-more-api-documentation-conventions.md">Rust doc style conventions</a></li>
 </ul>
-<p>Terminology used in this document:</p>
+<h2 id="dos"><a class="header" href="#dos">Do’s</a></h2>
+<p>Our documentation is inline with the code. The reader is likely to skim it while scrolling through the file and trying to understand what it does. So, our doc strings should:</p>
 <ul>
-<li>A <em>workflow</em> contains multiple independently ran <em>tasks</em>. Each task runs a series of <em>steps</em>. Steps can call predefined <em>actions</em>, or run shell commands.</li>
+<li>Be as brief and clear as possible</li>
+<li>Ideally, fit comfortably on a standard monitor without obscuring the code</li>
+<li>Contain key information about the method / structure, such as:
+<ul>
+<li>A single sentence explaining its purpose</li>
+<li>A brief overview of arguments / return types</li>
+<li>Example snippets for non-trivial methods</li>
 </ul>
-<h2 id="i-want-to-have-a-step-output-multilined--complex-text"><a class="header" href="#i-want-to-have-a-step-output-multilined--complex-text">I want to have a step output multilined / complex text</a></h2>
-<pre><code class="language-yml">- name: Calculate PR doc coverage
-  id: prddoc
-  run: |
-    RUSTDOCFLAGS='-Z unstable-options --show-coverage' cargo +nightly doc --workspace --no-deps &gt; coverage.md
-    echo 'coverage&lt;&lt;EOFABC' &gt;&gt; $GITHUB_OUTPUT
-    echo "$(cat coverage.md)" &gt;&gt; $GITHUB_OUTPUT
-    echo 'EOFABC' &gt;&gt; $GITHUB_OUTPUT```
+</li>
+<li>Explain any details that are <strong>not</strong> obvious from the method signature, such as:
+<ul>
+<li>Details of the method’s “contract” that can’t be easily encoded in the type system
+<blockquote>
+<p>(E.g: <em>“The input must be a sorted slice of positive integers”</em>; <em>“The given expression will be modified in-place”</em>)</p>
+</blockquote>
+</li>
+<li>Non-trivial situations where the method may <code>panic!</code> or cause unintended behaviour
+<blockquote>
+<p>(E.g: <em>“Panics if the connection terminates while the stream is being read”</em>)</p>
+</blockquote>
+</li>
+<li>Any <code>unsafe</code> things a method does
+<blockquote>
+<p>(E.g: <em>“We type-cast the given pointer with <code>mem::transmute</code>. This is safe because…”</em>)</p>
+</blockquote>
+</li>
+<li>Special cases</li>
+</ul>
+</li>
+</ul>
+<h2 id="donts"><a class="header" href="#donts">Don’ts</a></h2>
+<p>Documentation generally should <strong>not</strong>:</p>
+<ul>
+<li>Repeat itself</li>
+<li>Use long, vague, or overly complex sentences</li>
+<li>Re-state things that are obvious from the types / signature of the method</li>
+<li>Explain implementation details</li>
+<li>Explain high-level architectural decisions
+(Consider making a wiki page or opening an RFC issue instead!)</li>
+</ul>
+<p>And finally…
+Please, don’t ask ChatGPT to document your code for you!
+I know that writing documentation can be tedious, but you can always:</p>
+<ul>
+<li>Write a one-sentence doc string for now and come back to it later</li>
+<li>Ask others if you don’t quite understand what a method does</li>
+</ul>
+<h1 id="types-and-tests-are-documentation"><a class="header" href="#types-and-tests-are-documentation">Types and Tests are Documentation</a></h1>
+<p>Documentation is great, but we should also use the type system and other rust features to our advantage!</p>
+<ul>
+<li>
+<p>A lot of things (e.g: error conditions, thread safety, state) can be encoded in the types of arguments / return values.
+This is usually better than just <code>panic!</code>-ing and adding a doc string to explain why.</p>
+</li>
+<li>
+<p>Tests are also a great way to illustrate the behaviour of your code and any special cases - and they also help with catching bugs!</p>
+</li>
+</ul>
+<h1 id="example-snippets"><a class="header" href="#example-snippets">Example Snippets</a></h1>
+<p>For non-trivial methods and user-facing API’s, it may be useful to include an example.
+Examples should be minimal but complete snippets of code that illustrate a method’s behaviour.</p>
+<p>If you wrap your example in a code block:</p>
+<pre><code class="language-markdown">```rust ... ```
 </code></pre>
-<p>The entire output of <code>cargo doc</code> can be substituted into later jobs by using <code>${{ steps.prdoc.outputs.coverage }}</code></p>
-<h2 id="workflow_run-i-want-a-workflow-that-runs-on-a-pr-and-can-write-to-the-repo"><a class="header" href="#workflow_run-i-want-a-workflow-that-runs-on-a-pr-and-can-write-to-the-repo">workflow_run: I want a workflow that runs on a PR and can write to the repo</a></h2>
-<p>PR branches and their workflows typically live in on a branch on an external fork. Therefore, they cannot write to the repository. The solution is to split things into two workflows - one that runs on the PR with read-only permissions, and one that runs on main and can write to the repository. This is called a <code>workflow_run</code> workflow. Read <a href="https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_run">the docs</a>.</p>
-<p><strong>The workflow_run workflow should not run any user provided code as it has secrets in scope.</strong></p>
-<h2 id="i-want-to-access-the-calling-pr-in-a-workflow_run-workflow"><a class="header" href="#i-want-to-access-the-calling-pr-in-a-workflow_run-workflow">I want to access the calling PR in a workflow_run workflow</a></h2>
-<p><code>workflow_run</code> jobs do not get access to the calling workflows detail. While one can access some things via the Github API such as head_sha, head_repo, this may not give any PR information. <a href="https://securitylab.github.com/research/github-actions-preventing-pwn-requests/">Github</a> recommends saving the PR number to an artifact, and using this number to fetch the PR info through the API:</p>
-<p>Example from <a href="https://securitylab.github.com/research/github-actions-preventing-pwn-requests/">this github blog post</a> - see this for more explanation and details!</p>
-<pre><code class="language-yml">name: Receive PR
-
-# read-only repo token
-# no access to secrets
-on:
-  pull_request:
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:        
-      - uses: actions/checkout@v2
-
-      # imitation of a build process
-      - name: Build
-        run: /bin/bash ./build.sh
-
-      - name: Save PR number
-        run: |
-          mkdir -p ./pr
-          echo ${{ github.event.number }} &gt; ./pr/NR
-      - uses: actions/upload-artifact@v2
-        with:
-          name: pr
-          path: pr/
+<p>Our CI will even run it and complain if the example does not compile / contains an error!</p>
+<p>However, don’t feel obliged to include an example for every method!
+For simple methods they may not be necessary.</p>
+<h1 id="examples"><a class="header" href="#examples">Examples</a></h1>
+<p>⚠️ Good but a bit wordy:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Checks if the OPTIMIZATIONS environment variable is set to "1".
+///
+/// # Returns
+/// - true if the environment variable is set to "1".
+/// - false if the environment variable is not set or set to any other value.
+fn optimizations_enabled() -&gt; bool {
+    match env::var("OPTIMIZATIONS") {
+        Ok(val) =&gt; val == "1",
+        Err(_) =&gt; false, // Assume optimizations are disabled if the environment variable is not set
+    }
+}
+<span class="boring">}</span></code></pre>
+<p>✅ Since everything else is obvious from the signature, we can just say:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Checks if the OPTIMIZATIONS environment variable is set to "1"
+fn optimizations_enabled() -&gt; bool { ... }
+<span class="boring">}</span></code></pre>
+<p>⚠️ Not bad, but sounds a bit robotic</p>
+<pre><code class="language-markdown"># Side-Effects
+- When the model is rewritten, related data structures such as the symbol table (which tracks variable names and types)
+  or other top-level constraints may also be updated to reflect these changes. These updates are applied to the returned model,
+  ensuring that all related components stay consistent and aligned with the changes made during the rewrite.
+- The function collects statistics about the rewriting process, including the number of rule applications
+  and the total runtime of the rewriter. These statistics are then stored in the model's context for
+  performance monitoring and analysis.
 </code></pre>
-<pre><code class="language-yml">name: Comment on the pull request
-
-# read-write repo token
-# access to secrets
-on:
-  workflow_run:
-    workflows: ["Receive PR"]
-    types:
-      - completed
-
-jobs:
-  upload:
-    runs-on: ubuntu-latest
-    if: &gt;
-      github.event.workflow_run.event == 'pull_request' &amp;&amp;
-      github.event.workflow_run.conclusion == 'success'
-    steps:
-      - name: 'Download artifact'
-        uses: actions/github-script@v3.1.0
-        with:
-          script: |
-            var artifacts = await github.actions.listWorkflowRunArtifacts({
-               owner: context.repo.owner,
-               repo: context.repo.repo,
-               run_id: ${{github.event.workflow_run.id }},
-            });
-            var matchArtifact = artifacts.data.artifacts.filter((artifact) =&gt; {
-              return artifact.name == "pr"
-            })[0];
-            var download = await github.actions.downloadArtifact({
-               owner: context.repo.owner,
-               repo: context.repo.repo,
-               artifact_id: matchArtifact.id,
-               archive_format: 'zip',
-            });
-            var fs = require('fs');
-            fs.writeFileSync('${{github.workspace}}/pr.zip', Buffer.from(download.data));
-      - run: unzip pr.zip
-
-      - name: 'Comment on PR'
-        uses: actions/github-script@v3
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            var fs = require('fs');
-            var issue_number = Number(fs.readFileSync('./NR'));
-            await github.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: issue_number,
-              body: 'Everything is OK. Thank you for the PR!'
-            });
-
+<p>✅ Same idea but shorter</p>
+<pre><code class="language-markdown"># Side-Effects
+- Rules can apply side-effects to the model (e.g. adding new constraints or variables).
+  The original model is cloned and a modified copy is returned.
+- Rule engine statistics (e.g. number of rule applications, run time) are collected and stored in the new model's context.
 </code></pre>
-<h2 id="how-do-i-get-x-commit-inside-a-pr-workflow-what-do-all-the-different-github-shas-mean"><a class="header" href="#how-do-i-get-x-commit-inside-a-pr-workflow-what-do-all-the-different-github-shas-mean">How do I get x commit inside a PR workflow? What do all the different github sha’s mean?</a></h2>
-<p><strong>If you are running in a workflow_run workflow, you will need to get the calling PR first. See <a href="https://github.com/conjure-cp/conjure-oxide/wiki/_new#i-want-to-access-the-calling-pr-in-a-workflow_run-workflow">I want to access the calling PR in a workflow_run workflow</a> instead.</strong></p>
-<p>The default <code>github.sha</code> is a temporary commit representing the state of the repo should the PR be merged now. You probably want <code>github.event.pull_request.head.sha</code>. Read <a href="https://www.kenmuse.com/blog/the-many-shas-of-a-github-pull-request/">The many SHAs of a github pull request</a>.</p>
-<hr>
-<p><em>This section had been taken from the ‘Github Actions’ page of the conjure-oxide wiki</em></p>
+<p>⚠️ A bit too detailed</p>
+<pre><code class="language-markdown"># Parameters
+- `expression`: A reference to the [`Expression`] that will be evaluated against the given rules. This is the main
+   target for rule transformations and is expected to remain unchanged during the function execution.
+- `model`: A reference to the [`Model`] that provides context for rule evaluation, such as constraints and symbols.
+  Rules may depend on information in the model to determine if they can be applied.
+- `rules`: A vector of references to [`Rule`]s that define the transformations to be applied to the expression.
+  Each rule is applied independently, and all applicable rules are collected.
+- `stats`: A mutable reference to [`RewriterStats`] used to track statistics about rule application, such as
+  the number of attempts and successful applications.
+</code></pre>
+<p>✅ Just describing the meaning of arguments will do</p>
+<p>(Details of the rewriting process belong on the wiki, and details of underlying types such as <code>Model</code> or <code>Expression</code> are already documented next to their implementations)</p>
+<pre><code class="language-markdown">- `expression`: A reference to the [`Expression`] to evaluate.
+- `model`: A reference to the [`Model`] for access to the symbol table and context.
+- `rules`: A vector of references to [`Rule`]s to try.
+- `stats`: A mutable reference to [`RewriterStats`] used to track the number of rule applications and other statistics.
+</code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../developers_guide/ci_cd/coverage.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../developers_guide/contributors_guide/creating_documentation_guides.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../documentation/Essence-Parser.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../developers_guide/coding_resources/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -307,11 +330,11 @@ jobs:
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../developers_guide/ci_cd/coverage.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../developers_guide/contributors_guide/creating_documentation_guides.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../documentation/Essence-Parser.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../developers_guide/coding_resources/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

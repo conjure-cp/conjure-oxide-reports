@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Github Actions: Cookbook - Conjure Oxide</title>
+        <title>Writing Documentation Guides - Conjure Oxide</title>
 
 
         <!-- Custom HTML head -->
@@ -176,128 +176,77 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <!-- TODO: Edit this -->
-<h1 id="github-actions-cookbook"><a class="header" href="#github-actions-cookbook">Github Actions Cookbook</a></h1>
+                        <h1 id="creating-documentation"><a class="header" href="#creating-documentation">Creating Documentation</a></h1>
+<p>As an organisation, we want Conjure Oxide to be thoroughly documented so that new members of our growing team can integrate smoothly. Whether you are currently on a project or not, contributing to our documentation is essential to achieving this goal.</p>
+<p>To make creating and implementing documentation as smooth as possible, we ask that you follow the workflow as outlined below.</p>
+<h2 id="documentation-work-flow"><a class="header" href="#documentation-work-flow">Documentation Work Flow</a></h2>
+<ol>
+<li>
+<p>Identify the documentation you will write.</p>
+<p>In many cases, documentation contributors will be writing about projects they are currently working on or have already completed.
+However, there are still plenty of opportunities to contribute to documentation, even if you are not actively involved in a project or are seeking a small side project.
+In such cases, please refer to <a href="https://github.com/conjure-cp/conjure-oxide/issues/1334">issue #1334</a>, which tracks all documentation writing tasks.
+All unassigned child issues are available for anyone to work on!</p>
+<p>You may come across instances where important or useful documentation is missing from this book. If you notice such gaps and would like to address them as a side project, we encourage you to do so!</p>
+</li>
+<li>
+<p>If the issue is not already present, open a child issue on our documentation tracking issue <a href="https://github.com/conjure-cp/conjure-oxide/issues/1334">#1334</a>.</p>
+<p>Make the title of this issue the name of the documentation you will be writing.</p>
+</li>
+<li>
+<p>Link your child issue to a pr request.</p>
+<h4 id="file-type-and-naming-convention"><a class="header" href="#file-type-and-naming-convention">File type and naming convention:</a></h4>
+<p>All documentation for the Conjure Oxide book should be written in markdown. If you’re unfamiliar with markdown or need a refresher on its syntax, we recommend reviewing <a href="https://www.markdownguide.org/getting-started/">this guide</a>.</p>
+<p>When naming your documentation file, match the file name as closely as possible to the heading of the documentation and use underscores (‘_’) to replace spaces. For example, if your documentation page is titled “Creating Documentation,” name the file <code>creating_documentation.md</code>.</p>
+<h4 id="where-to-place-documentation"><a class="header" href="#where-to-place-documentation">Where to place documentation:</a></h4>
+<p>Place all documentation files in an appropriate location within the <code>/docs/src</code> directory. Each markdown file should be stored in the directory that matches its section in the documentation structure. For example, this file is located at <code>/docs/src/developers_guide/contributors_guide/</code>.</p>
+<p>If you know where your documentation belongs in the book, please place it in the appropriate directory. However, it’s not required to know the exact location—moving files is quick and easy. If you’re unsure where your documentation should go, place the file in <code>/docs/src/misc</code> so it can be relocated later to a more suitable section.</p>
+<h4 id="viewing-documentation-on-the-book"><a class="header" href="#viewing-documentation-on-the-book">Viewing documentation on the book:</a></h4>
+<p>You must ensure that the documentation you write formats as expected in the book. To do so, follow these steps:</p>
 <ul>
-<li>This document lists common patterns and issues we’ve had in our Github actions, and practical solutions to them.</li>
-<li>The first point of reference should be the official documentation, but if that is ever unclear, here would be a good place to look!</li>
+<li>Open <code>/docs/src/SUMMARY.md</code>.</li>
+<li>If you have a definite location for your documentation, link the documentation in the appropriate section using the following format: <code>[ Section title ](path/to/file)</code>.</li>
+<li>If you are unsure where your documentation should reside, place the documentation at any location, <strong>but remember to delete this link once you’re happy with your document’s formatting</strong>.</li>
+<li>In your terminal, ensure that you are in the <code>/docs</code> directory and type in the following command <code>mdbooks serve --open</code></li>
 </ul>
-<p>Terminology used in this document:</p>
-<ul>
-<li>A <em>workflow</em> contains multiple independently ran <em>tasks</em>. Each task runs a series of <em>steps</em>. Steps can call predefined <em>actions</em>, or run shell commands.</li>
-</ul>
-<h2 id="i-want-to-have-a-step-output-multilined--complex-text"><a class="header" href="#i-want-to-have-a-step-output-multilined--complex-text">I want to have a step output multilined / complex text</a></h2>
-<pre><code class="language-yml">- name: Calculate PR doc coverage
-  id: prddoc
-  run: |
-    RUSTDOCFLAGS='-Z unstable-options --show-coverage' cargo +nightly doc --workspace --no-deps &gt; coverage.md
-    echo 'coverage&lt;&lt;EOFABC' &gt;&gt; $GITHUB_OUTPUT
-    echo "$(cat coverage.md)" &gt;&gt; $GITHUB_OUTPUT
-    echo 'EOFABC' &gt;&gt; $GITHUB_OUTPUT```
-</code></pre>
-<p>The entire output of <code>cargo doc</code> can be substituted into later jobs by using <code>${{ steps.prdoc.outputs.coverage }}</code></p>
-<h2 id="workflow_run-i-want-a-workflow-that-runs-on-a-pr-and-can-write-to-the-repo"><a class="header" href="#workflow_run-i-want-a-workflow-that-runs-on-a-pr-and-can-write-to-the-repo">workflow_run: I want a workflow that runs on a PR and can write to the repo</a></h2>
-<p>PR branches and their workflows typically live in on a branch on an external fork. Therefore, they cannot write to the repository. The solution is to split things into two workflows - one that runs on the PR with read-only permissions, and one that runs on main and can write to the repository. This is called a <code>workflow_run</code> workflow. Read <a href="https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_run">the docs</a>.</p>
-<p><strong>The workflow_run workflow should not run any user provided code as it has secrets in scope.</strong></p>
-<h2 id="i-want-to-access-the-calling-pr-in-a-workflow_run-workflow"><a class="header" href="#i-want-to-access-the-calling-pr-in-a-workflow_run-workflow">I want to access the calling PR in a workflow_run workflow</a></h2>
-<p><code>workflow_run</code> jobs do not get access to the calling workflows detail. While one can access some things via the Github API such as head_sha, head_repo, this may not give any PR information. <a href="https://securitylab.github.com/research/github-actions-preventing-pwn-requests/">Github</a> recommends saving the PR number to an artifact, and using this number to fetch the PR info through the API:</p>
-<p>Example from <a href="https://securitylab.github.com/research/github-actions-preventing-pwn-requests/">this github blog post</a> - see this for more explanation and details!</p>
-<pre><code class="language-yml">name: Receive PR
-
-# read-only repo token
-# no access to secrets
-on:
-  pull_request:
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-
-    steps:        
-      - uses: actions/checkout@v2
-
-      # imitation of a build process
-      - name: Build
-        run: /bin/bash ./build.sh
-
-      - name: Save PR number
-        run: |
-          mkdir -p ./pr
-          echo ${{ github.event.number }} &gt; ./pr/NR
-      - uses: actions/upload-artifact@v2
-        with:
-          name: pr
-          path: pr/
-</code></pre>
-<pre><code class="language-yml">name: Comment on the pull request
-
-# read-write repo token
-# access to secrets
-on:
-  workflow_run:
-    workflows: ["Receive PR"]
-    types:
-      - completed
-
-jobs:
-  upload:
-    runs-on: ubuntu-latest
-    if: &gt;
-      github.event.workflow_run.event == 'pull_request' &amp;&amp;
-      github.event.workflow_run.conclusion == 'success'
-    steps:
-      - name: 'Download artifact'
-        uses: actions/github-script@v3.1.0
-        with:
-          script: |
-            var artifacts = await github.actions.listWorkflowRunArtifacts({
-               owner: context.repo.owner,
-               repo: context.repo.repo,
-               run_id: ${{github.event.workflow_run.id }},
-            });
-            var matchArtifact = artifacts.data.artifacts.filter((artifact) =&gt; {
-              return artifact.name == "pr"
-            })[0];
-            var download = await github.actions.downloadArtifact({
-               owner: context.repo.owner,
-               repo: context.repo.repo,
-               artifact_id: matchArtifact.id,
-               archive_format: 'zip',
-            });
-            var fs = require('fs');
-            fs.writeFileSync('${{github.workspace}}/pr.zip', Buffer.from(download.data));
-      - run: unzip pr.zip
-
-      - name: 'Comment on PR'
-        uses: actions/github-script@v3
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            var fs = require('fs');
-            var issue_number = Number(fs.readFileSync('./NR'));
-            await github.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: issue_number,
-              body: 'Everything is OK. Thank you for the PR!'
-            });
-
-</code></pre>
-<h2 id="how-do-i-get-x-commit-inside-a-pr-workflow-what-do-all-the-different-github-shas-mean"><a class="header" href="#how-do-i-get-x-commit-inside-a-pr-workflow-what-do-all-the-different-github-shas-mean">How do I get x commit inside a PR workflow? What do all the different github sha’s mean?</a></h2>
-<p><strong>If you are running in a workflow_run workflow, you will need to get the calling PR first. See <a href="https://github.com/conjure-cp/conjure-oxide/wiki/_new#i-want-to-access-the-calling-pr-in-a-workflow_run-workflow">I want to access the calling PR in a workflow_run workflow</a> instead.</strong></p>
-<p>The default <code>github.sha</code> is a temporary commit representing the state of the repo should the PR be merged now. You probably want <code>github.event.pull_request.head.sha</code>. Read <a href="https://www.kenmuse.com/blog/the-many-shas-of-a-github-pull-request/">The many SHAs of a github pull request</a>.</p>
+<blockquote>
+<p><strong>Important</strong></p>
+<p>Be sure to assign yourself and any other contributors working on the documentation to your child issue and pull request. This helps us keep track of who is responsible for each piece of documentation and ensures proper assignment.</p>
+</blockquote>
+</li>
+<li>
+<p>Once you are happy with your documentation, request a review from one or more other members of your team.</p>
+<blockquote>
+<p><strong>Important</strong></p>
+<p>Place any contributors to the documentation and the date where the documentation was last updated in a comment on the first and second lines of the file.
+For instance:</p>
+<p><code>[//]: # (Author: Jamie Melton)</code></p>
+<p><code>[//]: # (Last Updated: 09/12/2025)</code></p>
+<p>has been placed at the top of this file.</p>
+</blockquote>
+</li>
+<li>
+<p>When your team is happy with this documentation, request a review from the current book editors.</p>
+<p>The current book editors are: <em>JamieASM</em> and <em>HKhan-5</em>.</p>
+</li>
+<li>
+<p>Assuming no adjustments are required, the documentation will then be merged in, and the child issue will be closed.</p>
+</li>
+</ol>
 <hr>
-<p><em>This section had been taken from the ‘Github Actions’ page of the conjure-oxide wiki</em></p>
+<h2 id="still-unsure"><a class="header" href="#still-unsure">Still unsure?</a></h2>
+<p>If you have any questions or concerns, please post them on the documentation discussion board. A book editor will respond to you promptly.
+Likewise, if you have suggestions for improving or streamlining this process, feel free to share your ideas with the book editors! Your feedback is always welcome.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../developers_guide/ci_cd/coverage.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../developers_guide/contributors_guide/Git-Flow.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../documentation/Essence-Parser.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../developers_guide/contributors_guide/creating_documentation_code.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -307,11 +256,11 @@ jobs:
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../developers_guide/ci_cd/coverage.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../developers_guide/contributors_guide/Git-Flow.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../documentation/Essence-Parser.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../developers_guide/contributors_guide/creating_documentation_code.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>
