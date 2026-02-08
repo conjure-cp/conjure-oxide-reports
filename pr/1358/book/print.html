@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-c4e34754.js";
+            window.path_to_searchindex_js = "searchindex-0ba53dba.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-b9ef563d.js"></script>
+        <script src="toc-13399f30.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -1820,37 +1820,63 @@ jobs:
 <hr>
 <p><em>This section had been taken from the ‘Github Actions’ page of the conjure-oxide wiki</em></p>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="overview-2"><a class="header" href="#overview-2">Overview</a></h1>
-<p>The parser converts incoming Essence programs to Conjure Oxide to the <a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_core/ast/struct.Model.html">Model Object</a> that the rule engine takes in. The relevant parts of the Model object are the SymbolTable and Expression objects. The symbol table is essentially a list of the variables and their corresponding domains. The Expression object is a recursive object that hold all the constraints of the problem, nested into one object. The parser has two main parts. The first the <code>tree-sitter-essence</code> crate, which is a general Essence parser using the library tree-sitter. The second part is the <code>conjure_essence_parser</code> crate which is Rust code that uses the grammar to parse Essence programs and convert them into the above-mentioned Model object.</p>
+<h1 id="essence-parser"><a class="header" href="#essence-parser">Essence Parser</a></h1>
+<p>The parser converts incoming Essence programs in Conjure Oxide to the <a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_core/ast/struct.Model.html">Model Object</a> that the rule engine takes in. The relevant parts of the Model object are the SymbolTable and Expression objects. The symbol table is essentially a list of the variables and their corresponding domains. The Expression object is a recursive object that holds all the constraints of the problem, nested into one object. The parser has two main parts. The first is the <code>tree-sitter-essence</code> crate, which is a general Essence parser using the library tree-sitter. The second part is the <code>conjure-cp-essence-parser</code> crate which is Rust code that uses the grammar to parse Essence programs and convert them into the above-mentioned Model object.</p>
 <h1 id="tree-sitter-grammar"><a class="header" href="#tree-sitter-grammar">Tree Sitter Grammar</a></h1>
-<p><a href="https://tree-sitter.github.io/tree-sitter/">Tree-sitter</a> is a parsing library that creates concrete syntax trees from programs in various languages. It contains many languages already, but Essence is unfortunately not one of them. Therefore, this crate contains a JavaScript grammar for Essence, which tree-sitter uses to create a parser. The parser is not specific to Conjure Oxide as the grammar merely describes the general Essence language, but it is used in Conjure Oxide and currently covers only parts of the Essence language that Conjure Oxide deals with and has tests written for. Therefore, it is not extensive and relatively simple in structure.</p>
+<p><a href="https://tree-sitter.github.io/tree-sitter/">Tree-sitter</a> is a parsing library that creates concrete syntax trees from programs in various languages. It contains many languages already, but Essence is unfortunately not one of them. Therefore, the <a href="https://github.com/conjure-cp/conjure-oxide/tree/main/crates/tree-sitter-essence">tree-sitter-essence</a> crate contains a JavaScript grammar for Essence, which tree-sitter uses to create a parser. The parser is not specific to Conjure Oxide as the grammar merely describes the general Essence language, but it is used in and developed for Conjure Oxide so currently covers only parts of the Essence language that Conjure Oxide deals with and has tests written for. The grammar is based on <a href="https://conjure.readthedocs.io/en/latest/essence.html">this Essence documentation</a>.</p>
 <h2 id="general-structure"><a class="header" href="#general-structure">General Structure</a></h2>
-<p>At the top level, there can be either find statements, letting statements, and constraint statements. Find statements consist of the keyword <code>find</code>, one or more variables, and then a domain of either type boolean or integer. Letting statements have the keyword <code>letting</code>, one or more variables, and an expression or domain to assign to those variables. Constraints contain the keyword <code>such that</code> and one or more logical or numerical expressions which include variables and constants.</p>
-<h2 id="expression-hierarchy"><a class="header" href="#expression-hierarchy">Expression Hierarchy</a></h2>
-<p>Expressions in the grammar are broken down into boolean expressions, comparison expressions, and arithmetic expressions. This separation helps enforce semantic constraints inherent to the language. For example, expressions like <code>x + 3 = y</code> are allowed because an arithmetic expression is permitted on either side of a comparison, but chained comparisons like <code>x = y = 3</code> are disallowed, since a comparison expression cannot itself contain another comparison expression as an operand. This also helps ensure the top-most expression in a constraint evaluates to a boolean (so <code>such that x + 3</code> wouldn’t be valid). There are also <code>atom</code> expressions such as constants, identifiers, and structured values (tuples, matrices, or slices), which are allowed as operands to most expressions since they might be booleans. This does mean, however, that a constraint like <code>such that y</code> would be valid even though <code>y</code> might be an integer. Quantifier expressions are also separated into boolean and arithmetic quantifiers for this reason (so <code>such that allDif{[a, b]}</code> is valid but <code>such that min{[a,b]}</code> isn’t).</p>
-<p>The precedence levels throughout the grammar are based on the Essence prime operator precedence table found in Appendix B of the <a href="https://arxiv.org/pdf/2201.03472">Savile Row Manual</a>. This is important to ensure that nested or complicated expressions such as <code>(2*x) + (3*y) = 12</code> are parsed in the correct order, as this will determine the structure of the Expression object in the Model.</p>
-<h2 id="issue-763"><a class="header" href="#issue-763"><a href="https://github.com/conjure-cp/conjure-oxide/issues/763">Issue #763</a></a></h2>
-<p>Currently, the grammar allows for any combination of letters, numbers, and underscores to be parsed as a variable identifiers. This includes reserved keywords of the Essence language such as ‘find’ or ‘letting’. This is incorrect and such keyword shouldn’t be allowed as variables. A solution to this problem hasn’t been found. Below are notes about possible solutions.</p>
+<p>At the top level, there can be either find statements, letting statements, or constraint statements. Find statements consist of the keyword <code>find</code>, one or more variables, and then a domain. Letting statements have the keyword <code>letting</code>, one or more variables, and an expression or domain to assign to those variables. Constraints contain the keyword <code>such that</code> and one or more logical or numerical expressions which include variables and constants.</p>
+<h2 id="domains"><a class="header" href="#domains">Domains</a></h2>
+<p>Domains in Essence specify the set of possible values that a variable can take. The grammar currently supports the following types of domains:</p>
 <ul>
-<li>Tree-sitter doesn’t support lookahead assertions so grammar rules cannot exclude specific patterns or words.</li>
-<li>Defining rules for each keyword (with higher precedence than the identifier rule) has been brought up but it doesn’t stop keywords from being parsed as variables within a rule searching for identifiers (more detail in linked issue).</li>
-<li>It is possible to manually check all identifier nodes in the parse tree within the Rust program against a list of keywords (or by defining rules for keywords and allowing identifiers to be parsed as them or a valid identifier). This would allow for rejecting Essence programs that merely use a keyword as an identifier and have no other errors but wouldn’t allow for correct parsing of errors such as the one in line 2 of the program below. The extra ‘=’ in line two causes ‘such’ in line 3 to be parsed as an identifier and thus the whole of line 3 is parsed as an error, even though it is valid. If ‘such’ could be excluded as a valid identifier, the error would be only in line 2.</li>
+<li><strong><code>bool_domain</code></strong>: Boolean values (<code>bool</code>)</li>
+<li><strong><code>int_domain</code></strong>: Integer values, which can be unbounded (<code>int</code>) or bounded by ranges (<code>int(1..10)</code>, <code>int(1..5, 10..15)</code>)</li>
+<li><strong><code>tuple_domain</code></strong>: Tuples of multiple domains (<code>(int(1..5), bool)</code>)</li>
+<li><strong><code>matrix_domain</code></strong>: Multi-dimensional arrays indexed by domains (<code>matrix indexed by [int(1..5)] of int(0..9)</code>)</li>
+<li><strong><code>record_domain</code></strong>: Named records with typed fields (<code>record {x: int, y: bool}</code>)</li>
+<li><strong><code>set_domain</code></strong>: Sets with optional size constraints (<code>set of int(1..10)</code>, <code>set (minSize 2, maxSize 5) of bool</code>)</li>
+<li><strong><code>variable_domain</code></strong>: Domain references using identifiers, allowing domains to be parameterized or defined elsewhere</li>
 </ul>
-<pre><code class="language-Essence">find x,y,z : int(0..5)
-such that x = y =
-such that z = 3
-</code></pre>
+<h2 id="expression-hierarchy"><a class="header" href="#expression-hierarchy">Expression Hierarchy</a></h2>
+<p>Expressions in the grammar are broken down into boolean expressions, comparison expressions, arithmetic expressions, and atoms. This separation helps enforce semantic constraints inherent to the language. For example, expressions like <code>x + 3 = y</code> are allowed because an arithmetic expression is permitted on either side of a comparison, but chained comparisons like <code>x = y = 3</code> are disallowed, since a comparison expression cannot itself contain another comparison expression as an operand. This also helps ensure the top-most expression in a constraint evaluates to a boolean (so <code>such that x + 3</code> wouldn’t be valid).</p>
+<p>Atoms are the fundamental building blocks and represent constants, identifiers, and structured values (tuples, matrices, records, comprehensions, or slices). Atoms are separate from boolean and arithmetic expressions in the grammar hierarchy, though they can be used as operands in most expression contexts. This means a constraint like <code>such that y</code> would be valid syntactically even though <code>y</code> might be an integer - type checking happens at a later stage. List combining expressions are also separated into boolean and arithmetic variants for this reason (so <code>such that allDiff([a, b])</code> is valid but <code>such that min([a,b])</code> isn’t).</p>
+<p>The precedence levels throughout the grammar are based on the Essence Prime operator precedence table found in Appendix B of the <a href="https://arxiv.org/pdf/2201.03472">Savile Row Manual</a>. This is important to ensure that nested or complicated expressions such as <code>(2*x) + (3*y) = 12</code> are parsed in the correct order, as this will determine the structure of the Expression object in the Model.</p>
+<h2 id="limitations-of-the-tree-sitter-grammar"><a class="header" href="#limitations-of-the-tree-sitter-grammar">Limitations of the Tree-sitter Grammar</a></h2>
+<h3 id="keyword-exclusion"><a class="header" href="#keyword-exclusion">Keyword Exclusion</a></h3>
+<p>Currently, the grammar allows for any combination of letters, numbers, and underscores to be parsed as variable identifiers. This includes reserved keywords of the Essence language such as ‘find’ or ‘letting’. This is incorrect and such keywords shouldn’t be allowed as variables. Tree-sitter doesn’t support lookahead assertions or negative matches, so grammar rules cannot exclude specific patterns or words from identifier rules. Checking for keywords as variables happens during semantic checking (see Diagnostics section).</p>
+<h3 id="error-detection"><a class="header" href="#error-detection">Error Detection</a></h3>
+<p>Error detection from tree-sitter is unpredictable and can be confusing, as it simply creates ERROR nodes in the parse tree without detailed information about what was invalid. Similar errors will produce ERROR nodes in different places and impact the surrounding tree strucure in varying ways, depending on the context. More sophisticated error detection and messsaging has been implemented through Diagnostics.</p>
 <h1 id="rust-parser"><a class="header" href="#rust-parser">Rust Parser</a></h1>
-<p>This is the second part of the parser and is contained in the <a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_essence_parser/index.html">conjure_essence_parser</a> crate. The primary function is <code>parse_essence_file_native</code>, shown below, which takes in the path to the input and the context and returns the Model or an error.</p>
+<p>This is the second part of the parser and is contained in the <a href="https://github.com/conjure-cp/conjure-oxide/tree/main/crates/conjure-cp-essence-parser">conjure-cp-essence-parser</a> crate. The primary function is <code>parse_essence_file_native</code>, shown below, which takes in the path to the input and the context and returns the Model or an error.</p>
 <pre><code class="language-Rust">pub fn parse_essence_file_native(
     path: &amp;str,
     context: Arc&lt;RwLock&lt;Context&lt;'static&gt;&gt;&gt;,
 ) -&gt; Result&lt;Model, EssenceParseError&gt; {...}
 </code></pre>
 <p>Within that function, the source code is read from the input and the tree-sitter grammar is used to parse that code and produce a parse tree. From there, a Model object is created and the <code>SymbolTable</code> and <code>Expression</code> fields are populated by traversing and extracting information from the parse tree.</p>
-<h2 id="general-structure-and-utils"><a class="header" href="#general-structure-and-utils">General Structure and utils</a></h2>
+<h2 id="general-structure-1"><a class="header" href="#general-structure-1">General Structure</a></h2>
 <p>The top level nodes (children of the root node), are either extras (comments or language labels), find statements, letting statements, or constraints. Find and letting statements provide info that is added to the SymbolTable while constraints are added to the Expression.</p>
-<p>In general, <code>kind()</code> is used to determine which rule a node represents and the corresponding function or logic is then applied to that node. Child nodes are found using their field names or indexes and the <code>named_children()</code> function is used to iterate over the named child nodes of a node. The function <code>child_expr</code> returns the Expression parsed from the first named child of the given node.</p>
+<p>The parser crate is organized into multiple modules, each handling a specific aspect of Essence parsing:</p>
+<ul>
+<li><strong><code>parse_model.rs</code></strong>: Entry point containing <code>parse_essence_file_native</code>. Handles top-level statement parsing (find, letting, constraints) and orchestrates the overall parsing process.</li>
+<li><strong><code>expression.rs</code></strong>: Core expression parsing logic. Handles boolean expressions, comparisons, arithmetic operations, and dispatches to specialized parsers.</li>
+<li><strong><code>atom.rs</code></strong>: Parses atomic expressions - constants, identifiers, tuples, matrices, records, set literals, and indexing/slicing operations.</li>
+<li><strong><code>domain.rs</code></strong>: Domain parsing including integer domains (ranges), boolean domains, and matrix domains. Handles both ground domains (fully specified) and unresolved domains (containing references).</li>
+<li><strong><code>find.rs</code></strong>: Parses find statements, extracting variable names and their domains for the symbol table.</li>
+<li><strong><code>letting.rs</code></strong>: Parses letting statements, which can bind variables to either domains or expressions.</li>
+<li><strong><code>comprehension.rs</code></strong>: Parses comprehensions, quantifiers (forAll, exists), and aggregate expressions (sum, product, min, max, etc.). This is a complex module handling generator expressions and nested quantification.</li>
+<li><strong><code>abstract_literal.rs</code></strong>: Parses abstract literal structures like matrices, tuples, and records.</li>
+</ul>
+<h3 id="layered-dispatch-pattern"><a class="header" href="#layered-dispatch-pattern">Layered Dispatch Pattern</a></h3>
+<p>The parser is designed with a hierarchical dispatch architecture where each module has a main entry point function that delegates to more specific functions based on the tree-sitter node type. This creates layers of abstraction:</p>
+<ol>
+<li><strong>Top-level dispatcher</strong>: Examines the node’s <code>kind()</code> to determine which category of parser to call (e.g., expression, domain, statement)</li>
+<li><strong>Category-level parsers</strong>: Further dispatch to specialized functions based on the specific variant (e.g., <code>parse_binary_expression</code>, <code>parse_atom</code>, <code>parse_int_domain</code>)</li>
+<li><strong>Specialized parsers</strong>: Handle the actual parsing logic for specific node types</li>
+</ol>
+<p>This layered approach mirrors the structure of the tree-sitter grammar itself, where rules contain choices of subrules. This pattern keeps the codebase maintainable by separating concerns and making additions straightforward.</p>
+<h3 id="general-utils"><a class="header" href="#general-utils">General utils</a></h3>
+<p><code>kind()</code> is used to determine which rule a node represents and the corresponding function or logic is then applied to that node. Child nodes are found using their field names or indexes and the <code>named_children()</code> function is used to iterate over the named child nodes of a node. The function <code>child_expr</code> returns the Expression parsed from the first named child of the given node.</p>
 <h3 id="extracting-from-the-source-code-identifiers-and-constants"><a class="header" href="#extracting-from-the-source-code-identifiers-and-constants">Extracting from the source code (identifiers and constants)</a></h3>
 <p>The tree-sitter nodes have a start and end byte indicating where the node corresponds to in the source code. For variable identifiers, constants, and operators, these bytes are necessary to extract the actual values from the source code.</p>
 <p>For example, the following code appears in the <code>parse_find_statement</code> function and is used to extract the specific variable name from the source code, which is represented simply by a tree-sitter node (named <code>variable</code> in this case).</p>
@@ -1865,39 +1891,64 @@ let op_type = &amp;source_code[op.start_byte()..op.end_byte()];
 </code></pre>
 <h2 id="find-and-letting-statements"><a class="header" href="#find-and-letting-statements">Find and Letting Statements</a></h2>
 <p>Find and letting statements are parsed relatively intuitively. For find statements, the list of variables is iterated over and each is added to a hash map as the key. Then, the domain is parsed and added as the value for each variable it applies to. Once all variables and domains are parsed, the hash map is returned and the caller function iterates over it and adds each pair to the <code>SymbolTable</code>. For letting statements, a new <code>SymbolTable</code> is created. The variables are again iterated over and added to the table. Letting statements can either specify a domain or an expression for the variables so the type of node is checked and either parsed as an expression or domain before being added to the table. The <code>SymbolTable</code> is returned and the caller function adds it to the existing <code>SymbolTable</code> of the <code>Model</code>.</p>
+<h2 id="ground-vs-unresolved-domains"><a class="header" href="#ground-vs-unresolved-domains">Ground vs Unresolved Domains</a></h2>
+<p>The parser supports both <strong>ground domains</strong> (fully specified, e.g., <code>int(1..10)</code>) and <strong>unresolved domains</strong> (containing variable references, e.g., <code>int(1..n)</code>). For unresolved domains, the variable pointer must be retrieved from the existing <code>SymbolTable</code>, hich was described in the previous section. Unresolved domains are resolved during later stages of processing once all variables are known.</p>
 <h2 id="constraints"><a class="header" href="#constraints">Constraints</a></h2>
-<p>Adding constraints to the overall constraints <code>Expression</code> requires nesting <code>Expression</code> objects in a consistent and clear manner. Each constraint is parsed using the <code>parse_expression</code> function, which returns an <code>Expression</code> object, and is then added to the model using the <code>add_constraints</code> function. The <code>parse_expression</code> function takes a node as a parameter and is recursive. It matches the node to its ‘kind’, recursively parses the children of the node, then returns an <code>Expression</code> object that correctly packages up the expressions returned from the parsing of the children nodes.</p>
-<p>This structure allows for easy addition of more complex constraints as the grammar evolves. As more rules are added to the grammar, the corresponding code block must be added to the match statement in the <code>parse_expression</code> function.</p>
-<h3 id="example-1"><a class="header" href="#example-1">Example</a></h3>
-<p>The constraint <code>x = 3</code> would be represented by a <code>comparison_expr</code> node, which is defined in the grammar as:</p>
-<pre><code class="language-Javascript">comparison_expr: $ =&gt; prec(0, prec.left(seq(
-      field("left", choice($.boolean_expr, $.arithmetic_expr)), 
-      field("operator", $.comparative_op),
-      field("right", choice($.boolean_expr, $.arithmetic_expr))
-    ))),
+<p>Adding constraints to the overall constraints <code>Expression</code> requires nesting <code>Expression</code> objects. Each constraint is parsed and then added to the model using the <code>add_constraints</code> function.</p>
+<p>Following the layered dispatch pattern, expressions are organized into types (again mirroring the grammar):</p>
+<ul>
+<li><strong><code>parse_expression</code></strong> in <code>expression.rs</code>: The main entry point that dispatches to specialized parsers based on node type</li>
+<li><strong><code>parse_binary_expression</code></strong>: Handles binary operations</li>
+<li>** <code>parse_arithmetic_expression</code>**: Handles arithmetic operations</li>
+<li>** <code>parse_comparison_expression</code>**: Handles comparison operations</li>
+<li><strong><code>parse_atom</code></strong> in <code>atom.rs</code>: Handles atomic expressions</li>
+<li><strong><code>parse_comprehension</code></strong> in <code>comprehension.rs</code>: Handles comprehensions, quantifiers, and aggregates</li>
+</ul>
+<h2 id="comprehensions-quantifiers-and-aggregates"><a class="header" href="#comprehensions-quantifiers-and-aggregates">Comprehensions, Quantifiers, and Aggregates</a></h2>
+<p>Comprehensions are a significant feature in Essence that require special parsing logic beyond the standard node-to-expression pattern. They are parsed by the <code>comprehension.rs</code> module using the specialized <code>ComprehensionBuilder</code> type that manages the complex scoping rules inherent to comprehensions.</p>
+<p>Comprehensions create their own scope with local variables (generators). The parsing process involves:</p>
+<ol>
+<li><strong>Creating a ComprehensionBuilder</strong>: Initialized with the parent symbol table</li>
+<li><strong>Setting up scoped symbol tables</strong>: The builder creates two child symbol tables:
+<ul>
+<li><strong>Generator symbol table</strong>: Contains generator variables as regular variables (for parsing conditions)</li>
+<li><strong>Return expression symbol table</strong>: Contains generator variables as “givens” (for parsing the return expression)</li>
+</ul>
+</li>
+<li><strong>Parsing generators</strong>: Each generator (<code>var : domain</code> or <code>var &lt;- collection</code>) is parsed and added to both symbol tables</li>
+<li><strong>Parsing conditions</strong>: Conditions are parsed using the generator symbol table, allowing them to reference generator variables</li>
+<li><strong>Parsing the return expression</strong>: Parsed using the return expression symbol table where generators appear as givens</li>
+<li><strong>Building the comprehension</strong>: The builder combines all components into a <code>Comprehension</code> object</li>
+</ol>
+<p>Example: For <code>[x + 1 | x : int(1..5), x &gt; 2]</code>:</p>
+<ul>
+<li>Generator <code>x : int(1..5)</code> is added to both symbol tables</li>
+<li>Condition <code>x &gt; 2</code> is parsed with <code>x</code> in scope as a variable</li>
+<li>Return expression <code>x + 1</code> is parsed with <code>x</code> in scope as a given</li>
+<li>The result is wrapped in a <code>Comprehension</code> expression</li>
+</ul>
+<h3 id="quantifiers-and-aggregates"><a class="header" href="#quantifiers-and-aggregates">Quantifiers and Aggregates</a></h3>
+<p>Quantifier expressions (<code>forAll</code>, <code>exists</code>) and aggregate expressions (<code>sum</code>, <code>min</code>, <code>max</code>) follow the same comprehension-based parsing approach through <code>parse_quantifier_or_aggregate_expr</code>. They:</p>
+<ol>
+<li>Use <code>ComprehensionBuilder</code> to set up scoped symbol tables</li>
+<li>Parse generators to add variables to the scope</li>
+<li>Parse the body expression using the return expression symbol table</li>
+<li>Build a comprehension with an appropriate AC operator kind (<code>And</code> for <code>forAll</code>, <code>Sum</code> for <code>sum</code>, etc.)</li>
+<li>Wrap the comprehension in the corresponding expression type (<code>Expression::And</code>, <code>Expression::Sum</code>, etc.)</li>
+</ol>
+<p>This unified approach ensures consistent scoping behavior across all comprehension-style constructs in Essence.</p>
+<h1 id="testing"><a class="header" href="#testing">Testing</a></h1>
+<h2 id="integration-testing"><a class="header" href="#integration-testing">Integration Testing</a></h2>
+<p>The native parser (<code>parse_essence_file_native</code>) is used by default for all integration tests in the <code>tests-integration</code> crate, which include a range of tests for every feature currently supported. Also incuded in the integraiton testing suite is roundtrip testing. Some of the roundtrip tests test the parser’s error messages.</p>
+<p>To explicitly disable the native parser for a specific test, add a <code>config.toml</code> file in the test directory with:</p>
+<pre><code class="language-toml">enable_native_parser = false
 </code></pre>
-<p>In the parse_expression function, the left expression is parsed using the <code>child_expr</code> function. The returned Expression would represent the variable <code>x</code> and be saved as <code>expr1</code>. The operator is extracted from the source code and saved as <code>op_type</code>. The right expression node is then found using its field name ‘right’ and parsed. The returned Expression would represent the integer <code>3</code> and be saved as <code>expr2</code>.</p>
-<pre><code class="language-Rust">let expr1 = child_expr(constraint, source_code, root)?;
-            let op = constraint.child_by_field_name("operator").ok_or(format!(
-                "Missing operator in expression {}",
-                constraint.kind()
-            ))?;
-            let op_type = &amp;source_code[op.start_byte()..op.end_byte()];
-            let expr2_node = constraint.child_by_field_name("right").ok_or(format!(
-                "Missing second operand in expression {}",
-                constraint.kind()
-            ))?;
-            let expr2 = parse_expression(expr2_node, source_code, root)?;
-
-            match op_type {...}
+<p>This will cause the test to fall back to the legacy parser instead.</p>
+<h2 id="parser-specific-tests"><a class="header" href="#parser-specific-tests">Parser-Specific Tests</a></h2>
+<p>The <code>conjure-cp-essence-parser</code> crate contains its own unit tests that specifically test parser functionality. These tests can be run with:</p>
+<pre><code class="language-bash">cargo test -p conjure-cp-essence-parser
 </code></pre>
-<p>Depending on the operator type (in this case <code>=</code>), the left and right expressions are added to an Expression of the relevant type (in this case <code>Eq</code>), which is returned.</p>
-<pre><code class="language-Rust">"=" =&gt; Ok(Expression::Eq(
-                    Metadata::new(),
-                    Box::new(expr1),
-                    Box::new(expr2),
-                )),
-</code></pre>
+<p>For more details on parser testing, see the parser testing documentation.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <p>Tree-morph is a library that helps you perform boilerplate-free generic tree transformations. In its current state, tree-morph is able to perform transformations in a large number of test cases, and work is now being done to try to implement Essence with tree-morph. When completed, tree-morph will be a very powerful stand-alone crate, as well as sitting at the core of <code>conjure-oxide</code>. Despite its current power, there is a still a lot of work to be done on the <code>tree-morph</code> crate. It is currently in a completely unoptimised state, and will be very slow when performing on large trees with a rich rule set and rule hierarchy. In order to assess progress on new optimisations, it is essential to have a diverse list of benchmarks. All benchmarking has been done using the <a href="https://crates.io/crates/criterion">crtiterion</a> crate. The following section outlines some of the most important benchmarks.</p>
 <h1 id="benchmarks"><a class="header" href="#benchmarks">Benchmarks</a></h1>
@@ -2247,7 +2298,7 @@ The left graph is a probability density function for the run time. It says that 
 <li>Benchmark meta applications</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="overview-3"><a class="header" href="#overview-3">Overview</a></h1>
+<h1 id="overview-2"><a class="header" href="#overview-2">Overview</a></h1>
 <p>ProTrace is a tracing module created to trace rule applications on expressions when an Essence file is parsed and rewritten by Conjure Oxide. The purpose of the module is to visualise the rules applied on the expressions, and simplify the identification of errors for debugging. The module supports multiple output formats such as <strong>JSON</strong> or <strong>human</strong> readable, along with different verbosity levels to show only what the user would like to see.</p>
 <h3 id="verbosity-level"><a class="header" href="#verbosity-level">Verbosity Level</a></h3>
 <p>The different verbosity levels include:</p>
@@ -2563,7 +2614,7 @@ created: 16-02-24
 <blockquote>
 <p>NOTE: Once the rewrite engine API is finalised, we should possibly make a separate page for it.</p>
 </blockquote>
-<h1 id="overview-4"><a class="header" href="#overview-4">Overview</a></h1>
+<h1 id="overview-3"><a class="header" href="#overview-3">Overview</a></h1>
 <p>Conjure uses Essence, a high-level DSL for constraints modelling, and converts it into a solver-specific representation of the problem.
 To do that, we parse the Essence file into an AST, then use a rule engine to walk the expression tree and rewrite constraints into a format that is accepted by the solver before passing the AST to a solver adapter.</p>
 <p>The high-level process is as follows:</p>
@@ -2615,7 +2666,7 @@ When this macro is invoked, it creates a static <code>Rule</code> object and add
 <p>Currently, the <code>register_rule</code> macro has the following syntax:</p>
 <pre><code>#[register_rule(("&lt;RuleSet name&gt;", &lt;Rule priority within the ruleset&gt;))]
 </code></pre>
-<h3 id="example-2"><a class="header" href="#example-2">Example</a></h3>
+<h3 id="example-1"><a class="header" href="#example-1">Example</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>use conjure_core::ast::Expression;
@@ -2903,7 +2954,7 @@ and([C_Occurrence[q4] -&gt; or([A_Occurrence[q5] ∧ B_Occurrence[q5] ∧ q5 = q
                       ++ gocAfter
              )
 </code></pre>
-<h3 id="example-3"><a class="header" href="#example-3">Example:</a></h3>
+<h3 id="example-2"><a class="header" href="#example-2">Example:</a></h3>
 <ul>
 <li>set-comprehension-literal rule appears within model: “letting A be {1,5,3}, find B : set of int(0..6), such that B subsetEq A”</li>
 <li>here the body of the comprehension is “q3 = q2”, the gensOrConds is the single Generator “q3 &lt;- {1,3,5}”</li>
@@ -3013,7 +3064,7 @@ This means the body of the or() comprehension must apply to at least one member 
                   return [essence| forAll &amp;iPat in &amp;x . &amp;i in &amp;y |]
              )
 </code></pre>
-<h3 id="example-3-1"><a class="header" href="#example-3-1">Example:</a></h3>
+<h3 id="example-3"><a class="header" href="#example-3">Example:</a></h3>
 <ul>
 <li>here q3 is the quantified variable, referred to as “i” above.</li>
 <li>and() is the universal quantifier, quantifying over q3. and([q3 in B | q3 &lt;- A]) translates to “for all q3 in A, q3 is in B”</li>
@@ -3588,6 +3639,191 @@ Picking the first option: Question 1: [or([A_Occurrence[q5] /\ B_Occurrence[q5] 
         and([A_Occurrence[q6] /\ B_Occurrence[q6] -&gt; C_Occurrence[q6] | q6 : int(0..6)])
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
+<h1 id="lsp-documentation"><a class="header" href="#lsp-documentation">LSP Documentation</a></h1>
+<h2 id="overview-4"><a class="header" href="#overview-4">Overview</a></h2>
+<p>This is the overview documentation for the Language Server which is developed for use by Conjure Oxide. This is developed following the <a href="https://microsoft.github.io/language-server-protocol/">Language Server Protocol</a> developed by Microsoft Visual Studio Code, and implemented following VSCode guidelines. This means that functionality cannot be guaranteed on other IDE, though this does not mean it will/cannot work. The Language Server and Client provide the basis through which a fully functional Essence extension will be produced. The server and client run as separate processes primarily because this minimises performance cost.</p>
+<p>At present this addresses the client and server, with abstraction over lower level functions called by the server.</p>
+<h2 id="current-functionality-goals"><a class="header" href="#current-functionality-goals">Current Functionality Goals</a></h2>
+<p>Where implemented or actively in progress, the details of each goal shall be expanded upon. Achieving these goals would be considered to be a fully completed implementation.</p>
+<ul>
+<li>Syntax Highlighting
+<ul>
+<li>This is highlighting based on grammar structure</li>
+</ul>
+</li>
+<li>Semantic Highlighting
+<ul>
+<li>This is highlighting based on meaning</li>
+</ul>
+</li>
+<li>Error Underlining
+<ul>
+<li>Underlining errors of varying severity across the characters causing error</li>
+</ul>
+</li>
+<li>Hover Tooltips
+<ul>
+<li>When hovering over a word, produce information relating</li>
+</ul>
+</li>
+<li>Code Autocomplete
+<ul>
+<li>Produce completion options while user types</li>
+</ul>
+</li>
+</ul>
+<h2 id="files"><a class="header" href="#files">Files</a></h2>
+<pre><code class="language-bash"># the server (excluding diagnostics)
+crates/conjue-cp-language-server 
+├─ src/
+├── lib.rs
+├── server.rs
+├── handlers/
+├─── mod.rs
+├─── sync_event.rs
+├─ Cargo.toml
+
+# the client
+tools/vscode-ext 
+├─ node_modules/ #contains installed node_modules
+├─ out/ #contains files produced by npm compile
+├─ src/
+├── extension.ts
+├─ syntaxes/
+├── essence.tmLanguage.json
+├─ language-configuration.json
+├─ package-lock.json
+package.json
+package-lock.json
+tsconfig.json
+</code></pre>
+<h2 id="client-server-communication"><a class="header" href="#client-server-communication">Client-Server Communication</a></h2>
+<p>The client and server communicate asynchronously through I/O streams. Communication occurs through requests and responses, which use well-defined JSON objects to communicate. This communication is triggered on events (such as on-open, on-save, on-change), where the client will prompt the server.</p>
+<p>A client and server declare their capabilities during the initialisation handshake. These capabilities reflect what the server and client actually support, and so when new features are added these capabilities must be updated. Capabilities essentially allow for server and client to inform the other whether or not they support specific types of requests, ensuring that requests are not made needlessly. For example, <code>text_document_sync</code> indicates that the server supports syncing, meaning that the client will communicate on sync events (such as on-change and on-save).</p>
+<h2 id="client"><a class="header" href="#client">Client</a></h2>
+<p>The Client is a VSCode extension, in TypeScript. As such, the client represents the installed extension which is actively being used by a user. Broadly, we consider the client to be the the VSCode IDE in any instance where a <code>.essence</code> file is open.</p>
+<h3 id="key-structure"><a class="header" href="#key-structure">Key Structure</a></h3>
+<p>The Client itself is programmed within a TypeScript file, called <code>extension.ts</code>. This simply launches the client, which then launches the server using <code>ServerOptions</code> to call <code>conjure-oxide server-lsp</code>.</p>
+<p>Additionally, there is a <code>syntaxes/essence.tmLanguage.json</code> file, which lays out the syntactic grammar of Essence in a TextMate file. This file is what allows for Syntax Highlighting. The reason that this file exists, alongside the highlighting which will be performed by the server, is that this is extremely lightweight to implement. There are often performance costs associated with an LSP, as they can be large and require a lot of computation. As such, TextMate grammars allow for simple highlighting to occur before the LSP loads/while it is performing computation. <code>language-configuration.json</code> provides autoclosing of brackets, speech marks, etc.</p>
+<p>The client also requires a number of <code>package[-lock].json</code> files. The functionality of these files is to declare to the VSCode IDE what the extension is called, where it is sourced within the codebase, and what it’s functionality is. These files also establish the dependencies which are required for the client to function.</p>
+<h3 id="syntax-highlighting"><a class="header" href="#syntax-highlighting">Syntax Highlighting</a></h3>
+<p>As addressed above, syntax highlighting is implemented through a TextMate grammar. The basis of this grammar is that outlined by Conjure’s VSCode extension<sup class="footnote-reference" id="fr-bignote-1"><a href="#footnote-bignote">1</a></sup>
+‌</p>
+<h2 id="server"><a class="header" href="#server">Server</a></h2>
+<p>The server is a Rust server, created using tower-lsp. This library was used as it abstracts over the low-level implementation details. The implementation also abstracts over the implementation of the Diagnostic API and the parser, both of which are implemented and manipulated further downstream (if we consider the client and server to be the frontmost end of the project). This allows for the server to implement new functionality freely, so long as the information is capable of being provided by the Diagnostic API. Essentially, the implementation of the Language Server here is a higher level construct which makes requests to other levels (e.g. Diagnostics) when required. This allows for the code of the server to be fairly simple and easy to follow.</p>
+<h3 id="key-structure-1"><a class="header" href="#key-structure-1">Key Structure</a></h3>
+<h4 id="backend"><a class="header" href="#backend">Backend</a></h4>
+<p>Backend is the custom struct which represents the state and functionality of the Language Server. In this, it <strong>must</strong> implement towerlsp’s LanguageServer trait. This struct is named Backend simply because it represents the basis of the Language Server, and because this is common naming convention.</p>
+<p>The LanguageServer trait defined by towerlsp is the interface through which our language server is capable of adhering to the Language Server Protocol. In this, the capabilities of our server, and the implementation of these capabilities on given events, are specified. The current capabilities of the server are limited to syncing (as is required for error underlining).</p>
+<p>As established above, during the initialise handshake, the capabilities of the server are laid out. At present, the server only has it’s default capabilities and syncing capabilities (as required for error underlining), as it currently is in an in-development state. As more functionality is added to the server, more capabilities will be communicated across this handshake. It is worth noting that in the capabilities, the <code>text_document_sync</code> is set to ensure that each trigger event causes the client to pass the whole content of the text file. This is not the default case.</p>
+<p>There are currently five events handled, of which one is after the initialize handshake (simply communicates for log purposes) and one is shutdown. The other three events are syncing events, which have been mentioned throughout this documentation. The three events implemented at current are <code>did_open</code>, <code>did_save</code> and <code>did_change</code>. The functionality of these is handled by <code>handlers/sync_events</code>, as explained below.</p>
+<h4 id="sync_events"><a class="header" href="#sync_events">sync_events</a></h4>
+<p>These are split from the main <code>server.rs</code> primarily for readability, and to prevent the main body of the server from becoming bloated. Rust allows a struct to have it’s <code>impl</code> split over multiple files, so this file also simply implements functionality to the Backend struct. For each handler, the text file passed from the client is placed into a HashMap, which acts as a cache of the content of open files. Then, the content of the file is passed to <code>handle_diagnostics</code></p>
+<p>Backend has a custom function, <code>handle_diagnostics</code> which takes in a uri (uniform resource identifier: uniquely identifies a file) and the text of a file. This file is then passed to the background Diagnostic API, transformed from a vector of <code>parserDianostic</code> to a vector of <code>lspDiagnostic</code> (our name for towerlsp’s <code>Diagnostic</code> type), and published to the client. When a diagnostic is published to a client, it replaces any previous published diagnostics.</p>
+<h4 id="convert_diagnostics-parser_to_lsp_range-parser_to_lsp_position"><a class="header" href="#convert_diagnostics-parser_to_lsp_range-parser_to_lsp_position">convert_diagnostics, parser_to_lsp_range, parser_to_lsp_position</a></h4>
+<p>These are helper functions which allow for the transformation of a vector of <code>parseDiagnostics</code> to <code>lspDiagnostics</code>. This is done through iterating through the vector, and setting values according to <code>parseDiagnostics</code>. This is because the JSON communication between the Server and it’s Diagnostic API is not defined the same as the communication between the Server and the Client, though all of the correct information is communicated.</p>
+<h4 id="main"><a class="header" href="#main">main</a></h4>
+<p>Main is responsible for launching the server using the tokio library, as this is the async library towerlsp is designed to be used with. This is the function which is called from outwith the <code>conjure-cp-lsp</code> crate: for example, this is what is called in order to run the server, from conjure-oxide’s subcommand <code>server-lsp</code>.</p>
+<h3 id="error-underlining"><a class="header" href="#error-underlining">Error Underlining</a></h3>
+<p>The core functionality of this is expanded upon within the <a href="https://github.com/conjure-cp/conjure-oxide/tree/main/docs/src/documentation/diagnostics_api.md">Diagnostic API Documentation</a>. Most implementation details of Error Underlining are covered above. Error underlining is done through publishing diagnostics, which contain a range, warning level, and associated error text. The client recieves these diagnostics, and then displays the underlining as directed. The IDE will contain the error message on hover. Error underlining is demonstrated is documented in <a href="https://github.com/conjure-cp/conjure-oxide/tree/main/docs/src/documentation/ErrorUnderlineExample.mp4">Error Underlining Video</a>.</p>
+<p>Improvements to error underlining currently revolve around performance considerations. Presently, the whole Essence text is passed around. This is because this is the simplest option (and the performance cost is not great due to the fact that current essence test files are fairly short), and because the Diagnostic API requires the full text in order to parse and identify errors within it. Though a cache is currently created, it is simply written over at each sync event. It would be more efficient for it to be partially updated, but this would require much more consideration of range.</p>
+<h3 id="hover-tooltips"><a class="header" href="#hover-tooltips">Hover Tooltips</a></h3>
+<p>Not yet implemented, though this will be the next functionality added to the server. This will use Conjure’s documentation to provide information about Essence keywords when a keyword is being hovered over. It will also use context to provide information about non-keywords, such as the type of variable.</p>
+<h2 id="development"><a class="header" href="#development">Development</a></h2>
+<h3 id="how-to-use-for-development"><a class="header" href="#how-to-use-for-development">How to use (for development)</a></h3>
+<p>At the current stage of development, the extension is not being released. This means that functionality is being tested using VSCode’s extension Development environment. In order to ensure that this works as intended, compile <code>extension.ts</code> using <code>npm run compile</code> (or ctrl-shift-b and select this). Then launch the extension Development environment, and this will cause the client to run. Due to the structure of the client-server, the server will then run and link to the client, and the LSP can then be tested. Please ensure that <code>npm install</code> has been run in advance/all required node modules are installed, otherwise the client will not be able to launch.</p>
+<p>It is worth noting that a copy of conjure-oxide <strong>MUST</strong> be installed in order for the client to work. Testing the server requires for an updated install.</p>
+<p>If wishing to just run the server (though without a client it will be incapable of connecting to anything, and will time out), the user can run <code>conjure-oxide server-lsp</code>, which is a custom subcommand specifically to call the server. This does not run any other aspects of conjure-oxide.</p>
+<h3 id="development-directions"><a class="header" href="#development-directions">Development Directions</a></h3>
+<p>When developing, ensure that whatever functionality is being added has it’s respective capability communicated to the client during the initialisation handshake, otherwise the triggering events will not be communicated by the client.</p>
+<p>Furthermore, it is of note that the server and client communicate over standard input and output. As such, nothing which will be called by the server, including the server itself, should ever write onto or read from the stdin and stdout streams. This should always be handled by the tower-lsp library, to ensure that the communication occurring is JSONrpc as expected by the client. Any incorrectly formed writing to the stream will cause the client to close the server and disconnect.</p>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<p>conjure-cp (2025). conjure-vs-code/syntaxes/essence.tmLanguage.json at main · conjure-cp/conjure-vs-code. [online] GitHub. Available at: https://github.com/conjure-cp/conjure-vs-code/blob/main/syntaxes/essence.tmLanguage.json</p>
+<hr>
+<ol class="footnote-definition">
+<li id="footnote-bignote"> <a href="#fr-bignote-1">↩</a></li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="diagnostics-api-for-lsp-server"><a class="header" href="#diagnostics-api-for-lsp-server">Diagnostics API for LSP Server</a></h1>
+<h2 id="overview-5"><a class="header" href="#overview-5">Overview</a></h2>
+<p>The Diagnostics API provides tree-sitter and parser–based diagnostics for Essence source files (for error underlining, syntax highlighting, and hover info). It also exposes general LSP-compatible data structures for consumption by editors and tools. Currently, the main functionality of the Diagnostics API is to parse Essence source code and report syntactic errors found by walking the CST (using tree-sitter) and report semantic errors by attempting a semantic parse and reporting parser errors. It serialises diagnostics exposing a <code>get_diagnostics()</code> function, which returns both semantic and syntactic errors as a <code>Vec</code> of <code>Diagnostic</code>s.</p>
+<h2 id="structure"><a class="header" href="#structure">Structure</a></h2>
+<pre><code class="language-bash">crates/conjure-cp-essence-parser/src/diagnostics/
+├─ mod.rs
+├─ diagnostics_api.rs             # public LSP-facing structs and `get_diagnostics(source)` aggregator
+└─ error_detection/
+	 ├─ mod.rs
+	 ├─ semantic_errors.rs         # AST-based semantic detection: maps parse errors to Diagnostics
+	 └─ syntactic_errors.rs        # tree-sitter traversal: maps erronous parse tree patterns to Diagnostics
+</code></pre>
+<h3 id="key-functions"><a class="header" href="#key-functions">Key Functions</a></h3>
+<ul>
+<li>
+<p><code>get_diagnostics(source: &amp;str) -&gt; Vec&lt;Diagnostic)</code> serves as the main entrypoint. It aggregates <code>detect_semantic_errors(source)</code> and <code>detect_syntactic_errors(source)</code> into a single diagnostics vector, returning a combined, deduplicated-by-call vector of <code>Diagnostic</code>s. That’s the funciton you would call for error detection and underlining.</p>
+</li>
+<li>
+<p><code>detect_syntactic_errors(source: &amp;str) -&gt; Vec&lt;Diagnostic)</code> Parses with tree-sitter and walks the CST using DFS with early retract on error/missing/zero-length nodes to avoid duplicates. More information on that in <a href="documentation/LSP/error_detection/error_classification.html">error detection docs</a>.</p>
+</li>
+<li>
+<p><code>detect_semantic_errors(source: &amp;str) -&gt; Vec&lt;Diagnostic)</code> Runs <code>parse_essence_with_context</code> and, on <code>Err(EssenceParseError)</code>, maps the error into a <code>Diagnostic</code> using <code>error_to_diagnostic</code>. More information on that in <a href="documentation/LSP/error_detection/error_classification.html">error detection docs</a>.</p>
+</li>
+<li>
+<p>Helpers (for debugging and/or testing):</p>
+<ul>
+<li><code>print_all_error_nodes(source: &amp;str)</code>: prints all tree-sitter error/missing nodes with spans.</li>
+<li><code>print_diagnostics(diags: &amp;[Diagnostic])</code>: pretty-prints diagnostics.</li>
+<li><code>check_diagnostic(...)</code>: asserts diagnostic fields in tests.</li>
+</ul>
+</li>
+</ul>
+<h3 id="key-data-structures"><a class="header" href="#key-data-structures">Key Data Structures</a></h3>
+<ul>
+<li>
+<p><code>Position</code> and <code>Range</code>: 0-based positions used to loacte where in the source code the diagnotic originates from</p>
+</li>
+<li>
+<p><code>Severity</code>: indicates the type of diagnostic, i.e., Error, Warn, Info, Hint (numeric alignment with LSP <code>DiagnosticSeverity</code>)</p>
+</li>
+<li>
+<p><code>Diagnostic</code>:</p>
+<ul>
+<li><code>range</code>: <code>Range</code></li>
+<li><code>severity</code>: <code>Severity</code></li>
+<li><code>message</code>: human-readable description / error message</li>
+<li><code>source</code>: static string identifying which part of the API the diagnostic comes from (e.g., <code>syntactic-error-detector</code>)</li>
+</ul>
+<p>Example of serialised diagnostic:</p>
+<pre><code class="language-json">{
+	"range": {"start": {"line": 0, "character": 0}, "end": {"line": 0, "character": 5}},
+	"severity": 1,
+	"message": "some error message.",
+	"source": "syntactic-error-detector"
+}
+</code></pre>
+</li>
+<li>
+<p><code>SymbolKind</code> and <code>DocumentSymbol</code>:</p>
+<ul>
+<li>Intended for document highlighting; currently enumerates a few kinds (e.g., <code>Integer</code>, <code>Decimal</code>, <code>Function</code>, <code>Letting</code>, <code>Find</code>). To be extended in the near future.</li>
+<li><code>DocumentSymbol { name, detail?, kind, range, children? }</code>
+<code>DocumentSymbol</code> and <code>SymbolKind</code> exist to support semantic highlighting; As of now, these are scaffolded and will be extended across the Essence grammar later on.</li>
+</ul>
+</li>
+</ul>
+<h2 id="direction-for-use"><a class="header" href="#direction-for-use">Direction for Use</a></h2>
+<p>The API can be imported via <code>use conjure_cp_essence_parser::diagnostics::diagnostics_api::get_diagnostics</code> or <code>use conjure_cp_essence_parser::diagnostics::diagnostics_api::*</code>, depending on use.</p>
+<h3 id="testing-1"><a class="header" href="#testing-1">Testing</a></h3>
+<p>API-specific tests are located in <code>crates/conjure-cp-essence-parser/tests</code> and can be run via</p>
+<pre><code class="language-bash"># to run all tests
+cargo test -p conjure-cp-essence-parser --test
+
+# to run with a specific test target
+cargo test -p conjure-cp-essence-parser --test semantic_test
+cargo test -p conjure-cp-essence-parser --test keywords_as_ident
+cargo test -p conjure-cp-essence-parser --test missing_token
+cargo test -p conjure-cp-essence-parser --test unexpected_token
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="syntax-errors"><a class="header" href="#syntax-errors">Syntax Errors</a></h1>
 <p>(Will produce an invalid CST)</p>
 <h3 id="1-missing-token-eg-variable-domain-expression"><a class="header" href="#1-missing-token-eg-variable-domain-expression">1. Missing Token (e.g variable, Domain, Expression)</a></h3>
@@ -3700,11 +3936,117 @@ find a : bool such that a = (s[5] = t[1]) $ true
 <p>Format: <em>“such that”</em> list(<strong>Expression</strong>, <em>“,”</em>)</p>
 <p>Semantic Errors: All except for Invalid Domain</p>
 <div style="break-before: page; page-break-before: always;"></div><!--
+author: Yi Xin Chong
+last updated: 20-12-2025 1:08am
+-->
+<h1 id="lsp-error-testing"><a class="header" href="#lsp-error-testing">LSP Error Testing</a></h1>
+<h2 id="introduction"><a class="header" href="#introduction">Introduction</a></h2>
+<p>Conjure Oxide includes a server that uses a Language Server Protocol (LSP) to check Essence files for errors before the file is parsed. The LSP server communicates with the Diagnostics API to check for errors, and it will return the error message along with the range of the error. The server will then use the diagnosis to perform error underlining, and syntax and semantic highlighting (more details in <a href="#lsp-documentation">LSP Documentation</a> and <a href="#diagnostics-api-for-lsp-server">Diagnostics API documentation</a>).</p>
+<p>There are two types of error when trying to diagnose a given Essence file, which are <strong>syntactic</strong> and <strong>semantic errors</strong>:</p>
+<ul>
+<li><strong>Syntactic errors</strong> are errors that stem from the tokens in the Essence file not being in the correct syntax when given into the parser.</li>
+<li><strong>Semantic errors</strong> are errors that may pass the syntactic error checking (i.e. the file lines have the correct syntax), but ultimately is unable to be parsed due to errors relating to the entire context of the file.</li>
+</ul>
+<p>To be able to accurately diagnose the Essense files for errors, tests cases have been written for situations that <a href="#diagnostics-api-for-lsp-server">Diagnostics API</a> and <a href="#essence-parser">Native parser</a> might encounter during diagnosing and parsing, referencing the <a href="#syntax-errors-1">Essence Error Classification</a>).</p>
+<h2 id="testing-2"><a class="header" href="#testing-2">Testing</a></h2>
+<h3 id="parser"><a class="header" href="#parser">Parser</a></h3>
+<!-- TODO: Roundtrip testing does not exist -- waiting on an update from LSP team -->
+<p>Test cases that test the coverage of the Native parser use <a href="https://github.com/conjure-cp/conjure-oxide/tree/main/docs/src/documentation/testing/roundtrip/roundtrip_testing.md">Roundtrip testing</a>, and they are separated into the <code>syntax-error</code> and <code>semantic-error</code> directories in the <code>roundtrip\native-errors</code> directory of the <code>tests-integration</code> crate, and in the <code>config.toml</code> of all the test cases, only the Native parser is set to be used when testing.</p>
+<p>These test cases will run alongside all the integration tests in the <code>tests-integration</code> crate, which can be done by using:</p>
+<pre><code class="language-bash">cargo test
+</code></pre>
+<p>Alternatively, to run only the Roundtrip tests, use the command:</p>
+<pre><code class="language-bash">cargo test tests_roundtrip
+</code></pre>
+<h3 id="diagnostics-api"><a class="header" href="#diagnostics-api">Diagnostics API</a></h3>
+<p>For testing the Diagnostics API, test cases are written in the <code>tests</code> directory of the <code>conjure-cp-essence-parser</code> crate, which uses normal Rust unit testing. To run these tests, use the command:</p>
+<pre><code class="language-bash">cargo test -p conjure-cp-essence-parser
+</code></pre>
+<p>Or, to run the test files individually, use the command:</p>
+<pre><code class="language-bash">cargo test -p conjure-cp-essence-parser --test {file_name}
+</code></pre>
+<p>The sections below will categorise all test cases into one of the categories based on the error classigiv, with an explanation of the purpose of each test case.</p>
+<h3 id="native-parser-error-tests"><a class="header" href="#native-parser-error-tests">Native parser error tests</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Test name</th><th>Error category</th><th>Input essence</th><th>Purpose</th></tr>
+</thead>
+<tbody>
+<tr><td>missing-token-01</td><td>Syntax error: Missing token</td><td>find x:</td><td>To detect missing domains</td></tr>
+<tr><td>missing-token-02</td><td>Syntax error: Missing token</td><td>find: bool</td><td>To detect missing identifiers</td></tr>
+<tr><td>missing-token-03</td><td>Syntax error: Missing token</td><td>letting x be</td><td>To detect missing values</td></tr>
+<tr><td>missing-token-04</td><td>Syntax error: Missing token</td><td>find x,y,z: int(1..3)<br>such that x = y =<br>such that z = 3</td><td>To detect missing operators in comparison statements</td></tr>
+<tr><td>missing-token-05</td><td>Syntax error: Missing token</td><td>find x: int(1..3</td><td>To make sure that a domain is properly closed</td></tr>
+<tr><td>missing-token-06</td><td>Syntax error: Missing token</td><td>find x bool</td><td>To detect missing colons</td></tr>
+<tr><td>unexpected-token-01</td><td>Syntax error: Unexpected token</td><td>find x: int(1..3x)</td><td>To detect unexpected variables in a domain’s range</td></tr>
+<tr><td>unexpected-token-02</td><td>Syntax error: Unexpected token</td><td>find x: int(1..3))</td><td>To detect unexpected closing parentheses</td></tr>
+<tr><td>malformed-top-level-01</td><td>Syntax error: Malformed top level statement</td><td>find a,b,c: int(1..3)<br>print a</td><td>To make sure unknown commands will not be parsed</td></tr>
+<tr><td>invalid-domain-01</td><td>Semantic error: Invalid domain</td><td>find x: int(10..1)</td><td>To make sure that the start of a domain cannot be greater than the end of the domain</td></tr>
+<tr><td>invalid-index</td><td>Semantic error: Invalid index</td><td>letting s be (0,1,1,0)<br>letting t be (0,0,0,1)<br>find a : bool such that a = (s[5] = t[1])</td><td>To make sure that indexes that are out of range will raise an error</td></tr>
+<tr><td>keyword-as-identifiers-01</td><td>Keyword as identifier</td><td>find bool: bool</td><td>To make sure that the keyword ‘bool’ cannot be used as an identifier</td></tr>
+<tr><td>keyword-as-identifiers-02</td><td>Semantic error: Keyword as identifier</td><td>find letting,b,c: int(1..3)</td><td>To make sure that the keyword ‘letting’ cannot be used as an identifier</td></tr>
+<tr><td>type-mismatch</td><td>Semantic error: Type Mismatch</td><td>letting y be false<br>find x: int(5..10)<br>such that 5 + y = 6</td><td>To make sure that if the type of a variable is incorrect for an expression, it will raise an error</td></tr>
+<tr><td>unsafe-division</td><td>Semantic error: Unsafe division</td><td>find x: int(5..10)<br>such that x/0 = 3</td><td>To make sure that expressions with division over zero will raise an error</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="diagnostics-api-error-tests"><a class="header" href="#diagnostics-api-error-tests">Diagnostics API error tests</a></h3>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Test name</th><th>Error category</th><th>Input essence</th><th>Purpose</th></tr>
+</thead>
+<tbody>
+<tr><td>detects_keyword_as_identifier_find</td><td>Syntax error: Keyword as identifiers</td><td>find find,b,c: int(1..3)</td><td>To make sure that the keyword ‘find’ cannot be used as an identifier</td></tr>
+<tr><td>detects_keyword_as_identifier_letting</td><td>Syntax error: Keyword as identifiers</td><td>find letting,b,c: int(1..3)</td><td>To make sure that the keyword ‘letting’ cannot be used as an identifier</td></tr>
+<tr><td>detects_keyword_as_identifier_bool</td><td>Syntax error: Keyword as identifiers</td><td>find bool: bool</td><td>To make sure that the keyword ‘bool’ cannot be used as an identifier</td></tr>
+<tr><td>invalid_top_level_statement_expression</td><td>Syntax error: Malformed top level statements</td><td>a,a,b: int(1..3)</td><td>To make sure that a missing ‘find’ keyword will cause a top level error</td></tr>
+<tr><td>malformed_find_2</td><td>Syntax error: Malformed top level statements</td><td>find &gt;=lex,b,c: int(1..3)</td><td>To make sure that complex operators cannot be used as an identifier</td></tr>
+<tr><td>malformed_find_3</td><td>Syntax error: Malformed top level statements</td><td>find +,b,c: int(1..3)</td><td>To make sure that operators cannot be used as an identifier</td></tr>
+<tr><td>unexpected_colon_used_as_identifier</td><td>Syntax error: Malformed top level statements</td><td>find :,b,c: int(1..3)</td><td>To make sure that colons cannot be used as an identifier</td></tr>
+<tr><td>missing_colon_domain_in_find_statement_1st_line</td><td>Syntax error: Malformed top level statements</td><td>find x</td><td>To make sure that missing the colon and domain in a ‘find’ statement will cause a top level error</td></tr>
+<tr><td>missing_colon_domain_in_find_statement_2nd_line</td><td>Syntax error: Malformed top level statements</td><td>find x: int(1..3)<br>find y</td><td>To make sure that malformed top level checks work not only for the first line</td></tr>
+<tr><td>unexpected_print_2nd_line</td><td>Syntax error: Malformed statements<br>Syntax error: Unexpected token</td><td>find a,b,c: int(1..3)<br>print a</td><td>To make sure that unknown commands will not be parsed</td></tr>
+<tr><td>missing_identifier</td><td>Syntax error: Missing token</td><td>find: bool</td><td>To detect missing identifiers</td></tr>
+<tr><td>missing_colon</td><td>Syntax error: Missing token</td><td>find x bool</td><td>To detect missing colons</td></tr>
+<tr><td>missing_domain</td><td>Syntax error: Missing token</td><td>find x: bool<br>find y:</td><td>To detect missing domains</td></tr>
+<tr><td>missing_constraint</td><td>Syntax error: Missing token</td><td>find x: bool<br>such that</td><td>To detect missing constraints</td></tr>
+<tr><td>multiple_missing_tokens</td><td>Syntax error: Missing token</td><td>find x: int(1..3<br>letting x be</td><td>To detect multiple missing tokens</td></tr>
+<tr><td>missing_domain_in_tuple_domain</td><td>Syntax error: Missing token</td><td>find x: tuple()</td><td>To detect missing domains in tuple domains</td></tr>
+<tr><td>missing_operator_in_comparison</td><td>Syntax error: Missing token</td><td>find x: int<br>such that 5 =</td><td>To detect missing operators in comparison statements</td></tr>
+<tr><td>missing_right_operand_in_and_expr</td><td>Syntax error: Missing token</td><td>find x: int<br>such that x /\</td><td>To detect missing right operand in an ‘and’ expression</td></tr>
+<tr><td>missing_period_in_domain</td><td>Syntax error: Missing token</td><td>find a: int(1.3)</td><td>To detect if a domain is missing a period</td></tr>
+<tr><td>unexpected_closing_paren</td><td>Syntax error: Unexpected token</td><td>find x: int(1..3))</td><td>To detect unexpected closing parentheses</td></tr>
+<tr><td>unexpected_identifier_in_range</td><td>Syntax error: Unexpected token</td><td>find x: int(1..3x)</td><td>To detect unexpected variables in a domain’s range</td></tr>
+<tr><td>unexpected_semicolon</td><td>Syntax error: Unexpected token</td><td>find x: int(1..3)<br>such that x = 6;</td><td>To detect unexpected semicolons at the end of an expression</td></tr>
+<tr><td>unexpected_extra_comma_in_find</td><td>Syntax error: Unexpected token</td><td>find x,, y: int(1..3)</td><td>To detect extra commas in the variable list of a ‘find’ statement</td></tr>
+<tr><td>unexpected_token_in_implication</td><td>Syntax error: Unexpected token</td><td>find x: int(1..3)<br>such that x -&gt; %9</td><td>To detect unexpected token in an implication expression</td></tr>
+<tr><td>unexpected_token_in_matrix_domain</td><td>Syntax error: Unexpected token</td><td>find x: matrix indexed by [int, &amp;] of int</td><td>To detect unexpected token in a matrix domain</td></tr>
+<tr><td>unexpected_token_in_set_literal</td><td>Syntax error: Unexpected token</td><td>find x: set of int<br>such that x = {1, 2, @}</td><td>To detect unexpected token in a set literal</td></tr>
+<tr><td>multiple_unexpected_tokens</td><td>Syntax error: Unexpected token</td><td>find x: set of int;<br>such that x = {1, 2, @}</td><td>To make sure that the syntactic checker can detect multiple unexpected tokens</td></tr>
+<tr><td>unexpected_x_in_all_diff</td><td>Syntax error: Unexpected token</td><td>find a : bool<br>such that a = allDiff([1,2,4,1]x)</td><td>To detect unexpected tokens in all diffs</td></tr>
+<tr><td>unexpected_int_at_the_end</td><td>Syntax error: Unexpected token</td><td>find a : bool<br>such that a = allDiff([1,2,4,1])8</td><td>To detect unexpected tokens at the end of a line</td></tr>
+<tr><td>unexpected_token_in_identifier</td><td>Syntax error: Unexpected token</td><td>find v@lue: int(1..3)</td><td>To detect unexpected tokens in a variable name</td></tr>
+<tr><td>detects_undefined_variable</td><td>Semantic error: Undefined variable</td><td>find x: int(1..10)<br>such that x = y</td><td>To make sure that undefined variables will raise an error</td></tr>
+<tr><td>no_errors_for_valid_code</td><td>None</td><td>find x, y: int(1..10)<br>such that x + y = 10</td><td>To make sure that the semantic checker will not give an error when there is none</td></tr>
+<tr><td>range_points_to_error_location</td><td>None</td><td>find x: int(1..10)<br>such that x = undefined_var</td><td>To make sure that the range given by the semantic checker is the range of the error</td></tr>
+<tr><td>domain_start_greater_than_end</td><td>Semantic error: Invalid domain</td><td>find x: int(10..1)</td><td>To make sure that the start of a domain cannot be greater than the end of the domain</td></tr>
+<tr><td>incorrect_type_for_equation</td><td>Semantic error: Type mismatch</td><td>letting y be false<br>find x: int(5..10)<br>such that 5 + y = 6</td><td>To make sure that if the type of a variable is incorrect for an expression, it will raise an error</td></tr>
+<tr><td>dividing_over_zero</td><td>Semantic error: Unsafe division</td><td>find x: int(5..10)<br>such that x/0 = 3</td><td>To make sure that expressions with division over zero will raise an error</td></tr>
+<tr><td>invalid_index</td><td>Semantic error: Invalid index</td><td>letting s be (0,1,1,0)<br>letting t be (0,0,0,1)<br>find a : bool such that a = (s[5] = t[1])</td><td>To make sure that indexes that are out of range will raise an error</td></tr>
+<tr><td>duplicate_declaration_of_variable</td><td>Semantic error: Redefined variable</td><td>find x: int(1..10)<br>find x: int(2..3)</td><td>To make sure that redefining a variable will raise an error</td></tr>
+<tr><td>extra_comma_in_variable_list</td><td>Semantic error: Unexpected token</td><td>find x,: int(1..10)</td><td>To make sure that having an extra comma in the variable list is not allowed</td></tr>
+</tbody>
+</table>
+</div>
+<p><em>Note: currently all semantic tests are set to be ignored, as they have not been implemented yet. Once they have been implemented, the <code>#[ignore]</code> will be removed.</em></p>
+<div style="break-before: page; page-break-before: always;"></div><!--
 authors: Liz Dempstergit 
 last-updated: 21-12-25
 ---- -->
 <h1 id="ideal-scenario-of-testing-for-conjure-oxide"><a class="header" href="#ideal-scenario-of-testing-for-conjure-oxide">Ideal Scenario of Testing for Conjure-Oxide</a></h1>
-<h2 id="introduction"><a class="header" href="#introduction">Introduction</a></h2>
+<h2 id="introduction-1"><a class="header" href="#introduction-1">Introduction</a></h2>
 <h3 id="what-is-the-goal-of-this-document"><a class="header" href="#what-is-the-goal-of-this-document">What is the goal of this document?</a></h3>
 <p>The goal of this document is to provide an ideal testing outline for Conjure-Oxide, a project in development. To do so, this document will be split into definitions (of Conjure-Oxide and other relevant components, as well as key testing terms), current Conjure-Oxide testing, and idealised (to an extent) Conjure-Oxide testing. When discussing idealised testing, any key limitations will also be discussed. Further, this document will address the use of GitHub actions in this project, including code coverage.</p>
 <h3 id="what-is-conjure-oxide"><a class="header" href="#what-is-conjure-oxide">What is Conjure-Oxide</a></h3>
@@ -3824,7 +4166,7 @@ In the future, it may also be worth examining the possibility and likelihood of 
 </li>
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="overview-5"><a class="header" href="#overview-5">Overview</a></h1>
+<h1 id="overview-6"><a class="header" href="#overview-6">Overview</a></h1>
 <p>Custom tests were created as a solution to the problem that integration tests do not allow for testing of error messages, which automatically return from the integration test method and therefore cannot be analyzed. The custom tests, however, work for both erroneous and non-erroneous code. Each test contains an input, a <code>run.sh</code> file to execute the test, and an expected standard output/error (or both) to compare against. Conjure Oxide is set up to automatically create and execute a test for each test folder in the <code>tests/custom </code>directory when <code>cargo test</code> is ran so to add a test case, all one must do is add a folder in the directory which contains the necessary components.</p>
 <h1 id="how-to-add-a-test-case"><a class="header" href="#how-to-add-a-test-case">How to add a test case</a></h1>
 <p>Adding a test case is simple. First add a folder with the test case name to the <code>tests/custom</code> directory. Tests can be organized within folders in the directory–only folders with a <code>run.sh</code> file will be treated as a test case. Within the test folder, add these components:</p>
@@ -3851,7 +4193,7 @@ fn {test_name}() -&gt; Result&lt;(), Box&lt;dyn Error&gt;&gt; {{
 </code></pre>
 <p>The <code>custom_test</code> function takes the test directory as a parameter. It adds the <code>conjure_oxide</code> executable to the PATH environment variable and runs the commands from the <code>run.sh</code> file, saving the produced output. It then overwrites the expected output and error if accept was set to true and compares the actual and expected outputs/errors if not. If either does not match, the expected and actual output are printed and the test fails. Otherwise, the test passes.</p>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="introduction-1"><a class="header" href="#introduction-1">Introduction</a></h1>
+<h1 id="introduction-2"><a class="header" href="#introduction-2">Introduction</a></h1>
 <!-- ## Contents
 - [Recap: Uniplates and Biplates](#recap-uniplates-and-biplates)
 - [Definition of Children](#definition-of-children)
@@ -4127,136 +4469,6 @@ such that x &gt; 10
 <li><a href="https://conjure-cp.github.io/conjure-oxide/tools/essence-feature-usage-stats/">Essence feature usage stats</a></li>
 <li><a href="https://conjure-cp.github.io/conjure-blocks/">Conjure blocks</a></li>
 </ul>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="essence-parser"><a class="header" href="#essence-parser">Essence Parser</a></h1>
-<p>The parser converts incoming Essence programs in Conjure Oxide to the <a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_core/ast/struct.Model.html">Model Object</a> that the rule engine takes in. The relevant parts of the Model object are the SymbolTable and Expression objects. The symbol table is essentially a list of the variables and their corresponding domains. The Expression object is a recursive object that holds all the constraints of the problem, nested into one object. The parser has two main parts. The first is the <code>tree-sitter-essence</code> crate, which is a general Essence parser using the library tree-sitter. The second part is the <code>conjure-cp-essence-parser</code> crate which is Rust code that uses the grammar to parse Essence programs and convert them into the above-mentioned Model object.</p>
-<h1 id="tree-sitter-grammar-1"><a class="header" href="#tree-sitter-grammar-1">Tree Sitter Grammar</a></h1>
-<p><a href="https://tree-sitter.github.io/tree-sitter/">Tree-sitter</a> is a parsing library that creates concrete syntax trees from programs in various languages. It contains many languages already, but Essence is unfortunately not one of them. Therefore, the <a href="https://github.com/conjure-cp/conjure-oxide/tree/main/crates/tree-sitter-essence">tree-sitter-essence</a> crate contains a JavaScript grammar for Essence, which tree-sitter uses to create a parser. The parser is not specific to Conjure Oxide as the grammar merely describes the general Essence language, but it is used in and developed for Conjure Oxide so currently covers only parts of the Essence language that Conjure Oxide deals with and has tests written for. The grammar is based on <a href="https://conjure.readthedocs.io/en/latest/essence.html">this Essence documentation</a>.</p>
-<h2 id="general-structure-1"><a class="header" href="#general-structure-1">General Structure</a></h2>
-<p>At the top level, there can be either find statements, letting statements, or constraint statements. Find statements consist of the keyword <code>find</code>, one or more variables, and then a domain. Letting statements have the keyword <code>letting</code>, one or more variables, and an expression or domain to assign to those variables. Constraints contain the keyword <code>such that</code> and one or more logical or numerical expressions which include variables and constants.</p>
-<h2 id="domains"><a class="header" href="#domains">Domains</a></h2>
-<p>Domains in Essence specify the set of possible values that a variable can take. The grammar currently supports the following types of domains:</p>
-<ul>
-<li><strong><code>bool_domain</code></strong>: Boolean values (<code>bool</code>)</li>
-<li><strong><code>int_domain</code></strong>: Integer values, which can be unbounded (<code>int</code>) or bounded by ranges (<code>int(1..10)</code>, <code>int(1..5, 10..15)</code>)</li>
-<li><strong><code>tuple_domain</code></strong>: Tuples of multiple domains (<code>(int(1..5), bool)</code>)</li>
-<li><strong><code>matrix_domain</code></strong>: Multi-dimensional arrays indexed by domains (<code>matrix indexed by [int(1..5)] of int(0..9)</code>)</li>
-<li><strong><code>record_domain</code></strong>: Named records with typed fields (<code>record {x: int, y: bool}</code>)</li>
-<li><strong><code>set_domain</code></strong>: Sets with optional size constraints (<code>set of int(1..10)</code>, <code>set (minSize 2, maxSize 5) of bool</code>)</li>
-<li><strong><code>variable_domain</code></strong>: Domain references using identifiers, allowing domains to be parameterized or defined elsewhere</li>
-</ul>
-<h2 id="expression-hierarchy-1"><a class="header" href="#expression-hierarchy-1">Expression Hierarchy</a></h2>
-<p>Expressions in the grammar are broken down into boolean expressions, comparison expressions, arithmetic expressions, and atoms. This separation helps enforce semantic constraints inherent to the language. For example, expressions like <code>x + 3 = y</code> are allowed because an arithmetic expression is permitted on either side of a comparison, but chained comparisons like <code>x = y = 3</code> are disallowed, since a comparison expression cannot itself contain another comparison expression as an operand. This also helps ensure the top-most expression in a constraint evaluates to a boolean (so <code>such that x + 3</code> wouldn’t be valid).</p>
-<p>Atoms are the fundamental building blocks and represent constants, identifiers, and structured values (tuples, matrices, records, comprehensions, or slices). Atoms are separate from boolean and arithmetic expressions in the grammar hierarchy, though they can be used as operands in most expression contexts. This means a constraint like <code>such that y</code> would be valid syntactically even though <code>y</code> might be an integer - type checking happens at a later stage. List combining expressions are also separated into boolean and arithmetic variants for this reason (so <code>such that allDiff([a, b])</code> is valid but <code>such that min([a,b])</code> isn’t).</p>
-<p>The precedence levels throughout the grammar are based on the Essence Prime operator precedence table found in Appendix B of the <a href="https://arxiv.org/pdf/2201.03472">Savile Row Manual</a>. This is important to ensure that nested or complicated expressions such as <code>(2*x) + (3*y) = 12</code> are parsed in the correct order, as this will determine the structure of the Expression object in the Model.</p>
-<h2 id="limitations-of-the-tree-sitter-grammar"><a class="header" href="#limitations-of-the-tree-sitter-grammar">Limitations of the Tree-sitter Grammar</a></h2>
-<h3 id="keyword-exclusion"><a class="header" href="#keyword-exclusion">Keyword Exclusion</a></h3>
-<p>Currently, the grammar allows for any combination of letters, numbers, and underscores to be parsed as variable identifiers. This includes reserved keywords of the Essence language such as ‘find’ or ‘letting’. This is incorrect and such keywords shouldn’t be allowed as variables. Tree-sitter doesn’t support lookahead assertions or negative matches, so grammar rules cannot exclude specific patterns or words from identifier rules. Checking for keywords as variables happens during semantic checking (see Diagnostics section).</p>
-<h3 id="error-detection"><a class="header" href="#error-detection">Error Detection</a></h3>
-<p>Error detection from tree-sitter is unpredictable and can be confusing, as it simply creates ERROR nodes in the parse tree without detailed information about what was invalid. Similar errors will produce ERROR nodes in different places and impact the surrounding tree strucure in varying ways, depending on the context. More sophisticated error detection and messsaging has been implemented through Diagnostics.</p>
-<h1 id="rust-parser-1"><a class="header" href="#rust-parser-1">Rust Parser</a></h1>
-<p>This is the second part of the parser and is contained in the <a href="https://github.com/conjure-cp/conjure-oxide/tree/main/crates/conjure-cp-essence-parser">conjure-cp-essence-parser</a> crate. The primary function is <code>parse_essence_file_native</code>, shown below, which takes in the path to the input and the context and returns the Model or an error.</p>
-<pre><code class="language-Rust">pub fn parse_essence_file_native(
-    path: &amp;str,
-    context: Arc&lt;RwLock&lt;Context&lt;'static&gt;&gt;&gt;,
-) -&gt; Result&lt;Model, EssenceParseError&gt; {...}
-</code></pre>
-<p>Within that function, the source code is read from the input and the tree-sitter grammar is used to parse that code and produce a parse tree. From there, a Model object is created and the <code>SymbolTable</code> and <code>Expression</code> fields are populated by traversing and extracting information from the parse tree.</p>
-<h2 id="general-structure-1-1"><a class="header" href="#general-structure-1-1">General Structure</a></h2>
-<p>The top level nodes (children of the root node), are either extras (comments or language labels), find statements, letting statements, or constraints. Find and letting statements provide info that is added to the SymbolTable while constraints are added to the Expression.</p>
-<p>The parser crate is organized into multiple modules, each handling a specific aspect of Essence parsing:</p>
-<ul>
-<li><strong><code>parse_model.rs</code></strong>: Entry point containing <code>parse_essence_file_native</code>. Handles top-level statement parsing (find, letting, constraints) and orchestrates the overall parsing process.</li>
-<li><strong><code>expression.rs</code></strong>: Core expression parsing logic. Handles boolean expressions, comparisons, arithmetic operations, and dispatches to specialized parsers.</li>
-<li><strong><code>atom.rs</code></strong>: Parses atomic expressions - constants, identifiers, tuples, matrices, records, set literals, and indexing/slicing operations.</li>
-<li><strong><code>domain.rs</code></strong>: Domain parsing including integer domains (ranges), boolean domains, and matrix domains. Handles both ground domains (fully specified) and unresolved domains (containing references).</li>
-<li><strong><code>find.rs</code></strong>: Parses find statements, extracting variable names and their domains for the symbol table.</li>
-<li><strong><code>letting.rs</code></strong>: Parses letting statements, which can bind variables to either domains or expressions.</li>
-<li><strong><code>comprehension.rs</code></strong>: Parses comprehensions, quantifiers (forAll, exists), and aggregate expressions (sum, product, min, max, etc.). This is a complex module handling generator expressions and nested quantification.</li>
-<li><strong><code>abstract_literal.rs</code></strong>: Parses abstract literal structures like matrices, tuples, and records.</li>
-</ul>
-<h3 id="layered-dispatch-pattern"><a class="header" href="#layered-dispatch-pattern">Layered Dispatch Pattern</a></h3>
-<p>The parser is designed with a hierarchical dispatch architecture where each module has a main entry point function that delegates to more specific functions based on the tree-sitter node type. This creates layers of abstraction:</p>
-<ol>
-<li><strong>Top-level dispatcher</strong>: Examines the node’s <code>kind()</code> to determine which category of parser to call (e.g., expression, domain, statement)</li>
-<li><strong>Category-level parsers</strong>: Further dispatch to specialized functions based on the specific variant (e.g., <code>parse_binary_expression</code>, <code>parse_atom</code>, <code>parse_int_domain</code>)</li>
-<li><strong>Specialized parsers</strong>: Handle the actual parsing logic for specific node types</li>
-</ol>
-<p>This layered approach mirrors the structure of the tree-sitter grammar itself, where rules contain choices of subrules. This pattern keeps the codebase maintainable by separating concerns and making additions straightforward.</p>
-<h3 id="general-utils"><a class="header" href="#general-utils">General utils</a></h3>
-<p><code>kind()</code> is used to determine which rule a node represents and the corresponding function or logic is then applied to that node. Child nodes are found using their field names or indexes and the <code>named_children()</code> function is used to iterate over the named child nodes of a node. The function <code>child_expr</code> returns the Expression parsed from the first named child of the given node.</p>
-<h3 id="extracting-from-the-source-code-identifiers-and-constants-1"><a class="header" href="#extracting-from-the-source-code-identifiers-and-constants-1">Extracting from the source code (identifiers and constants)</a></h3>
-<p>The tree-sitter nodes have a start and end byte indicating where the node corresponds to in the source code. For variable identifiers, constants, and operators, these bytes are necessary to extract the actual values from the source code.</p>
-<p>For example, the following code appears in the <code>parse_find_statement</code> function and is used to extract the specific variable name from the source code, which is represented simply by a tree-sitter node (named <code>variable</code> in this case).</p>
-<pre><code class="language-Rust">let variable_name = &amp;source_code[variable.start_byte()..variable.end_byte()];
-</code></pre>
-<p>Another example is when parsing expressions, the node representing the operator is not always ‘named’, meaning it is not its own rule in the grammar and rather specified directly in the rule (ex. <code>exponent: $ =&gt; seq($.arithmetic_expr, "**", $.arithmetic_expr)</code> (simplified)), or the operator one of multiple choices in a rule (ex. <code>mulitcative_op: $ =&gt; choice("*", "/", "%")</code>). In this situation, the same method as for the variable identifiers is used:</p>
-<pre><code class="language-Rust">let op = constraint.child_by_field_name("operator").ok_or(format!(
-        "Missing operator in expression {}",
-        constraint.kind()
-    ))?;
-let op_type = &amp;source_code[op.start_byte()..op.end_byte()];
-</code></pre>
-<h2 id="find-and-letting-statements-1"><a class="header" href="#find-and-letting-statements-1">Find and Letting Statements</a></h2>
-<p>Find and letting statements are parsed relatively intuitively. For find statements, the list of variables is iterated over and each is added to a hash map as the key. Then, the domain is parsed and added as the value for each variable it applies to. Once all variables and domains are parsed, the hash map is returned and the caller function iterates over it and adds each pair to the <code>SymbolTable</code>. For letting statements, a new <code>SymbolTable</code> is created. The variables are again iterated over and added to the table. Letting statements can either specify a domain or an expression for the variables so the type of node is checked and either parsed as an expression or domain before being added to the table. The <code>SymbolTable</code> is returned and the caller function adds it to the existing <code>SymbolTable</code> of the <code>Model</code>.</p>
-<h2 id="ground-vs-unresolved-domains"><a class="header" href="#ground-vs-unresolved-domains">Ground vs Unresolved Domains</a></h2>
-<p>The parser supports both <strong>ground domains</strong> (fully specified, e.g., <code>int(1..10)</code>) and <strong>unresolved domains</strong> (containing variable references, e.g., <code>int(1..n)</code>). For unresolved domains, the variable pointer must be retrieved from the existing <code>SymbolTable</code>, hich was described in the previous section. Unresolved domains are resolved during later stages of processing once all variables are known.</p>
-<h2 id="constraints-2"><a class="header" href="#constraints-2">Constraints</a></h2>
-<p>Adding constraints to the overall constraints <code>Expression</code> requires nesting <code>Expression</code> objects. Each constraint is parsed and then added to the model using the <code>add_constraints</code> function.</p>
-<p>Following the layered dispatch pattern, expressions are organized into types (again mirroring the grammar):</p>
-<ul>
-<li><strong><code>parse_expression</code></strong> in <code>expression.rs</code>: The main entry point that dispatches to specialized parsers based on node type</li>
-<li><strong><code>parse_binary_expression</code></strong>: Handles binary operations</li>
-<li>** <code>parse_arithmetic_expression</code>**: Handles arithmetic operations</li>
-<li>** <code>parse_comparison_expression</code>**: Handles comparison operations</li>
-<li><strong><code>parse_atom</code></strong> in <code>atom.rs</code>: Handles atomic expressions</li>
-<li><strong><code>parse_comprehension</code></strong> in <code>comprehension.rs</code>: Handles comprehensions, quantifiers, and aggregates</li>
-</ul>
-<h2 id="comprehensions-quantifiers-and-aggregates"><a class="header" href="#comprehensions-quantifiers-and-aggregates">Comprehensions, Quantifiers, and Aggregates</a></h2>
-<p>Comprehensions are a significant feature in Essence that require special parsing logic beyond the standard node-to-expression pattern. They are parsed by the <code>comprehension.rs</code> module using the specialized <code>ComprehensionBuilder</code> type that manages the complex scoping rules inherent to comprehensions.</p>
-<p>Comprehensions create their own scope with local variables (generators). The parsing process involves:</p>
-<ol>
-<li><strong>Creating a ComprehensionBuilder</strong>: Initialized with the parent symbol table</li>
-<li><strong>Setting up scoped symbol tables</strong>: The builder creates two child symbol tables:
-<ul>
-<li><strong>Generator symbol table</strong>: Contains generator variables as regular variables (for parsing conditions)</li>
-<li><strong>Return expression symbol table</strong>: Contains generator variables as “givens” (for parsing the return expression)</li>
-</ul>
-</li>
-<li><strong>Parsing generators</strong>: Each generator (<code>var : domain</code> or <code>var &lt;- collection</code>) is parsed and added to both symbol tables</li>
-<li><strong>Parsing conditions</strong>: Conditions are parsed using the generator symbol table, allowing them to reference generator variables</li>
-<li><strong>Parsing the return expression</strong>: Parsed using the return expression symbol table where generators appear as givens</li>
-<li><strong>Building the comprehension</strong>: The builder combines all components into a <code>Comprehension</code> object</li>
-</ol>
-<p>Example: For <code>[x + 1 | x : int(1..5), x &gt; 2]</code>:</p>
-<ul>
-<li>Generator <code>x : int(1..5)</code> is added to both symbol tables</li>
-<li>Condition <code>x &gt; 2</code> is parsed with <code>x</code> in scope as a variable</li>
-<li>Return expression <code>x + 1</code> is parsed with <code>x</code> in scope as a given</li>
-<li>The result is wrapped in a <code>Comprehension</code> expression</li>
-</ul>
-<h3 id="quantifiers-and-aggregates"><a class="header" href="#quantifiers-and-aggregates">Quantifiers and Aggregates</a></h3>
-<p>Quantifier expressions (<code>forAll</code>, <code>exists</code>) and aggregate expressions (<code>sum</code>, <code>min</code>, <code>max</code>) follow the same comprehension-based parsing approach through <code>parse_quantifier_or_aggregate_expr</code>. They:</p>
-<ol>
-<li>Use <code>ComprehensionBuilder</code> to set up scoped symbol tables</li>
-<li>Parse generators to add variables to the scope</li>
-<li>Parse the body expression using the return expression symbol table</li>
-<li>Build a comprehension with an appropriate AC operator kind (<code>And</code> for <code>forAll</code>, <code>Sum</code> for <code>sum</code>, etc.)</li>
-<li>Wrap the comprehension in the corresponding expression type (<code>Expression::And</code>, <code>Expression::Sum</code>, etc.)</li>
-</ol>
-<p>This unified approach ensures consistent scoping behavior across all comprehension-style constructs in Essence.</p>
-<h1 id="testing"><a class="header" href="#testing">Testing</a></h1>
-<h2 id="integration-testing"><a class="header" href="#integration-testing">Integration Testing</a></h2>
-<p>The native parser (<code>parse_essence_file_native</code>) is used by default for all integration tests in the <code>tests-integration</code> crate, which include a range of tests for every feature currently supported. Also incuded in the integraiton testing suite is roundtrip testing. Some of the roundtrip tests test the parser’s error messages.</p>
-<p>To explicitly disable the native parser for a specific test, add a <code>config.toml</code> file in the test directory with:</p>
-<pre><code class="language-toml">enable_native_parser = false
-</code></pre>
-<p>This will cause the test to fall back to the legacy parser instead.</p>
-<h2 id="parser-specific-tests"><a class="header" href="#parser-specific-tests">Parser-Specific Tests</a></h2>
-<p>The <code>conjure-cp-essence-parser</code> crate contains its own unit tests that specifically test parser functionality. These tests can be run with:</p>
-<pre><code class="language-bash">cargo test -p conjure-cp-essence-parser
-</code></pre>
-<p>For more details on parser testing, see the parser testing documentation.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <p><strong>CST</strong> - Concrete Syntax Tree. Generated by the tree-sitter parser when parsing an essence file.</p>
 <p><strong>AST</strong> - Abstract Syntax Tree. Generated when the CST is parsed and Model struct is created.</p>

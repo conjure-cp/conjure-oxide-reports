@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>What we didn&#x27;t do - Conjure Oxide</title>
+        <title>Diagnostics API - Conjure Oxide</title>
 
 
         <!-- Custom HTML head -->
@@ -176,113 +176,95 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="what-we-didnt-do"><a class="header" href="#what-we-didnt-do">What we didn’t do</a></h1>
-<p>The intention of this page is to chronicle decisions made during the development of conjure-oxide. There have been many situations where we have thought of something interesting that ends up not being the best solution to a problem and we believe others may come up with the same ideas. This page should be read before contributing so that potential contributors do not go down rabbit holes that have already been thoroughly searched.</p>
-<details>
-<summary>
-<h2>Nested expressions within the polymorphic metadata field </h2>
-</summary>
-<h3 id="background"><a class="header" href="#background">Background</a></h3>
-<p>As discussed in <a href="https://github.com/conjure-cp/conjure-oxide/issues/182">Issue 182</a>, we wanted to create a polymorphic metadata field that would be contained within the expression struct and that could be changed on a case-by-case basis as metadata might only be needed for a single module for example.</p>
-<h3 id="what-we-thought-of"><a class="header" href="#what-we-thought-of">What we thought of</a></h3>
-<p>One interesting idea that was suggested as a structure like this:</p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>// Define a trait for metadata in each module.
-pub trait Metadata {
-    // Define methods specific to the metadata.
-    fn print_metadata(&amp;self);
-    // Add other methods as needed.
+                        <h1 id="diagnostics-api-for-lsp-server"><a class="header" href="#diagnostics-api-for-lsp-server">Diagnostics API for LSP Server</a></h1>
+<h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
+<p>The Diagnostics API provides tree-sitter and parser–based diagnostics for Essence source files (for error underlining, syntax highlighting, and hover info). It also exposes general LSP-compatible data structures for consumption by editors and tools. Currently, the main functionality of the Diagnostics API is to parse Essence source code and report syntactic errors found by walking the CST (using tree-sitter) and report semantic errors by attempting a semantic parse and reporting parser errors. It serialises diagnostics exposing a <code>get_diagnostics()</code> function, which returns both semantic and syntactic errors as a <code>Vec</code> of <code>Diagnostic</code>s.</p>
+<h2 id="structure"><a class="header" href="#structure">Structure</a></h2>
+<pre><code class="language-bash">crates/conjure-cp-essence-parser/src/diagnostics/
+├─ mod.rs
+├─ diagnostics_api.rs             # public LSP-facing structs and `get_diagnostics(source)` aggregator
+└─ error_detection/
+	 ├─ mod.rs
+	 ├─ semantic_errors.rs         # AST-based semantic detection: maps parse errors to Diagnostics
+	 └─ syntactic_errors.rs        # tree-sitter traversal: maps erronous parse tree patterns to Diagnostics
+</code></pre>
+<h3 id="key-functions"><a class="header" href="#key-functions">Key Functions</a></h3>
+<ul>
+<li>
+<p><code>get_diagnostics(source: &amp;str) -&gt; Vec&lt;Diagnostic)</code> serves as the main entrypoint. It aggregates <code>detect_semantic_errors(source)</code> and <code>detect_syntactic_errors(source)</code> into a single diagnostics vector, returning a combined, deduplicated-by-call vector of <code>Diagnostic</code>s. That’s the funciton you would call for error detection and underlining.</p>
+</li>
+<li>
+<p><code>detect_syntactic_errors(source: &amp;str) -&gt; Vec&lt;Diagnostic)</code> Parses with tree-sitter and walks the CST using DFS with early retract on error/missing/zero-length nodes to avoid duplicates. More information on that in <a href="error_detection/error_classification.html">error detection docs</a>.</p>
+</li>
+<li>
+<p><code>detect_semantic_errors(source: &amp;str) -&gt; Vec&lt;Diagnostic)</code> Runs <code>parse_essence_with_context</code> and, on <code>Err(EssenceParseError)</code>, maps the error into a <code>Diagnostic</code> using <code>error_to_diagnostic</code>. More information on that in <a href="error_detection/error_classification.html">error detection docs</a>.</p>
+</li>
+<li>
+<p>Helpers (for debugging and/or testing):</p>
+<ul>
+<li><code>print_all_error_nodes(source: &amp;str)</code>: prints all tree-sitter error/missing nodes with spans.</li>
+<li><code>print_diagnostics(diags: &amp;[Diagnostic])</code>: pretty-prints diagnostics.</li>
+<li><code>check_diagnostic(...)</code>: asserts diagnostic fields in tests.</li>
+</ul>
+</li>
+</ul>
+<h3 id="key-data-structures"><a class="header" href="#key-data-structures">Key Data Structures</a></h3>
+<ul>
+<li>
+<p><code>Position</code> and <code>Range</code>: 0-based positions used to loacte where in the source code the diagnotic originates from</p>
+</li>
+<li>
+<p><code>Severity</code>: indicates the type of diagnostic, i.e., Error, Warn, Info, Hint (numeric alignment with LSP <code>DiagnosticSeverity</code>)</p>
+</li>
+<li>
+<p><code>Diagnostic</code>:</p>
+<ul>
+<li><code>range</code>: <code>Range</code></li>
+<li><code>severity</code>: <code>Severity</code></li>
+<li><code>message</code>: human-readable description / error message</li>
+<li><code>source</code>: static string identifying which part of the API the diagnostic comes from (e.g., <code>syntactic-error-detector</code>)</li>
+</ul>
+<p>Example of serialised diagnostic:</p>
+<pre><code class="language-json">{
+	"range": {"start": {"line": 0, "character": 0}, "end": {"line": 0, "character": 5}},
+	"severity": 1,
+	"message": "some error message.",
+	"source": "syntactic-error-detector"
 }
+</code></pre>
+</li>
+<li>
+<p><code>SymbolKind</code> and <code>DocumentSymbol</code>:</p>
+<ul>
+<li>Intended for document highlighting; currently enumerates a few kinds (e.g., <code>Integer</code>, <code>Decimal</code>, <code>Function</code>, <code>Letting</code>, <code>Find</code>). To be extended in the near future.</li>
+<li><code>DocumentSymbol { name, detail?, kind, range, children? }</code>
+<code>DocumentSymbol</code> and <code>SymbolKind</code> exist to support semantic highlighting; As of now, these are scaffolded and will be extended across the Essence grammar later on.</li>
+</ul>
+</li>
+</ul>
+<h2 id="direction-for-use"><a class="header" href="#direction-for-use">Direction for Use</a></h2>
+<p>The API can be imported via <code>use conjure_cp_essence_parser::diagnostics::diagnostics_api::get_diagnostics</code> or <code>use conjure_cp_essence_parser::diagnostics::diagnostics_api::*</code>, depending on use.</p>
+<h3 id="testing"><a class="header" href="#testing">Testing</a></h3>
+<p>API-specific tests are located in <code>crates/conjure-cp-essence-parser/tests</code> and can be run via</p>
+<pre><code class="language-bash"># to run all tests
+cargo test -p conjure-cp-essence-parser --test
 
-// Module-specific metadata types.
-pub mod module1 {
-    pub struct Metadata1 {
-        // Define fields specific to this metadata.
-        pub clean: bool,
-        // Add other fields as needed.
-    }
-
-    impl super::Metadata for Metadata1 {
-        fn print_metadata(&amp;self) {
-            println!("Metadata1: Clean - {}", self.clean);
-        }
-    }
-}
-
-pub mod module2 {
-    pub struct Metadata2 {
-        // Define fields specific to this metadata.
-        pub status: String,
-        // Add other fields as needed.
-    }
-
-    impl super::Metadata for Metadata2 {
-        fn print_metadata(&amp;self) {
-            println!("Metadata2: Status - {}", self.status);
-        }
-    }
-}
-
-// Modify the Expression enum to hold a trait object for metadata.
-#[derive(Clone, Debug)]
-pub enum Expression {
-    // Existing enum variants here...
-    WithMetadata(Box&lt;Expression&gt;, Option&lt;Box&lt;dyn Metadata&gt;&gt;),
-}
-
-impl Expression {
-    // Create a new expression with metadata.
-    pub fn with_metadata(expr: Expression, metadata: Option&lt;Box&lt;dyn Metadata&gt;&gt;) -&gt; Expression {
-        Expression::WithMetadata(Box::new(expr), metadata)
-    }
-
-    // Extract the expression and metadata.
-    pub fn extract_metadata(self) -&gt; (Expression, Option&lt;Box&lt;dyn Metadata&gt;&gt;) {
-        match self {
-            Expression::WithMetadata(expr, metadata) =&gt; (*expr, metadata),
-            _ =&gt; (self, None),
-        }
-    }
-
-    // Set metadata for an expression.
-    pub fn set_metadata(&amp;mut self, metadata: Option&lt;Box&lt;dyn Metadata&gt;&gt;) {
-        if let Expression::WithMetadata(_, ref mut existing_metadata) = *self {
-            *existing_metadata = metadata;
-        }
-    }
-
-    // Get metadata for an expression.
-    pub fn get_metadata(&amp;self) -&gt; Option&lt;&amp;dyn Metadata&gt; {
-        if let Expression::WithMetadata(_, Some(metadata)) = self {
-            Some(metadata.as_ref())
-        } else {
-            None
-        }
-    }
-
-    // Existing methods here...
-}
-
-<span class="boring">}</span></code></pre>
-<h3 id="why-we-didnt-do-it"><a class="header" href="#why-we-didnt-do-it">Why we didn’t do it</a></h3>
-<p>This is nice in the sense that there is less “ugliness” when creating expressions as there is no need to have metadata in every enum variant. However, this severely effects the way that the rewriter traverses the AST as there is now WithMetadata objects sprinkled throughout the AST which would require some way to traverse up the tree while saving the context of nodes below the metadata object. This image shows the differences in a basic AST:</p>
-<img src="https://github.com/conjure-cp/conjure-oxide/assets/27870413/09726bf0-c2ef-4056-b7c3-e011f148774b" width="300" height="600">
-<h3 id="what-we-did-do"><a class="header" href="#what-we-did-do">What we did do</a></h3>
-<p>Due to this issue we decided that a simpler implementation where metadata is explicitly required every time but could be set to some empty metadata object was more practical. More details on this implementation can found in <a href="https://github.com/conjure-cp/conjure-oxide/pull/233">Near Future PR</a></p>
-</details>
-<hr>
-<p><em>This section had been adapted from the ‘What we didn’t do’ page of the conjure-oxide wiki</em></p>
+# to run with a specific test target
+cargo test -p conjure-cp-essence-parser --test semantic_test
+cargo test -p conjure-cp-essence-parser --test keywords_as_ident
+cargo test -p conjure-cp-essence-parser --test missing_token
+cargo test -p conjure-cp-essence-parser --test unexpected_token
+</code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../developers_guide/design_documents/semantics-of-rewriting-expressions.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../documentation/LSP/lsp-server-client.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../developers_guide/ci_cd/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../documentation/LSP/Essence-Error-Catalog-for-LSP-Error-Underlining-implementation.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -292,11 +274,11 @@ impl Expression {
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../developers_guide/design_documents/semantics-of-rewriting-expressions.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../documentation/LSP/lsp-server-client.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../developers_guide/ci_cd/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../documentation/LSP/Essence-Error-Catalog-for-LSP-Error-Underlining-implementation.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>
