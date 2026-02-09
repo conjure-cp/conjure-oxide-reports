@@ -16,7 +16,7 @@
 <a href=#16 id=16 data-nosnippet>16</a>    symbols_ptr: <span class="prelude-ty">Option</span>&lt;Rc&lt;RefCell&lt;SymbolTable&gt;&gt;&gt;,
 <a href=#17 id=17 data-nosnippet>17</a>) -&gt; <span class="prelude-ty">Result</span>&lt;Expression, EssenceParseError&gt; {
 <a href=#18 id=18 data-nosnippet>18</a>    <span class="kw">match </span>node.kind() {
-<a href=#19 id=19 data-nosnippet>19</a>        <span class="string">"atom" </span>=&gt; parse_atom(<span class="kw-2">&amp;</span><span class="macro">named_child!</span>(node), source_code, root, symbols_ptr),
+<a href=#19 id=19 data-nosnippet>19</a>        <span class="string">"atom" </span>| <span class="string">"sub_atom_expr" </span>=&gt; parse_atom(<span class="kw-2">&amp;</span><span class="macro">named_child!</span>(node), source_code, root, symbols_ptr),
 <a href=#20 id=20 data-nosnippet>20</a>        <span class="string">"metavar" </span>=&gt; {
 <a href=#21 id=21 data-nosnippet>21</a>            <span class="kw">let </span>ident = <span class="macro">field!</span>(node, <span class="string">"identifier"</span>);
 <a href=#22 id=22 data-nosnippet>22</a>            <span class="kw">let </span>name_str = <span class="kw-2">&amp;</span>source_code[ident.start_byte()..ident.end_byte()];
@@ -123,7 +123,7 @@
 <a href=#123 id=123 data-nosnippet>123</a>    symbols_ptr: <span class="prelude-ty">Option</span>&lt;Rc&lt;RefCell&lt;SymbolTable&gt;&gt;&gt;,
 <a href=#124 id=124 data-nosnippet>124</a>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;Expression&gt;, EssenceParseError&gt; {
 <a href=#125 id=125 data-nosnippet>125</a>    <span class="kw">match </span>node.kind() {
-<a href=#126 id=126 data-nosnippet>126</a>        <span class="string">"arithmetic_expr" </span>=&gt; <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(parse_expression(
+<a href=#126 id=126 data-nosnippet>126</a>        <span class="string">"arithmetic_expr" </span>| <span class="string">"atom" </span>=&gt; <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(parse_expression(
 <a href=#127 id=127 data-nosnippet>127</a>            <span class="kw-2">*</span>node,
 <a href=#128 id=128 data-nosnippet>128</a>            source_code,
 <a href=#129 id=129 data-nosnippet>129</a>            node,

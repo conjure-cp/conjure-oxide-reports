@@ -75,39 +75,40 @@
 <a href=#75 id=75 data-nosnippet>75</a>        <span class="kw">if </span>child.kind() == <span class="string">"arithmetic_expr"
 <a href=#76 id=76 data-nosnippet>76</a>            </span>|| child.kind() == <span class="string">"bool_expr"
 <a href=#77 id=77 data-nosnippet>77</a>            </span>|| child.kind() == <span class="string">"comparison_expr"
-<a href=#78 id=78 data-nosnippet>78</a>        </span>{
-<a href=#79 id=79 data-nosnippet>79</a>            elements.push(parse_expression(
-<a href=#80 id=80 data-nosnippet>80</a>                child,
-<a href=#81 id=81 data-nosnippet>81</a>                source_code,
-<a href=#82 id=82 data-nosnippet>82</a>                node,
-<a href=#83 id=83 data-nosnippet>83</a>                symbols_ptr.clone(),
-<a href=#84 id=84 data-nosnippet>84</a>            )<span class="question-mark">?</span>);
-<a href=#85 id=85 data-nosnippet>85</a>        } <span class="kw">else </span>{
-<a href=#86 id=86 data-nosnippet>86</a>            domain = <span class="prelude-val">Some</span>(parse_domain(child, source_code, symbols_ptr.clone())<span class="question-mark">?</span>);
-<a href=#87 id=87 data-nosnippet>87</a>        }
-<a href=#88 id=88 data-nosnippet>88</a>    }
-<a href=#89 id=89 data-nosnippet>89</a>    <span class="kw">if </span>domain.is_none() {
-<a href=#90 id=90 data-nosnippet>90</a>        <span class="kw">let </span>count = elements.len() <span class="kw">as </span>i32;
-<a href=#91 id=91 data-nosnippet>91</a>        domain = <span class="prelude-val">Some</span>(<span class="macro">domain_int!</span>(<span class="number">1</span>..count));
-<a href=#92 id=92 data-nosnippet>92</a>    }
-<a href=#93 id=93 data-nosnippet>93</a>
-<a href=#94 id=94 data-nosnippet>94</a>    <span class="prelude-val">Ok</span>(AbstractLiteral::Matrix(elements, domain.unwrap()))
-<a href=#95 id=95 data-nosnippet>95</a>}
-<a href=#96 id=96 data-nosnippet>96</a>
-<a href=#97 id=97 data-nosnippet>97</a><span class="kw">fn </span>parse_set_literal(
-<a href=#98 id=98 data-nosnippet>98</a>    node: <span class="kw-2">&amp;</span>Node,
-<a href=#99 id=99 data-nosnippet>99</a>    source_code: <span class="kw-2">&amp;</span>str,
-<a href=#100 id=100 data-nosnippet>100</a>    symbols_ptr: <span class="prelude-ty">Option</span>&lt;Rc&lt;RefCell&lt;SymbolTable&gt;&gt;&gt;,
-<a href=#101 id=101 data-nosnippet>101</a>) -&gt; <span class="prelude-ty">Result</span>&lt;AbstractLiteral&lt;Expression&gt;, EssenceParseError&gt; {
-<a href=#102 id=102 data-nosnippet>102</a>    <span class="kw">let </span><span class="kw-2">mut </span>elements = Vec::new();
-<a href=#103 id=103 data-nosnippet>103</a>    <span class="kw">for </span>child <span class="kw">in </span>named_children(node) {
-<a href=#104 id=104 data-nosnippet>104</a>        elements.push(parse_expression(
-<a href=#105 id=105 data-nosnippet>105</a>            child,
-<a href=#106 id=106 data-nosnippet>106</a>            source_code,
-<a href=#107 id=107 data-nosnippet>107</a>            node,
-<a href=#108 id=108 data-nosnippet>108</a>            symbols_ptr.clone(),
-<a href=#109 id=109 data-nosnippet>109</a>        )<span class="question-mark">?</span>);
-<a href=#110 id=110 data-nosnippet>110</a>    }
-<a href=#111 id=111 data-nosnippet>111</a>    <span class="prelude-val">Ok</span>(AbstractLiteral::Set(elements))
-<a href=#112 id=112 data-nosnippet>112</a>}
+<a href=#78 id=78 data-nosnippet>78</a>            </span>|| child.kind() == <span class="string">"atom"
+<a href=#79 id=79 data-nosnippet>79</a>        </span>{
+<a href=#80 id=80 data-nosnippet>80</a>            elements.push(parse_expression(
+<a href=#81 id=81 data-nosnippet>81</a>                child,
+<a href=#82 id=82 data-nosnippet>82</a>                source_code,
+<a href=#83 id=83 data-nosnippet>83</a>                node,
+<a href=#84 id=84 data-nosnippet>84</a>                symbols_ptr.clone(),
+<a href=#85 id=85 data-nosnippet>85</a>            )<span class="question-mark">?</span>);
+<a href=#86 id=86 data-nosnippet>86</a>        } <span class="kw">else </span>{
+<a href=#87 id=87 data-nosnippet>87</a>            domain = <span class="prelude-val">Some</span>(parse_domain(child, source_code, symbols_ptr.clone())<span class="question-mark">?</span>);
+<a href=#88 id=88 data-nosnippet>88</a>        }
+<a href=#89 id=89 data-nosnippet>89</a>    }
+<a href=#90 id=90 data-nosnippet>90</a>    <span class="kw">if </span>domain.is_none() {
+<a href=#91 id=91 data-nosnippet>91</a>        <span class="kw">let </span>count = elements.len() <span class="kw">as </span>i32;
+<a href=#92 id=92 data-nosnippet>92</a>        domain = <span class="prelude-val">Some</span>(<span class="macro">domain_int!</span>(<span class="number">1</span>..count));
+<a href=#93 id=93 data-nosnippet>93</a>    }
+<a href=#94 id=94 data-nosnippet>94</a>
+<a href=#95 id=95 data-nosnippet>95</a>    <span class="prelude-val">Ok</span>(AbstractLiteral::Matrix(elements, domain.unwrap()))
+<a href=#96 id=96 data-nosnippet>96</a>}
+<a href=#97 id=97 data-nosnippet>97</a>
+<a href=#98 id=98 data-nosnippet>98</a><span class="kw">fn </span>parse_set_literal(
+<a href=#99 id=99 data-nosnippet>99</a>    node: <span class="kw-2">&amp;</span>Node,
+<a href=#100 id=100 data-nosnippet>100</a>    source_code: <span class="kw-2">&amp;</span>str,
+<a href=#101 id=101 data-nosnippet>101</a>    symbols_ptr: <span class="prelude-ty">Option</span>&lt;Rc&lt;RefCell&lt;SymbolTable&gt;&gt;&gt;,
+<a href=#102 id=102 data-nosnippet>102</a>) -&gt; <span class="prelude-ty">Result</span>&lt;AbstractLiteral&lt;Expression&gt;, EssenceParseError&gt; {
+<a href=#103 id=103 data-nosnippet>103</a>    <span class="kw">let </span><span class="kw-2">mut </span>elements = Vec::new();
+<a href=#104 id=104 data-nosnippet>104</a>    <span class="kw">for </span>child <span class="kw">in </span>named_children(node) {
+<a href=#105 id=105 data-nosnippet>105</a>        elements.push(parse_expression(
+<a href=#106 id=106 data-nosnippet>106</a>            child,
+<a href=#107 id=107 data-nosnippet>107</a>            source_code,
+<a href=#108 id=108 data-nosnippet>108</a>            node,
+<a href=#109 id=109 data-nosnippet>109</a>            symbols_ptr.clone(),
+<a href=#110 id=110 data-nosnippet>110</a>        )<span class="question-mark">?</span>);
+<a href=#111 id=111 data-nosnippet>111</a>    }
+<a href=#112 id=112 data-nosnippet>112</a>    <span class="prelude-val">Ok</span>(AbstractLiteral::Set(elements))
+<a href=#113 id=113 data-nosnippet>113</a>}
 </code></pre></div></section></main></body></html>
