@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>SAT Encoding Types - Conjure Oxide</title>
+        <title>Writing Documentation Guides - Conjure Oxide</title>
 
 
         <!-- Custom HTML head -->
@@ -176,60 +176,77 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h2 id="types-of-sat-encodings"><a class="header" href="#types-of-sat-encodings">Types of SAT Encodings</a></h2>
-<p>There are three different types of SAT Encodings planned in conjure oxide. Of these, only Logarithmic Encodings have been implemented thus far. The three types are these:</p>
+                        <h1 id="creating-documentation"><a class="header" href="#creating-documentation">Creating Documentation</a></h1>
+<p>As an organisation, we want Conjure Oxide to be thoroughly documented so that new members of our growing team can integrate smoothly. Whether you are currently on a project or not, contributing to our documentation is essential to achieving this goal.</p>
+<p>To make creating and implementing documentation as smooth as possible, we ask that you follow the workflow as outlined below.</p>
+<h2 id="documentation-work-flow"><a class="header" href="#documentation-work-flow">Documentation Work Flow</a></h2>
+<ol>
+<li>
+<p>Identify the documentation you will write.</p>
+<p>In many cases, documentation contributors will be writing about projects they are currently working on or have already completed.
+However, there are still plenty of opportunities to contribute to documentation, even if you are not actively involved in a project or are seeking a small side project.
+In such cases, please refer to <a href="https://github.com/conjure-cp/conjure-oxide/issues/1334">issue #1334</a>, which tracks all documentation writing tasks.
+All unassigned child issues are available for anyone to work on!</p>
+<p>You may come across instances where important or useful documentation is missing from this book. If you notice such gaps and would like to address them as a side project, we encourage you to do so!</p>
+</li>
+<li>
+<p>If the issue is not already present, open a child issue on our documentation tracking issue <a href="https://github.com/conjure-cp/conjure-oxide/issues/1334">#1334</a>.</p>
+<p>Make the title of this issue the name of the documentation you will be writing.</p>
+</li>
+<li>
+<p>Link your child issue to a pr request.</p>
+<h4 id="file-type-and-naming-convention"><a class="header" href="#file-type-and-naming-convention">File type and naming convention:</a></h4>
+<p>All documentation for the Conjure Oxide book should be written in markdown. If you’re unfamiliar with markdown or need a refresher on its syntax, we recommend reviewing <a href="https://www.markdownguide.org/getting-started/">this guide</a>.</p>
+<p>When naming your documentation file, match the file name as closely as possible to the heading of the documentation and use underscores (‘_’) to replace spaces. For example, if your documentation page is titled “Creating Documentation,” name the file <code>creating_documentation.md</code>.</p>
+<h4 id="where-to-place-documentation"><a class="header" href="#where-to-place-documentation">Where to place documentation:</a></h4>
+<p>Place all documentation files in an appropriate location within the <code>/docs/src</code> directory. Each markdown file should be stored in the directory that matches its section in the documentation structure. For example, this file is located at <code>/docs/src/developers_guide/contributors_guide/</code>.</p>
+<p>If you know where your documentation belongs in the book, please place it in the appropriate directory. However, it’s not required to know the exact location—moving files is quick and easy. If you’re unsure where your documentation should go, place the file in <code>/docs/src/misc</code> so it can be relocated later to a more suitable section.</p>
+<h4 id="viewing-documentation-on-the-book"><a class="header" href="#viewing-documentation-on-the-book">Viewing documentation on the book:</a></h4>
+<p>You must ensure that the documentation you write formats as expected in the book. To do so, follow these steps:</p>
 <ul>
-<li>Direct Encodings</li>
-<li>Logarithmic Encodings</li>
-<li>Order Encodings</li>
+<li>Open <code>/docs/src/SUMMARY.md</code>.</li>
+<li>If you have a definite location for your documentation, link the documentation in the appropriate section using the following format: <code>[ Section title ](path/to/file)</code>.</li>
+<li>If you are unsure where your documentation should reside, place the documentation at any location, <strong>but remember to delete this link once you’re happy with your document’s formatting</strong>.</li>
+<li>In your terminal, ensure that you are in the <code>/docs</code> directory and type in the following command <code>mdbooks serve --open</code></li>
 </ul>
-<p>Each type of encoding has pros and cons, and a different one may be selected based on the type of constraint problem.</p>
-<h3 id="satint-expression"><a class="header" href="#satint-expression">SATInt Expression</a></h3>
-<p>All encodings are stored using the same <code>SATInt</code> expression type. This expression type holds: an enum specifying the encoding, a bitvector of boolean expressions (these can be literals, variables, or complex operations), and the domain of the integer. This expression cannot be created through parsing and should only be created by SAT rules.</p>
-<h3 id="logarithmic-encoding"><a class="header" href="#logarithmic-encoding">Logarithmic Encoding</a></h3>
-<p>The base principle is quite simple: encode an integer as a bitvector. This allows us to represent integers as a series of boolean constraints – one for each bit.</p>
-<p>For example, the integer ‘6’ can be represented in binary as ‘0110’. We can then represent this as (P = 0 ∨ 1, Q = 0 ∨ 1, R = 0 ∨ 1, S = 0 ∨ 1). The connection that is missing, however, is that this isn’t actually a representation of a constraint problem, but of a solution to a problem.</p>
-<h3 id="direct-encoding"><a class="header" href="#direct-encoding">Direct Encoding</a></h3>
-<p>Direct encodings are the most straightforward type of encoding - it involves creating a vector of boolean variables, one corresponding to each member of the domain. Only one of these variables can be true at a time, and it is the one corresponding to the value of the integer.</p>
-<h3 id="order-encoding"><a class="header" href="#order-encoding">Order Encoding</a></h3>
-<p>Order follows the same principle as direct encoding, but instead of each boolean variable ‘specifying’ a value in the way that direct encodings do, each bit specifies whether the integer corresponding to it is less than or equal to the integer variable’s value.</p>
-<h3 id="why-have-multiple-types-of-encoding"><a class="header" href="#why-have-multiple-types-of-encoding">Why have multiple types of encoding?</a></h3>
-<p>Only logarithmic encodings are currently implemented in conjure-oxide. We’re planning to include other encodings such as direct and order encodings. This is motivated by their potential advantages over the log encoding in some cases.</p>
-<p>Direct encodings should perform well for equality-heavy constraints but may scale poorly with larger domains or inequalities. Logarithmic encodings are expected to handle inequalities more efficiently. Order encodings are often viewed as a compromise, potentially balancing these trade-offs.</p>
-<h3 id="performance-comparison"><a class="header" href="#performance-comparison">Performance Comparison</a></h3>
-<p>The choice of encoding significantly impacts performance depending on the constraint types used.</p>
-<h4 id="direct-encoding-better-for-equality-and-disequality"><a class="header" href="#direct-encoding-better-for-equality-and-disequality">Direct Encoding: Better for Equality and Disequality</a></h4>
-<p>Direct encoding excels in models dominated by <code>=</code> and <code>!=</code> constraints, such as graph coloring. It enables immediate unit propagation in the SAT solver, pruning values faster than bitwise reasoning.</p>
-<p><strong>Example: Graph Coloring</strong></p>
-<pre><code class="language-essence">find c1, c2, c3, c4, c5 : int(1..3)
-such that
-    c1 != c2, c1 != c3, c2 != c3, c2 != c4,
-    c3 != c4, c3 != c5, c4 != c5
-</code></pre>
-<ul>
-<li><strong>Direct:</strong> ~0.55s Rewriting / 0.001s Solving</li>
-<li><strong>Log:</strong> ~1.61s Rewriting / 0.002s Solving</li>
-</ul>
-<h4 id="logarithmic-encoding-better-for-inequalities"><a class="header" href="#logarithmic-encoding-better-for-inequalities">Logarithmic Encoding: Better for Inequalities</a></h4>
-<p>Logarithmic encoding is superior for arithmetic and inequalities (<code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, <code>&gt;=</code>) over large or sparse domains. Binary bit-vectors result in a more compact representation and reduced overhead.</p>
-<p><strong>Example: Sparse Domain with Inequalities</strong></p>
-<pre><code class="language-essence">find x : int(1, 10, 20, 30, 40, 50)
-such that x &gt; 10
-</code></pre>
-<ul>
-<li><strong>Direct:</strong> ~1.24s Rewriting / 0.005s Solving</li>
-<li><strong>Log:</strong> ~0.07s Rewriting / 0.000s Solving</li>
-</ul>
+<blockquote>
+<p><strong>Important</strong></p>
+<p>Be sure to assign yourself and any other contributors working on the documentation to your child issue and pull request. This helps us keep track of who is responsible for each piece of documentation and ensures proper assignment.</p>
+</blockquote>
+</li>
+<li>
+<p>Once you are happy with your documentation, request a review from one or more other members of your team.</p>
+<blockquote>
+<p><strong>Important</strong></p>
+<p>Place any contributors to the documentation and the date where the documentation was last updated in a comment on the first and second lines of the file.
+For instance:</p>
+<p><code>[//]: # (Author: Jamie Melton)</code></p>
+<p><code>[//]: # (Last Updated: 09/12/2025)</code></p>
+<p>has been placed at the top of this file.</p>
+</blockquote>
+</li>
+<li>
+<p>When your team is happy with this documentation, request a review from the current book editors.</p>
+<p>The current book editors are: <em>JamieASM</em> and <em>HKhan-5</em>.</p>
+</li>
+<li>
+<p>Assuming no adjustments are required, the documentation will then be merged in, and the child issue will be closed.</p>
+</li>
+</ol>
+<hr>
+<h2 id="still-unsure"><a class="header" href="#still-unsure">Still unsure?</a></h2>
+<p>If you have any questions or concerns, please post them on the documentation discussion board. A book editor will respond to you promptly.
+Likewise, if you have suggestions for improving or streamlining this process, feel free to share your ideas with the book editors! Your feedback is always welcome.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../documentation/Implementing-Uniplates-and-Biplates-with-Structure-Preserving-Trees.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../developers_guide/contributors_guide/Git-Flow.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../documentation/SAT/rule-types.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../developers_guide/contributors_guide/creating_documentation_code.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -239,11 +256,11 @@ such that x &gt; 10
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../documentation/Implementing-Uniplates-and-Biplates-with-Structure-Preserving-Trees.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../developers_guide/contributors_guide/Git-Flow.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../documentation/SAT/rule-types.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../developers_guide/contributors_guide/creating_documentation_code.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

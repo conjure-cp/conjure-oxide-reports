@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Useful Links - Conjure Oxide</title>
+        <title>Tree Morph Benchmarking - Conjure Oxide</title>
 
 
         <!-- Custom HTML head -->
@@ -176,47 +176,363 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="useful-links"><a class="header" href="#useful-links">Useful Links</a></h1>
-<h2 id="api-documentation"><a class="header" href="#api-documentation">API Documentation</a></h2>
+                        <p>Tree-morph is a library that helps you perform boilerplate-free generic tree transformations. In its current state, tree-morph is able to perform transformations in a large number of test cases, and work is now being done to try to implement Essence with tree-morph. When completed, tree-morph will be a very powerful stand-alone crate, as well as sitting at the core of <code>conjure-oxide</code>. Despite its current power, there is a still a lot of work to be done on the <code>tree-morph</code> crate. It is currently in a completely unoptimised state, and will be very slow when performing on large trees with a rich rule set and rule hierarchy. In order to assess progress on new optimisations, it is essential to have a diverse list of benchmarks. All benchmarking has been done using the <a href="https://crates.io/crates/criterion">crtiterion</a> crate. The following section outlines some of the most important benchmarks.</p>
+<h1 id="benchmarks"><a class="header" href="#benchmarks">Benchmarks</a></h1>
+<h2 id="identity"><a class="header" href="#identity">identity</a></h2>
+<p>The <code>identity benchmark</code> is a test designed to capture how long one tree traversal takes. There is no metadata, and the only rule is <code>do_nothing</code> which is never evaluated. The helper function <code>construct_tree</code> creates a simple tree of variable depth. This is an important benchmark to make sure that new proposed changes do not negatively effect <code>tree-morph</code> traversal speed.</p>
+<p>Filename: <code>conjure-oxide/crates/tree_morph/benches/identity.rs</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use tree_morph::prelude::*;
+use uniplate::derive::Uniplate;
+
+#[derive(Debug, Clone, PartialEq, Eq, Uniplate)]
+#[uniplate()]
+enum Expr {
+    Branch(Box&lt;Expr&gt;, Box&lt;Expr&gt;),
+    Val(i32),
+}
+struct Meta {}
+fn do_nothing(cmds: &amp;mut Commands&lt;Expr, Meta&gt;, subtree: &amp;Expr, meta: &amp;Meta) -&gt; Option&lt;Expr&gt; {
+    None
+}
+
+fn construct_tree(n: i32) -&gt; Box&lt;Expr&gt; {
+    if n == 1 {
+        Box::new(Expr::Val(0))
+    } else {
+        Box::new(Expr::Branch(Box::new(Expr::Val(0)), construct_tree(n - 1)))
+    }
+}
+
+pub fn criterion_benchmark(c: &amp;mut Criterion) {
+    let base: i32 = 2;
+    let expr = *construct_tree(base.pow(5));
+    let rules = vec![vec![do_nothing]];
+
+    c.bench_function("Identity", |b| {
+        b.iter(|| {
+            morph(
+                black_box(rules.clone()),
+                select_first,
+                black_box(expr.clone()),
+                Meta {},
+            )
+        })
+    });
+}
+
+criterion_group!(benches, criterion_benchmark);
+criterion_main!(benches);
+<span class="boring">}</span></code></pre>
+<h2 id="modify_leafs"><a class="header" href="#modify_leafs">modify_leafs</a></h2>
+<p>The <code>modify_leafs</code> benchmark is designed to capture how long it takes for a simple modification rule to be applied to all of the leaf nodes. The function <code>construct_tree</code> creates a tree of variable depth with all leaf nodes initialised to 0. There is no metadata and the only function <code>zero_to_one</code> changes a leaf node of 0 to a leaf node of 1. It should be expected that this will take a lot longer than the identity benchmark, as when a node is changed in <code>tree-morph</code>, an entirely new tree is created.</p>
+<p>Filename: <code>conjure-oxide/crates/tree_morph/benches/modify_leafs.rs</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use tree_morph::prelude::*;
+use uniplate::derive::Uniplate;
+
+#[derive(Debug, Clone, PartialEq, Eq, Uniplate)]
+#[uniplate()]
+enum Expr {
+    Branch(Box&lt;Expr&gt;, Box&lt;Expr&gt;),
+    Val(i32),
+}
+
+struct Meta {} // not relevant for this benchmark
+
+fn zero_to_one(cmds: &amp;mut Commands&lt;Expr, Meta&gt;, subtree: &amp;Expr, meta: &amp;Meta) -&gt; Option&lt;Expr&gt; {
+    if let Expr::Val(a) = subtree {
+        if let 0 = *a {
+            return Some(Expr::Val(1));
+        }
+    }
+    None
+}
+
+fn construct_tree(n: i32) -&gt; Box&lt;Expr&gt; {
+    if n == 1 {
+        Box::new(Expr::Val(0))
+    } else {
+        Box::new(Expr::Branch(Box::new(Expr::Val(0)), construct_tree(n - 1)))
+    }
+}
+
+pub fn criterion_benchmark(c: &amp;mut Criterion) {
+    let base: i32 = 2;
+    let expr = *construct_tree(base.pow(5));
+    let rules = vec![vec![zero_to_one]];
+
+    c.bench_function("Modify_leafs", |b| {
+        b.iter(|| {
+            morph(
+                black_box(rules.clone()),
+                select_first,
+                black_box(expr.clone()),
+                Meta {},
+            )
+        })
+    });
+}
+
+criterion_group!(benches, criterion_benchmark);
+criterion_main!(benches);
+<span class="boring">}</span></code></pre>
+<h2 id="factorial"><a class="header" href="#factorial">factorial</a></h2>
+<p>The <code>factorial</code> benchmark is the most difficult benchmark currently made, and an improved score on factorial will be indicative of serious gains in optimisations. As the name suggests, <code>factorial</code> is centred around the mathematical factorial operation (<code>5! = 5*4*3*2*1</code>), which will grow the tree depth, providing a rich set of transformations for <code>tree-morph</code> to calculate. The tree generating function <code>random_exp_tree</code> here takes as input a random seed and a max depth, and generates a tree of an arithmetic expression involving values, additions, multiplications and factorials. An example of such an expression with a random seed of <code>41</code> and a max depth of <code>5</code> is shown below.</p>
+<pre><code class="language-bash">(((8 + 1!) + (1 * 3)!) + (1!! * ((2 + 1) * (1 * 1))))!
+</code></pre>
+<p>It is worth mentioning that this expression is extremely large due to the nested factorials, and as such we need a way of making sure that calculations are bounded. This is achieved by modding the results of any additions and multiplications in the <code>rule_eval_add</code> and <code>rule_eval_mul</code> functions by <code>10</code>, which will bound all factorial expressions by <code>10!</code>. The benchmark counts the number of addition and multiplication rule applications, and also has a high priority dummy rule <code>do_nothing</code>, in order to increase the benchmark difficulty.</p>
+<p>Filename: <code>conjure-oxide/crates/tree_morph/benches/factorial.rs</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use rand::rngs::StdRng;
+use rand::{Rng, SeedableRng};
+use tree_morph::prelude::*;
+use uniplate::derive::Uniplate;
+
+#[derive(Debug, Clone, PartialEq, Eq, Uniplate)]
+#[uniplate()]
+enum Expr {
+    Add(Box&lt;Expr&gt;, Box&lt;Expr&gt;),
+    Mul(Box&lt;Expr&gt;, Box&lt;Expr&gt;),
+    Val(i32),
+    Factorial(Box&lt;Expr&gt;),
+}
+
+fn random_exp_tree(rng: &amp;mut StdRng, count: &amp;mut usize, depth: usize) -&gt; Expr {
+    if depth == 0 {
+        *count += 1;
+        return Expr::Val(rng.random_range(1..=3));
+    }
+
+    match rng.random_range(1..=13) {
+        x if (1..=4).contains(&amp;x) =&gt; Expr::Add(
+            Box::new(random_exp_tree(rng, count, depth - 1)),
+            Box::new(random_exp_tree(rng, count, depth - 1)),
+        ),
+        x if (5..=8).contains(&amp;x) =&gt; Expr::Mul(
+            Box::new(random_exp_tree(rng, count, depth - 1)),
+            Box::new(random_exp_tree(rng, count, depth - 1)),
+        ),
+        x if (8..=11).contains(&amp;x) =&gt; {
+            Expr::Factorial(Box::new(random_exp_tree(rng, count, depth - 1)))
+        }
+        _ =&gt; Expr::Val(rng.random_range(1..=10)),
+    }
+}
+fn do_nothing(cmds: &amp;mut Commands&lt;Expr, Meta&gt;, subtree: &amp;Expr, meta: &amp;Meta) -&gt; Option&lt;Expr&gt; {
+    None
+}
+
+fn factorial_eval(cmds: &amp;mut Commands&lt;Expr, Meta&gt;, subtree: &amp;Expr, meta: &amp;Meta) -&gt; Option&lt;Expr&gt; {
+    if let Expr::Factorial(a) = subtree {
+        if let Expr::Val(n) = *a.as_ref() {
+            if n == 0 {
+                return Some(Expr::Val(1));
+            }
+            return Some(Expr::Mul(
+                Box::new(Expr::Val(n)),
+                Box::new(Expr::Factorial(Box::new(Expr::Val(n - 1)))),
+            ));
+        }
+    }
+    None
+}
+
+fn rule_eval_add(cmds: &amp;mut Commands&lt;Expr, Meta&gt;, subtree: &amp;Expr, meta: &amp;Meta) -&gt; Option&lt;Expr&gt; {
+    if let Expr::Add(a, b) = subtree {
+        if let (Expr::Val(a_v), Expr::Val(b_v)) = (a.as_ref(), b.as_ref()) {
+            cmds.mut_meta(|m| m.num_applications_addition += 1);
+            return Some(Expr::Val((a_v + b_v) % 10));
+        }
+    }
+    None
+}
+
+fn rule_eval_mul(cmds: &amp;mut Commands&lt;Expr, Meta&gt;, subtree: &amp;Expr, meta: &amp;Meta) -&gt; Option&lt;Expr&gt; {
+    if let Expr::Mul(a, b) = subtree {
+        if let (Expr::Val(a_v), Expr::Val(b_v)) = (a.as_ref(), b.as_ref()) {
+            cmds.mut_meta(|m| m.num_applications_multiplication += 1);
+            return Some(Expr::Val((a_v * b_v) % 10));
+        }
+    }
+    None
+}
+
+#[derive(Debug)]
+struct Meta {
+    num_applications_addition: i32,
+    num_applications_multiplication: i32,
+}
+
+pub fn criterion_benchmark(c: &amp;mut Criterion) {
+    let seed = [41; 32];
+    let mut rng = StdRng::from_seed(seed);
+    let mut count = 0;
+
+    let my_expression = random_exp_tree(&amp;mut rng, &amp;mut count, 10);
+    let rules = vec![
+        rule_fns![do_nothing],
+        rule_fns![rule_eval_add, rule_eval_mul, factorial_eval],
+    ];
+
+    c.bench_function("factorial", |b| {
+        b.iter(|| {
+            let meta = Meta {
+                num_applications_addition: 0,
+                num_applications_multiplication: 0,
+            };
+            morph(
+                black_box(rules.clone()),
+                select_first,
+                black_box(my_expression.clone()),
+                black_box(meta),
+            )
+        })
+    });
+}
+
+criterion_group!(benches, criterion_benchmark);
+criterion_main!(benches);
+<span class="boring">}</span></code></pre>
+<h2 id="left_addleft_add_hard"><a class="header" href="#left_addleft_add_hard">left_add/left_add_hard</a></h2>
+<p>The benchmarks <code>left_add</code> and <code>left_add_hard</code> are two benchmarks that evaluate a very simple nested addition expression <code>(1+(1+(1+...)))</code> of variable depth. In its unoptimised state, all but he final two instances of a <code>1</code> node will undergo several superfluous rule checks. The benchmark <code>left_add_hard</code> also is identical to <code>left_add</code>, except there are also four additional dummy rules, all assigned with a higher priority than the <code>rule_eval_add</code>. As expected, this will reduce code performance by about 400% (shown later). The code for <code>left_add_hard</code> is shown below, with <code>left_add</code> being very similar.</p>
+<p>Filename: <code>conjure-oxide/crates/tree_morph/benches/left_add_hard.rs</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use tree_morph::prelude::*;
+use uniplate::derive::Uniplate;
+
+#[derive(Debug, Clone, PartialEq, Eq, Uniplate)]
+#[uniplate()]
+enum Expr {
+    Add(Box&lt;Expr&gt;, Box&lt;Expr&gt;),
+    Val(i32),
+}
+
+fn rule_eval_add(_: &amp;mut Commands&lt;Expr, Meta&gt;, expr: &amp;Expr, _: &amp;Meta) -&gt; Option&lt;Expr&gt; {
+    match expr {
+        Expr::Add(a, b) =&gt; match (a.as_ref(), b.as_ref()) {
+            (Expr::Val(x), Expr::Val(y)) =&gt; Some(Expr::Val(x + y)),
+            _ =&gt; None,
+        },
+        _ =&gt; None,
+    }
+}
+
+#[derive(Clone)]
+enum MyRule {
+    EvalAdd,
+    Fee,
+    Fi,
+    Fo,
+    Fum,
+}
+
+impl Rule&lt;Expr, Meta&gt; for MyRule {
+    fn apply(&amp;self, cmd: &amp;mut Commands&lt;Expr, Meta&gt;, expr: &amp;Expr, meta: &amp;Meta) -&gt; Option&lt;Expr&gt; {
+        cmd.mut_meta(|m| m.num_applications += 1); // Only applied if successful
+        match self {
+            MyRule::EvalAdd =&gt; rule_eval_add(cmd, expr, meta),
+            MyRule::Fee =&gt; None,
+            MyRule::Fi =&gt; None,
+            MyRule::Fo =&gt; None,
+            MyRule::Fum =&gt; None,
+        }
+    }
+}
+
+#[derive(Clone)]
+struct Meta {
+    num_applications: u32,
+}
+
+fn val(n: i32) -&gt; Box&lt;Expr&gt; {
+    Box::new(Expr::Val(n))
+}
+
+fn add(lhs: Box&lt;Expr&gt;, rhs: Box&lt;Expr&gt;) -&gt; Box&lt;Expr&gt; {
+    Box::new(Expr::Add(lhs, rhs))
+}
+
+fn nested_addition(n: i32) -&gt; Box&lt;Expr&gt; {
+    if n == 1 {
+        val(1)
+    } else {
+        add(val(1), nested_addition(n - 1))
+    }
+}
+
+pub fn criterion_benchmark(c: &amp;mut Criterion) {
+    let base: i32 = 2;
+    let expr = *nested_addition(base.pow(5));
+    let rules = vec![
+        vec![MyRule::Fi],
+        vec![MyRule::Fee],
+        vec![MyRule::Fo],
+        vec![MyRule::Fum],
+        vec![MyRule::EvalAdd],
+    ];
+
+    c.bench_function("left_add_hard", |b| {
+        b.iter(|| {
+            let meta = Meta {
+                num_applications: 0,
+            };
+            morph(rules.clone(), select_first, black_box(expr.clone()), meta)
+        })
+    });
+}
+
+criterion_group!(benches, criterion_benchmark);
+criterion_main!(benches);
+<span class="boring">}</span></code></pre>
+<h2 id="right_add"><a class="header" href="#right_add">right_add</a></h2>
+<p>The benchmark <code>right_add</code> is identical to <code>left_add</code>, except there now we are evaluating <code>((...+1)+1)</code> instead. This is designed to show the inherent left bias used in <code>tree-morph</code>. Performance is a little better than <code>left_add</code>. Due to the similarity with <code>left_add</code>, the code is omitted.</p>
+<h1 id="results"><a class="header" href="#results">results</a></h1>
+<p>The most helpful feature that <code>criterion</code> produces is its automatic graphing software. Upon a run of <code>cargo bench</code>, <code>criterion</code> automatically produces html reports of all benchmarks, accessible in <code>conjure-oxide/target/criterion</code>. An example report is shown below.
+<img width="1300" alt="image" src="https://github.com/user-attachments/assets/963c76eb-2d8c-4c77-8529-8b9b6bc22dc3" />
+The left graph is a probability density function for the run time. It says that on average it takes <code>854.26 µs</code> for identity to run at a fixed depth (in this case <code>2^5</code> was used). The right graph is a cumulative time plot. The fact that the line is almost straight indicates that the run times are all very comparable in time. The additional stats provided are all standard statistics measurements, with MAD standing for the mean absolute deviation.</p>
+<h2 id="identity-vs-modify_leafs"><a class="header" href="#identity-vs-modify_leafs">identity vs modify_leafs</a></h2>
+<p>The probability density functions for <code>identity</code> and <code>modify_leafs</code> are shown below, both evaluated a tree depth of <code>2^5</code>.
+<img width="550" alt="image" src="https://github.com/user-attachments/assets/06fd9c0e-b094-4a5f-ab5e-6d88b3ace29a" />
+<img width="547.5" alt="image" src="https://github.com/user-attachments/assets/2e31067d-a848-4259-bf67-bf516c70a6cf" /></p>
+<p>As you can see, <code>modify_leafs</code> takes significantly longer (<code>2300%</code>) than <code>identity</code> on average, showing how costly even simple tree transformations take. This is most likely due to the fact that <code>tree-morph</code> does not edit in-place, but rather constructs a new tree after applying a transformation.</p>
+<h2 id="factorial-1"><a class="header" href="#factorial-1">factorial</a></h2>
+<p>The following is the probability density function for <code>factorial</code>, ran at a max depth of <code>10</code> and a seed of <code>[41; 32]</code>.
+<img src="https://github.com/user-attachments/assets/afb83193-b33c-452b-a5ba-8b9b9ae66f1a" alt="image"></p>
+<p>As you can see, even for a relatively small max depth compute is large. Also note that <code>factorial</code> still has a very small amount of rule groupings, and performance would likely be orders of magnitude worse if a number of rules comparable to a <code>conjure</code> problem was presented. This shows a significant need for optimisations, and an improved score on <code>factorial</code> would indicate a lot of good progress.</p>
+<h2 id="left_add-vs-left_add_hard"><a class="header" href="#left_add-vs-left_add_hard">left_add vs left_add_hard</a></h2>
+<p>A comparison between <code>left_add</code> and <code>left_add_hard</code> is a clear demonstration of how detrimental duplicate rule checks can be for performance.</p>
+<p><img src="https://github.com/user-attachments/assets/ae292d37-f26d-4080-9520-019f60476e93" alt="image">
+<img src="https://github.com/user-attachments/assets/2f882085-71fc-4d13-a266-ead400db31e8" alt="image"></p>
+<p>Ignoring the differences between the shapes of the graphs (I am unsure why this is the case), we can immediately notice how the extra 4 dummy rules in <code>left_add_hard</code> lead to almost exactly a <code>400%</code> increase in performance!</p>
+<h1 id="further-work"><a class="header" href="#further-work">Further work</a></h1>
+<p>Benchmarks are still in an early stage, and there is lots more to do. Some ideas for future work include:</p>
 <ul>
-<li><a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_cp/index.html">conjure-cp</a></li>
-</ul>
-<!--- This link seems to be dead. Cannot find an equivalent on the docs --->
-<!-- md-dead-link-check: off -->
-<ul>
-<li><a href="https://conjure-cp.github.io/conjure-oxide/docs/tree_morph/index.html">tree-morph</a></li>
-</ul>
- <!-- md-dead-link-check: on -->
-<ul>
-<li><a href="https://conjure-cp.github.io/conjure-oxide/docs/minion_sys/index.html">minion-sys</a></li>
-</ul>
-<h3 id="internal-crates"><a class="header" href="#internal-crates">Internal crates</a></h3>
-<p>The following crates are internal, and are re-exported by <code>conjure-cp</code>:</p>
-<ul>
-<li><a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_cp_cli/index.html">conjure-cp-cli</a></li>
-<li><a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_cp_core/index.html">conjure-cp-core</a></li>
-<li><a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_cp_essence_macros/">conjure-cp-essence-macros</a></li>
-<li><a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_cp_essence_parser">conjure-cp-essence-parser</a></li>
-<li><a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_cp_rule_macros">conjure-cp-rule-macros</a></li>
-<li><a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_cp_enum_compatibility_macro">conjure-cp-enum-compatibility-macro</a></li>
-</ul>
-<h2 id="code-coverage"><a class="header" href="#code-coverage">Code Coverage</a></h2>
-<p>Code coverage reports can be found <a href="https://conjure-cp.github.io/conjure-oxide/coverage/main/">here</a>.</p>
-<h2 id="miscellaneous"><a class="header" href="#miscellaneous">Miscellaneous</a></h2>
-<ul>
-<li><a href="https://conjure-cp.github.io/conjure-oxide/tools/essence-feature-usage-stats/">Essence feature usage stats</a></li>
-<li><a href="https://conjure-cp.github.io/conjure-blocks/">Conjure blocks</a></li>
+<li>Set up some automated infrastructure for running benchmarks automatically on GitHub</li>
+<li>Find out scaling laws for increasing tree depth for current benchmarks</li>
+<li>Set up some head to head tests between two functions</li>
+<li>Set up counters that can measure things like node counts, maximum tree depths and other useful information</li>
+<li>Benchmark individual functions (such as a rule application) in order to better understand how trees grow and shrink during transformations</li>
+<li>Benchmark meta applications</li>
 </ul>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../documentation/SAT/rule-types.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../documentation/Essence-Parser.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../documentation/essence_parser.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../documentation/ProTrace-module.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -226,11 +542,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../documentation/SAT/rule-types.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../documentation/Essence-Parser.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../documentation/essence_parser.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../documentation/ProTrace-module.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

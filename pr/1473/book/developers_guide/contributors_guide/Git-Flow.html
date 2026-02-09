@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>SAT Encoding Types - Conjure Oxide</title>
+        <title>Git Flow - Conjure Oxide</title>
 
 
         <!-- Custom HTML head -->
@@ -176,60 +176,132 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h2 id="types-of-sat-encodings"><a class="header" href="#types-of-sat-encodings">Types of SAT Encodings</a></h2>
-<p>There are three different types of SAT Encodings planned in conjure oxide. Of these, only Logarithmic Encodings have been implemented thus far. The three types are these:</p>
+                        <h1 id="pull-requests"><a class="header" href="#pull-requests">Pull Requests</a></h1>
+<blockquote class="blockquote-tag blockquote-tag-tip">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z"></path></svg>Tip</p>
+<p>We Use <a href="https://guides.github.com/introduction/flow/index.html">Github Flow</a>, so All Code Changes Happen Through Pull Requests</p>
+</blockquote>
+<p>Our development process is as follows:</p>
+<ol>
+<li>Make a fork.</li>
+<li>Create a branch on your fork, do not develop on main.</li>
+<li>Create a pull request as soon as you want others to be able to see your progress, comment, and/or help:
 <ul>
-<li>Direct Encodings</li>
-<li>Logarithmic Encodings</li>
-<li>Order Encodings</li>
+<li>Err on the side of creating the pull request too early instead of too late.
+Having an active PR makes your work visible, allows others to help you and give feedback. Request reviews from people who have worked on similar parts of the project.</li>
+<li>Keep the PR in draft status until you think it’s ready to be merged.</li>
 </ul>
-<p>Each type of encoding has pros and cons, and a different one may be selected based on the type of constraint problem.</p>
-<h3 id="satint-expression"><a class="header" href="#satint-expression">SATInt Expression</a></h3>
-<p>All encodings are stored using the same <code>SATInt</code> expression type. This expression type holds: an enum specifying the encoding, a bitvector of boolean expressions (these can be literals, variables, or complex operations), and the domain of the integer. This expression cannot be created through parsing and should only be created by SAT rules.</p>
-<h3 id="logarithmic-encoding"><a class="header" href="#logarithmic-encoding">Logarithmic Encoding</a></h3>
-<p>The base principle is quite simple: encode an integer as a bitvector. This allows us to represent integers as a series of boolean constraints – one for each bit.</p>
-<p>For example, the integer ‘6’ can be represented in binary as ‘0110’. We can then represent this as (P = 0 ∨ 1, Q = 0 ∨ 1, R = 0 ∨ 1, S = 0 ∨ 1). The connection that is missing, however, is that this isn’t actually a representation of a constraint problem, but of a solution to a problem.</p>
-<h3 id="direct-encoding"><a class="header" href="#direct-encoding">Direct Encoding</a></h3>
-<p>Direct encodings are the most straightforward type of encoding - it involves creating a vector of boolean variables, one corresponding to each member of the domain. Only one of these variables can be true at a time, and it is the one corresponding to the value of the integer.</p>
-<h3 id="order-encoding"><a class="header" href="#order-encoding">Order Encoding</a></h3>
-<p>Order follows the same principle as direct encoding, but instead of each boolean variable ‘specifying’ a value in the way that direct encodings do, each bit specifies whether the integer corresponding to it is less than or equal to the integer variable’s value.</p>
-<h3 id="why-have-multiple-types-of-encoding"><a class="header" href="#why-have-multiple-types-of-encoding">Why have multiple types of encoding?</a></h3>
-<p>Only logarithmic encodings are currently implemented in conjure-oxide. We’re planning to include other encodings such as direct and order encodings. This is motivated by their potential advantages over the log encoding in some cases.</p>
-<p>Direct encodings should perform well for equality-heavy constraints but may scale poorly with larger domains or inequalities. Logarithmic encodings are expected to handle inequalities more efficiently. Order encodings are often viewed as a compromise, potentially balancing these trade-offs.</p>
-<h3 id="performance-comparison"><a class="header" href="#performance-comparison">Performance Comparison</a></h3>
-<p>The choice of encoding significantly impacts performance depending on the constraint types used.</p>
-<h4 id="direct-encoding-better-for-equality-and-disequality"><a class="header" href="#direct-encoding-better-for-equality-and-disequality">Direct Encoding: Better for Equality and Disequality</a></h4>
-<p>Direct encoding excels in models dominated by <code>=</code> and <code>!=</code> constraints, such as graph coloring. It enables immediate unit propagation in the SAT solver, pruning values faster than bitwise reasoning.</p>
-<p><strong>Example: Graph Coloring</strong></p>
-<pre><code class="language-essence">find c1, c2, c3, c4, c5 : int(1..3)
-such that
-    c1 != c2, c1 != c3, c2 != c3, c2 != c4,
-    c3 != c4, c3 != c5, c4 != c5
+</li>
+<li>Assign PR to reviewer(s) when it’s ready to be merged.
+<ul>
+<li>Only Oz (@ozgurakgun) can merge PR’s, so add him as a reviewer when you want your PR to be merged.</li>
+<li>During reviewing, avoid force-pushing to the pull request, as this makes reviewing more difficult.
+Details on how to update a PR are given below.</li>
+</ul>
+</li>
+<li>Once Oz has approved the PR:
+<ul>
+<li>Update your PR to main by rebase or merge. This can be done through the Github UI or locally.</li>
+<li>Cleanup your git history (see below) or request your PR to be squash merged.</li>
+</ul>
+</li>
+</ol>
+<h1 id="style"><a class="header" href="#style">Style</a></h1>
+<ul>
+<li>Run <code>cargo fmt</code> in the project directory to automatically format code</li>
+<li>Use <code>cargo clippy</code> to lint the code and identify any common issues</li>
+</ul>
+<p>See: [[Documentation Style]] and [[Rust Coding Style]] (TODO)</p>
+<h1 id="commit-and-pr-titles"><a class="header" href="#commit-and-pr-titles">Commit and PR Titles</a></h1>
+<p>We use <a href="https://gist.github.com/joshbuchea/6f47e86d2510bce28f8e7f42ae84c716">Semantic PR / Commit messages</a>.</p>
+<p>Format: <code>&lt;type&gt;(&lt;scope&gt;): &lt;subject&gt;</code>
+(<code>&lt;scope&gt;</code> is optional)</p>
+<h2 id="example"><a class="header" href="#example">Example</a></h2>
+<pre><code>feat(parser): add letting statements
+^--^ ^----^   ^--------------------^
+|    |        |
+|    |        +--&gt; Summary in present tense.
+|    |
+|    +--&gt; Area of the project affected by the change.
+|
++-------&gt; Type: chore, docs, feat, fix, refactor, style, or test.
 </code></pre>
+<h2 id="types"><a class="header" href="#types">Types</a></h2>
 <ul>
-<li><strong>Direct:</strong> ~0.55s Rewriting / 0.001s Solving</li>
-<li><strong>Log:</strong> ~1.61s Rewriting / 0.002s Solving</li>
+<li><code>feat</code>: new features for the end user</li>
+<li><code>chore</code>: changes to build scripts, CI, dependency updates; does not affect production code</li>
+<li><code>fix</code>: fixing bugs in production code</li>
+<li><code>style</code>: purely stylistic changes to the code (e.g. indentation, semicolons, etc) that do not affect behaviour</li>
+<li><code>refactor</code>: changes of production code that do not add new features or fix specific bugs</li>
+<li><code>test</code>: adding, updating, or refactoring test code</li>
+<li><code>doc</code>: adding or updating documentation</li>
 </ul>
-<h4 id="logarithmic-encoding-better-for-inequalities"><a class="header" href="#logarithmic-encoding-better-for-inequalities">Logarithmic Encoding: Better for Inequalities</a></h4>
-<p>Logarithmic encoding is superior for arithmetic and inequalities (<code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, <code>&gt;=</code>) over large or sparse domains. Binary bit-vectors result in a more compact representation and reduced overhead.</p>
-<p><strong>Example: Sparse Domain with Inequalities</strong></p>
-<pre><code class="language-essence">find x : int(1, 10, 20, 30, 40, 50)
-such that x &gt; 10
+<h1 id="pr-messages"><a class="header" href="#pr-messages">PR Messages</a></h1>
+<p>Your pull request should contain a brief description explaining:</p>
+<ul>
+<li>What changes you are making</li>
+<li>Why they are necessary</li>
+<li>Any significant changes that may break other people’s work</li>
+</ul>
+<p>Additionally, you can link your PR to an issue. For example: <code>closes issue #42</code>.</p>
+<h1 id="amending-your-pr-and-force-pushes"><a class="header" href="#amending-your-pr-and-force-pushes">Amending your PR and Force Pushes</a></h1>
+<p>You should avoid rebasing, amending, and force-pushing changes during PR review.
+This makes code review difficult by removing the context around code review comments and changes to a commit.</p>
+<p>The recommended way to update PRs is to use git’s <a href="https://git-scm.com/docs/git-commit#Documentation/git-commit.txt---fixupamendrewordltcommitgt">built-in support for fixups</a>.</p>
+<p>To make a change to a commit (e.g. addressing a code review comment):</p>
+<pre><code class="language-sh">git commit --fixup &lt;commit&gt;
+git push
 </code></pre>
+<p>Once your PR is ready to merge, these fixup commits can be merged into their original commits like so:</p>
+<pre><code class="language-sh">git rebase --autosquash main
+git push --force
+</code></pre>
+<p>We have CI checks to block accidental merging of <code>fixup!</code> commits.</p>
+<p>See:</p>
 <ul>
-<li><strong>Direct:</strong> ~1.24s Rewriting / 0.005s Solving</li>
-<li><strong>Log:</strong> ~0.07s Rewriting / 0.000s Solving</li>
+<li>https://rietta.com/blog/git-rebase-autosquash-code-reviews/</li>
+<li>https://git-scm.com/docs/git-commit#Documentation/git-commit.txt—fixupamendrewordltcommitgt</li>
 </ul>
+<h1 id="before-your-pr-is-merged"><a class="header" href="#before-your-pr-is-merged">Before your PR is merged</a></h1>
+<p>When your PR is approved, you may need to <a href="https://git-scm.com/docs/git-rebase#_description">rebase</a> your branch onto main before it can be merged. Rebasing essentially adds all the latest commits from main to your branch if it has fallen behind main.</p>
+<p>To do this:</p>
+<ol>
+<li>Make sure that your <code>main</code> branch is synced to the main repo</li>
+<li>Switch to the branch you’re making the PR from</li>
+<li>Do:
+<pre><code class="language-sh">git rebase main
+git push --force
+</code></pre>
+</li>
+</ol>
+<h1 id="optional-cleaning-up-your-git-history"><a class="header" href="#optional-cleaning-up-your-git-history">(Optional) Cleaning up your Git history</a></h1>
+<p>Additionally, if you are proficient with git, you can use interactive rebase to clean up your commit history.
+This allows you to reorder, drop, or amend commits arbitrarily.</p>
+<p>See:</p>
+<ul>
+<li><a href="https://about.gitlab.com/blog/2020/11/23/keep-git-history-clean-with-interactive-rebase/">How to keep your Git history clean with interactive rebase</a></li>
+<li><a href="https://git-scm.com/book/en/v2/Git-Tools-Rewriting-History">7.6 Git Tools - Rewriting History</a></li>
+</ul>
+<p>There are some GUI tools to help you do that, such as the <a href="https://github.com/apps/desktop">GitHub Client</a>, <a href="https://www.gitkraken.com/">GitKraken</a>, various VS Code extensions, etc.</p>
+<blockquote class="blockquote-tag blockquote-tag-warning">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575Zm1.763.707a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368Zm.53 3.996v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg>Warning</p>
+<p>Interactive rebase and force-pushing overwrites your git history, so it can be destructive.
+This is also not a requirement!</p>
+</blockquote>
+<h1 id="squashing-prs"><a class="header" href="#squashing-prs">Squashing PRs</a></h1>
+<p>Alternatively, you can ask for the PR to be “squashed”.
+This combines all your commits into one merge commit.
+Squashing PRs helps keep the commit history on main clean and logical without requiring you to go back and  manually edit your commits!</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../documentation/Implementing-Uniplates-and-Biplates-with-Structure-Preserving-Trees.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../developers_guide/contributors_guide/set-dev-env.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../documentation/SAT/rule-types.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../developers_guide/contributors_guide/creating_documentation_guides.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -239,11 +311,11 @@ such that x &gt; 10
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../documentation/Implementing-Uniplates-and-Biplates-with-Structure-Preserving-Trees.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../developers_guide/contributors_guide/set-dev-env.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../documentation/SAT/rule-types.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../developers_guide/contributors_guide/creating_documentation_guides.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

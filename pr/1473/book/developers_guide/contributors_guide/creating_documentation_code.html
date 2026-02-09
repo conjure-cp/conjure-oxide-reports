@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Expression rewriting, Rules and RuleSets - Conjure Oxide</title>
+        <title>Writing Documentation in Code - Conjure Oxide</title>
 
 
         <!-- Custom HTML head -->
@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../searchindex-393733bd.js";
+            window.path_to_searchindex_js = "../../searchindex-78c1d72e.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-72bc647e.js"></script>
+        <script src="../../toc-b9ef563d.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -176,294 +176,151 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <!-- maturity: draft
-authors: Georgii Skorokhod, Hanaa Khan
-created: 16-02-24
----- -->
-<!-- TODO edit more -->
-<h1 id="expression-rewriting-rules-and-rulesets"><a class="header" href="#expression-rewriting-rules-and-rulesets">Expression rewriting, Rules and RuleSets</a></h1>
-<blockquote>
-<p>NOTE: Once the rewrite engine API is finalised, we should possibly make a separate page for it.</p>
+                        <blockquote>
+<p><em>“Omit needless words”</em></p>
+<p>(c) William Strunk</p>
 </blockquote>
-<h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
-<p>Conjure uses Essence, a high-level DSL for constraints modelling, and converts it into a solver-specific representation of the problem.
-To do that, we parse the Essence file into an AST, then use a rule engine to walk the expression tree and rewrite constraints into a format that is accepted by the solver before passing the AST to a solver adapter.</p>
-<p>The high-level process is as follows:</p>
-<ol>
-<li>Start with a deterministically ordered list of rules</li>
-<li>For each node in the expression tree:
+<h1 id="key-points"><a class="header" href="#key-points">Key Points</a></h1>
+<h2 id="resources"><a class="header" href="#resources">Resources</a></h2>
+<p>See:</p>
 <ul>
-<li>Find all rules that can be applied to it</li>
-<li>If there are none, keep traversing the tree. Otherwise:
+<li>the <a href="https://github.com/rust-lang/rfcs/blob/master/text/1574-more-api-documentation-conventions.md">Rust doc style conventions</a></li>
+</ul>
+<h2 id="dos"><a class="header" href="#dos">Do’s</a></h2>
+<p>Our documentation is inline with the code. The reader is likely to skim it while scrolling through the file and trying to understand what it does. So, our doc strings should:</p>
 <ul>
-<li>Take the rules with the highest priority</li>
-<li>If there is only one, apply it</li>
-<li>If there are multiple, use some strategy to choose a rule
-(the rule selection logic is separate from the rewrite engine itself).
-For testing, we currently just choose the first rule</li>
+<li>Be as brief and clear as possible</li>
+<li>Ideally, fit comfortably on a standard monitor without obscuring the code</li>
+<li>Contain key information about the method / structure, such as:
+<ul>
+<li>A single sentence explaining its purpose</li>
+<li>A brief overview of arguments / return types</li>
+<li>Example snippets for non-trivial methods</li>
 </ul>
 </li>
-</ul>
-</li>
-<li>When there are no more rules to apply, the rewrite is complete</li>
-</ol>
-<p>We want the rewrite process to:</p>
+<li>Explain any details that are <strong>not</strong> obvious from the method signature, such as:
 <ul>
-<li>be <strong>flexible</strong> - instead of hard coding the rules, we want an easy way to extend the list of rules and to decide which rules to use, both for ourselves and for any users who may wish to use conjure-oxide in their projects</li>
-<li>be <strong>deterministic</strong> (in a loose sense of the term) - for a given input, set of rules, and a given set of answers to all rule selection questions (see above), the rewriter must always produce the same output</li>
-<li>happen in a single step, instead of doing multiple passes over the model (like it is done in Saville Row currently)</li>
-</ul>
-<h2 id="rules"><a class="header" href="#rules">Rules</a></h2>
-<hr>
-<h3 id="overview-1"><a class="header" href="#overview-1">Overview</a></h3>
-<p>Rules are the fundamental part of the rewrite engine.
-They consist of:</p>
-<ul>
-<li>A unique <strong>name</strong></li>
-<li>An application function which takes an <code>Expression</code> and either rewrites it or errors if the rule is not applicable.
-(Checking applicability and applying the rule are not separated to avoid code duplication and inefficiency - their logic is the same)</li>
-</ul>
-<p>We may also store other metadata in the <code>Rule</code> struct, for example the names of the <code>RuleSet</code>s that it belongs to.</p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>pub struct Rule&lt;'a&gt; {
-    pub name: &amp;'a str,
-    pub application: fn(&amp;Expression) -&gt; Result&lt;Expression, RuleApplicationError&gt;,
-    pub rule_sets: &amp;'a [(&amp;'a str, u8)], // (name, priority). At runtime, we add the rule to rulesets
-}
-<span class="boring">}</span></code></pre>
-<h3 id="registering-rules"><a class="header" href="#registering-rules">Registering Rules</a></h3>
-<p>The main way to register rules is by defining their application function and decorating it with the <code>#[register_rule()]</code> macro.
-When this macro is invoked, it creates a static <code>Rule</code> object and adds it to a global rule registry. Rules may be registered from the <code>conjure_oxide</code> crate, or any downstream crate (so, users may define their own rules).</p>
-<p>Currently, the <code>register_rule</code> macro has the following syntax:</p>
-<pre><code>#[register_rule(("&lt;RuleSet name&gt;", &lt;Rule priority within the ruleset&gt;))]
-</code></pre>
-<h4 id="example"><a class="header" href="#example">Example</a></h4>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>use conjure_core::ast::Expression;
-use conjure_core::rule::RuleApplicationError;
-use conjure_rules::register_rule;
-
-#[register_rule(("RuleSetName", 10))]
-fn identity(expr: &amp;Expression) -&gt; Result&lt;Expression, RuleApplicationError&gt; {
-   Ok(expr.clone())
-}
-<span class="boring">}</span></code></pre>
-<h3 id="getting-rules-from-the-registry"><a class="header" href="#getting-rules-from-the-registry">Getting Rules from the registry</a></h3>
-<p>Rules may be retrieved using the following functions:</p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>pub fn get_rule_by_name(name: &amp;str) -&gt; Option&lt;&amp;'static Rule&lt;'static&gt;&gt;
-<span class="boring">}</span></code></pre>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>pub fn get_rules() -&gt; Vec&lt;&amp;'static Rule&lt;'static&gt;&gt;
-<span class="boring">}</span></code></pre>
-<ul>
-<li><code>get_rules()</code> returns a vector of static references to <code>Rule</code> structs</li>
-<li><code>get_rule_by_name()</code> returns a static reference to a specific rule, if it exists</li>
-</ul>
-<h2 id="rule-sets"><a class="header" href="#rule-sets">Rule Sets</a></h2>
-<hr>
-<p>Rule sets group some <code>Rule</code>s together and map them to their priorities.
-The <code>rewrite</code> function takes a set of <code>RuleSet</code>s and uses it to resolve a final list of rules, ordered by their priority.</p>
-<p>The <code>RuleSet</code> object contains the following fields:</p>
-<ul>
-<li><code>name</code> The name of the rule set.</li>
-<li><code>order</code> The order of the rule set.</li>
-<li><code>rules</code> A map of rules to their priorities. This is evaluated lazily at runtime.</li>
-<li><code>solvers</code> The solvers that this <code>RuleSet</code> applies for.</li>
-<li><code>solver_families</code> The solver families that this <code>RuleSet</code> applies for.</li>
-</ul>
+<li>Details of the method’s “contract” that can’t be easily encoded in the type system
 <blockquote>
-<p>NOTE: A <code>RuleSet</code> would apply if EITHER of the following is true:</p>
-<ul>
-<li>The target solver belongs to its list of <code>solvers</code></li>
-<li>The target solver belongs to a family that is listed in <code>solver_families</code>, even if it is not explicitly named in <code>solvers</code></li>
-</ul>
+<p>(E.g: <em>“The input must be a sorted slice of positive integers”</em>; <em>“The given expression will be modified in-place”</em>)</p>
 </blockquote>
-<p>It provides the following public methods:</p>
-<ul>
-<li><code>get_dependencies() -&gt; &amp;HashSet&lt;&amp;'static RuleSet&gt;</code> Get the dependency <code>RuleSet</code>s of this <code>RuleSet</code> (evaluating them lazily if necessary)</li>
-<li><code>get_rules() -&gt; &amp;HashMap&lt;&amp;'a Rule&lt;'a&gt;, u8&gt;</code> Get a map of rules to their priorities (performing lazy evaluation - “reversing the arrows” - if necessary)</li>
-</ul>
-<h3 id="registering-rule-sets"><a class="header" href="#registering-rule-sets">Registering Rule Sets</a></h3>
-<p>Like <code>Rule</code>s, <code>RuleSet</code>s may be registered from anywhere within the <code>conjure_oxide</code> crate or any downstream crate.
-They are registered using the <code>register_rule_set!</code> macro using the following syntax:</p>
-<pre><code>register_rule_set!("&lt;Rule set name&gt;", &lt;order&gt;, ("&lt;name of dependency RuleSet&gt;", ...), (&lt;list of solver families&gt;), (&lt;list of solvers&gt;));
-</code></pre>
-<p>If a bracketed list is omitted, the corresponding list would be empty. However, you must not break the order.
-For example:</p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>register_rule_set!("MyRuleSet", 10) // This is legal (rule set will have no dependencies, solvers or solver families)
-register_rule_set!("MyRuleSet", 10, ("DependencyRS")) // Also legal
-register_rule_set!("MyRuleSet", 10, (SolverFamily::CNF)) // This is illegal because dependencies come before solver families
-register_rule_set!("MyRuleSet", 10, (), (SolverFamily::CNF)) // But this is fine
-<span class="boring">}</span></code></pre>
-<h4 id="example-1"><a class="header" href="#example-1">Example</a></h4>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>register_rule_set!("MyRuleSet", 10, ("DependencyRuleSet", "AnotherRuleSet"), (SolverFamily::CNF), (SolverName::Minion));
-<span class="boring">}</span></code></pre>
-<h4 id="adding-rules-to-rulesets"><a class="header" href="#adding-rules-to-rulesets">Adding Rules to RuleSets</a></h4>
-<p>Notice that we do not add any rules to the <code>RuleSet</code> when we register it.
-Instead, the <code>Rule</code> contains the names of the <code>RuleSets</code> that it needs to be added to.</p>
-<p>At runtime, when we first request the <code>rules</code> from a <code>RuleSet</code>, it retrieves a list of all the rules that reference it by name from the registry, and stores static references to the rules along with their priorities.</p>
-<p>This is done to allow us to statically initialise <code>Rule</code>s and <code>RuleSet</code>s in a decentralised way across multiple files and store them in a single registry. Dynamic data structures (like <code>Vec</code> or <code>HashMap</code>) cannot be initialised at this stage (Rust has no “life before <code>main()</code>”), so we have to initialise them lazily at runtime.</p>
-<p><img src="./expression_rewriting_diagram.png" alt="image"></p>
-<p>Internally, we would sometimes refer to this lazy initialisation as “reversing the arrows”.</p>
-<h3 id="getting-rulesets-from-the-registry"><a class="header" href="#getting-rulesets-from-the-registry">Getting RuleSets from the registry</a></h3>
-<p>Similarly to <code>Rule</code>s, <code>RuleSet</code>s may be retrieved using the following functions:</p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>pub fn get_rule_set_by_name(name: &amp;str) -&gt; Option&lt;&amp;'static RuleSet&lt;'static&gt;&gt;
-<span class="boring">}</span></code></pre>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>pub fn get_rule_sets() -&gt; Vec&lt;&amp;'static RuleSet&lt;'static&gt;&gt;
-<span class="boring">}</span></code></pre>
-<h2 id="resolving-a-final-list-of-rules"><a class="header" href="#resolving-a-final-list-of-rules">Resolving a final list of <code>Rule</code>s</a></h2>
-<hr>
-<p>Our <code>rewrite</code> function takes an <code>Expression</code> along with a list of <code>RuleSet</code>s to apply:</p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>pub fn rewrite&lt;'a&gt;(
-    expression: &amp;Expression,
-    rule_sets: &amp;Vec&lt;&amp;'a RuleSet&lt;'a&gt;&gt;,
-) -&gt; Result&lt;Expression, RewriteError&gt;
-<span class="boring">}</span></code></pre>
-<p>Before we start rewriting the AST, we must first resolve the final list of rules to apply.</p>
-<p>This is done via the following steps:</p>
-<ol>
-<li>
-<p>Add all given <code>RuleSet</code>s to a set of rulesets</p>
 </li>
-<li>
-<p>Recursively look up all their dependencies by name and add them to the set as well</p>
-</li>
-<li>
-<p>Once we have a final set of <code>RuleSet</code>s:</p>
-<ol>
-<li>
-<p>Construct a <code>HashMap&lt;&amp;Rule, priority&gt;)</code>. This will hold our final mapping of rules to priorities</p>
-</li>
-<li>
-<p>Loop over all the rules of every <code>RuleSet</code></p>
-</li>
-<li>
-<p>If a rule is not yet present in the final <code>HashMap</code>, add it and its priority within the <code>RuleSet</code></p>
-</li>
-<li>
-<p>If it is already present:</p>
-<ul>
-<li>Compare the order of the current <code>RuleSet</code> and the one that the rule originally came from</li>
-<li>If the new <code>RuleSet</code> has a higher order, update the <code>Rule</code>’s priority</li>
-</ul>
-</li>
-</ol>
-</li>
-<li>
-<p>Once all rules have been added to the <code>HashMap</code>:</p>
-<ol>
-<li>Take all its keys and put them in a vector</li>
-<li>Sort it by rule priority</li>
-<li>In the case that two rules have the same priority, sort them lexicographically by <code>name</code></li>
-</ol>
-</li>
-</ol>
-<p>In the end, we should have a final deterministically ordered list of rules and a <code>HashMap</code> that maps them to their priorities.
-Now, we can proceed with rewriting.</p>
-<h3 id="why-all-this-weirdness"><a class="header" href="#why-all-this-weirdness">Why all this weirdness?</a></h3>
-<h4 id="rule-ordering"><a class="header" href="#rule-ordering">Rule ordering</a></h4>
-<p>We want to always have a single deterministic ordering of <code>Rule</code>s. This way, for a given set of rules, the <code>select_rule</code> strategy would always give the same result.</p>
-<p>Think of it as a multiple choice quiz: if we want to know that the same numbers in the answer sheet actually correspond to the same set of answers, we must make sure that all students get the questions in the same order.</p>
-<p>This is why we sort <code>Rule</code>s by priority, and then use their name (which is guaranteed to be unique) as a tie breaker.</p>
-<p>Normally, one would just construct a vector of <code>Rule</code>s and use it as the final ordering, but we cannot do that, because rules are registered in a decentralised way across many files, and when we get them from the rule registry, they are not guaranteed to be in any specific order</p>
-<h4 id="ruleset-ordering"><a class="header" href="#ruleset-ordering">RuleSet ordering</a></h4>
-<p>As part of resolving the list of rules to use, we need to take rules from multiple <code>RuleSet</code>s and put these rules and their priorities in a <code>HashMap</code>. However, the <code>RuleSet</code>s may overlap (i.e. contain the same rules but with different priorities), and we want to make sure that, for a given set of <code>RuleSet</code>s, the final rule priorities will always be the same.</p>
-<p>Normally, this would not be an issue - entries in the <code>HashMap</code> would be added and updated as needed as we loop over the <code>RuleSet</code>s. However, since the <code>RuleSet</code>s are stored in a decentralised registry and are not guaranteed to come in any particular order (i.e. this order may change every time we recompile the project), we need to ensure that the order in which the entries are added to the <code>HashMap</code> (and thus the final rule priorities) doesn’t change.</p>
-<p>To achieve this, we use the following algorithm:</p>
-<ol>
-<li>Loop over all given <code>RuleSet</code>s</li>
-<li>Loop over all the rules in a <code>RuleSet</code>
-<ul>
-<li>If the rule is not present in the <code>HashMap</code>, add it</li>
-<li>If the rule is already there:
-<ul>
-<li>If this <code>RuleSet</code> has a higher <code>order</code> than the one that the rule came from, update its priority</li>
-<li>Otherwise, don’t change anything</li>
-</ul>
-</li>
-</ul>
-</li>
-</ol>
+<li>Non-trivial situations where the method may <code>panic!</code> or cause unintended behaviour
 <blockquote>
-<p>NOTE: The <code>order</code> of a <code>RuleSet</code> should not be thought of as a “priority” and does not affect the priorities of the rules in it.
-It only provides a consistent order of operations when resolving the final set of rules</p>
+<p>(E.g: <em>“Panics if the connection terminates while the stream is being read”</em>)</p>
 </blockquote>
-<h2 id="concrete-example--sat-backend-pipeline"><a class="header" href="#concrete-example--sat-backend-pipeline">Concrete Example:  SAT Backend Pipeline</a></h2>
-<p>To see how rules and rulesets work in practice, let’s walk through the SAT backend’s transformation of a simple Essence model.</p>
+</li>
+<li>Any <code>unsafe</code> things a method does
 <blockquote>
-<p><strong>Note:</strong> The actual RuleSet names and groupings in the codebase may differ from this simplified explanation, but the general priority ordering and transformation pipeline described here is accurate.</p>
+<p>(E.g: <em>“We type-cast the given pointer with <code>mem::transmute</code>. This is safe because…”</em>)</p>
 </blockquote>
-<h3 id="input-model"><a class="header" href="#input-model">Input Model</a></h3>
-<pre><code class="language-essence">find x : int(1..3)
-find y : int(2..5)
-such that x &gt; y
+</li>
+<li>Special cases</li>
+</ul>
+</li>
+</ul>
+<h2 id="donts"><a class="header" href="#donts">Don’ts</a></h2>
+<p>Documentation generally should <strong>not</strong>:</p>
+<ul>
+<li>Repeat itself</li>
+<li>Use long, vague, or overly complex sentences</li>
+<li>Re-state things that are obvious from the types / signature of the method</li>
+<li>Explain implementation details</li>
+<li>Explain high-level architectural decisions
+(Consider making a wiki page or opening an RFC issue instead!)</li>
+</ul>
+<p>And finally…
+Please, don’t ask ChatGPT to document your code for you!
+I know that writing documentation can be tedious, but you can always:</p>
+<ul>
+<li>Write a one-sentence doc string for now and come back to it later</li>
+<li>Ask others if you don’t quite understand what a method does</li>
+</ul>
+<h1 id="types-and-tests-are-documentation"><a class="header" href="#types-and-tests-are-documentation">Types and Tests are Documentation</a></h1>
+<p>Documentation is great, but we should also use the type system and other rust features to our advantage!</p>
+<ul>
+<li>
+<p>A lot of things (e.g: error conditions, thread safety, state) can be encoded in the types of arguments / return values.
+This is usually better than just <code>panic!</code>-ing and adding a doc string to explain why.</p>
+</li>
+<li>
+<p>Tests are also a great way to illustrate the behaviour of your code and any special cases - and they also help with catching bugs!</p>
+</li>
+</ul>
+<h1 id="example-snippets"><a class="header" href="#example-snippets">Example Snippets</a></h1>
+<p>For non-trivial methods and user-facing API’s, it may be useful to include an example.
+Examples should be minimal but complete snippets of code that illustrate a method’s behaviour.</p>
+<p>If you wrap your example in a code block:</p>
+<pre><code class="language-markdown">```rust ... ```
 </code></pre>
-<h3 id="transformation-pipeline"><a class="header" href="#transformation-pipeline">Transformation Pipeline</a></h3>
-<p>The SAT backend applies rules in three priority groups:</p>
-<h4 id="1-integer-representation-rules-highest-priority"><a class="header" href="#1-integer-representation-rules-highest-priority">1. Integer Representation Rules (Highest Priority)</a></h4>
-<p><strong>RuleSet</strong>: <code>integer_repr</code></p>
-<p>These rules convert integer variables into <code>SATInt</code> representations (boolean vectors):</p>
+<p>Our CI will even run it and complain if the example does not compile / contains an error!</p>
+<p>However, don’t feel obliged to include an example for every method!
+For simple methods they may not be necessary.</p>
+<h1 id="examples"><a class="header" href="#examples">Examples</a></h1>
+<p>⚠️ Good but a bit wordy:</p>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>#[register_rule(("integer_repr", 100))]
-fn integer_decision_representation(expr: &amp;Expression) -&gt; Result&lt;Expression, RuleApplicationError&gt; {
-    // Converts:  find x : int(1..3)
-    // Into: SATInt([bool_0, bool_1, ... ])
+</span>/// Checks if the OPTIMIZATIONS environment variable is set to "1".
+///
+/// # Returns
+/// - true if the environment variable is set to "1".
+/// - false if the environment variable is not set or set to any other value.
+fn optimizations_enabled() -&gt; bool {
+    match env::var("OPTIMIZATIONS") {
+        Ok(val) =&gt; val == "1",
+        Err(_) =&gt; false, // Assume optimizations are disabled if the environment variable is not set
+    }
 }
 <span class="boring">}</span></code></pre>
-<h4 id="2-operation-transformation-rules"><a class="header" href="#2-operation-transformation-rules">2. Operation Transformation Rules</a></h4>
-<p><strong>RuleSet</strong>: <code>integer_operations</code></p>
-<p>These rules convert operations on <code>SATInt</code>s into boolean expressions:</p>
+<p>✅ Since everything else is obvious from the signature, we can just say:</p>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>#[register_rule(("integer_operations", 50))]
-fn cnf_int_ineq(expr: &amp;Expression) -&gt; Result&lt;Expression, RuleApplicationError&gt; {
-    // Converts: SATInt(x) &gt; SATInt(y)
-    // Into: complex boolean expression
-}
+</span>/// Checks if the OPTIMIZATIONS environment variable is set to "1"
+fn optimizations_enabled() -&gt; bool { ... }
 <span class="boring">}</span></code></pre>
-<h4 id="3-tseitin-transformation-rules-lowest-priority"><a class="header" href="#3-tseitin-transformation-rules-lowest-priority">3. Tseitin Transformation Rules (Lowest Priority)</a></h4>
-<p><strong>RuleSet</strong>: <code>boolean</code></p>
-<p>These rules convert the resulting boolean expressions into Conjunctive Normal Form:</p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>#[register_rule(("boolean", 10))]
-fn tseitin_and(expr: &amp;Expression) -&gt; Result&lt;Expression, RuleApplicationError&gt; {
-    // Converts: A AND B
-    // Into: auxiliary variable C with clauses enforcing C &lt;-&gt; A AND B
-}
-<span class="boring">}</span></code></pre>
-<h3 id="viewing-the-transformations"><a class="header" href="#viewing-the-transformations">Viewing the Transformations</a></h3>
-<p>You can see this pipeline in action using logging:</p>
-<pre><code class="language-bash">RUST_LOG=TRACE cargo run -- solve --solver sat my_problem.essence --verbose
+<p>⚠️ Not bad, but sounds a bit robotic</p>
+<pre><code class="language-markdown"># Side-Effects
+- When the model is rewritten, related data structures such as the symbol table (which tracks variable names and types)
+  or other top-level constraints may also be updated to reflect these changes. These updates are applied to the returned model,
+  ensuring that all related components stay consistent and aligned with the changes made during the rewrite.
+- The function collects statistics about the rewriting process, including the number of rule applications
+  and the total runtime of the rewriter. These statistics are then stored in the model's context for
+  performance monitoring and analysis.
 </code></pre>
-<hr>
-<p><em>This section had been taken from the ‘Expression rewriting, Rules and RuleSets’ page of the conjure-oxide wiki</em></p>
+<p>✅ Same idea but shorter</p>
+<pre><code class="language-markdown"># Side-Effects
+- Rules can apply side-effects to the model (e.g. adding new constraints or variables).
+  The original model is cloned and a modified copy is returned.
+- Rule engine statistics (e.g. number of rule applications, run time) are collected and stored in the new model's context.
+</code></pre>
+<p>⚠️ A bit too detailed</p>
+<pre><code class="language-markdown"># Parameters
+- `expression`: A reference to the [`Expression`] that will be evaluated against the given rules. This is the main
+   target for rule transformations and is expected to remain unchanged during the function execution.
+- `model`: A reference to the [`Model`] that provides context for rule evaluation, such as constraints and symbols.
+  Rules may depend on information in the model to determine if they can be applied.
+- `rules`: A vector of references to [`Rule`]s that define the transformations to be applied to the expression.
+  Each rule is applied independently, and all applicable rules are collected.
+- `stats`: A mutable reference to [`RewriterStats`] used to track statistics about rule application, such as
+  the number of attempts and successful applications.
+</code></pre>
+<p>✅ Just describing the meaning of arguments will do</p>
+<p>(Details of the rewriting process belong on the wiki, and details of underlying types such as <code>Model</code> or <code>Expression</code> are already documented next to their implementations)</p>
+<pre><code class="language-markdown">- `expression`: A reference to the [`Expression`] to evaluate.
+- `model`: A reference to the [`Model`] for access to the symbol table and context.
+- `rules`: A vector of references to [`Rule`]s to try.
+- `stats`: A mutable reference to [`RewriterStats`] used to track the number of rule applications and other statistics.
+</code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../developers_guide/design_documents/2024_03.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../developers_guide/contributors_guide/creating_documentation_guides.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../developers_guide/design_documents/semantics-of-rewriting-expressions.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../developers_guide/coding_resources/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -473,11 +330,11 @@ fn tseitin_and(expr: &amp;Expression) -&gt; Result&lt;Expression, RuleApplicatio
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../developers_guide/design_documents/2024_03.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../developers_guide/contributors_guide/creating_documentation_guides.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../developers_guide/design_documents/semantics-of-rewriting-expressions.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../developers_guide/coding_resources/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

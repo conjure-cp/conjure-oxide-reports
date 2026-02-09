@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>SAT Encoding Types - Conjure Oxide</title>
+        <title>Essence Error Catalog for Error Underlining - Conjure Oxide</title>
 
 
         <!-- Custom HTML head -->
@@ -176,60 +176,127 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h2 id="types-of-sat-encodings"><a class="header" href="#types-of-sat-encodings">Types of SAT Encodings</a></h2>
-<p>There are three different types of SAT Encodings planned in conjure oxide. Of these, only Logarithmic Encodings have been implemented thus far. The three types are these:</p>
-<ul>
-<li>Direct Encodings</li>
-<li>Logarithmic Encodings</li>
-<li>Order Encodings</li>
-</ul>
-<p>Each type of encoding has pros and cons, and a different one may be selected based on the type of constraint problem.</p>
-<h3 id="satint-expression"><a class="header" href="#satint-expression">SATInt Expression</a></h3>
-<p>All encodings are stored using the same <code>SATInt</code> expression type. This expression type holds: an enum specifying the encoding, a bitvector of boolean expressions (these can be literals, variables, or complex operations), and the domain of the integer. This expression cannot be created through parsing and should only be created by SAT rules.</p>
-<h3 id="logarithmic-encoding"><a class="header" href="#logarithmic-encoding">Logarithmic Encoding</a></h3>
-<p>The base principle is quite simple: encode an integer as a bitvector. This allows us to represent integers as a series of boolean constraints – one for each bit.</p>
-<p>For example, the integer ‘6’ can be represented in binary as ‘0110’. We can then represent this as (P = 0 ∨ 1, Q = 0 ∨ 1, R = 0 ∨ 1, S = 0 ∨ 1). The connection that is missing, however, is that this isn’t actually a representation of a constraint problem, but of a solution to a problem.</p>
-<h3 id="direct-encoding"><a class="header" href="#direct-encoding">Direct Encoding</a></h3>
-<p>Direct encodings are the most straightforward type of encoding - it involves creating a vector of boolean variables, one corresponding to each member of the domain. Only one of these variables can be true at a time, and it is the one corresponding to the value of the integer.</p>
-<h3 id="order-encoding"><a class="header" href="#order-encoding">Order Encoding</a></h3>
-<p>Order follows the same principle as direct encoding, but instead of each boolean variable ‘specifying’ a value in the way that direct encodings do, each bit specifies whether the integer corresponding to it is less than or equal to the integer variable’s value.</p>
-<h3 id="why-have-multiple-types-of-encoding"><a class="header" href="#why-have-multiple-types-of-encoding">Why have multiple types of encoding?</a></h3>
-<p>Only logarithmic encodings are currently implemented in conjure-oxide. We’re planning to include other encodings such as direct and order encodings. This is motivated by their potential advantages over the log encoding in some cases.</p>
-<p>Direct encodings should perform well for equality-heavy constraints but may scale poorly with larger domains or inequalities. Logarithmic encodings are expected to handle inequalities more efficiently. Order encodings are often viewed as a compromise, potentially balancing these trade-offs.</p>
-<h3 id="performance-comparison"><a class="header" href="#performance-comparison">Performance Comparison</a></h3>
-<p>The choice of encoding significantly impacts performance depending on the constraint types used.</p>
-<h4 id="direct-encoding-better-for-equality-and-disequality"><a class="header" href="#direct-encoding-better-for-equality-and-disequality">Direct Encoding: Better for Equality and Disequality</a></h4>
-<p>Direct encoding excels in models dominated by <code>=</code> and <code>!=</code> constraints, such as graph coloring. It enables immediate unit propagation in the SAT solver, pruning values faster than bitwise reasoning.</p>
-<p><strong>Example: Graph Coloring</strong></p>
-<pre><code class="language-essence">find c1, c2, c3, c4, c5 : int(1..3)
-such that
-    c1 != c2, c1 != c3, c2 != c3, c2 != c4,
-    c3 != c4, c3 != c5, c4 != c5
+                        <h1 id="syntax-errors"><a class="header" href="#syntax-errors">Syntax Errors</a></h1>
+<p>(Will produce an invalid CST)</p>
+<h3 id="1-missing-token-eg-variable-domain-expression"><a class="header" href="#1-missing-token-eg-variable-domain-expression">1. Missing Token (e.g variable, Domain, Expression)</a></h3>
+<p>Description: expected token is absent
+Detection: Empty node or a missing child node. (MISSING node is inserted)
+Example: missing variable name</p>
+<pre><code class="language-text">find: bool
 </code></pre>
-<ul>
-<li><strong>Direct:</strong> ~0.55s Rewriting / 0.001s Solving</li>
-<li><strong>Log:</strong> ~1.61s Rewriting / 0.002s Solving</li>
-</ul>
-<h4 id="logarithmic-encoding-better-for-inequalities"><a class="header" href="#logarithmic-encoding-better-for-inequalities">Logarithmic Encoding: Better for Inequalities</a></h4>
-<p>Logarithmic encoding is superior for arithmetic and inequalities (<code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, <code>&gt;=</code>) over large or sparse domains. Binary bit-vectors result in a more compact representation and reduced overhead.</p>
-<p><strong>Example: Sparse Domain with Inequalities</strong></p>
-<pre><code class="language-essence">find x : int(1, 10, 20, 30, 40, 50)
-such that x &gt; 10
+<p>Example: missing Expression</p>
+<pre><code class="language-text">letting x be 
 </code></pre>
-<ul>
-<li><strong>Direct:</strong> ~1.24s Rewriting / 0.005s Solving</li>
-<li><strong>Log:</strong> ~0.07s Rewriting / 0.000s Solving</li>
-</ul>
+<h3 id="2-missing-keyword"><a class="header" href="#2-missing-keyword">2. Missing Keyword</a></h3>
+<p>Description: a token appears where a different token/keyword is expected
+Detection: ERROR node containing all the tokens where that failed to match the grammar</p>
+<p>Example: missing colon, <code>int</code> is unexpected (here <code>x</code> and <code>int</code> will be children of the ERROR node)</p>
+<pre><code class="language-text">find x int
+</code></pre>
+<h3 id="3-unexpected-token"><a class="header" href="#3-unexpected-token">3. Unexpected Token</a></h3>
+<p>Description: a token appearing after a valid construct is complete
+Detection: ERROR node containing the extra token (ERROR node will likely be the last child of a valid construct)
+Example: second <code>)</code> is extra</p>
+<pre><code class="language-text">find x: int(1..2))
+</code></pre>
+<h3 id="4-invalid-token"><a class="header" href="#4-invalid-token">4. Invalid Token</a></h3>
+<p>Description: token is malformed or not part of the grammar
+Detection: look for an ERROR node with the invalid token
+Example: <code>@int</code> is not a valid token (ERROR node with <code>@</code>)</p>
+<pre><code class="language-text">find x: @int
+</code></pre>
+<p>Conjur does not identify <code>int</code> at all, just says “Skipped token”, “Missing Domain”
+Tree-Sitter in conjure-oxide sees <code>int</code> as a valid token but has an ERROR node with <code>@</code> before.
+So in Conjure the same error as Missing Token but might make sense to separate due to different CST structures.</p>
+<h3 id="5-unclosed-delimiter"><a class="header" href="#5-unclosed-delimiter">5. Unclosed Delimiter</a></h3>
+<p>Description: unmatched or missing closing bracket, parenthesis, brace
+Detection: MISSING node “)”
+Example: missing <code>)</code></p>
+<pre><code class="language-text">find x: int(1..2
+</code></pre>
+<p>Conjure allows it but since out grammar enforces it Tree-Sitter produces an error.</p>
+<h3 id="6-unsupported-statements"><a class="header" href="#6-unsupported-statements">6. Unsupported Statements</a></h3>
+<p>Description: statement not recognised by Essence grammar
+Detection: ERROR node with the unrecognised statement
+Example:</p>
+<pre><code class="language-text">find x: int(1..5)
+print x 
+</code></pre>
+<p>Conjure doesn’t recognise <code>print x</code> as a separate invalid statement.</p>
+<h3 id="7-general-syntax-error"><a class="header" href="#7-general-syntax-error">7. General Syntax Error</a></h3>
+<p>All the other cases that cause an ERROR node in the CST tree.</p>
+<h1 id="semantic-errors"><a class="header" href="#semantic-errors">Semantic Errors</a></h1>
+<p>(Will produce a valid CST and AST, now can only detected at runtime, e.g typecheking)</p>
+<h3 id="1-keywords-as-identifiers"><a class="header" href="#1-keywords-as-identifiers">1. Keywords as Identifiers</a></h3>
+<p>Description: token’s name is not allowed<br>Detection: compare the variable names against the set of keywords
+Example: Keyword “bool” used as a variable name</p>
+<pre><code class="language-text">find bool: bool
+</code></pre>
+<pre><code class="language-text">find x: letting
+</code></pre>
+<p>Conjure doesn’t allow it but Tree-Sitter does so we will have to check as part of semantic checks.</p>
+<h3 id="2-omitted-declaration"><a class="header" href="#2-omitted-declaration">2. Omitted Declaration</a></h3>
+<p>Description: variable not declared
+Detection: save the declared variables and check if the ones used in expressions are in the declared set
+Example: x was not declared before</p>
+<pre><code class="language-text">find y: int (1..4)
+such that x = 5
+</code></pre>
+<h3 id="3-invalid-domain"><a class="header" href="#3-invalid-domain">3. Invalid Domain</a></h3>
+<p>Description: logically or mathematically invalid bounds/domain + infinite domain</p>
+<p>Example: a bigger value before smaller</p>
+<pre><code class="language-text">find x: int(10..5)
+</code></pre>
+<p>Conjure doesn’t flag as error just says no solutions found.</p>
+<p>Example: infinite domain</p>
+<pre><code class="language-text">find x: int(1..) 
+</code></pre>
+<p>Might want to restrict infinite domain with the grammar so it could be a syntax error.</p>
+<h3 id="4-type-mismatch"><a class="header" href="#4-type-mismatch">4. Type Mismatch</a></h3>
+<p>Description: attempt to do an operation on illegal types</p>
+<p>Example: cannot add integer and boolean</p>
+<pre><code class="language-text">letting y be true 
+find x: int (5..10)
+such that 5 + y = 6
+</code></pre>
+<h3 id="5-unsafe-division"><a class="header" href="#5-unsafe-division">5. Unsafe division</a></h3>
+<p>Description: cannot divide/modulo by zero</p>
+<p>Example: cannot divide by zero</p>
+<pre><code class="language-text">find x: int(5..10)
+such that x/0 = 3
+</code></pre>
+<p>Conjure allows, proceeds to run the solver but just outputs no solutions. We should disallow.</p>
+<h3 id="6-invalid-indexing-in-tuples-and-matrices"><a class="header" href="#6-invalid-indexing-in-tuples-and-matrices">6. Invalid indexing in tuples and matrices</a></h3>
+<p>Description: Tuples and matrices are indexed from . Negative, zero or index out of bounds is invalid</p>
+<p>Example: s tuple index of out bounds</p>
+<pre><code class="language-text">letting s be tuple(0,1,1,0)
+letting t be tuple(0,0,0,1)
+find a : bool such that a = (s[5] = t[1]) $ true
+</code></pre>
+<h1 id="possible-semantic-errors-per-statement-type"><a class="header" href="#possible-semantic-errors-per-statement-type">Possible semantic errors per statement type</a></h1>
+<p>(All syntactic errors are relevant for each)</p>
+<h2 id="declarations"><a class="header" href="#declarations">Declarations</a></h2>
+<h3 id="find-statement"><a class="header" href="#find-statement">Find Statement</a></h3>
+<p>(Declaring decision variables)</p>
+<p>Format: <em>“find”</em> <strong>Name</strong> <em>“:”</em> <strong>Domain</strong></p>
+<p>Semantic Errors: Keyword as Token, Invalid Domain</p>
+<h3 id="letting-statement"><a class="header" href="#letting-statement">Letting Statement</a></h3>
+<p>(Declaring aliases)</p>
+<p>Formats: <em>“letting”</em> <strong>Name</strong> <em>“be”</em> <strong>Expression</strong> | <em>“letting”</em> <strong>Name</strong> <em>“be”</em> <em>“domain”</em> <strong>Domain</strong></p>
+<p>Semantic Errors: All except Omitted Declaration</p>
+<h3 id="constraints"><a class="header" href="#constraints">Constraints</a></h3>
+<p>Format: <em>“such that”</em> list(<strong>Expression</strong>, <em>“,”</em>)</p>
+<p>Semantic Errors: All except for Invalid Domain</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../documentation/Implementing-Uniplates-and-Biplates-with-Structure-Preserving-Trees.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../documentation/sets/Conjure-Vertical-Set-Rules-Occurrence-Representation.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../documentation/SAT/rule-types.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../documentation/testing/ideal-scenario-of-testing.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -239,11 +306,11 @@ such that x &gt; 10
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../documentation/Implementing-Uniplates-and-Biplates-with-Structure-Preserving-Trees.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../documentation/sets/Conjure-Vertical-Set-Rules-Occurrence-Representation.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../documentation/SAT/rule-types.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../documentation/testing/ideal-scenario-of-testing.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>
