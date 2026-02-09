@@ -4,7 +4,7 @@
 **minion-sys:** 25% with examples, 86% documented -- 2/31/119
 **tree-morph:** 22% with examples, 100% documented -- 6/38/38
 
-Commit: [e5da32c32f2dc444ecc439ab3ed5476e2ad0d7ed](https://github.com/conjure-cp/conjure-oxide/commit/e5da32c32f2dc444ecc439ab3ed5476e2ad0d7ed)
+Commit: [53cac9dbb4e9ffc8660b31307a60bcfd388be37c](https://github.com/conjure-cp/conjure-oxide/commit/53cac9dbb4e9ffc8660b31307a60bcfd388be37c)
 
 ## Documentation coverage for `conjure-cp`
 
