@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-0ba53dba.js";
+            window.path_to_searchindex_js = "searchindex-78beea49.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-13399f30.js"></script>
+        <script src="toc-2c0130f0.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -3639,8 +3639,15 @@ Picking the first option: Question 1: [or([A_Occurrence[q5] /\ B_Occurrence[q5] 
         and([A_Occurrence[q6] /\ B_Occurrence[q6] -&gt; C_Occurrence[q6] | q6 : int(0..6)])
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
+<h1 id="overview-4"><a class="header" href="#overview-4">Overview</a></h1>
+<p>The Language Server Protocol (LSP) for Essence is designed to provide error detection and syntax highlighting for the Essence language. It consists of a server component and a diagnostics API. When fully implemented, the server will receive document change events from clients (e.g., VS Code), call the diagnostics API to detect syntactic and semantic errors, and publish these diagnostics back to the client for. The diagnostics API provides error detection and document symbol information for syntax highlighting. Its main purpose is to improve the user experience when formulating the problems in Essence.</p>
+<h1 id="structure"><a class="header" href="#structure">Structure</a></h1>
+<p>The LSP architecture follows a client-server model where the client (editor extension) and server (language server) communicate asynchronously via JSON-RPC 2.0 protocol. The server runs as a separate process, and exchanges messages over standard I/O streams. More on that in <a href="#lsp-documentation">LSP structure docs</a>.</p>
+<p>When the client requests diagnostics (on open, one edit, on hover… etc.), the LSP forwards this request to the Diagnostics API (for more details see <a href="#diagnostics-api-for-lsp-server">Diagnostics API</a>), which responds with a list of diagnostics which the server converts to <code>tower-lsp</code>-compatible types and publishes to the client.</p>
+<p><img src="documentation/assets/lsp_structure.svg" alt="LSP Structure Diagram"></p>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="lsp-documentation"><a class="header" href="#lsp-documentation">LSP Documentation</a></h1>
-<h2 id="overview-4"><a class="header" href="#overview-4">Overview</a></h2>
+<h2 id="overview-5"><a class="header" href="#overview-5">Overview</a></h2>
 <p>This is the overview documentation for the Language Server which is developed for use by Conjure Oxide. This is developed following the <a href="https://microsoft.github.io/language-server-protocol/">Language Server Protocol</a> developed by Microsoft Visual Studio Code, and implemented following VSCode guidelines. This means that functionality cannot be guaranteed on other IDE, though this does not mean it will/cannot work. The Language Server and Client provide the basis through which a fully functional Essence extension will be produced. The server and client run as separate processes primarily because this minimises performance cost.</p>
 <p>At present this addresses the client and server, with abstraction over lower level functions called by the server.</p>
 <h2 id="current-functionality-goals"><a class="header" href="#current-functionality-goals">Current Functionality Goals</a></h2>
@@ -3745,9 +3752,9 @@ tsconfig.json
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="diagnostics-api-for-lsp-server"><a class="header" href="#diagnostics-api-for-lsp-server">Diagnostics API for LSP Server</a></h1>
-<h2 id="overview-5"><a class="header" href="#overview-5">Overview</a></h2>
+<h2 id="overview-6"><a class="header" href="#overview-6">Overview</a></h2>
 <p>The Diagnostics API provides tree-sitter and parser–based diagnostics for Essence source files (for error underlining, syntax highlighting, and hover info). It also exposes general LSP-compatible data structures for consumption by editors and tools. Currently, the main functionality of the Diagnostics API is to parse Essence source code and report syntactic errors found by walking the CST (using tree-sitter) and report semantic errors by attempting a semantic parse and reporting parser errors. It serialises diagnostics exposing a <code>get_diagnostics()</code> function, which returns both semantic and syntactic errors as a <code>Vec</code> of <code>Diagnostic</code>s.</p>
-<h2 id="structure"><a class="header" href="#structure">Structure</a></h2>
+<h2 id="structure-1"><a class="header" href="#structure-1">Structure</a></h2>
 <pre><code class="language-bash">crates/conjure-cp-essence-parser/src/diagnostics/
 ├─ mod.rs
 ├─ diagnostics_api.rs             # public LSP-facing structs and `get_diagnostics(source)` aggregator
@@ -3762,10 +3769,10 @@ tsconfig.json
 <p><code>get_diagnostics(source: &amp;str) -&gt; Vec&lt;Diagnostic)</code> serves as the main entrypoint. It aggregates <code>detect_semantic_errors(source)</code> and <code>detect_syntactic_errors(source)</code> into a single diagnostics vector, returning a combined, deduplicated-by-call vector of <code>Diagnostic</code>s. That’s the funciton you would call for error detection and underlining.</p>
 </li>
 <li>
-<p><code>detect_syntactic_errors(source: &amp;str) -&gt; Vec&lt;Diagnostic)</code> Parses with tree-sitter and walks the CST using DFS with early retract on error/missing/zero-length nodes to avoid duplicates. More information on that in <a href="documentation/LSP/error_detection/error_classification.html">error detection docs</a>.</p>
+<p><code>detect_syntactic_errors(source: &amp;str) -&gt; Vec&lt;Diagnostic)</code> Parses with tree-sitter and walks the CST using DFS with early retract on error/missing/zero-length nodes to avoid duplicates. More information on that in <a href="#syntax-errors-1">error detection docs</a>.</p>
 </li>
 <li>
-<p><code>detect_semantic_errors(source: &amp;str) -&gt; Vec&lt;Diagnostic)</code> Runs <code>parse_essence_with_context</code> and, on <code>Err(EssenceParseError)</code>, maps the error into a <code>Diagnostic</code> using <code>error_to_diagnostic</code>. More information on that in <a href="documentation/LSP/error_detection/error_classification.html">error detection docs</a>.</p>
+<p><code>detect_semantic_errors(source: &amp;str) -&gt; Vec&lt;Diagnostic)</code> Runs <code>parse_essence_with_context</code> and, on <code>Err(EssenceParseError)</code>, maps the error into a <code>Diagnostic</code> using <code>error_to_diagnostic</code>. More information on that in <a href="#syntax-errors-1">error detection docs</a>.</p>
 </li>
 <li>
 <p>Helpers (for debugging and/or testing):</p>
@@ -4166,7 +4173,7 @@ In the future, it may also be worth examining the possibility and likelihood of 
 </li>
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="overview-6"><a class="header" href="#overview-6">Overview</a></h1>
+<h1 id="overview-7"><a class="header" href="#overview-7">Overview</a></h1>
 <p>Custom tests were created as a solution to the problem that integration tests do not allow for testing of error messages, which automatically return from the integration test method and therefore cannot be analyzed. The custom tests, however, work for both erroneous and non-erroneous code. Each test contains an input, a <code>run.sh</code> file to execute the test, and an expected standard output/error (or both) to compare against. Conjure Oxide is set up to automatically create and execute a test for each test folder in the <code>tests/custom </code>directory when <code>cargo test</code> is ran so to add a test case, all one must do is add a folder in the directory which contains the necessary components.</p>
 <h1 id="how-to-add-a-test-case"><a class="header" href="#how-to-add-a-test-case">How to add a test case</a></h1>
 <p>Adding a test case is simple. First add a folder with the test case name to the <code>tests/custom</code> directory. Tests can be organized within folders in the directory–only folders with a <code>run.sh</code> file will be treated as a test case. Within the test folder, add these components:</p>
