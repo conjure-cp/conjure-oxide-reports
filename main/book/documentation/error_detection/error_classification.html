@@ -37,7 +37,7 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../searchindex-78c1d72e.js";
+            window.path_to_searchindex_js = "../../searchindex-a1f03dec.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-b9ef563d.js"></script>
@@ -183,9 +183,9 @@
 Lead to an invalid CST. They are caught by the tree-sitter when an Essence expression does not match any rules in the current <a href="https://github.com/conjure-cp/conjure-oxide/blob/main/crates/tree-sitter-essence/grammar.js">grammar</a> and cause the CST to have <code>ERROR</code> nodes.</p>
 <p>Detected by inspecting and contextualising the CST.</p>
 <h2 id="1-missing-token"><a class="header" href="#1-missing-token">1. Missing Token</a></h2>
-<h3 id="description"><a class="header" href="#description">Description:</a></h3>
+<h3 id="description"><a class="header" href="#description">Description</a></h3>
 <p>Expected token is absent.</p>
-<h3 id="detection"><a class="header" href="#detection">Detection:</a></h3>
+<h3 id="detection"><a class="header" href="#detection">Detection</a></h3>
 <p><code>MISSING</code> node inserted or zero range node in the CST.</p>
 <h3 id="example-1-missing-identifiers"><a class="header" href="#example-1-missing-identifiers">Example 1: Missing identifier(s)</a></h3>
 <pre><code class="language-text">find: bool
@@ -198,9 +198,9 @@ such that x /
 <pre><code class="language-text">find x: tuple()
 </code></pre>
 <h2 id="2-unexpected-token"><a class="header" href="#2-unexpected-token">2. Unexpected Token</a></h2>
-<h3 id="description-1"><a class="header" href="#description-1">Description:</a></h3>
+<h3 id="description-1"><a class="header" href="#description-1">Description</a></h3>
 <p>Symbol(s) that are not supposed to be there according to the grammar rule tree-sitter is matching. Can be tokens belonging to the grammar or any foreign symbols.</p>
-<h3 id="detection-1"><a class="header" href="#detection-1">Detection:</a></h3>
+<h3 id="detection-1"><a class="header" href="#detection-1">Detection</a></h3>
 <p><code>ERROR</code> node wrapping the unexpected symbol(s).</p>
 <h3 id="example-1-extra--at-the-end"><a class="header" href="#example-1-extra--at-the-end">Example 1: Extra <code>)</code> at the end</a></h3>
 <pre><code class="language-text">find x: int(1..2))
@@ -213,16 +213,16 @@ such that x -&gt; %9
 <pre><code class="language-text">find x: matrix indexed by [int, &amp;] of int
 </code></pre>
 <h2 id="3-malformed-top-level-statement"><a class="header" href="#3-malformed-top-level-statement">3. Malformed Top Level Statement</a></h2>
-<h3 id="description-2"><a class="header" href="#description-2">Description:</a></h3>
+<h3 id="description-2"><a class="header" href="#description-2">Description</a></h3>
 <p>A line that cannot be parsed by the tree-sitter using any of the grammar rules.</p>
-<h3 id="detection-2"><a class="header" href="#detection-2">Detection:</a></h3>
+<h3 id="detection-2"><a class="header" href="#detection-2">Detection</a></h3>
 <p><code>ERROR</code> node that is a direct child of the root node <code>program</code> and precedes the nodes if the parsed line.</p>
 <h3 id="example-1-invalid-print-x"><a class="header" href="#example-1-invalid-print-x">Example 1: Invalid <code>print x</code></a></h3>
 <pre><code class="language-text">find x: int(1..5)
 print x 
 </code></pre>
 <h3 id="example-2-malformed-find-statement"><a class="header" href="#example-2-malformed-find-statement">Example 2: Malformed find statement</a></h3>
-<p>More of an edge case. Even though the keyword <code>find</code> is present, tree-sitter does not parse the line using the <code>find_statement</code> rule since the first symbol after <code>find</code> cannot be parsed an an identifier.</p>
+<p>More of an edge case. Even though the keyword <code>find</code> is present, tree-sitter does not parse the line using the <code>find_statement</code> rule since the first symbol after <code>find</code> cannot be parsed an identifier.</p>
 <pre><code class="language-text">find +,a,b: int(1..3)
 </code></pre>
 <h3 id="4-general-syntax-error"><a class="header" href="#4-general-syntax-error">4. General Syntax Error</a></h3>
@@ -230,20 +230,20 @@ print x
 <h1 id="semantic-errors"><a class="header" href="#semantic-errors">Semantic Errors</a></h1>
 <p>These errors concern the logical context of an expression rather than its surface-level formatting. As a result, the expression may conform to the grammar and produce a valid CST, but still fail to parse into a valid AST. Such errors are detected during the phase that converts the CST into a <code>Model</code> struct.</p>
 <h2 id="1-keywords-as-identifiers"><a class="header" href="#1-keywords-as-identifiers">1. Keywords as Identifiers</a></h2>
-<h3 id="description-3"><a class="header" href="#description-3">Description:</a></h3>
+<h3 id="description-3"><a class="header" href="#description-3">Description</a></h3>
 <p>Using grammar keywords (e.g <code>find</code>, <code>bool</code>) as a variable name.</p>
-<h3 id="detection-3"><a class="header" href="#detection-3">Detection:</a></h3>
+<h3 id="detection-3"><a class="header" href="#detection-3">Detection</a></h3>
 <p>Compare the variable names against the set of keywords that should not be allowed.</p>
-<h3 id="example-1-keyword-bool-as-an-identifier"><a class="header" href="#example-1-keyword-bool-as-an-identifier">Example 1: Keyword <code>bool</code> as an identifier.</a></h3>
+<h3 id="example-1-keyword-bool-as-an-identifier"><a class="header" href="#example-1-keyword-bool-as-an-identifier">Example 1: Keyword <code>bool</code> as an identifier</a></h3>
 <pre><code class="language-text">find bool: bool
 </code></pre>
-<h3 id="example-2-keyword-letting-used-as-an-identifier"><a class="header" href="#example-2-keyword-letting-used-as-an-identifier">Example 2: Keyword <code>letting</code> used as an identifier.</a></h3>
+<h3 id="example-2-keyword-letting-used-as-an-identifier"><a class="header" href="#example-2-keyword-letting-used-as-an-identifier">Example 2: Keyword <code>letting</code> used as an identifier</a></h3>
 <pre><code class="language-text">find letting,b,c: int(1..3)
 </code></pre>
 <h2 id="2-omitted-declaration"><a class="header" href="#2-omitted-declaration">2. Omitted Declaration</a></h2>
-<h3 id="description-4"><a class="header" href="#description-4">Description:</a></h3>
+<h3 id="description-4"><a class="header" href="#description-4">Description</a></h3>
 <p>Variable used but not declared.</p>
-<h3 id="detection-4"><a class="header" href="#detection-4">Detection:</a></h3>
+<h3 id="detection-4"><a class="header" href="#detection-4">Detection</a></h3>
 <p>Checking that the identifier used in a constraint was previsouly declared in a <code>find</code> or <code>letting_statement</code>.</p>
 <h3 id="example-x-was-not-declared-before"><a class="header" href="#example-x-was-not-declared-before">Example: x was not declared before</a></h3>
 <pre><code class="language-text">find y: int (1..4)
@@ -251,24 +251,24 @@ such that x = 5
 </code></pre>
 <h2 id="3-invalid-domain"><a class="header" href="#3-invalid-domain">3. Invalid Domain</a></h2>
 <p>(not yet supported)</p>
-<h3 id="description-5"><a class="header" href="#description-5">Description:</a></h3>
+<h3 id="description-5"><a class="header" href="#description-5">Description</a></h3>
 <p>Logically or mathematically invalid bounds.</p>
 <h3 id="example-a-bigger-value-before-smaller"><a class="header" href="#example-a-bigger-value-before-smaller">Example: a bigger value before smaller</a></h3>
 <pre><code class="language-text">find x: int(10..5)
 </code></pre>
 <h2 id="4-type-mismatch"><a class="header" href="#4-type-mismatch">4. Type Mismatch</a></h2>
-<h3 id="description-6"><a class="header" href="#description-6">Description:</a></h3>
+<h3 id="description-6"><a class="header" href="#description-6">Description</a></h3>
 <p>Attempt to do an operation on illegal types.</p>
-<h3 id="detection-5"><a class="header" href="#detection-5">Detection:</a></h3>
+<h3 id="detection-5"><a class="header" href="#detection-5">Detection</a></h3>
 <p>Enforcing types on operations and catching a mismatch between expected types and node <code>kind</code> that is being parsed.</p>
-<h3 id="example-adding-an-integer-and-boolean"><a class="header" href="#example-adding-an-integer-and-boolean">Example: Adding an integer and boolean.</a></h3>
+<h3 id="example-adding-an-integer-and-boolean"><a class="header" href="#example-adding-an-integer-and-boolean">Example: Adding an integer and boolean</a></h3>
 <pre><code class="language-text">letting y be true 
 find x: int (5..10)
 such that 5 + y = 6
 </code></pre>
 <h2 id="5-unsafe-division"><a class="header" href="#5-unsafe-division">5. Unsafe division</a></h2>
 <p>(not yet implemented)</p>
-<h3 id="description-7"><a class="header" href="#description-7">Description:</a></h3>
+<h3 id="description-7"><a class="header" href="#description-7">Description</a></h3>
 <p>Attempt to divide/modulo by zero.</p>
 <h3 id="example-divide-by-zero"><a class="header" href="#example-divide-by-zero">Example: Divide by zero</a></h3>
 <pre><code class="language-text">find x: int(5..10)
@@ -276,10 +276,10 @@ such that x/0 = 3
 </code></pre>
 <p>At the moment says no solutions found. Would want to explicitly disallow it.</p>
 <h2 id="6-invalid-indexing"><a class="header" href="#6-invalid-indexing">6. Invalid indexing</a></h2>
-<h3 id="description-8"><a class="header" href="#description-8">Description:</a></h3>
+<h3 id="description-8"><a class="header" href="#description-8">Description</a></h3>
 <p>Tuples and matrices are indexed from 1.
 Negative, zero or index out of bounds is invalid.</p>
-<h3 id="example-s-tuple-index-of-out-bounds"><a class="header" href="#example-s-tuple-index-of-out-bounds">Example: s tuple index of out bounds.</a></h3>
+<h3 id="example-s-tuple-index-of-out-bounds"><a class="header" href="#example-s-tuple-index-of-out-bounds">Example: s tuple index of out bounds</a></h3>
 <pre><code class="language-text">letting s be tuple(0,1,1,0)
 letting t be tuple(0,0,0,1)
 find a : bool such that a = (s[5] = t[1]) $ true

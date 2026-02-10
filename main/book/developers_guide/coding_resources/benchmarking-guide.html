@@ -37,7 +37,7 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../searchindex-78c1d72e.js";
+            window.path_to_searchindex_js = "../../searchindex-a1f03dec.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-b9ef563d.js"></script>
@@ -211,7 +211,7 @@ criterion_main!(benches);
 <p>The <code>.bench_function</code> method creates an instance of a benchmark. Then the <code>.iter</code> method tells Criterion to repeatedly execute the provided closure. Finally, black_box is used to prevent the compiler from optimising away the code being benchmarked. To run the benchmark simply run <code>cargo bench</code>. Among other things, your terminal should show something alone the lines of:
 <img width="1322" alt="image" src="https://github.com/user-attachments/assets/53565407-11fc-43b0-afe1-2e3b582d41c5" />
 Which shows the average wall-clock time, as well as providing some information on outliers and performance against previous benchmarks. For the full details, see <code>\target\criterion</code>. The <code>.html</code> reports are especially good.</p>
-<p><code>criterion</code> is usually the right tool for most benchmarks, althought there are issues. Due to the statistics-driven ethos of <code>criterion</code>, there is currently no one-shot support, with 10 samples being the minimum number of samples for a benchmark. Wall-clock time also gives little insight into where things are slowing in your code, and will not catch things like poor memory locality. Even more crucially, however, is how <code>criterion</code> performs in CI pipelines. The developer’s themselves say the following:</p>
+<p><code>criterion</code> is usually the right tool for most benchmarks, although there are issues. Due to the statistics-driven ethos of <code>criterion</code>, there is currently no one-shot support, with 10 samples being the minimum number of samples for a benchmark. Wall-clock time also gives little insight into where things are slowing in your code, and will not catch things like poor memory locality. Even more crucially, however, is how <code>criterion</code> performs in CI pipelines. The developer’s themselves say the following:</p>
 <p><em>”You probably shouldn’t (or, if you do, don’t rely on the results). The virtualization used by</em>
 <em>Cloud-CI providers like Travis-CI and Github Actions introduces a great deal of noise into the</em>
 <em>benchmarking process, and Criterion.rs’ statistical analysis can only do so much to mitigate</em>
@@ -219,7 +219,7 @@ Which shows the average wall-clock time, as well as providing some information o
 <em>if the actual performance of the code is not changing.“</em></p>
 <p>As such, we need some other metric apart from wall-clock time to use in order to still run benchmarks in a CI pipeline. This is where the <code>iai-callgrind</code> crate comes in.</p>
 <h1 id="iai-callgrind"><a class="header" href="#iai-callgrind"><code>iai-callgrind</code></a></h1>
-<p>Iai-Callgrind is a benchmarking framework which uses <a href="https://valgrind.org/docs/manual/cl-manual.html">Valgrind’s Callgrind</a> and other to provide extremely accurate and consistent measurements of Rust code. It does <strong>not</strong> provide information on wall-clock time, instead focussing on metrics like instruction count and memory hit rates. It is important to note that this will only run on <code>linux</code>, due to the valgrind dependancy. Let us create a benchmark called <code>iai-bench</code> in the <code>benches</code> folder. We add the following to <code>cargo.toml</code></p>
+<p>Iai-Callgrind is a benchmarking framework which uses <a href="https://valgrind.org/docs/manual/cl-manual.html">Valgrind’s Callgrind</a> and other to provide extremely accurate and consistent measurements of Rust code. It does <strong>not</strong> provide information on wall-clock time, instead focussing on metrics like instruction count and memory hit rates. It is important to note that this will only run on <code>linux</code>, due to the valgrind dependency. Let us create a benchmark called <code>iai-bench</code> in the <code>benches</code> folder. We add the following to <code>cargo.toml</code></p>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>[profile.bench]
