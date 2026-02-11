@@ -37,7 +37,7 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../searchindex-a67057b1.js";
+            window.path_to_searchindex_js = "../searchindex-451d5f78.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-2a11f317.js"></script>
@@ -201,7 +201,7 @@
 <h3 id="keyword-exclusion"><a class="header" href="#keyword-exclusion">Keyword Exclusion</a></h3>
 <p>Currently, the grammar allows for any combination of letters, numbers, and underscores to be parsed as variable identifiers. This includes reserved keywords of the Essence language such as ‘find’ or ‘letting’. This is incorrect and such keywords shouldn’t be allowed as variables. Tree-sitter doesn’t support lookahead assertions or negative matches, so grammar rules cannot exclude specific patterns or words from identifier rules. Checking for keywords as variables happens during semantic checking (see Diagnostics section).</p>
 <h3 id="error-detection"><a class="header" href="#error-detection">Error Detection</a></h3>
-<p>Error detection from tree-sitter is unpredictable and can be confusing, as it simply creates ERROR nodes in the parse tree without detailed information about what was invalid. Similar errors will produce ERROR nodes in different places and impact the surrounding tree strucure in varying ways, depending on the context. More sophisticated error detection and messsaging has been implemented through Diagnostics.</p>
+<p>Error detection from tree-sitter is unpredictable and can be confusing, as it simply creates ERROR nodes in the parse tree without detailed information about what was invalid. Similar errors will produce ERROR nodes in different places and impact the surrounding tree structure in varying ways, depending on the context. More sophisticated error detection and messaging has been implemented through Diagnostics.</p>
 <h1 id="rust-parser"><a class="header" href="#rust-parser">Rust Parser</a></h1>
 <p>This is the second part of the parser and is contained in the <a href="https://github.com/conjure-cp/conjure-oxide/tree/main/crates/conjure-cp-essence-parser">conjure-cp-essence-parser</a> crate. The primary function is <code>parse_essence_file_native</code>, shown below, which takes in the path to the input and the context and returns the Model or an error.</p>
 <pre><code class="language-Rust">pub fn parse_essence_file_native(
@@ -248,15 +248,15 @@ let op_type = &amp;source_code[op.start_byte()..op.end_byte()];
 <h2 id="find-and-letting-statements"><a class="header" href="#find-and-letting-statements">Find and Letting Statements</a></h2>
 <p>Find and letting statements are parsed relatively intuitively. For find statements, the list of variables is iterated over and each is added to a hash map as the key. Then, the domain is parsed and added as the value for each variable it applies to. Once all variables and domains are parsed, the hash map is returned and the caller function iterates over it and adds each pair to the <code>SymbolTable</code>. For letting statements, a new <code>SymbolTable</code> is created. The variables are again iterated over and added to the table. Letting statements can either specify a domain or an expression for the variables so the type of node is checked and either parsed as an expression or domain before being added to the table. The <code>SymbolTable</code> is returned and the caller function adds it to the existing <code>SymbolTable</code> of the <code>Model</code>.</p>
 <h2 id="ground-vs-unresolved-domains"><a class="header" href="#ground-vs-unresolved-domains">Ground vs Unresolved Domains</a></h2>
-<p>The parser supports both <strong>ground domains</strong> (fully specified, e.g., <code>int(1..10)</code>) and <strong>unresolved domains</strong> (containing variable references, e.g., <code>int(1..n)</code>). For unresolved domains, the variable pointer must be retrieved from the existing <code>SymbolTable</code>, hich was described in the previous section. Unresolved domains are resolved during later stages of processing once all variables are known.</p>
+<p>The parser supports both <strong>ground domains</strong> (fully specified, e.g., <code>int(1..10)</code>) and <strong>unresolved domains</strong> (containing variable references, e.g., <code>int(1..n)</code>). For unresolved domains, the variable pointer must be retrieved from the existing <code>SymbolTable</code>, which was described in the previous section. Unresolved domains are resolved during later stages of processing once all variables are known.</p>
 <h2 id="constraints"><a class="header" href="#constraints">Constraints</a></h2>
 <p>Adding constraints to the overall constraints <code>Expression</code> requires nesting <code>Expression</code> objects. Each constraint is parsed and then added to the model using the <code>add_constraints</code> function.</p>
 <p>Following the layered dispatch pattern, expressions are organized into types (again mirroring the grammar):</p>
 <ul>
 <li><strong><code>parse_expression</code></strong> in <code>expression.rs</code>: The main entry point that dispatches to specialized parsers based on node type</li>
 <li><strong><code>parse_binary_expression</code></strong>: Handles binary operations</li>
-<li>** <code>parse_arithmetic_expression</code>**: Handles arithmetic operations</li>
-<li>** <code>parse_comparison_expression</code>**: Handles comparison operations</li>
+<li><strong><code>parse_arithmetic_expression</code></strong>: Handles arithmetic operations</li>
+<li><strong><code>parse_comparison_expression</code></strong>: Handles comparison operations</li>
 <li><strong><code>parse_atom</code></strong> in <code>atom.rs</code>: Handles atomic expressions</li>
 <li><strong><code>parse_comprehension</code></strong> in <code>comprehension.rs</code>: Handles comprehensions, quantifiers, and aggregates</li>
 </ul>
@@ -295,7 +295,7 @@ let op_type = &amp;source_code[op.start_byte()..op.end_byte()];
 <p>This unified approach ensures consistent scoping behavior across all comprehension-style constructs in Essence.</p>
 <h1 id="testing"><a class="header" href="#testing">Testing</a></h1>
 <h2 id="integration-testing"><a class="header" href="#integration-testing">Integration Testing</a></h2>
-<p>The native parser (<code>parse_essence_file_native</code>) is used by default for all integration tests in the <code>tests-integration</code> crate, which include a range of tests for every feature currently supported. Also incuded in the integraiton testing suite is roundtrip testing. Some of the roundtrip tests test the parser’s error messages.</p>
+<p>The native parser (<code>parse_essence_file_native</code>) is used by default for all integration tests in the <code>tests-integration</code> crate, which include a range of tests for every feature currently supported. Also included in the integration testing suite is roundtrip testing. Some of the roundtrip tests test the parser’s error messages.</p>
 <p>To explicitly disable the native parser for a specific test, add a <code>config.toml</code> file in the test directory with:</p>
 <pre><code class="language-toml">enable_native_parser = false
 </code></pre>

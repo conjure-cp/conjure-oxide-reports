@@ -37,7 +37,7 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../searchindex-a67057b1.js";
+            window.path_to_searchindex_js = "../searchindex-451d5f78.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-2a11f317.js"></script>
@@ -180,7 +180,7 @@
 <p>This guide walks you through running your first Essence model with Conjure Oxide.</p>
 <h2 id="your-first-problem"><a class="header" href="#your-first-problem">Your First Problem</a></h2>
 <p>Create a file called <code>my_problem.essence</code> with the following content:</p>
-<pre><code class="language-essence">find x :  int(1..3)
+<pre><code class="language-essence">find x : int(1..3)
 find y : int(2..5)
 
 such that x &gt; y
@@ -190,6 +190,12 @@ such that x &gt; y
 <h3 id="sat-solver"><a class="header" href="#sat-solver">SAT Solver</a></h3>
 <pre><code class="language-bash">cargo run -- solve --solver sat my_problem.essence
 </code></pre>
+<blockquote class="blockquote-tag blockquote-tag-warning">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575Zm1.763.707a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368Zm.53 3.996v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg>Warning</p>
+<p>Currently, running the command above will cause the following error:</p>
+<p><code>model invalid: Only Boolean Decision Variables supported</code></p>
+<p>This because the SAT option for the solver argument only currently enables the base (boolean) rule set and does not specify an integer SAT ruleset to include. This is something we are currently working on, and should be resolved soon.</p>
+</blockquote>
 <h3 id="minion-solver"><a class="header" href="#minion-solver">Minion Solver</a></h3>
 <pre><code class="language-bash">cargo run -- solve --solver minion my_problem.essence
 </code></pre>
