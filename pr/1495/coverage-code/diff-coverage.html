@@ -90,9 +90,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
         <h1>Diff Coverage</h1>
         <p>Diff: upstream/main...HEAD, staged and unstaged changes</p>
         <ul>
-            <li><b>Total</b>: 82 lines</li>
-            <li><b>Missing</b>: 29 lines</li>
-            <li><b>Coverage</b>: 64%</li>
+            <li><b>Total</b>: 95 lines</li>
+            <li><b>Missing</b>: 39 lines</li>
+            <li><b>Coverage</b>: 58%</li>
         </ul>
         <table border="1">
             <tr>
@@ -114,6 +114,11 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
                 <td>crates/conjure-cp-essence-parser/src/parser/parse_model.rs</td>
                 <td>73.3%</td>
                 <td>23,33-35</td>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-essence-parser/src/parser_legacy.rs</td>
+                <td>37.5%</td>
+                <td>18-22,36-40</td>
             </tr>
             <tr>
                 <td>tests-integration/tests/roundtrip_tests.rs</td>
@@ -326,6 +331,65 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <a id="crates/conjure-cp-essence-parser/src/parser/parse_model.rs-37" name="crates/conjure-cp-essence-parser/src/parser/parse_model.rs-37"></a><span class="w">        </span><span class="nb">Box</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="n">ParseErrorCollection</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="fm">vec!</span><span class="p">[</span><span class="n">enhanced_error</span><span class="p">]))</span>
 <a id="crates/conjure-cp-essence-parser/src/parser/parse_model.rs-38" name="crates/conjure-cp-essence-parser/src/parser/parse_model.rs-38"></a><span class="w">    </span><span class="p">})</span>
 <a id="crates/conjure-cp-essence-parser/src/parser/parse_model.rs-39" name="crates/conjure-cp-essence-parser/src/parser/parse_model.rs-39"></a><span class="p">}</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/conjure-cp-essence-parser/src/parser_legacy.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-essence-parser/src/parser_legacy.rs-14" name="crates/conjure-cp-essence-parser/src/parser_legacy.rs-14"></a><span class="w">        </span><span class="p">.</span><span class="n">arg</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+<a id="crates/conjure-cp-essence-parser/src/parser_legacy.rs-15" name="crates/conjure-cp-essence-parser/src/parser_legacy.rs-15"></a><span class="w">        </span><span class="p">.</span><span class="n">output</span><span class="p">()</span>
+<a id="crates/conjure-cp-essence-parser/src/parser_legacy.rs-16" name="crates/conjure-cp-essence-parser/src/parser_legacy.rs-16"></a><span class="w">    </span><span class="p">{</span>
+<a id="crates/conjure-cp-essence-parser/src/parser_legacy.rs-17" name="crates/conjure-cp-essence-parser/src/parser_legacy.rs-17"></a><span class="w">        </span><span class="nb">Ok</span><span class="p">(</span><span class="n">output</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">output</span><span class="p">,</span>
+<a id="crates/conjure-cp-essence-parser/src/parser_legacy.rs-18" name="crates/conjure-cp-essence-parser/src/parser_legacy.rs-18"></a><span class="hll"><span class="w">        </span><span class="nb">Err</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser_legacy.rs-19" name="crates/conjure-cp-essence-parser/src/parser_legacy.rs-19"></a><span class="hll"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="nb">Box</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="n">ParseErrorCollection</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="fm">vec!</span><span class="p">[</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser_legacy.rs-20" name="crates/conjure-cp-essence-parser/src/parser_legacy.rs-20"></a><span class="hll"><span class="w">                </span><span class="n">EssenceParseError</span><span class="p">::</span><span class="n">ConjurePrettyError</span><span class="p">(</span><span class="n">e</span><span class="p">.</span><span class="n">to_string</span><span class="p">()),</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser_legacy.rs-21" name="crates/conjure-cp-essence-parser/src/parser_legacy.rs-21"></a><span class="hll"><span class="w">            </span><span class="p">])));</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser_legacy.rs-22" name="crates/conjure-cp-essence-parser/src/parser_legacy.rs-22"></a><span class="hll"><span class="w">        </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser_legacy.rs-23" name="crates/conjure-cp-essence-parser/src/parser_legacy.rs-23"></a><span class="w">    </span><span class="p">};</span>
+<a id="crates/conjure-cp-essence-parser/src/parser_legacy.rs-24" name="crates/conjure-cp-essence-parser/src/parser_legacy.rs-24"></a>
+<a id="crates/conjure-cp-essence-parser/src/parser_legacy.rs-25" name="crates/conjure-cp-essence-parser/src/parser_legacy.rs-25"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">!</span><span class="n">output</span><span class="p">.</span><span class="n">status</span><span class="p">.</span><span class="n">success</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-essence-parser/src/parser_legacy.rs-26" name="crates/conjure-cp-essence-parser/src/parser_legacy.rs-26"></a><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">stderr_string</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">String</span><span class="p">::</span><span class="n">from_utf8</span><span class="p">(</span><span class="n">output</span><span class="p">.</span><span class="n">stderr</span><span class="p">)</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-essence-parser/src/parser_legacy.rs-32" name="crates/conjure-cp-essence-parser/src/parser_legacy.rs-32"></a>
+<a id="crates/conjure-cp-essence-parser/src/parser_legacy.rs-33" name="crates/conjure-cp-essence-parser/src/parser_legacy.rs-33"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">astjson</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">match</span><span class="w"> </span><span class="nb">String</span><span class="p">::</span><span class="n">from_utf8</span><span class="p">(</span><span class="n">output</span><span class="p">.</span><span class="n">stdout</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-essence-parser/src/parser_legacy.rs-34" name="crates/conjure-cp-essence-parser/src/parser_legacy.rs-34"></a><span class="w">        </span><span class="nb">Ok</span><span class="p">(</span><span class="n">astjson</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">astjson</span><span class="p">,</span>
+<a id="crates/conjure-cp-essence-parser/src/parser_legacy.rs-35" name="crates/conjure-cp-essence-parser/src/parser_legacy.rs-35"></a><span class="w">        </span><span class="nb">Err</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-essence-parser/src/parser_legacy.rs-36" name="crates/conjure-cp-essence-parser/src/parser_legacy.rs-36"></a><span class="hll"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="nb">Box</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="n">ParseErrorCollection</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="fm">vec!</span><span class="p">[</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser_legacy.rs-37" name="crates/conjure-cp-essence-parser/src/parser_legacy.rs-37"></a><span class="hll"><span class="w">                </span><span class="n">EssenceParseError</span><span class="p">::</span><span class="n">ConjurePrettyError</span><span class="p">(</span><span class="fm">format!</span><span class="p">(</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser_legacy.rs-38" name="crates/conjure-cp-essence-parser/src/parser_legacy.rs-38"></a><span class="hll"><span class="w">                    </span><span class="s">&quot;Error parsing output from conjure: {e:#?}&quot;</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser_legacy.rs-39" name="crates/conjure-cp-essence-parser/src/parser_legacy.rs-39"></a><span class="hll"><span class="w">                </span><span class="p">)),</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser_legacy.rs-40" name="crates/conjure-cp-essence-parser/src/parser_legacy.rs-40"></a><span class="hll"><span class="w">            </span><span class="p">])));</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser_legacy.rs-41" name="crates/conjure-cp-essence-parser/src/parser_legacy.rs-41"></a><span class="w">        </span><span class="p">}</span>
+<a id="crates/conjure-cp-essence-parser/src/parser_legacy.rs-42" name="crates/conjure-cp-essence-parser/src/parser_legacy.rs-42"></a><span class="w">    </span><span class="p">};</span>
+<a id="crates/conjure-cp-essence-parser/src/parser_legacy.rs-43" name="crates/conjure-cp-essence-parser/src/parser_legacy.rs-43"></a>
+<a id="crates/conjure-cp-essence-parser/src/parser_legacy.rs-44" name="crates/conjure-cp-essence-parser/src/parser_legacy.rs-44"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">parsed_model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">model_from_json</span><span class="p">(</span><span class="o">&amp;</span><span class="n">astjson</span><span class="p">,</span><span class="w"> </span><span class="n">context</span><span class="p">)</span>
 </pre></div></td></tr></table></div>
 
             </div>
