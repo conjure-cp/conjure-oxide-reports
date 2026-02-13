@@ -1,0 +1,583 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Tree Morph Benchmarking - Conjure Oxide</title>
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../css/general-2459343d.css">
+        <link rel="stylesheet" href="../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+
+        <!-- MathJax -->
+        <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "../";
+            const default_light_theme = "light";
+            const default_dark_theme = "coal";
+            window.path_to_searchindex_js = "../searchindex-f7095ecf.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="../toc-b9ef563d.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Conjure Oxide</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <p>Tree-morph is a library that helps you perform boilerplate-free generic tree transformations. In its current state, tree-morph is able to perform transformations in a large number of test cases, and work is now being done to try to implement Essence with tree-morph. When completed, tree-morph will be a very powerful stand-alone crate, as well as sitting at the core of <code>conjure-oxide</code>. Despite its current power, there is a still a lot of work to be done on the <code>tree-morph</code> crate. It is currently in a completely unoptimised state, and will be very slow when performing on large trees with a rich rule set and rule hierarchy. In order to assess progress on new optimisations, it is essential to have a diverse list of benchmarks. All benchmarking has been done using the <a href="https://crates.io/crates/criterion">criterion</a> crate. The following section outlines some of the most important benchmarks.</p>
+<h1 id="benchmarks"><a class="header" href="#benchmarks">Benchmarks</a></h1>
+<h2 id="identity"><a class="header" href="#identity">identity</a></h2>
+<p>The <code>identity benchmark</code> is a test designed to capture how long one tree traversal takes. There is no metadata, and the only rule is <code>do_nothing</code> which is never evaluated. The helper function <code>construct_tree</code> creates a simple tree of variable depth. This is an important benchmark to make sure that new proposed changes do not negatively effect <code>tree-morph</code> traversal speed.</p>
+<p>Filename: <code>conjure-oxide/crates/tree_morph/benches/identity.rs</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use tree_morph::prelude::*;
+use uniplate::derive::Uniplate;
+
+#[derive(Debug, Clone, PartialEq, Eq, Uniplate)]
+#[uniplate()]
+enum Expr {
+    Branch(Box&lt;Expr&gt;, Box&lt;Expr&gt;),
+    Val(i32),
+}
+struct Meta {}
+fn do_nothing(cmds: &amp;mut Commands&lt;Expr, Meta&gt;, subtree: &amp;Expr, meta: &amp;Meta) -&gt; Option&lt;Expr&gt; {
+    None
+}
+
+fn construct_tree(n: i32) -&gt; Box&lt;Expr&gt; {
+    if n == 1 {
+        Box::new(Expr::Val(0))
+    } else {
+        Box::new(Expr::Branch(Box::new(Expr::Val(0)), construct_tree(n - 1)))
+    }
+}
+
+pub fn criterion_benchmark(c: &amp;mut Criterion) {
+    let base: i32 = 2;
+    let expr = *construct_tree(base.pow(5));
+    let rules = vec![vec![do_nothing]];
+
+    c.bench_function("Identity", |b| {
+        b.iter(|| {
+            morph(
+                black_box(rules.clone()),
+                select_first,
+                black_box(expr.clone()),
+                Meta {},
+            )
+        })
+    });
+}
+
+criterion_group!(benches, criterion_benchmark);
+criterion_main!(benches);
+<span class="boring">}</span></code></pre>
+<h2 id="modify_leafs"><a class="header" href="#modify_leafs">modify_leafs</a></h2>
+<p>The <code>modify_leafs</code> benchmark is designed to capture how long it takes for a simple modification rule to be applied to all of the leaf nodes. The function <code>construct_tree</code> creates a tree of variable depth with all leaf nodes initialised to 0. There is no metadata and the only function <code>zero_to_one</code> changes a leaf node of 0 to a leaf node of 1. It should be expected that this will take a lot longer than the identity benchmark, as when a node is changed in <code>tree-morph</code>, an entirely new tree is created.</p>
+<p>Filename: <code>conjure-oxide/crates/tree_morph/benches/modify_leafs.rs</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use tree_morph::prelude::*;
+use uniplate::derive::Uniplate;
+
+#[derive(Debug, Clone, PartialEq, Eq, Uniplate)]
+#[uniplate()]
+enum Expr {
+    Branch(Box&lt;Expr&gt;, Box&lt;Expr&gt;),
+    Val(i32),
+}
+
+struct Meta {} // not relevant for this benchmark
+
+fn zero_to_one(cmds: &amp;mut Commands&lt;Expr, Meta&gt;, subtree: &amp;Expr, meta: &amp;Meta) -&gt; Option&lt;Expr&gt; {
+    if let Expr::Val(a) = subtree {
+        if let 0 = *a {
+            return Some(Expr::Val(1));
+        }
+    }
+    None
+}
+
+fn construct_tree(n: i32) -&gt; Box&lt;Expr&gt; {
+    if n == 1 {
+        Box::new(Expr::Val(0))
+    } else {
+        Box::new(Expr::Branch(Box::new(Expr::Val(0)), construct_tree(n - 1)))
+    }
+}
+
+pub fn criterion_benchmark(c: &amp;mut Criterion) {
+    let base: i32 = 2;
+    let expr = *construct_tree(base.pow(5));
+    let rules = vec![vec![zero_to_one]];
+
+    c.bench_function("Modify_leafs", |b| {
+        b.iter(|| {
+            morph(
+                black_box(rules.clone()),
+                select_first,
+                black_box(expr.clone()),
+                Meta {},
+            )
+        })
+    });
+}
+
+criterion_group!(benches, criterion_benchmark);
+criterion_main!(benches);
+<span class="boring">}</span></code></pre>
+<h2 id="factorial"><a class="header" href="#factorial">factorial</a></h2>
+<p>The <code>factorial</code> benchmark is the most difficult benchmark currently made, and an improved score on factorial will be indicative of serious gains in optimisations. As the name suggests, <code>factorial</code> is centred around the mathematical factorial operation (<code>5! = 5*4*3*2*1</code>), which will grow the tree depth, providing a rich set of transformations for <code>tree-morph</code> to calculate. The tree generating function <code>random_exp_tree</code> here takes as input a random seed and a max depth, and generates a tree of an arithmetic expression involving values, additions, multiplications and factorials. An example of such an expression with a random seed of <code>41</code> and a max depth of <code>5</code> is shown below.</p>
+<pre><code class="language-bash">(((8 + 1!) + (1 * 3)!) + (1!! * ((2 + 1) * (1 * 1))))!
+</code></pre>
+<p>It is worth mentioning that this expression is extremely large due to the nested factorials, and as such we need a way of making sure that calculations are bounded. This is achieved by modding the results of any additions and multiplications in the <code>rule_eval_add</code> and <code>rule_eval_mul</code> functions by <code>10</code>, which will bound all factorial expressions by <code>10!</code>. The benchmark counts the number of addition and multiplication rule applications, and also has a high priority dummy rule <code>do_nothing</code>, in order to increase the benchmark difficulty.</p>
+<p>Filename: <code>conjure-oxide/crates/tree_morph/benches/factorial.rs</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use rand::rngs::StdRng;
+use rand::{Rng, SeedableRng};
+use tree_morph::prelude::*;
+use uniplate::derive::Uniplate;
+
+#[derive(Debug, Clone, PartialEq, Eq, Uniplate)]
+#[uniplate()]
+enum Expr {
+    Add(Box&lt;Expr&gt;, Box&lt;Expr&gt;),
+    Mul(Box&lt;Expr&gt;, Box&lt;Expr&gt;),
+    Val(i32),
+    Factorial(Box&lt;Expr&gt;),
+}
+
+fn random_exp_tree(rng: &amp;mut StdRng, count: &amp;mut usize, depth: usize) -&gt; Expr {
+    if depth == 0 {
+        *count += 1;
+        return Expr::Val(rng.random_range(1..=3));
+    }
+
+    match rng.random_range(1..=13) {
+        x if (1..=4).contains(&amp;x) =&gt; Expr::Add(
+            Box::new(random_exp_tree(rng, count, depth - 1)),
+            Box::new(random_exp_tree(rng, count, depth - 1)),
+        ),
+        x if (5..=8).contains(&amp;x) =&gt; Expr::Mul(
+            Box::new(random_exp_tree(rng, count, depth - 1)),
+            Box::new(random_exp_tree(rng, count, depth - 1)),
+        ),
+        x if (8..=11).contains(&amp;x) =&gt; {
+            Expr::Factorial(Box::new(random_exp_tree(rng, count, depth - 1)))
+        }
+        _ =&gt; Expr::Val(rng.random_range(1..=10)),
+    }
+}
+fn do_nothing(cmds: &amp;mut Commands&lt;Expr, Meta&gt;, subtree: &amp;Expr, meta: &amp;Meta) -&gt; Option&lt;Expr&gt; {
+    None
+}
+
+fn factorial_eval(cmds: &amp;mut Commands&lt;Expr, Meta&gt;, subtree: &amp;Expr, meta: &amp;Meta) -&gt; Option&lt;Expr&gt; {
+    if let Expr::Factorial(a) = subtree {
+        if let Expr::Val(n) = *a.as_ref() {
+            if n == 0 {
+                return Some(Expr::Val(1));
+            }
+            return Some(Expr::Mul(
+                Box::new(Expr::Val(n)),
+                Box::new(Expr::Factorial(Box::new(Expr::Val(n - 1)))),
+            ));
+        }
+    }
+    None
+}
+
+fn rule_eval_add(cmds: &amp;mut Commands&lt;Expr, Meta&gt;, subtree: &amp;Expr, meta: &amp;Meta) -&gt; Option&lt;Expr&gt; {
+    if let Expr::Add(a, b) = subtree {
+        if let (Expr::Val(a_v), Expr::Val(b_v)) = (a.as_ref(), b.as_ref()) {
+            cmds.mut_meta(|m| m.num_applications_addition += 1);
+            return Some(Expr::Val((a_v + b_v) % 10));
+        }
+    }
+    None
+}
+
+fn rule_eval_mul(cmds: &amp;mut Commands&lt;Expr, Meta&gt;, subtree: &amp;Expr, meta: &amp;Meta) -&gt; Option&lt;Expr&gt; {
+    if let Expr::Mul(a, b) = subtree {
+        if let (Expr::Val(a_v), Expr::Val(b_v)) = (a.as_ref(), b.as_ref()) {
+            cmds.mut_meta(|m| m.num_applications_multiplication += 1);
+            return Some(Expr::Val((a_v * b_v) % 10));
+        }
+    }
+    None
+}
+
+#[derive(Debug)]
+struct Meta {
+    num_applications_addition: i32,
+    num_applications_multiplication: i32,
+}
+
+pub fn criterion_benchmark(c: &amp;mut Criterion) {
+    let seed = [41; 32];
+    let mut rng = StdRng::from_seed(seed);
+    let mut count = 0;
+
+    let my_expression = random_exp_tree(&amp;mut rng, &amp;mut count, 10);
+    let rules = vec![
+        rule_fns![do_nothing],
+        rule_fns![rule_eval_add, rule_eval_mul, factorial_eval],
+    ];
+
+    c.bench_function("factorial", |b| {
+        b.iter(|| {
+            let meta = Meta {
+                num_applications_addition: 0,
+                num_applications_multiplication: 0,
+            };
+            morph(
+                black_box(rules.clone()),
+                select_first,
+                black_box(my_expression.clone()),
+                black_box(meta),
+            )
+        })
+    });
+}
+
+criterion_group!(benches, criterion_benchmark);
+criterion_main!(benches);
+<span class="boring">}</span></code></pre>
+<h2 id="left_addleft_add_hard"><a class="header" href="#left_addleft_add_hard">left_add/left_add_hard</a></h2>
+<p>The benchmarks <code>left_add</code> and <code>left_add_hard</code> are two benchmarks that evaluate a very simple nested addition expression <code>(1+(1+(1+...)))</code> of variable depth. In its unoptimised state, all but he final two instances of a <code>1</code> node will undergo several superfluous rule checks. The benchmark <code>left_add_hard</code> also is identical to <code>left_add</code>, except there are also four additional dummy rules, all assigned with a higher priority than the <code>rule_eval_add</code>. As expected, this will reduce code performance by about 400% (shown later). The code for <code>left_add_hard</code> is shown below, with <code>left_add</code> being very similar.</p>
+<p>Filename: <code>conjure-oxide/crates/tree_morph/benches/left_add_hard.rs</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use tree_morph::prelude::*;
+use uniplate::derive::Uniplate;
+
+#[derive(Debug, Clone, PartialEq, Eq, Uniplate)]
+#[uniplate()]
+enum Expr {
+    Add(Box&lt;Expr&gt;, Box&lt;Expr&gt;),
+    Val(i32),
+}
+
+fn rule_eval_add(_: &amp;mut Commands&lt;Expr, Meta&gt;, expr: &amp;Expr, _: &amp;Meta) -&gt; Option&lt;Expr&gt; {
+    match expr {
+        Expr::Add(a, b) =&gt; match (a.as_ref(), b.as_ref()) {
+            (Expr::Val(x), Expr::Val(y)) =&gt; Some(Expr::Val(x + y)),
+            _ =&gt; None,
+        },
+        _ =&gt; None,
+    }
+}
+
+#[derive(Clone)]
+enum MyRule {
+    EvalAdd,
+    Fee,
+    Fi,
+    Fo,
+    Fum,
+}
+
+impl Rule&lt;Expr, Meta&gt; for MyRule {
+    fn apply(&amp;self, cmd: &amp;mut Commands&lt;Expr, Meta&gt;, expr: &amp;Expr, meta: &amp;Meta) -&gt; Option&lt;Expr&gt; {
+        cmd.mut_meta(|m| m.num_applications += 1); // Only applied if successful
+        match self {
+            MyRule::EvalAdd =&gt; rule_eval_add(cmd, expr, meta),
+            MyRule::Fee =&gt; None,
+            MyRule::Fi =&gt; None,
+            MyRule::Fo =&gt; None,
+            MyRule::Fum =&gt; None,
+        }
+    }
+}
+
+#[derive(Clone)]
+struct Meta {
+    num_applications: u32,
+}
+
+fn val(n: i32) -&gt; Box&lt;Expr&gt; {
+    Box::new(Expr::Val(n))
+}
+
+fn add(lhs: Box&lt;Expr&gt;, rhs: Box&lt;Expr&gt;) -&gt; Box&lt;Expr&gt; {
+    Box::new(Expr::Add(lhs, rhs))
+}
+
+fn nested_addition(n: i32) -&gt; Box&lt;Expr&gt; {
+    if n == 1 {
+        val(1)
+    } else {
+        add(val(1), nested_addition(n - 1))
+    }
+}
+
+pub fn criterion_benchmark(c: &amp;mut Criterion) {
+    let base: i32 = 2;
+    let expr = *nested_addition(base.pow(5));
+    let rules = vec![
+        vec![MyRule::Fi],
+        vec![MyRule::Fee],
+        vec![MyRule::Fo],
+        vec![MyRule::Fum],
+        vec![MyRule::EvalAdd],
+    ];
+
+    c.bench_function("left_add_hard", |b| {
+        b.iter(|| {
+            let meta = Meta {
+                num_applications: 0,
+            };
+            morph(rules.clone(), select_first, black_box(expr.clone()), meta)
+        })
+    });
+}
+
+criterion_group!(benches, criterion_benchmark);
+criterion_main!(benches);
+<span class="boring">}</span></code></pre>
+<h2 id="right_add"><a class="header" href="#right_add">right_add</a></h2>
+<p>The benchmark <code>right_add</code> is identical to <code>left_add</code>, except there now we are evaluating <code>((...+1)+1)</code> instead. This is designed to show the inherent left bias used in <code>tree-morph</code>. Performance is a little better than <code>left_add</code>. Due to the similarity with <code>left_add</code>, the code is omitted.</p>
+<h1 id="results"><a class="header" href="#results">results</a></h1>
+<p>The most helpful feature that <code>criterion</code> produces is its automatic graphing software. Upon a run of <code>cargo bench</code>, <code>criterion</code> automatically produces html reports of all benchmarks, accessible in <code>conjure-oxide/target/criterion</code>. An example report is shown below.
+<img width="1300" alt="image" src="https://github.com/user-attachments/assets/963c76eb-2d8c-4c77-8529-8b9b6bc22dc3" />
+The left graph is a probability density function for the run time. It says that on average it takes <code>854.26 µs</code> for identity to run at a fixed depth (in this case <code>2^5</code> was used). The right graph is a cumulative time plot. The fact that the line is almost straight indicates that the run times are all very comparable in time. The additional stats provided are all standard statistics measurements, with MAD standing for the mean absolute deviation.</p>
+<h2 id="identity-vs-modify_leafs"><a class="header" href="#identity-vs-modify_leafs">identity vs modify_leafs</a></h2>
+<p>The probability density functions for <code>identity</code> and <code>modify_leafs</code> are shown below, both evaluated a tree depth of <code>2^5</code>.
+<img width="550" alt="image" src="https://github.com/user-attachments/assets/06fd9c0e-b094-4a5f-ab5e-6d88b3ace29a" />
+<img width="547.5" alt="image" src="https://github.com/user-attachments/assets/2e31067d-a848-4259-bf67-bf516c70a6cf" /></p>
+<p>As you can see, <code>modify_leafs</code> takes significantly longer (<code>2300%</code>) than <code>identity</code> on average, showing how costly even simple tree transformations take. This is most likely due to the fact that <code>tree-morph</code> does not edit in-place, but rather constructs a new tree after applying a transformation.</p>
+<h2 id="factorial-1"><a class="header" href="#factorial-1">factorial</a></h2>
+<p>The following is the probability density function for <code>factorial</code>, ran at a max depth of <code>10</code> and a seed of <code>[41; 32]</code>.
+<img src="https://github.com/user-attachments/assets/afb83193-b33c-452b-a5ba-8b9b9ae66f1a" alt="image"></p>
+<p>As you can see, even for a relatively small max depth compute is large. Also note that <code>factorial</code> still has a very small amount of rule groupings, and performance would likely be orders of magnitude worse if a number of rules comparable to a <code>conjure</code> problem was presented. This shows a significant need for optimisations, and an improved score on <code>factorial</code> would indicate a lot of good progress.</p>
+<h2 id="left_add-vs-left_add_hard"><a class="header" href="#left_add-vs-left_add_hard">left_add vs left_add_hard</a></h2>
+<p>A comparison between <code>left_add</code> and <code>left_add_hard</code> is a clear demonstration of how detrimental duplicate rule checks can be for performance.</p>
+<p><img src="https://github.com/user-attachments/assets/ae292d37-f26d-4080-9520-019f60476e93" alt="image">
+<img src="https://github.com/user-attachments/assets/2f882085-71fc-4d13-a266-ead400db31e8" alt="image"></p>
+<p>Ignoring the differences between the shapes of the graphs (I am unsure why this is the case), we can immediately notice how the extra 4 dummy rules in <code>left_add_hard</code> lead to almost exactly a <code>400%</code> increase in performance!</p>
+<h1 id="further-work"><a class="header" href="#further-work">Further work</a></h1>
+<p>Benchmarks are still in an early stage, and there is lots more to do. Some ideas for future work include:</p>
+<ul>
+<li>Set up some automated infrastructure for running benchmarks automatically on GitHub</li>
+<li>Find out scaling laws for increasing tree depth for current benchmarks</li>
+<li>Set up some head to head tests between two functions</li>
+<li>Set up counters that can measure things like node counts, maximum tree depths and other useful information</li>
+<li>Benchmark individual functions (such as a rule application) in order to better understand how trees grow and shrink during transformations</li>
+<li>Benchmark meta applications</li>
+</ul>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../documentation/Essence-Parser.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
+
+                            <a rel="next prefetch" href="../documentation/ProTrace-module.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../documentation/Essence-Parser.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
+
+                    <a rel="next prefetch" href="../documentation/ProTrace-module.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-c2a407aa.js"></script>
+
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-abc7f01d.js"></script>
+        <script src="../book-a0b12cfe.js"></script>
+
+        <!-- Custom JS scripts -->
+
+
+
+    </div>
+    </body>
+</html>
