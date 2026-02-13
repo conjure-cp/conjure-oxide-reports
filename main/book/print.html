@@ -38,7 +38,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-a6c29758.js";
+            window.path_to_searchindex_js = "searchindex-f7095ecf.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-b9ef563d.js"></script>
@@ -301,7 +301,7 @@ debugging):</p>
 <ul>
 <li>Integer-to-boolean conversions</li>
 <li>Operation transformations</li>
-<li>Tseitin transformations</li>
+<li>Tseytin transformations</li>
 <li>All rules that were tried and applied</li>
 </ul>
 <p>For more detailed testing output (including JSON traces and rewritten models), run specific tests:</p>
@@ -407,7 +407,7 @@ created: 31-03-25
 <details><summary><b>Linux (Debian/Ubuntu)</b></summary>
 <p><strong>The following software is required:</strong></p>
 <ul>
-<li>The latest version of stable Rust, installed using <a href="https://www.rust-lang.org/tools/install">Rustup</a>.</li>
+<li>The latest version of stable Rust, installed using <a href="https://www.rust-lang.org/tools/install">rustup</a>.</li>
 <li>A C/C++ compilation toolchain and libraries:
 <ul>
 <li>Debian, Ubuntu and derivatives: <code>sudo apt install build-essential libclang-dev</code></li>
@@ -426,7 +426,7 @@ created: 31-03-25
 <details><summary><b>MacOS</b></summary>
 <p><strong>The following software is required:</strong></p>
 <ul>
-<li>the latest version of stable Rust, installed using <a href="https://www.rust-lang.org/tools/install">Rustup</a>.</li>
+<li>the latest version of stable Rust, installed using <a href="https://www.rust-lang.org/tools/install">rustup</a>.</li>
 <li>an XCode Command Line Tools installation (installable using <code>xcode-select --install</code>)</li>
 <li>CMake: <code>brew install cmake</code> (for SAT solving)</li>
 <li><a href="https://github.com/conjure-cp/conjure">Conjure</a>.</li>
@@ -473,7 +473,7 @@ Having an active PR makes your work visible, allows others to help you and give 
 </li>
 <li>Assign PR to reviewer(s) when it’s ready to be merged.
 <ul>
-<li>Only Oz (@ozgurakgun) can merge PR’s, so add him as a reviewer when you want your PR to be merged.</li>
+<li>Only Oz (@ozgurakgun) can merge PRs, so add him as a reviewer when you want your PR to be merged.</li>
 <li>During reviewing, avoid force-pushing to the pull request, as this makes reviewing more difficult.
 Details on how to update a PR are given below.</li>
 </ul>
@@ -677,7 +677,7 @@ Likewise, if you have suggestions for improving or streamlining this process, fe
 </ul>
 </li>
 </ul>
-<h2 id="donts"><a class="header" href="#donts">Don’ts</a></h2>
+<h2 id="things-to-avoid"><a class="header" href="#things-to-avoid">Things to Avoid</a></h2>
 <p>Documentation generally should <strong>not</strong>:</p>
 <ul>
 <li>Repeat itself</li>
@@ -964,7 +964,7 @@ public void fnReturnsError(a,b) {
 </ul>
 </li>
 </ul>
-<h2 id="donts-1"><a class="header" href="#donts-1">Don’ts</a></h2>
+<h2 id="things-to-avoid-1"><a class="header" href="#things-to-avoid-1">Things to Avoid</a></h2>
 <p>Documentation generally should <strong>not</strong>:</p>
 <ul>
 <li>Repeat itself</li>
@@ -1111,7 +1111,7 @@ Code to run our project on these files is contained in <code>integration_tests.r
 Rules are grouped into files and directories based on their purpose: for example, all rules for normalising boolean expressions are in <code>conjure_rules/src/normalisers/bool.rs</code></li>
 <li><code>conjure_rule_macros</code> implements the <code>#[register_rule(...)]</code> and <code>#[register_rule_set(...)]</code> procedural macros. See also: <a href="https://github.com/conjure-cp/conjure-oxide/wiki/Expression-rewriting%2C-Rules-and-RuleSets">Wiki - Rules and RuleSets</a>.</li>
 <li><code>conjure_essence_parser</code> implements the native Rust parser for Essence.
-It uses our Treesitter grammar, which is defined <em>separately</em> in<code>tree-sitter-essence</code></li>
+It uses our Tree-sitter grammar, which is defined <em>separately</em> in<code>tree-sitter-essence</code></li>
 <li><code>conjure_essence_macros</code> implements the <code>essence_expr!</code> procedural macro.</li>
 <li><code>enum_compatability_macro</code> is a macro that allows us to indicate whether certain features of Essence are compatible with certain solvers, for documentation purposes.</li>
 <li><code>randicheck</code> is a somewhat separate project developed by Ty (@TAswan) and others.
@@ -1709,7 +1709,7 @@ impl Expression {
 </ol>
 <p><strong>Reading:</strong></p>
 <ol>
-<li><a href="https://github.com/mozilla/grcov">grcov readme - how to generate coverage reports</a>.</li>
+<li><a href="https://github.com/mozilla/grcov">grcov README - how to generate coverage reports</a>.</li>
 <li><a href="https://doc.rust-lang.org/rustc/instrument-coverage.html">rustc book - details on instrumentation based coverage</a>.</li>
 </ol>
 <h3 id="doc-coverage"><a class="header" href="#doc-coverage">Doc Coverage</a></h3>
@@ -1916,7 +1916,7 @@ let op_type = &amp;source_code[op.start_byte()..op.end_byte()];
                 )),
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
-<p>Tree-morph is a library that helps you perform boilerplate-free generic tree transformations. In its current state, tree-morph is able to perform transformations in a large number of test cases, and work is now being done to try to implement Essence with tree-morph. When completed, tree-morph will be a very powerful stand-alone crate, as well as sitting at the core of <code>conjure-oxide</code>. Despite its current power, there is a still a lot of work to be done on the <code>tree-morph</code> crate. It is currently in a completely unoptimised state, and will be very slow when performing on large trees with a rich rule set and rule hierarchy. In order to assess progress on new optimisations, it is essential to have a diverse list of benchmarks. All benchmarking has been done using the <a href="https://crates.io/crates/criterion">crtiterion</a> crate. The following section outlines some of the most important benchmarks.</p>
+<p>Tree-morph is a library that helps you perform boilerplate-free generic tree transformations. In its current state, tree-morph is able to perform transformations in a large number of test cases, and work is now being done to try to implement Essence with tree-morph. When completed, tree-morph will be a very powerful stand-alone crate, as well as sitting at the core of <code>conjure-oxide</code>. Despite its current power, there is a still a lot of work to be done on the <code>tree-morph</code> crate. It is currently in a completely unoptimised state, and will be very slow when performing on large trees with a rich rule set and rule hierarchy. In order to assess progress on new optimisations, it is essential to have a diverse list of benchmarks. All benchmarking has been done using the <a href="https://crates.io/crates/criterion">criterion</a> crate. The following section outlines some of the most important benchmarks.</p>
 <h1 id="benchmarks"><a class="header" href="#benchmarks">Benchmarks</a></h1>
 <h2 id="identity"><a class="header" href="#identity">identity</a></h2>
 <p>The <code>identity benchmark</code> is a test designed to capture how long one tree traversal takes. There is no metadata, and the only rule is <code>do_nothing</code> which is never evaluated. The helper function <code>construct_tree</code> creates a simple tree of variable depth. This is an important benchmark to make sure that new proposed changes do not negatively effect <code>tree-morph</code> traversal speed.</p>
@@ -2607,7 +2607,7 @@ For testing, we currently just choose the first rule</li>
 <ul>
 <li>be <strong>flexible</strong> - instead of hard coding the rules, we want an easy way to extend the list of rules and to decide which rules to use, both for ourselves and for any users who may wish to use conjure-oxide in their projects</li>
 <li>be <strong>deterministic</strong> (in a loose sense of the term) - for a given input, set of rules, and a given set of answers to all rule selection questions (see above), the rewriter must always produce the same output</li>
-<li>happen in a single step, instead of doing multiple passes over the model (like it is done in Saville Row currently)</li>
+<li>happen in a single step, instead of doing multiple passes over the model (like it is done in Savile Row currently)</li>
 </ul>
 <h1 id="rules"><a class="header" href="#rules">Rules</a></h1>
 <h2 id="overview-1-1"><a class="header" href="#overview-1-1">Overview</a></h2>
@@ -2801,7 +2801,7 @@ NOTE: The <code>order</code> of a <code>RuleSet</code> should not be thought of 
 It only provides a consistent order of operations when resolving the final set of rules</p>
 </blockquote>
 <h2 id="concrete-example--sat-backend-pipeline"><a class="header" href="#concrete-example--sat-backend-pipeline">Concrete Example:  SAT Backend Pipeline</a></h2>
-<p>To see how rules and rulesets work in practice, let’s walk through the SAT backend’s transformation of a simple Essence model.</p>
+<p>To see how rules and rulesets work in practice, let’s walk through the SAT backend transformation of a simple Essence model.</p>
 <blockquote>
 <p><strong>Note:</strong> The actual RuleSet names and groupings in the codebase may differ from this simplified explanation, but the general priority ordering and transformation pipeline described here is accurate.</p>
 </blockquote>
@@ -2834,7 +2834,7 @@ fn cnf_int_ineq(expr: &amp;Expression) -&gt; Result&lt;Expression, RuleApplicati
     // Into: complex boolean expression
 }
 <span class="boring">}</span></code></pre>
-<h4 id="3-tseitin-transformation-rules-lowest-priority"><a class="header" href="#3-tseitin-transformation-rules-lowest-priority">3. Tseitin Transformation Rules (Lowest Priority)</a></h4>
+<h4 id="3-tseytin-transformation-rules-lowest-priority"><a class="header" href="#3-tseytin-transformation-rules-lowest-priority">3. Tseytin Transformation Rules (Lowest Priority)</a></h4>
 <p><strong>RuleSet</strong>: <code>boolean</code></p>
 <p>These rules convert the resulting boolean expressions into Conjunctive Normal Form:</p>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -3416,7 +3416,7 @@ Picking the first option: Question 1: min(A)
 <li>matches the generator to an expression of the form “iPat &lt;- s”, iPat, later called “i” is a quantified variable</li>
 <li>checks that s is a set, and that it has Occurrence representation</li>
 <li>retrieves matrix m representing this set, and its domain</li>
-<li>returns Comprehension with same body, original generator is replaced by a generator specifying the domain of the quantified variable, followed by a condition that the ith entry of the Occurrence matrix is true.</li>
+<li>returns Comprehension with same body, original generator is replaced by a generator specifying the domain of the quantified variable, followed by a condition that the i-th entry of the Occurrence matrix is true.</li>
 </ol>
 <ul>
 <li>i.e. it loops over the given domain and checks that element “i” is present in the set.</li>
@@ -3457,7 +3457,7 @@ Picking the first option: Question 1: min(A)
               [q3 in B | q3 : int(0..6), A_Occurrence[q3]]
 </code></pre>
 <h2 Occurrence="" id="set-in"><a class="header" href="#set-in">Set-in</a></h2>
-<p>Set-in rule for Occurrence representation. In Occurrence representation, an element “i” is in a set if and only if the “ith” entry of the Occurrence matrix is true.</p>
+<p>Set-in rule for Occurrence representation. In Occurrence representation, an element “i” is in a set if and only if the “i-th” entry of the Occurrence matrix is true.</p>
 <ul>
 <li>This rule is not necessary, “in” can be implemented using the comprehension rule above.</li>
 </ul>
@@ -3802,7 +3802,7 @@ Another issue present in performance testing is that completely decoupling size 
 <h3 id="code-coverage"><a class="header" href="#code-coverage">Code Coverage</a></h3>
 <p>When pushes are made to the main branch of Conjure-Oxide on GitHub, a code coverage automated workflow is run. This workflow generates a documentation coverage report which outlines what percentage of the code in the repository is being executed when tests are run. The higher the percentage, the more of the code can be relied upon as working under test conditions. This is also already implemented in the GitHub repository, through “code-coverage.yml”, “code-coverage-main.yml” and “code-coverage-deploy.yml”. One of the goals of correctness testing is to increase the code coverage percentage, because this would show that more of the code is functioning correctly.</p>
 <h3 id="automated-performance-testing"><a class="header" href="#automated-performance-testing">Automated Performance Testing</a></h3>
-<p>GitHub workflows can be used to create further custom processed to be automated. Automating performance testing in GitHub allows for them to be run routinely (e.g., every X pushes, or every X days) to ensure consistent performance of the project. As they occur automatically, this means that benchmarks can be set, and failue on any of these benchmarks can reuslt in a flag, allowing for early detection when performance of the program begins to regress, or fall far behind that of the Conjure suite. GitHub Actions allow for the results to be placed into files, and from here an interactive dashboard could be generated (as in PR #291. <sup class="footnote-reference" id="fr-5-1-1"><a href="#footnote-5-1">5</a></sup></p>
+<p>GitHub workflows can be used to create further custom processed to be automated. Automating performance testing in GitHub allows for them to be run routinely (e.g., every X pushes, or every X days) to ensure consistent performance of the project. As they occur automatically, this means that benchmarks can be set, and failure on any of these benchmarks can result in a flag, allowing for early detection when performance of the program begins to regress, or fall far behind that of the Conjure suite. GitHub Actions allow for the results to be placed into files, and from here an interactive dashboard could be generated (as in PR #291. <sup class="footnote-reference" id="fr-5-1-1"><a href="#footnote-5-1">5</a></sup></p>
 <h2 id="brief-outline-of-possible-future-sub-projects"><a class="header" href="#brief-outline-of-possible-future-sub-projects">Brief Outline of Possible Future Sub-Projects</a></h2>
 <p>Having outlined at least a portion of the ideal testing scenario above, as well as some limitations of this scenario, it is now possible to outline to some degree future sub-projects which could be added to the overall Conjure-Oxide project.</p>
 <h3 id="improving-code-coverage"><a class="header" href="#improving-code-coverage">Improving Code Coverage</a></h3>
@@ -4344,7 +4344,7 @@ print x
 <h3 id="description-4"><a class="header" href="#description-4">Description</a></h3>
 <p>Variable used but not declared.</p>
 <h3 id="detection-4"><a class="header" href="#detection-4">Detection</a></h3>
-<p>Checking that the identifier used in a constraint was previsouly declared in a <code>find</code> or <code>letting_statement</code>.</p>
+<p>Checking that the identifier used in a constraint was previously declared in a <code>find</code> or <code>letting_statement</code>.</p>
 <h3 id="example-x-was-not-declared-before"><a class="header" href="#example-x-was-not-declared-before">Example: x was not declared before</a></h3>
 <pre><code class="language-text">find y: int (1..4)
 such that x = 5
