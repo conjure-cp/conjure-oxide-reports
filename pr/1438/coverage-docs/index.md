@@ -2,10 +2,10 @@
 
 **conjure-cp:** 0% with examples, 25% documented -- 0/1/4
 **minion-sys:** 25% with examples, 86% documented -- 2/31/119
-**tree-morph:** 15% with examples, 100% documented -- 7/59/59
+**tree-morph:** 15% with examples, 99% documented -- 7/58/59
 
 PR: [#1438](https://github.com/conjure-cp/conjure-oxide/pull/1438)
-Commit: [a4a41008736dab276b516b99cc19c40f5fb34e5e](https://github.com/Arnav-Bista/conjure-oxide/commit/a4a41008736dab276b516b99cc19c40f5fb34e5e)
+Commit: [7d36a61b2db2d0a3a079c9c48604413c38debac2](https://github.com/Arnav-Bista/conjure-oxide/commit/7d36a61b2db2d0a3a079c9c48604413c38debac2)
 
 ## Documentation coverage for `conjure-cp`
 
@@ -29,10 +29,10 @@ Commit: [a4a41008736dab276b516b99cc19c40f5fb34e5e](https://github.com/Arnav-Bist
 
 | File | Percentage Documented | Percentage with examples |
 |----|----|----|
+| crates/tree-morph/src/engine_builder.rs | ✅ 95% *(18/19)* | ❌ 0% *(0/19)* |
 | crates/tree-morph/src/cache.rs | ✅ 100% *(11/11)* | ❌ 0% *(0/11)* |
 | crates/tree-morph/src/commands.rs | ✅ 100% *(5/5)* | ❌ 20% *(1/5)* |
 | crates/tree-morph/src/engine.rs | ✅ 100% *(4/4)* | ❌ 25% *(1/4)* |
-| crates/tree-morph/src/engine_builder.rs | ✅ 100% *(19/19)* | ❌ 0% *(0/19)* |
 | crates/tree-morph/src/engine_zipper.rs | ✅ 100% *(1/1)* | ❌ 0% *(0/1)* |
 | crates/tree-morph/src/helpers.rs | ✅ 100% *(7/7)* | ❌ 0% *(0/7)* |
 | crates/tree-morph/src/lib.rs | ✅ 100% *(2/2)* | ❌ 50% *(1/2)* |
