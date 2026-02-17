@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-f7095ecf.js";
+            window.path_to_searchindex_js = "searchindex-3b5fd93e.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-b9ef563d.js"></script>
+        <script src="toc-298c32dd.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -1836,6 +1836,49 @@ jobs:
 <p>The default <code>github.sha</code> is a temporary commit representing the state of the repo should the PR be merged now. You probably want <code>github.event.pull_request.head.sha</code>. Read <a href="https://www.kenmuse.com/blog/the-many-shas-of-a-github-pull-request/">The many SHAs of a github pull request</a>.</p>
 <hr>
 <p><em>This section had been taken from the ‘Github Actions’ page of the conjure-oxide wiki</em></p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="test-github-actions-locally-with-act"><a class="header" href="#test-github-actions-locally-with-act">Test GitHub Actions Locally With act</a></h1>
+<p>This guide shows how to run GitHub Actions workflows locally using act. It is useful for fast feedback on CI changes without waiting for a remote run.</p>
+<p>For details on installation and advanced usage, see <a href="https://nektosact.com/">https://nektosact.com/</a>.</p>
+<h2 id="quick-start"><a class="header" href="#quick-start">Quick start</a></h2>
+<ol>
+<li>Install <code>act</code> (see the official site for the latest install steps).</li>
+<li>From the repo root, run a workflow event, for example:</li>
+</ol>
+<pre><code class="language-bash">act --container-architecture linux/amd64
+</code></pre>
+<p>This repo works best with the <code>catthehacker/ubuntu:act-latest</code> image. It includes common CI tooling and matches GitHub-hosted Ubuntu runners more closely than the default image. The <code>act</code> default image can be configured at runtime; see <a href="https://nektosact.com/">https://nektosact.com/</a> for details.</p>
+<h2 id="common-usage-patterns"><a class="header" href="#common-usage-patterns">Common usage patterns</a></h2>
+<ul>
+<li>Run a specific workflow file:</li>
+</ul>
+<pre><code class="language-bash">act -W .github/workflows/ci.yml --container-architecture linux/amd64
+</code></pre>
+<ul>
+<li>Run a specific job:</li>
+</ul>
+<pre><code class="language-bash">act -j test --container-architecture linux/amd64
+</code></pre>
+<ul>
+<li>Provide secrets locally (example):</li>
+</ul>
+<pre><code class="language-bash">act --secret-file .secrets --container-architecture linux/amd64
+</code></pre>
+<ul>
+<li>Run the Vale job for pull requests:</li>
+</ul>
+<pre><code class="language-bash">act pull_request --job vale --container-architecture linux/amd64
+</code></pre>
+<p>In this repo, the <code>vale</code> job is part of the pull request workflows, so this command runs that job locally against a simulated <code>pull_request</code> event. It uses the recommended <code>catthehacker/ubuntu:act-latest</code> image by default, and you can configure the image at runtime; see <a href="https://nektosact.com/usage/runners.html#alternative-runner-images/">https://nektosact.com/usage/runners.html#alternative-runner-images/</a> for details.</p>
+<h2 id="limitations-to-keep-in-mind"><a class="header" href="#limitations-to-keep-in-mind">Limitations to keep in mind</a></h2>
+<ul>
+<li>Workflow triggers: some events (<code>workflow_run</code>, <code>pull_request_target</code>, scheduled jobs) do not behave exactly like GitHub and may need extra inputs or manual flags.</li>
+<li>GitHub API usage: steps that call the GitHub API (releases, issues, PR comments, status checks) require valid tokens and may still diverge from real GitHub behavior.</li>
+<li>Deployment workflows: jobs that deploy (cloud credentials, OIDC, environment protection rules) are hard to reproduce locally and are better validated in a real GitHub run.</li>
+<li>Hosted services and caches: actions depending on GitHub-hosted caches or services may be no-ops or behave differently.</li>
+<li>Matrix and concurrency: complex matrices, concurrency groups, and reusable workflows can be partially supported but may require extra configuration or run differently.</li>
+</ul>
+<p>When in doubt, use <code>act</code> for fast iteration, then confirm changes with a real GitHub Actions run.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="overview-2"><a class="header" href="#overview-2">Overview</a></h1>
 <p>The parser converts incoming Essence programs to Conjure Oxide to the <a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_core/ast/struct.Model.html">Model Object</a> that the rule engine takes in. The relevant parts of the Model object are the SymbolTable and Expression objects. The symbol table is essentially a list of the variables and their corresponding domains. The Expression object is a recursive object that hold all the constraints of the problem, nested into one object. The parser has two main parts. The first the <code>tree-sitter-essence</code> crate, which is a general Essence parser using the library tree-sitter. The second part is the <code>conjure_essence_parser</code> crate which is Rust code that uses the grammar to parse Essence programs and convert them into the above-mentioned Model object.</p>
