@@ -39,7 +39,7 @@
 <a href=#39 id=39 data-nosnippet>39</a>    <span class="attr">#[doc(hidden)]
 <a href=#40 id=40 data-nosnippet>40</a>    </span><span class="kw">pub </span>generator_submodel: SubModel,
 <a href=#41 id=41 data-nosnippet>41</a>    <span class="attr">#[doc(hidden)]
-<a href=#42 id=42 data-nosnippet>42</a>    </span><span class="kw">pub </span>induction_vars: Vec&lt;Name&gt;,
+<a href=#42 id=42 data-nosnippet>42</a>    </span><span class="kw">pub </span>quantified_vars: Vec&lt;Name&gt;,
 <a href=#43 id=43 data-nosnippet>43</a>}
 <a href=#44 id=44 data-nosnippet>44</a>
 <a href=#45 id=45 data-nosnippet>45</a><span class="kw">impl </span>Comprehension {
@@ -72,9 +72,9 @@
 <a href=#72 id=72 data-nosnippet>72</a>        <span class="kw-2">*</span><span class="self">self</span>.return_expression_submodel.root_mut_unchecked() = new_expr;
 <a href=#73 id=73 data-nosnippet>73</a>    }
 <a href=#74 id=74 data-nosnippet>74</a>
-<a href=#75 id=75 data-nosnippet>75</a>    <span class="doccomment">/// Adds a guard to the comprehension. Returns false if the guard does not only reference induction variables.
-<a href=#76 id=76 data-nosnippet>76</a>    </span><span class="kw">pub fn </span>add_induction_guard(<span class="kw-2">&amp;mut </span><span class="self">self</span>, guard: Expression) -&gt; bool {
-<a href=#77 id=77 data-nosnippet>77</a>        <span class="kw">if </span><span class="self">self</span>.is_induction_guard(<span class="kw-2">&amp;</span>guard) {
+<a href=#75 id=75 data-nosnippet>75</a>    <span class="doccomment">/// Adds a guard to the comprehension. Returns false if the guard does not only reference quantified variables.
+<a href=#76 id=76 data-nosnippet>76</a>    </span><span class="kw">pub fn </span>add_quantified_guard(<span class="kw-2">&amp;mut </span><span class="self">self</span>, guard: Expression) -&gt; bool {
+<a href=#77 id=77 data-nosnippet>77</a>        <span class="kw">if </span><span class="self">self</span>.is_quantified_guard(<span class="kw-2">&amp;</span>guard) {
 <a href=#78 id=78 data-nosnippet>78</a>            <span class="self">self</span>.generator_submodel.add_constraint(guard);
 <a href=#79 id=79 data-nosnippet>79</a>            <span class="bool-val">true
 <a href=#80 id=80 data-nosnippet>80</a>        </span>} <span class="kw">else </span>{
@@ -82,9 +82,9 @@
 <a href=#82 id=82 data-nosnippet>82</a>        </span>}
 <a href=#83 id=83 data-nosnippet>83</a>    }
 <a href=#84 id=84 data-nosnippet>84</a>
-<a href=#85 id=85 data-nosnippet>85</a>    <span class="doccomment">/// True iff expr only references induction variables.
-<a href=#86 id=86 data-nosnippet>86</a>    </span><span class="kw">pub fn </span>is_induction_guard(<span class="kw-2">&amp;</span><span class="self">self</span>, expr: <span class="kw-2">&amp;</span>Expression) -&gt; bool {
-<a href=#87 id=87 data-nosnippet>87</a>        is_induction_guard(<span class="kw-2">&amp;</span>(<span class="self">self</span>.induction_vars.clone().into_iter().collect()), expr)
+<a href=#85 id=85 data-nosnippet>85</a>    <span class="doccomment">/// True iff expr only references quantified variables.
+<a href=#86 id=86 data-nosnippet>86</a>    </span><span class="kw">pub fn </span>is_quantified_guard(<span class="kw-2">&amp;</span><span class="self">self</span>, expr: <span class="kw-2">&amp;</span>Expression) -&gt; bool {
+<a href=#87 id=87 data-nosnippet>87</a>        is_quantified_guard(<span class="kw-2">&amp;</span>(<span class="self">self</span>.quantified_vars.clone().into_iter().collect()), expr)
 <a href=#88 id=88 data-nosnippet>88</a>    }
 <a href=#89 id=89 data-nosnippet>89</a>}
 <a href=#90 id=90 data-nosnippet>90</a>
@@ -134,7 +134,7 @@
 <a href=#134 id=134 data-nosnippet>134</a>    // this is not ideal, but i am chucking all this code very soon anyways...
 <a href=#135 id=135 data-nosnippet>135</a>    </span>generator_symboltable: SymbolTablePtr,
 <a href=#136 id=136 data-nosnippet>136</a>    return_expr_symboltable: SymbolTablePtr,
-<a href=#137 id=137 data-nosnippet>137</a>    induction_variables: BTreeSet&lt;Name&gt;,
+<a href=#137 id=137 data-nosnippet>137</a>    quantified_variables: BTreeSet&lt;Name&gt;,
 <a href=#138 id=138 data-nosnippet>138</a>}
 <a href=#139 id=139 data-nosnippet>139</a>
 <a href=#140 id=140 data-nosnippet>140</a><span class="kw">impl </span>ComprehensionBuilder {
@@ -143,7 +143,7 @@
 <a href=#143 id=143 data-nosnippet>143</a>            guards: <span class="macro">vec!</span>[],
 <a href=#144 id=144 data-nosnippet>144</a>            generator_symboltable: SymbolTablePtr::with_parent(symbol_table_ptr.clone()),
 <a href=#145 id=145 data-nosnippet>145</a>            return_expr_symboltable: SymbolTablePtr::with_parent(symbol_table_ptr),
-<a href=#146 id=146 data-nosnippet>146</a>            induction_variables: BTreeSet::new(),
+<a href=#146 id=146 data-nosnippet>146</a>            quantified_variables: BTreeSet::new(),
 <a href=#147 id=147 data-nosnippet>147</a>        }
 <a href=#148 id=148 data-nosnippet>148</a>    }
 <a href=#149 id=149 data-nosnippet>149</a>
@@ -165,9 +165,9 @@
 <a href=#165 id=165 data-nosnippet>165</a>    <span class="kw">pub fn </span>generator(<span class="kw-2">mut </span><span class="self">self</span>, declaration: DeclarationPtr) -&gt; <span class="self">Self </span>{
 <a href=#166 id=166 data-nosnippet>166</a>        <span class="kw">let </span>name = declaration.name().clone();
 <a href=#167 id=167 data-nosnippet>167</a>        <span class="kw">let </span>domain = declaration.domain().unwrap();
-<a href=#168 id=168 data-nosnippet>168</a>        <span class="macro">assert!</span>(!<span class="self">self</span>.induction_variables.contains(<span class="kw-2">&amp;</span>name));
+<a href=#168 id=168 data-nosnippet>168</a>        <span class="macro">assert!</span>(!<span class="self">self</span>.quantified_variables.contains(<span class="kw-2">&amp;</span>name));
 <a href=#169 id=169 data-nosnippet>169</a>
-<a href=#170 id=170 data-nosnippet>170</a>        <span class="self">self</span>.induction_variables.insert(name.clone());
+<a href=#170 id=170 data-nosnippet>170</a>        <span class="self">self</span>.quantified_variables.insert(name.clone());
 <a href=#171 id=171 data-nosnippet>171</a>
 <a href=#172 id=172 data-nosnippet>172</a>        <span class="comment">// insert into generator symbol table as a variable
 <a href=#173 id=173 data-nosnippet>173</a>        </span><span class="self">self</span>.generator_symboltable.write().insert(declaration);
@@ -202,21 +202,21 @@
 <a href=#202 id=202 data-nosnippet>202</a>
 <a href=#203 id=203 data-nosnippet>203</a>        <span class="comment">// TODO:also allow guards that reference lettings and givens.
 <a href=#204 id=204 data-nosnippet>204</a>
-<a href=#205 id=205 data-nosnippet>205</a>        </span><span class="kw">let </span>induction_variables = <span class="self">self</span>.induction_variables;
+<a href=#205 id=205 data-nosnippet>205</a>        </span><span class="kw">let </span>quantified_variables = <span class="self">self</span>.quantified_variables;
 <a href=#206 id=206 data-nosnippet>206</a>
-<a href=#207 id=207 data-nosnippet>207</a>        <span class="comment">// only guards referencing induction variables can go inside the comprehension
-<a href=#208 id=208 data-nosnippet>208</a>        </span><span class="kw">let </span>(<span class="kw-2">mut </span>induction_guards, <span class="kw-2">mut </span>other_guards): (Vec&lt;<span class="kw">_</span>&gt;, Vec&lt;<span class="kw">_</span>&gt;) = <span class="self">self
+<a href=#207 id=207 data-nosnippet>207</a>        <span class="comment">// only guards referencing quantified variables can go inside the comprehension
+<a href=#208 id=208 data-nosnippet>208</a>        </span><span class="kw">let </span>(<span class="kw-2">mut </span>quantified_guards, <span class="kw-2">mut </span>other_guards): (Vec&lt;<span class="kw">_</span>&gt;, Vec&lt;<span class="kw">_</span>&gt;) = <span class="self">self
 <a href=#209 id=209 data-nosnippet>209</a>            </span>.guards
 <a href=#210 id=210 data-nosnippet>210</a>            .into_iter()
-<a href=#211 id=211 data-nosnippet>211</a>            .partition(|x| is_induction_guard(<span class="kw-2">&amp;</span>induction_variables, x));
+<a href=#211 id=211 data-nosnippet>211</a>            .partition(|x| is_quantified_guard(<span class="kw-2">&amp;</span>quantified_variables, x));
 <a href=#212 id=212 data-nosnippet>212</a>
-<a href=#213 id=213 data-nosnippet>213</a>        <span class="kw">let </span>induction_variables_2 = induction_variables.clone();
+<a href=#213 id=213 data-nosnippet>213</a>        <span class="kw">let </span>quantified_variables_2 = quantified_variables.clone();
 <a href=#214 id=214 data-nosnippet>214</a>        <span class="kw">let </span>generator_symboltable_ptr = generator_submodel.symbols_ptr_unchecked().clone();
 <a href=#215 id=215 data-nosnippet>215</a>
-<a href=#216 id=216 data-nosnippet>216</a>        <span class="comment">// fix induction guard pointers so that they all point to variables in the generator model
-<a href=#217 id=217 data-nosnippet>217</a>        </span>induction_guards =
-<a href=#218 id=218 data-nosnippet>218</a>            Biplate::&lt;DeclarationPtr&gt;::transform_bi(<span class="kw-2">&amp;</span>induction_guards, <span class="kw-2">&amp;</span><span class="kw">move </span>|decl| {
-<a href=#219 id=219 data-nosnippet>219</a>                <span class="kw">if </span>induction_variables_2.contains(<span class="kw-2">&amp;</span>decl.name()) {
+<a href=#216 id=216 data-nosnippet>216</a>        <span class="comment">// fix quantified guard pointers so that they all point to variables in the generator model
+<a href=#217 id=217 data-nosnippet>217</a>        </span>quantified_guards =
+<a href=#218 id=218 data-nosnippet>218</a>            Biplate::&lt;DeclarationPtr&gt;::transform_bi(<span class="kw-2">&amp;</span>quantified_guards, <span class="kw-2">&amp;</span><span class="kw">move </span>|decl| {
+<a href=#219 id=219 data-nosnippet>219</a>                <span class="kw">if </span>quantified_variables_2.contains(<span class="kw-2">&amp;</span>decl.name()) {
 <a href=#220 id=220 data-nosnippet>220</a>                    generator_symboltable_ptr
 <a href=#221 id=221 data-nosnippet>221</a>                        .read()
 <a href=#222 id=222 data-nosnippet>222</a>                        .lookup_local(<span class="kw-2">&amp;</span>decl.name())
@@ -228,13 +228,13 @@
 <a href=#228 id=228 data-nosnippet>228</a>            .into_iter()
 <a href=#229 id=229 data-nosnippet>229</a>            .collect_vec();
 <a href=#230 id=230 data-nosnippet>230</a>
-<a href=#231 id=231 data-nosnippet>231</a>        <span class="kw">let </span>induction_variables_2 = induction_variables.clone();
+<a href=#231 id=231 data-nosnippet>231</a>        <span class="kw">let </span>quantified_variables_2 = quantified_variables.clone();
 <a href=#232 id=232 data-nosnippet>232</a>        <span class="kw">let </span>return_expr_symboltable_ptr =
 <a href=#233 id=233 data-nosnippet>233</a>            return_expression_submodel.symbols_ptr_unchecked().clone();
 <a href=#234 id=234 data-nosnippet>234</a>
 <a href=#235 id=235 data-nosnippet>235</a>        <span class="comment">// fix other guard pointers so that they all point to variables in the return expr model
 <a href=#236 id=236 data-nosnippet>236</a>        </span>other_guards = Biplate::&lt;DeclarationPtr&gt;::transform_bi(<span class="kw-2">&amp;</span>other_guards, <span class="kw-2">&amp;</span><span class="kw">move </span>|decl| {
-<a href=#237 id=237 data-nosnippet>237</a>            <span class="kw">if </span>induction_variables_2.contains(<span class="kw-2">&amp;</span>decl.name()) {
+<a href=#237 id=237 data-nosnippet>237</a>            <span class="kw">if </span>quantified_variables_2.contains(<span class="kw-2">&amp;</span>decl.name()) {
 <a href=#238 id=238 data-nosnippet>238</a>                return_expr_symboltable_ptr
 <a href=#239 id=239 data-nosnippet>239</a>                    .read()
 <a href=#240 id=240 data-nosnippet>240</a>                    .lookup_local(<span class="kw-2">&amp;</span>decl.name())
@@ -246,7 +246,7 @@
 <a href=#246 id=246 data-nosnippet>246</a>        .into_iter()
 <a href=#247 id=247 data-nosnippet>247</a>        .collect_vec();
 <a href=#248 id=248 data-nosnippet>248</a>
-<a href=#249 id=249 data-nosnippet>249</a>        <span class="comment">// handle guards that reference non-induction variables
+<a href=#249 id=249 data-nosnippet>249</a>        <span class="comment">// handle guards that reference non-quantified variables
 <a href=#250 id=250 data-nosnippet>250</a>        </span><span class="kw">if </span>!other_guards.is_empty() {
 <a href=#251 id=251 data-nosnippet>251</a>            <span class="kw">let </span>comprehension_kind = comprehension_kind.expect(
 <a href=#252 id=252 data-nosnippet>252</a>                <span class="string">"if any guards reference decision variables, a comprehension kind should be given"</span>,
@@ -281,23 +281,23 @@
 <a href=#281 id=281 data-nosnippet>281</a>            }
 <a href=#282 id=282 data-nosnippet>282</a>        }
 <a href=#283 id=283 data-nosnippet>283</a>
-<a href=#284 id=284 data-nosnippet>284</a>        generator_submodel.add_constraints(induction_guards);
+<a href=#284 id=284 data-nosnippet>284</a>        generator_submodel.add_constraints(quantified_guards);
 <a href=#285 id=285 data-nosnippet>285</a>
 <a href=#286 id=286 data-nosnippet>286</a>        return_expression_submodel.add_constraint(expression);
 <a href=#287 id=287 data-nosnippet>287</a>
 <a href=#288 id=288 data-nosnippet>288</a>        Comprehension {
 <a href=#289 id=289 data-nosnippet>289</a>            return_expression_submodel,
 <a href=#290 id=290 data-nosnippet>290</a>            generator_submodel,
-<a href=#291 id=291 data-nosnippet>291</a>            induction_vars: induction_variables.into_iter().collect_vec(),
+<a href=#291 id=291 data-nosnippet>291</a>            quantified_vars: quantified_variables.into_iter().collect_vec(),
 <a href=#292 id=292 data-nosnippet>292</a>        }
 <a href=#293 id=293 data-nosnippet>293</a>    }
 <a href=#294 id=294 data-nosnippet>294</a>}
 <a href=#295 id=295 data-nosnippet>295</a>
-<a href=#296 id=296 data-nosnippet>296</a><span class="doccomment">/// True iff the guard only references induction variables.
-<a href=#297 id=297 data-nosnippet>297</a></span><span class="kw">fn </span>is_induction_guard(induction_variables: <span class="kw-2">&amp;</span>BTreeSet&lt;Name&gt;, guard: <span class="kw-2">&amp;</span>Expression) -&gt; bool {
+<a href=#296 id=296 data-nosnippet>296</a><span class="doccomment">/// True iff the guard only references quantified variables.
+<a href=#297 id=297 data-nosnippet>297</a></span><span class="kw">fn </span>is_quantified_guard(quantified_variables: <span class="kw-2">&amp;</span>BTreeSet&lt;Name&gt;, guard: <span class="kw-2">&amp;</span>Expression) -&gt; bool {
 <a href=#298 id=298 data-nosnippet>298</a>    guard
 <a href=#299 id=299 data-nosnippet>299</a>        .universe_bi()
 <a href=#300 id=300 data-nosnippet>300</a>        .iter()
-<a href=#301 id=301 data-nosnippet>301</a>        .all(|x| induction_variables.contains(x))
+<a href=#301 id=301 data-nosnippet>301</a>        .all(|x| quantified_variables.contains(x))
 <a href=#302 id=302 data-nosnippet>302</a>}
 </code></pre></div></section></main></body></html>
