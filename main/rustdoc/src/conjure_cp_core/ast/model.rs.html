@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/conjure-cp-core/src/ast/model.rs`."><title>model.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-b7b9f40b.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="conjure_cp_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.95.0-nightly (7f99507f5 2026-02-19)" data-channel="nightly" data-search-js="search-63369b7b.js" data-stringdex-js="stringdex-b897f86f.js" data-settings-js="settings-170eb4bf.js" ><script src="../../../static.files/storage-41dd4d93.js"></script><script defer src="../../../static.files/src-script-813739b1.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-5013f961.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-f7c3ffd8.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><a class="skip-main-content" href="#main-content">Skip to main content</a><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><section id="main-content" class="content" tabindex="-1"><div class="main-heading"><h1><div class="sub-heading">conjure_cp_core/ast/</div>model.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-3"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="kw">use </span>std::collections::{HashMap, HashSet, VecDeque};
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/conjure-cp-core/src/ast/model.rs`."><title>model.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-b7b9f40b.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="conjure_cp_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.95.0-nightly (7f99507f5 2026-02-19)" data-channel="nightly" data-search-js="search-63369b7b.js" data-stringdex-js="stringdex-b897f86f.js" data-settings-js="settings-170eb4bf.js" ><script src="../../../static.files/storage-41dd4d93.js"></script><script defer src="../../../static.files/src-script-813739b1.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-5013f961.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-f7c3ffd8.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><a class="skip-main-content" href="#main-content">Skip to main content</a><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><section id="main-content" class="content" tabindex="-1"><div class="main-heading"><h1><div class="sub-heading">conjure_cp_core/ast/</div>model.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-3"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="kw">use </span>std::collections::{HashMap, VecDeque};
 <a href=#2 id=2 data-nosnippet>2</a><span class="kw">use </span>std::fmt::{Debug, Display};
 <a href=#3 id=3 data-nosnippet>3</a><span class="kw">use </span>std::sync::{Arc, RwLock};
 <a href=#4 id=4 data-nosnippet>4</a>
@@ -266,68 +266,54 @@
 <a href=#266 id=266 data-nosnippet>266</a>    /// IDs are assigned in the order they are encountered during traversal, ensuring
 <a href=#267 id=267 data-nosnippet>267</a>    /// stability across identical model structures.
 <a href=#268 id=268 data-nosnippet>268</a>    </span><span class="kw">pub fn </span>collect_stable_id_mapping(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; HashMap&lt;ObjId, ObjId&gt; {
-<a href=#269 id=269 data-nosnippet>269</a>        <span class="comment">// Using an IndexSet here, we maintain insertion order without having to check if a value was inserted into the set repeatedly.
-<a href=#270 id=270 data-nosnippet>270</a>        </span><span class="kw">let </span><span class="kw-2">mut </span>id_list: IndexSet&lt;ObjId&gt; = IndexSet::new();
-<a href=#271 id=271 data-nosnippet>271</a>        <span class="kw">let </span><span class="kw-2">mut </span>visited_symbol_tables: HashSet&lt;ObjId&gt; = HashSet::new();
-<a href=#272 id=272 data-nosnippet>272</a>
-<a href=#273 id=273 data-nosnippet>273</a>        <span class="kw">let </span><span class="kw-2">mut </span>visit = |id: ObjId| {
-<a href=#274 id=274 data-nosnippet>274</a>            id_list.insert(id);
-<a href=#275 id=275 data-nosnippet>275</a>        };
-<a href=#276 id=276 data-nosnippet>276</a>
-<a href=#277 id=277 data-nosnippet>277</a>        <span class="kw">let </span><span class="kw-2">mut </span>visit_symbol_table_chain = |symbol_table: SymbolTablePtr| {
-<a href=#278 id=278 data-nosnippet>278</a>            <span class="kw">let </span><span class="kw-2">mut </span>current = <span class="prelude-val">Some</span>(symbol_table);
-<a href=#279 id=279 data-nosnippet>279</a>
-<a href=#280 id=280 data-nosnippet>280</a>            <span class="kw">while let </span><span class="prelude-val">Some</span>(table) = current {
-<a href=#281 id=281 data-nosnippet>281</a>                <span class="kw">let </span>table_id = table.id();
-<a href=#282 id=282 data-nosnippet>282</a>                <span class="kw">if </span>!visited_symbol_tables.insert(table_id.clone()) {
-<a href=#283 id=283 data-nosnippet>283</a>                    <span class="kw">break</span>;
-<a href=#284 id=284 data-nosnippet>284</a>                }
-<a href=#285 id=285 data-nosnippet>285</a>
-<a href=#286 id=286 data-nosnippet>286</a>                visit(table_id);
-<a href=#287 id=287 data-nosnippet>287</a>
-<a href=#288 id=288 data-nosnippet>288</a>                current = {
-<a href=#289 id=289 data-nosnippet>289</a>                    <span class="kw">let </span>table_ref = table.read();
-<a href=#290 id=290 data-nosnippet>290</a>                    table_ref
-<a href=#291 id=291 data-nosnippet>291</a>                        .iter_local()
-<a href=#292 id=292 data-nosnippet>292</a>                        .for_each(|(<span class="kw">_</span>, decl)| visit(decl.id()));
-<a href=#293 id=293 data-nosnippet>293</a>                    table_ref.parent().clone()
-<a href=#294 id=294 data-nosnippet>294</a>                };
-<a href=#295 id=295 data-nosnippet>295</a>            }
-<a href=#296 id=296 data-nosnippet>296</a>        };
-<a href=#297 id=297 data-nosnippet>297</a>
-<a href=#298 id=298 data-nosnippet>298</a>        <span class="comment">// Collect SymbolTable IDs by traversing all SubModels
-<a href=#299 id=299 data-nosnippet>299</a>        </span><span class="kw">for </span>submodel <span class="kw">in </span><span class="self">self</span>.submodel.universe() {
-<a href=#300 id=300 data-nosnippet>300</a>            visit_symbol_table_chain(submodel.symbols_ptr_unchecked().clone());
+<a href=#269 id=269 data-nosnippet>269</a>        <span class="kw">fn </span>visit_symbol_table(symbol_table: SymbolTablePtr, id_list: <span class="kw-2">&amp;mut </span>IndexSet&lt;ObjId&gt;) {
+<a href=#270 id=270 data-nosnippet>270</a>            <span class="comment">// If we have seen this table before, all its local declarations were already handled.
+<a href=#271 id=271 data-nosnippet>271</a>            </span><span class="kw">if </span>!id_list.insert(symbol_table.id()) {
+<a href=#272 id=272 data-nosnippet>272</a>                <span class="kw">return</span>;
+<a href=#273 id=273 data-nosnippet>273</a>            }
+<a href=#274 id=274 data-nosnippet>274</a>
+<a href=#275 id=275 data-nosnippet>275</a>            <span class="kw">let </span>table_ref = symbol_table.read();
+<a href=#276 id=276 data-nosnippet>276</a>            table_ref.iter_local().for_each(|(<span class="kw">_</span>, decl)| {
+<a href=#277 id=277 data-nosnippet>277</a>                id_list.insert(decl.id());
+<a href=#278 id=278 data-nosnippet>278</a>            });
+<a href=#279 id=279 data-nosnippet>279</a>        }
+<a href=#280 id=280 data-nosnippet>280</a>
+<a href=#281 id=281 data-nosnippet>281</a>        <span class="comment">// Using an IndexSet here, we maintain insertion order while deduplicating IDs.
+<a href=#282 id=282 data-nosnippet>282</a>        </span><span class="kw">let </span><span class="kw-2">mut </span>id_list: IndexSet&lt;ObjId&gt; = IndexSet::new();
+<a href=#283 id=283 data-nosnippet>283</a>
+<a href=#284 id=284 data-nosnippet>284</a>        <span class="comment">// Collect SymbolTable IDs by traversing all SubModels
+<a href=#285 id=285 data-nosnippet>285</a>        </span><span class="kw">for </span>submodel <span class="kw">in </span><span class="self">self</span>.submodel.universe() {
+<a href=#286 id=286 data-nosnippet>286</a>            visit_symbol_table(submodel.symbols_ptr_unchecked().clone(), <span class="kw-2">&amp;mut </span>id_list);
+<a href=#287 id=287 data-nosnippet>287</a>        }
+<a href=#288 id=288 data-nosnippet>288</a>
+<a href=#289 id=289 data-nosnippet>289</a>        <span class="comment">// Collect remaining IDs by traversing the expression tree
+<a href=#290 id=290 data-nosnippet>290</a>        // (Some expressions, e.g. AbstractComprehensions, contain SymbolTable's not
+<a href=#291 id=291 data-nosnippet>291</a>        // contained in submodels).
+<a href=#292 id=292 data-nosnippet>292</a>        </span><span class="kw">let </span><span class="kw-2">mut </span>exprs: VecDeque&lt;Expression&gt; = <span class="self">self</span>.submodel.universe_bi();
+<a href=#293 id=293 data-nosnippet>293</a>        <span class="kw">if let </span><span class="prelude-val">Some</span>(dominance) = <span class="kw-2">&amp;</span><span class="self">self</span>.dominance {
+<a href=#294 id=294 data-nosnippet>294</a>            exprs.push_back(dominance.clone());
+<a href=#295 id=295 data-nosnippet>295</a>        }
+<a href=#296 id=296 data-nosnippet>296</a>        <span class="kw">for </span>symbol_table <span class="kw">in </span>Biplate::&lt;SymbolTablePtr&gt;::universe_bi(<span class="kw-2">&amp;</span>exprs) {
+<a href=#297 id=297 data-nosnippet>297</a>            visit_symbol_table(symbol_table, <span class="kw-2">&amp;mut </span>id_list);
+<a href=#298 id=298 data-nosnippet>298</a>        }
+<a href=#299 id=299 data-nosnippet>299</a>        <span class="kw">for </span>declaration <span class="kw">in </span>Biplate::&lt;DeclarationPtr&gt;::universe_bi(<span class="kw-2">&amp;</span>exprs) {
+<a href=#300 id=300 data-nosnippet>300</a>            id_list.insert(declaration.id());
 <a href=#301 id=301 data-nosnippet>301</a>        }
 <a href=#302 id=302 data-nosnippet>302</a>
-<a href=#303 id=303 data-nosnippet>303</a>        <span class="comment">// Collect remaining IDs by traversing the expression tree
-<a href=#304 id=304 data-nosnippet>304</a>        // (Some expressions, e.g. AbstractComprehensions, contain SymbolTable's not
-<a href=#305 id=305 data-nosnippet>305</a>        // contained in submodels).
-<a href=#306 id=306 data-nosnippet>306</a>        </span><span class="kw">let </span><span class="kw-2">mut </span>exprs: VecDeque&lt;Expression&gt; = <span class="self">self</span>.submodel.universe_bi();
-<a href=#307 id=307 data-nosnippet>307</a>        <span class="kw">if let </span><span class="prelude-val">Some</span>(dominance) = <span class="kw-2">&amp;</span><span class="self">self</span>.dominance {
-<a href=#308 id=308 data-nosnippet>308</a>            exprs.push_back(dominance.clone());
-<a href=#309 id=309 data-nosnippet>309</a>        }
-<a href=#310 id=310 data-nosnippet>310</a>        <span class="kw">for </span>symbol_table <span class="kw">in </span>Biplate::&lt;SymbolTablePtr&gt;::universe_bi(<span class="kw-2">&amp;</span>exprs) {
-<a href=#311 id=311 data-nosnippet>311</a>            visit_symbol_table_chain(symbol_table);
-<a href=#312 id=312 data-nosnippet>312</a>        }
-<a href=#313 id=313 data-nosnippet>313</a>        <span class="kw">for </span>declaration <span class="kw">in </span>Biplate::&lt;DeclarationPtr&gt;::universe_bi(<span class="kw-2">&amp;</span>exprs) {
-<a href=#314 id=314 data-nosnippet>314</a>            visit(declaration.id());
-<a href=#315 id=315 data-nosnippet>315</a>        }
-<a href=#316 id=316 data-nosnippet>316</a>
-<a href=#317 id=317 data-nosnippet>317</a>        <span class="comment">// Create stable mapping: original_id -&gt; stable_id
-<a href=#318 id=318 data-nosnippet>318</a>        </span><span class="kw">let </span><span class="kw-2">mut </span>id_map = HashMap::new();
-<a href=#319 id=319 data-nosnippet>319</a>        <span class="kw">for </span>(stable_id, original_id) <span class="kw">in </span>id_list.into_iter().enumerate() {
-<a href=#320 id=320 data-nosnippet>320</a>            <span class="kw">let </span>type_name = original_id.type_name;
-<a href=#321 id=321 data-nosnippet>321</a>            id_map.insert(
-<a href=#322 id=322 data-nosnippet>322</a>                original_id,
-<a href=#323 id=323 data-nosnippet>323</a>                ObjId {
-<a href=#324 id=324 data-nosnippet>324</a>                    object_id: stable_id <span class="kw">as </span>u32,
-<a href=#325 id=325 data-nosnippet>325</a>                    type_name,
-<a href=#326 id=326 data-nosnippet>326</a>                },
-<a href=#327 id=327 data-nosnippet>327</a>            );
-<a href=#328 id=328 data-nosnippet>328</a>        }
-<a href=#329 id=329 data-nosnippet>329</a>
-<a href=#330 id=330 data-nosnippet>330</a>        id_map
-<a href=#331 id=331 data-nosnippet>331</a>    }
-<a href=#332 id=332 data-nosnippet>332</a>}
+<a href=#303 id=303 data-nosnippet>303</a>        <span class="comment">// Create stable mapping: original_id -&gt; stable_id
+<a href=#304 id=304 data-nosnippet>304</a>        </span><span class="kw">let </span><span class="kw-2">mut </span>id_map = HashMap::new();
+<a href=#305 id=305 data-nosnippet>305</a>        <span class="kw">for </span>(stable_id, original_id) <span class="kw">in </span>id_list.into_iter().enumerate() {
+<a href=#306 id=306 data-nosnippet>306</a>            <span class="kw">let </span>type_name = original_id.type_name;
+<a href=#307 id=307 data-nosnippet>307</a>            id_map.insert(
+<a href=#308 id=308 data-nosnippet>308</a>                original_id,
+<a href=#309 id=309 data-nosnippet>309</a>                ObjId {
+<a href=#310 id=310 data-nosnippet>310</a>                    object_id: stable_id <span class="kw">as </span>u32,
+<a href=#311 id=311 data-nosnippet>311</a>                    type_name,
+<a href=#312 id=312 data-nosnippet>312</a>                },
+<a href=#313 id=313 data-nosnippet>313</a>            );
+<a href=#314 id=314 data-nosnippet>314</a>        }
+<a href=#315 id=315 data-nosnippet>315</a>
+<a href=#316 id=316 data-nosnippet>316</a>        id_map
+<a href=#317 id=317 data-nosnippet>317</a>    }
+<a href=#318 id=318 data-nosnippet>318</a>}
 </code></pre></div></section></main></body></html>
