@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Parser","QuantifiedExpander","Rewriter","SatEncoding","SolverFamily"],"struct":["SolverArgs","SolverFamilyIter"]};
