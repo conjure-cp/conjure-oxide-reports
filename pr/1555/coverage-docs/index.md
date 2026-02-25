@@ -1,14 +1,18 @@
 # Documentation Coverage Report
 
-**conjure-cp:** **minion-sys:** 22% with examples, 86% documented -- 2/32/120
+**conjure-cp:** 0% with examples, 25% documented -- 0/1/4
+**minion-sys:** 22% with examples, 86% documented -- 2/32/120
 **tree-morph:** 22% with examples, 100% documented -- 6/38/38
 
 PR: [#1555](https://github.com/conjure-cp/conjure-oxide/pull/1555)
-Commit: [b2b80083113a7177ef700a250a4dcc9c2767b779](https://github.com/TronciuVlad/conjure-oxide/commit/b2b80083113a7177ef700a250a4dcc9c2767b779)
+Commit: [c3009d9053b64c7e95ecbf216efd1dc13e96ab4e](https://github.com/TronciuVlad/conjure-oxide/commit/c3009d9053b64c7e95ecbf216efd1dc13e96ab4e)
 
 ## Documentation coverage for `conjure-cp`
 
-
+| File | Percentage Documented | Percentage with examples |
+|----|----|----|
+| crates/conjure-cp/src/defaults.rs | ❌ 0% *(0/2)* | ❌ 0% *(0/2)* |
+| crates/conjure-cp/src/lib.rs | ❌ 50% *(1/2)* | ❌ 0% *(0/2)* |
 
 ## Documentation coverage for `minion-sys`
 
