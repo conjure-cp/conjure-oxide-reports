@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["detect_semantic_errors","error_to_diagnostic"]};
+window.SIDEBAR_ITEMS = {"fn":["detect_semantic_errors","error_to_diagnostic","fatal_error_to_diagnostic"]};
