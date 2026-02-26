@@ -1,0 +1,369 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+        <title>Diff Coverage</title>
+        <style>
+            .src-snippet { margin-top: 2em; }
+            .src-name { font-weight: bold; }
+            .snippets {
+                border-top: 1px solid #bdbdbd;
+                border-bottom: 1px solid #bdbdbd;
+            }
+            pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.hll { background-color: #ffcccc }
+.c { color: #3D7B7B; font-style: italic } /* Comment */
+.err { border: 1px solid #F00 } /* Error */
+.k { color: #008000; font-weight: bold } /* Keyword */
+.o { color: #666 } /* Operator */
+.ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.cp { color: #9C6500 } /* Comment.Preproc */
+.cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.gd { color: #A00000 } /* Generic.Deleted */
+.ge { font-style: italic } /* Generic.Emph */
+.ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.gr { color: #E40000 } /* Generic.Error */
+.gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.gi { color: #008400 } /* Generic.Inserted */
+.go { color: #717171 } /* Generic.Output */
+.gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.gs { font-weight: bold } /* Generic.Strong */
+.gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.gt { color: #04D } /* Generic.Traceback */
+.kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.kp { color: #008000 } /* Keyword.Pseudo */
+.kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.kt { color: #B00040 } /* Keyword.Type */
+.m { color: #666 } /* Literal.Number */
+.s { color: #BA2121 } /* Literal.String */
+.na { color: #687822 } /* Name.Attribute */
+.nb { color: #008000 } /* Name.Builtin */
+.nc { color: #00F; font-weight: bold } /* Name.Class */
+.no { color: #800 } /* Name.Constant */
+.nd { color: #A2F } /* Name.Decorator */
+.ni { color: #717171; font-weight: bold } /* Name.Entity */
+.ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.nf { color: #00F } /* Name.Function */
+.nl { color: #767600 } /* Name.Label */
+.nn { color: #00F; font-weight: bold } /* Name.Namespace */
+.nt { color: #008000; font-weight: bold } /* Name.Tag */
+.nv { color: #19177C } /* Name.Variable */
+.ow { color: #A2F; font-weight: bold } /* Operator.Word */
+.w { color: #BBB } /* Text.Whitespace */
+.mb { color: #666 } /* Literal.Number.Bin */
+.mf { color: #666 } /* Literal.Number.Float */
+.mh { color: #666 } /* Literal.Number.Hex */
+.mi { color: #666 } /* Literal.Number.Integer */
+.mo { color: #666 } /* Literal.Number.Oct */
+.sa { color: #BA2121 } /* Literal.String.Affix */
+.sb { color: #BA2121 } /* Literal.String.Backtick */
+.sc { color: #BA2121 } /* Literal.String.Char */
+.dl { color: #BA2121 } /* Literal.String.Delimiter */
+.sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.s2 { color: #BA2121 } /* Literal.String.Double */
+.se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.sh { color: #BA2121 } /* Literal.String.Heredoc */
+.si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.sx { color: #008000 } /* Literal.String.Other */
+.sr { color: #A45A77 } /* Literal.String.Regex */
+.s1 { color: #BA2121 } /* Literal.String.Single */
+.ss { color: #19177C } /* Literal.String.Symbol */
+.bp { color: #008000 } /* Name.Builtin.Pseudo */
+.fm { color: #00F } /* Name.Function.Magic */
+.vc { color: #19177C } /* Name.Variable.Class */
+.vg { color: #19177C } /* Name.Variable.Global */
+.vi { color: #19177C } /* Name.Variable.Instance */
+.vm { color: #19177C } /* Name.Variable.Magic */
+.il { color: #666 } /* Literal.Number.Integer.Long */
+        </style>
+    </head>
+    <body>
+        <h1>Diff Coverage</h1>
+        <p>Diff: upstream/main...HEAD, staged and unstaged changes</p>
+        <ul>
+            <li><b>Total</b>: 113 lines</li>
+            <li><b>Missing</b>: 41 lines</li>
+            <li><b>Coverage</b>: 63%</li>
+        </ul>
+        <table border="1">
+            <tr>
+                <th>Source File</th>
+                <th>Diff Coverage (%)</th>
+                <th>Missing Lines</th>
+            </tr>
+            <tr>
+                <td>tests-integration/tests/roundtrip_tests.rs</td>
+                <td>63.7%</td>
+                <td>34,46,48,51,56-76,79-81,83,123-124,127-128,137,168-169,176,200,205,217,220</td>
+            </tr>
+        </table>
+        <div class="src-snippet">
+            <div class="src-name">tests-integration/tests/roundtrip_tests.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span></pre></div></td><td class="code"><div><pre><span></span><a id="tests-integration/tests/roundtrip_tests.rs-30" name="tests-integration/tests/roundtrip_tests.rs-30"></a><span class="w">            </span><span class="nb">Default</span><span class="p">::</span><span class="n">default</span><span class="p">()</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-31" name="tests-integration/tests/roundtrip_tests.rs-31"></a><span class="w">        </span><span class="p">};</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-32" name="tests-integration/tests/roundtrip_tests.rs-32"></a>
+<a id="tests-integration/tests/roundtrip_tests.rs-33" name="tests-integration/tests/roundtrip_tests.rs-33"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">accept</span><span class="w"> </span><span class="p">{</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-34" name="tests-integration/tests/roundtrip_tests.rs-34"></a><span class="hll"><span class="w">        </span><span class="n">clean_test_dir_for_accept</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
+</span><a id="tests-integration/tests/roundtrip_tests.rs-35" name="tests-integration/tests/roundtrip_tests.rs-35"></a><span class="w">    </span><span class="p">}</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-36" name="tests-integration/tests/roundtrip_tests.rs-36"></a>
+<a id="tests-integration/tests/roundtrip_tests.rs-37" name="tests-integration/tests/roundtrip_tests.rs-37"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">parsers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">file_config</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-38" name="tests-integration/tests/roundtrip_tests.rs-38"></a><span class="w">        </span><span class="p">.</span><span class="n">configured_parsers</span><span class="p">()</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span>
+<span class="normal">86</span>
+<span class="normal">87</span></pre></div></td><td class="code"><div><pre><span></span><a id="tests-integration/tests/roundtrip_tests.rs-42" name="tests-integration/tests/roundtrip_tests.rs-42"></a><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">case_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">parser</span><span class="p">.</span><span class="n">to_string</span><span class="p">();</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-43" name="tests-integration/tests/roundtrip_tests.rs-43"></a><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">parse</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">match</span><span class="w"> </span><span class="n">parser</span><span class="w"> </span><span class="p">{</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-44" name="tests-integration/tests/roundtrip_tests.rs-44"></a><span class="w">            </span><span class="n">Parser</span><span class="p">::</span><span class="n">TreeSitter</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">parse_essence_file_native</span><span class="p">,</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-45" name="tests-integration/tests/roundtrip_tests.rs-45"></a><span class="w">            </span><span class="n">Parser</span><span class="p">::</span><span class="n">ViaConjure</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">parse_essence_file</span><span class="p">,</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-46" name="tests-integration/tests/roundtrip_tests.rs-46"></a><span class="hll"><span class="w">        </span><span class="p">};</span>
+</span><a id="tests-integration/tests/roundtrip_tests.rs-47" name="tests-integration/tests/roundtrip_tests.rs-47"></a><span class="w">        </span><span class="n">roundtrip_test_inner</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">case_name</span><span class="p">,</span><span class="w"> </span><span class="n">extension</span><span class="p">,</span><span class="w"> </span><span class="n">parse</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-48" name="tests-integration/tests/roundtrip_tests.rs-48"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="tests-integration/tests/roundtrip_tests.rs-49" name="tests-integration/tests/roundtrip_tests.rs-49"></a><span class="w">    </span><span class="nb">Ok</span><span class="p">(())</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-50" name="tests-integration/tests/roundtrip_tests.rs-50"></a><span class="p">}</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-51" name="tests-integration/tests/roundtrip_tests.rs-51"></a><span class="hll">
+</span><a id="tests-integration/tests/roundtrip_tests.rs-52" name="tests-integration/tests/roundtrip_tests.rs-52"></a><span class="sd">/// Removes generated and expected artefacts for a roundtrip test directory when `ACCEPT=true`.</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-53" name="tests-integration/tests/roundtrip_tests.rs-53"></a><span class="sd">///</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-54" name="tests-integration/tests/roundtrip_tests.rs-54"></a><span class="sd">/// Keeps source model files (`.essence`) and `config.toml`. Nested directories are not removed,</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-55" name="tests-integration/tests/roundtrip_tests.rs-55"></a><span class="sd">/// because each nested test directory performs its own cleanup when executed.</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-56" name="tests-integration/tests/roundtrip_tests.rs-56"></a><span class="hll"><span class="k">fn</span><span class="w"> </span><span class="nf">clean_test_dir_for_accept</span><span class="p">(</span><span class="n">path</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="kt">str</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nb">Result</span><span class="o">&lt;</span><span class="p">(),</span><span class="w"> </span><span class="n">std</span><span class="p">::</span><span class="n">io</span><span class="p">::</span><span class="n">Error</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><a id="tests-integration/tests/roundtrip_tests.rs-57" name="tests-integration/tests/roundtrip_tests.rs-57"></a><span class="hll"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">entry</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">std</span><span class="p">::</span><span class="n">fs</span><span class="p">::</span><span class="n">read_dir</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">?</span><span class="w"> </span><span class="p">{</span>
+</span><a id="tests-integration/tests/roundtrip_tests.rs-58" name="tests-integration/tests/roundtrip_tests.rs-58"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">entry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">entry</span><span class="o">?</span><span class="p">;</span>
+</span><a id="tests-integration/tests/roundtrip_tests.rs-59" name="tests-integration/tests/roundtrip_tests.rs-59"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">file_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">entry</span><span class="p">.</span><span class="n">file_name</span><span class="p">();</span>
+</span><a id="tests-integration/tests/roundtrip_tests.rs-60" name="tests-integration/tests/roundtrip_tests.rs-60"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">file_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">file_name</span><span class="p">.</span><span class="n">to_string_lossy</span><span class="p">();</span>
+</span><a id="tests-integration/tests/roundtrip_tests.rs-61" name="tests-integration/tests/roundtrip_tests.rs-61"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">entry_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">entry</span><span class="p">.</span><span class="n">path</span><span class="p">();</span>
+</span><a id="tests-integration/tests/roundtrip_tests.rs-62" name="tests-integration/tests/roundtrip_tests.rs-62"></a><span class="hll">
+</span><a id="tests-integration/tests/roundtrip_tests.rs-63" name="tests-integration/tests/roundtrip_tests.rs-63"></a><span class="hll"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="n">entry_path</span><span class="p">.</span><span class="n">is_dir</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</span><a id="tests-integration/tests/roundtrip_tests.rs-64" name="tests-integration/tests/roundtrip_tests.rs-64"></a><span class="hll"><span class="w">            </span><span class="k">continue</span><span class="p">;</span>
+</span><a id="tests-integration/tests/roundtrip_tests.rs-65" name="tests-integration/tests/roundtrip_tests.rs-65"></a><span class="hll"><span class="w">        </span><span class="p">}</span>
+</span><a id="tests-integration/tests/roundtrip_tests.rs-66" name="tests-integration/tests/roundtrip_tests.rs-66"></a><span class="hll">
+</span><a id="tests-integration/tests/roundtrip_tests.rs-67" name="tests-integration/tests/roundtrip_tests.rs-67"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">keep</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">file_name</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;config.toml&quot;</span><span class="w"> </span><span class="p">{</span>
+</span><a id="tests-integration/tests/roundtrip_tests.rs-68" name="tests-integration/tests/roundtrip_tests.rs-68"></a><span class="hll"><span class="w">            </span><span class="kc">true</span>
+</span><a id="tests-integration/tests/roundtrip_tests.rs-69" name="tests-integration/tests/roundtrip_tests.rs-69"></a><span class="hll"><span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+</span><a id="tests-integration/tests/roundtrip_tests.rs-70" name="tests-integration/tests/roundtrip_tests.rs-70"></a><span class="hll"><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="n">is_model_file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">entry_path</span>
+</span><a id="tests-integration/tests/roundtrip_tests.rs-71" name="tests-integration/tests/roundtrip_tests.rs-71"></a><span class="hll"><span class="w">                </span><span class="p">.</span><span class="n">extension</span><span class="p">()</span>
+</span><a id="tests-integration/tests/roundtrip_tests.rs-72" name="tests-integration/tests/roundtrip_tests.rs-72"></a><span class="hll"><span class="w">                </span><span class="p">.</span><span class="n">and_then</span><span class="p">(</span><span class="o">|</span><span class="n">ext</span><span class="o">|</span><span class="w"> </span><span class="n">ext</span><span class="p">.</span><span class="n">to_str</span><span class="p">())</span>
+</span><a id="tests-integration/tests/roundtrip_tests.rs-73" name="tests-integration/tests/roundtrip_tests.rs-73"></a><span class="hll"><span class="w">                </span><span class="p">.</span><span class="n">is_some_and</span><span class="p">(</span><span class="o">|</span><span class="n">ext</span><span class="o">|</span><span class="w"> </span><span class="n">ext</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;essence&quot;</span><span class="p">);</span>
+</span><a id="tests-integration/tests/roundtrip_tests.rs-74" name="tests-integration/tests/roundtrip_tests.rs-74"></a><span class="hll"><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="n">is_generated_or_expected</span><span class="w"> </span><span class="o">=</span>
+</span><a id="tests-integration/tests/roundtrip_tests.rs-75" name="tests-integration/tests/roundtrip_tests.rs-75"></a><span class="hll"><span class="w">                </span><span class="n">file_name</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;.generated&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">file_name</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="s">&quot;.expected&quot;</span><span class="p">);</span>
+</span><a id="tests-integration/tests/roundtrip_tests.rs-76" name="tests-integration/tests/roundtrip_tests.rs-76"></a><span class="hll"><span class="w">            </span><span class="n">is_model_file</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">is_generated_or_expected</span>
+</span><a id="tests-integration/tests/roundtrip_tests.rs-77" name="tests-integration/tests/roundtrip_tests.rs-77"></a><span class="w">        </span><span class="p">};</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-78" name="tests-integration/tests/roundtrip_tests.rs-78"></a>
+<a id="tests-integration/tests/roundtrip_tests.rs-79" name="tests-integration/tests/roundtrip_tests.rs-79"></a><span class="hll"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="n">keep</span><span class="w"> </span><span class="p">{</span>
+</span><a id="tests-integration/tests/roundtrip_tests.rs-80" name="tests-integration/tests/roundtrip_tests.rs-80"></a><span class="hll"><span class="w">            </span><span class="k">continue</span><span class="p">;</span>
+</span><a id="tests-integration/tests/roundtrip_tests.rs-81" name="tests-integration/tests/roundtrip_tests.rs-81"></a><span class="hll"><span class="w">        </span><span class="p">}</span>
+</span><a id="tests-integration/tests/roundtrip_tests.rs-82" name="tests-integration/tests/roundtrip_tests.rs-82"></a>
+<a id="tests-integration/tests/roundtrip_tests.rs-83" name="tests-integration/tests/roundtrip_tests.rs-83"></a><span class="hll"><span class="w">        </span><span class="n">std</span><span class="p">::</span><span class="n">fs</span><span class="p">::</span><span class="n">remove_file</span><span class="p">(</span><span class="n">entry_path</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
+</span><a id="tests-integration/tests/roundtrip_tests.rs-84" name="tests-integration/tests/roundtrip_tests.rs-84"></a><span class="w">    </span><span class="p">}</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-85" name="tests-integration/tests/roundtrip_tests.rs-85"></a>
+<a id="tests-integration/tests/roundtrip_tests.rs-86" name="tests-integration/tests/roundtrip_tests.rs-86"></a><span class="w">    </span><span class="nb">Ok</span><span class="p">(())</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-87" name="tests-integration/tests/roundtrip_tests.rs-87"></a><span class="p">}</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span></pre></div></td><td class="code"><div><pre><span></span><a id="tests-integration/tests/roundtrip_tests.rs-119" name="tests-integration/tests/roundtrip_tests.rs-119"></a><span class="w">            </span><span class="n">save_essence</span><span class="p">(</span><span class="o">&amp;</span><span class="n">initial_model</span><span class="p">,</span><span class="w"> </span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="n">case_name</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;generated&quot;</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-120" name="tests-integration/tests/roundtrip_tests.rs-120"></a>
+<a id="tests-integration/tests/roundtrip_tests.rs-121" name="tests-integration/tests/roundtrip_tests.rs-121"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="n">accept</span><span class="w"> </span><span class="p">{</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-122" name="tests-integration/tests/roundtrip_tests.rs-122"></a><span class="w">                </span><span class="n">std</span><span class="p">::</span><span class="n">fs</span><span class="p">::</span><span class="n">copy</span><span class="p">(</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-123" name="tests-integration/tests/roundtrip_tests.rs-123"></a><span class="hll"><span class="w">                    </span><span class="n">roundtrip_model_json_path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="n">case_name</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;generated&quot;</span><span class="p">),</span>
+</span><a id="tests-integration/tests/roundtrip_tests.rs-124" name="tests-integration/tests/roundtrip_tests.rs-124"></a><span class="hll"><span class="w">                    </span><span class="n">roundtrip_model_json_path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="n">case_name</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;expected&quot;</span><span class="p">),</span>
+</span><a id="tests-integration/tests/roundtrip_tests.rs-125" name="tests-integration/tests/roundtrip_tests.rs-125"></a><span class="w">                </span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-126" name="tests-integration/tests/roundtrip_tests.rs-126"></a><span class="w">                </span><span class="n">std</span><span class="p">::</span><span class="n">fs</span><span class="p">::</span><span class="n">copy</span><span class="p">(</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-127" name="tests-integration/tests/roundtrip_tests.rs-127"></a><span class="hll"><span class="w">                    </span><span class="n">roundtrip_essence_path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="n">case_name</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;generated&quot;</span><span class="p">),</span>
+</span><a id="tests-integration/tests/roundtrip_tests.rs-128" name="tests-integration/tests/roundtrip_tests.rs-128"></a><span class="hll"><span class="w">                    </span><span class="n">roundtrip_essence_path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="n">case_name</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;expected&quot;</span><span class="p">),</span>
+</span><a id="tests-integration/tests/roundtrip_tests.rs-129" name="tests-integration/tests/roundtrip_tests.rs-129"></a><span class="w">                </span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-130" name="tests-integration/tests/roundtrip_tests.rs-130"></a><span class="w">            </span><span class="p">}</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-131" name="tests-integration/tests/roundtrip_tests.rs-131"></a>
+<a id="tests-integration/tests/roundtrip_tests.rs-132" name="tests-integration/tests/roundtrip_tests.rs-132"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="o">!</span><span class="n">accept</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span></pre></div></td><td class="code"><div><pre><span></span><a id="tests-integration/tests/roundtrip_tests.rs-133" name="tests-integration/tests/roundtrip_tests.rs-133"></a><span class="w">                </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">Path</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="o">&amp;</span><span class="n">roundtrip_model_json_path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="n">case_name</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;expected&quot;</span><span class="p">)).</span><span class="n">exists</span><span class="p">()</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-134" name="tests-integration/tests/roundtrip_tests.rs-134"></a><span class="w">            </span><span class="p">{</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-135" name="tests-integration/tests/roundtrip_tests.rs-135"></a><span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="nb">Box</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="n">std</span><span class="p">::</span><span class="n">io</span><span class="p">::</span><span class="n">Error</span><span class="p">::</span><span class="n">new</span><span class="p">(</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-136" name="tests-integration/tests/roundtrip_tests.rs-136"></a><span class="w">                    </span><span class="n">std</span><span class="p">::</span><span class="n">io</span><span class="p">::</span><span class="n">ErrorKind</span><span class="p">::</span><span class="n">NotFound</span><span class="p">,</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-137" name="tests-integration/tests/roundtrip_tests.rs-137"></a><span class="hll"><span class="w">                    </span><span class="s">&quot;Expected output file not found: Run with ACCEPT=true&quot;</span><span class="p">.</span><span class="n">to_string</span><span class="p">(),</span>
+</span><a id="tests-integration/tests/roundtrip_tests.rs-138" name="tests-integration/tests/roundtrip_tests.rs-138"></a><span class="w">                </span><span class="p">)));</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-139" name="tests-integration/tests/roundtrip_tests.rs-139"></a><span class="w">            </span><span class="p">}</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-140" name="tests-integration/tests/roundtrip_tests.rs-140"></a>
+<a id="tests-integration/tests/roundtrip_tests.rs-141" name="tests-integration/tests/roundtrip_tests.rs-141"></a><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="n">expected_model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">read_roundtrip_model_json</span><span class="p">(</span><span class="o">&amp;</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="n">case_name</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;expected&quot;</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span></pre></div></td><td class="code"><div><pre><span></span><a id="tests-integration/tests/roundtrip_tests.rs-164" name="tests-integration/tests/roundtrip_tests.rs-164"></a><span class="w">            </span><span class="n">save_parse_error</span><span class="p">(</span><span class="o">&amp;</span><span class="n">parse_error</span><span class="p">,</span><span class="w"> </span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="n">case_name</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;generated&quot;</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-165" name="tests-integration/tests/roundtrip_tests.rs-165"></a>
+<a id="tests-integration/tests/roundtrip_tests.rs-166" name="tests-integration/tests/roundtrip_tests.rs-166"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="n">accept</span><span class="w"> </span><span class="p">{</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-167" name="tests-integration/tests/roundtrip_tests.rs-167"></a><span class="w">                </span><span class="n">std</span><span class="p">::</span><span class="n">fs</span><span class="p">::</span><span class="n">copy</span><span class="p">(</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-168" name="tests-integration/tests/roundtrip_tests.rs-168"></a><span class="hll"><span class="w">                    </span><span class="n">roundtrip_error_path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="n">case_name</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;generated&quot;</span><span class="p">),</span>
+</span><a id="tests-integration/tests/roundtrip_tests.rs-169" name="tests-integration/tests/roundtrip_tests.rs-169"></a><span class="hll"><span class="w">                    </span><span class="n">roundtrip_error_path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="n">case_name</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;expected&quot;</span><span class="p">),</span>
+</span><a id="tests-integration/tests/roundtrip_tests.rs-170" name="tests-integration/tests/roundtrip_tests.rs-170"></a><span class="w">                </span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-171" name="tests-integration/tests/roundtrip_tests.rs-171"></a><span class="w">            </span><span class="p">}</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-172" name="tests-integration/tests/roundtrip_tests.rs-172"></a>
+<a id="tests-integration/tests/roundtrip_tests.rs-173" name="tests-integration/tests/roundtrip_tests.rs-173"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="o">!</span><span class="n">accept</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">Path</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="o">&amp;</span><span class="n">roundtrip_error_path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="n">case_name</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;expected&quot;</span><span class="p">)).</span><span class="n">exists</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span></pre></div></td><td class="code"><div><pre><span></span><a id="tests-integration/tests/roundtrip_tests.rs-172" name="tests-integration/tests/roundtrip_tests.rs-172"></a>
+<a id="tests-integration/tests/roundtrip_tests.rs-173" name="tests-integration/tests/roundtrip_tests.rs-173"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="o">!</span><span class="n">accept</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">Path</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="o">&amp;</span><span class="n">roundtrip_error_path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="n">case_name</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;expected&quot;</span><span class="p">)).</span><span class="n">exists</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-174" name="tests-integration/tests/roundtrip_tests.rs-174"></a><span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="nb">Box</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="n">std</span><span class="p">::</span><span class="n">io</span><span class="p">::</span><span class="n">Error</span><span class="p">::</span><span class="n">new</span><span class="p">(</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-175" name="tests-integration/tests/roundtrip_tests.rs-175"></a><span class="w">                    </span><span class="n">std</span><span class="p">::</span><span class="n">io</span><span class="p">::</span><span class="n">ErrorKind</span><span class="p">::</span><span class="n">NotFound</span><span class="p">,</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-176" name="tests-integration/tests/roundtrip_tests.rs-176"></a><span class="hll"><span class="w">                    </span><span class="s">&quot;Expected output file not found: Run with ACCEPT=true&quot;</span><span class="p">.</span><span class="n">to_string</span><span class="p">(),</span>
+</span><a id="tests-integration/tests/roundtrip_tests.rs-177" name="tests-integration/tests/roundtrip_tests.rs-177"></a><span class="w">                </span><span class="p">)));</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-178" name="tests-integration/tests/roundtrip_tests.rs-178"></a><span class="w">            </span><span class="p">}</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-179" name="tests-integration/tests/roundtrip_tests.rs-179"></a>
+<a id="tests-integration/tests/roundtrip_tests.rs-180" name="tests-integration/tests/roundtrip_tests.rs-180"></a><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="n">expected_error</span><span class="w"> </span><span class="o">=</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span></pre></div></td><td class="code"><div><pre><span></span><a id="tests-integration/tests/roundtrip_tests.rs-196" name="tests-integration/tests/roundtrip_tests.rs-196"></a><span class="sd">/// Returns the roundtrip Essence path for a parser case and model type.</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-197" name="tests-integration/tests/roundtrip_tests.rs-197"></a><span class="k">fn</span><span class="w"> </span><span class="nf">roundtrip_essence_path</span><span class="p">(</span><span class="n">path</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="kt">str</span><span class="p">,</span><span class="w"> </span><span class="n">case_name</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="kt">str</span><span class="p">,</span><span class="w"> </span><span class="n">file_type</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="kt">str</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nb">String</span><span class="w"> </span><span class="p">{</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-198" name="tests-integration/tests/roundtrip_tests.rs-198"></a><span class="w">    </span><span class="fm">format!</span><span class="p">(</span><span class="s">&quot;{path}/{case_name}.{file_type}.essence&quot;</span><span class="p">)</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-199" name="tests-integration/tests/roundtrip_tests.rs-199"></a><span class="p">}</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-200" name="tests-integration/tests/roundtrip_tests.rs-200"></a><span class="hll">
+</span><a id="tests-integration/tests/roundtrip_tests.rs-201" name="tests-integration/tests/roundtrip_tests.rs-201"></a><span class="sd">/// Returns the roundtrip parser-error path for a parser case and model type.</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-202" name="tests-integration/tests/roundtrip_tests.rs-202"></a><span class="k">fn</span><span class="w"> </span><span class="nf">roundtrip_error_path</span><span class="p">(</span><span class="n">path</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="kt">str</span><span class="p">,</span><span class="w"> </span><span class="n">case_name</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="kt">str</span><span class="p">,</span><span class="w"> </span><span class="n">file_type</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="kt">str</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nb">String</span><span class="w"> </span><span class="p">{</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-203" name="tests-integration/tests/roundtrip_tests.rs-203"></a><span class="w">    </span><span class="fm">format!</span><span class="p">(</span><span class="s">&quot;{path}/{case_name}.{file_type}-error.txt&quot;</span><span class="p">)</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-204" name="tests-integration/tests/roundtrip_tests.rs-204"></a><span class="p">}</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-205" name="tests-integration/tests/roundtrip_tests.rs-205"></a><span class="hll">
+</span><a id="tests-integration/tests/roundtrip_tests.rs-206" name="tests-integration/tests/roundtrip_tests.rs-206"></a><span class="sd">/// Serialises and writes a generated model snapshot for roundtrip comparison.</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-207" name="tests-integration/tests/roundtrip_tests.rs-207"></a><span class="k">fn</span><span class="w"> </span><span class="nf">save_roundtrip_model_json</span><span class="p">(</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-208" name="tests-integration/tests/roundtrip_tests.rs-208"></a><span class="w">    </span><span class="n">model</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">Model</span><span class="p">,</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-209" name="tests-integration/tests/roundtrip_tests.rs-209"></a><span class="w">    </span><span class="n">path</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="kt">str</span><span class="p">,</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span></pre></div></td><td class="code"><div><pre><span></span><a id="tests-integration/tests/roundtrip_tests.rs-213" name="tests-integration/tests/roundtrip_tests.rs-213"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">serialised</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">serialize_model</span><span class="p">(</span><span class="n">model</span><span class="p">).</span><span class="n">map_err</span><span class="p">(</span><span class="n">std</span><span class="p">::</span><span class="n">io</span><span class="p">::</span><span class="n">Error</span><span class="p">::</span><span class="n">other</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-214" name="tests-integration/tests/roundtrip_tests.rs-214"></a><span class="w">    </span><span class="n">fs</span><span class="p">::</span><span class="n">write</span><span class="p">(</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-215" name="tests-integration/tests/roundtrip_tests.rs-215"></a><span class="w">        </span><span class="n">roundtrip_model_json_path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="n">case_name</span><span class="p">,</span><span class="w"> </span><span class="n">file_type</span><span class="p">),</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-216" name="tests-integration/tests/roundtrip_tests.rs-216"></a><span class="w">        </span><span class="n">serialised</span><span class="p">,</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-217" name="tests-integration/tests/roundtrip_tests.rs-217"></a><span class="hll"><span class="w">    </span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
+</span><a id="tests-integration/tests/roundtrip_tests.rs-218" name="tests-integration/tests/roundtrip_tests.rs-218"></a><span class="w">    </span><span class="nb">Ok</span><span class="p">(())</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-219" name="tests-integration/tests/roundtrip_tests.rs-219"></a><span class="p">}</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-220" name="tests-integration/tests/roundtrip_tests.rs-220"></a><span class="hll">
+</span><a id="tests-integration/tests/roundtrip_tests.rs-221" name="tests-integration/tests/roundtrip_tests.rs-221"></a><span class="sd">/// Reads and initialises a saved roundtrip model snapshot.</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-222" name="tests-integration/tests/roundtrip_tests.rs-222"></a><span class="k">fn</span><span class="w"> </span><span class="nf">read_roundtrip_model_json</span><span class="p">(</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-223" name="tests-integration/tests/roundtrip_tests.rs-223"></a><span class="w">    </span><span class="n">context</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">Arc</span><span class="o">&lt;</span><span class="n">RwLock</span><span class="o">&lt;</span><span class="n">Context</span><span class="o">&lt;&#39;</span><span class="nb">static</span><span class="o">&gt;&gt;&gt;</span><span class="p">,</span>
+<a id="tests-integration/tests/roundtrip_tests.rs-224" name="tests-integration/tests/roundtrip_tests.rs-224"></a><span class="w">    </span><span class="n">path</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="kt">str</span><span class="p">,</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+    </body>
+</html>
