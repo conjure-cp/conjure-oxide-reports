@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["quantified_expander_for_comprehensions","set_quantified_expander_for_comprehensions"],"static":["QUANTIFIED_EXPANDER_FOR_COMPREHENSIONS","USE_OPTIMISED_REWRITER_FOR_COMPREHENSIONS"],"struct":["Comprehension","ComprehensionBuilder"]};
+window.SIDEBAR_ITEMS = {"enum":["ComprehensionQualifier"],"struct":["Comprehension","ComprehensionBuilder"]};

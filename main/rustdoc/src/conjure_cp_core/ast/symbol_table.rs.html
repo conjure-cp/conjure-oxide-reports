@@ -425,7 +425,7 @@
 <a href=#425 id=425 data-nosnippet>425</a>        // table..
 <a href=#426 id=426 data-nosnippet>426</a>
 <a href=#427 id=427 data-nosnippet>427</a>        </span><span class="kw">let </span>decl = <span class="self">self</span>.lookup(name)<span class="question-mark">?</span>;
-<a href=#428 id=428 data-nosnippet>428</a>        <span class="kw">let </span>var = <span class="kw-2">&amp;</span>decl.as_var()<span class="question-mark">?</span>;
+<a href=#428 id=428 data-nosnippet>428</a>        <span class="kw">let </span>var = <span class="kw-2">&amp;</span>decl.as_find()<span class="question-mark">?</span>;
 <a href=#429 id=429 data-nosnippet>429</a>
 <a href=#430 id=430 data-nosnippet>430</a>        var.representations
 <a href=#431 id=431 data-nosnippet>431</a>            .iter()
@@ -440,7 +440,7 @@
 <a href=#440 id=440 data-nosnippet>440</a>    /// + `None` if `name` does not exist, or is not a decision variable.
 <a href=#441 id=441 data-nosnippet>441</a>    </span><span class="kw">pub fn </span>representations_for(<span class="kw-2">&amp;</span><span class="self">self</span>, name: <span class="kw-2">&amp;</span>Name) -&gt; <span class="prelude-ty">Option</span>&lt;Vec&lt;Vec&lt;Box&lt;<span class="kw">dyn </span>Representation&gt;&gt;&gt;&gt; {
 <a href=#442 id=442 data-nosnippet>442</a>        <span class="kw">let </span>decl = <span class="self">self</span>.lookup(name)<span class="question-mark">?</span>;
-<a href=#443 id=443 data-nosnippet>443</a>        decl.as_var().map(|x| x.representations.clone())
+<a href=#443 id=443 data-nosnippet>443</a>        decl.as_find().map(|x| x.representations.clone())
 <a href=#444 id=444 data-nosnippet>444</a>    }
 <a href=#445 id=445 data-nosnippet>445</a>
 <a href=#446 id=446 data-nosnippet>446</a>    <span class="doccomment">/// Gets the representation `representation` for `name`, creating it if it does not exist.
@@ -467,7 +467,7 @@
 <a href=#467 id=467 data-nosnippet>467</a>        <span class="comment">// Lookup the declaration reference
 <a href=#468 id=468 data-nosnippet>468</a>        </span><span class="kw">let </span><span class="kw-2">mut </span>decl = <span class="self">self</span>.lookup(name)<span class="question-mark">?</span>;
 <a href=#469 id=469 data-nosnippet>469</a>
-<a href=#470 id=470 data-nosnippet>470</a>        <span class="kw">if let </span><span class="prelude-val">Some</span>(var) = decl.as_var()
+<a href=#470 id=470 data-nosnippet>470</a>        <span class="kw">if let </span><span class="prelude-val">Some</span>(var) = decl.as_find()
 <a href=#471 id=471 data-nosnippet>471</a>            &amp;&amp; <span class="kw">let </span><span class="prelude-val">Some</span>(existing_reprs) = var
 <a href=#472 id=472 data-nosnippet>472</a>                .representations
 <a href=#473 id=473 data-nosnippet>473</a>                .iter()
@@ -488,7 +488,7 @@
 <a href=#488 id=488 data-nosnippet>488</a>        <span class="kw">let </span>reprs = <span class="macro">vec!</span>[repr_init_fn(name, <span class="self">self</span>)<span class="question-mark">?</span>];
 <a href=#489 id=489 data-nosnippet>489</a>
 <a href=#490 id=490 data-nosnippet>490</a>        <span class="comment">// Get mutable access to the variable part
-<a href=#491 id=491 data-nosnippet>491</a>        </span><span class="kw">let </span><span class="kw-2">mut </span>var = decl.as_var_mut()<span class="question-mark">?</span>;
+<a href=#491 id=491 data-nosnippet>491</a>        </span><span class="kw">let </span><span class="kw-2">mut </span>var = decl.as_find_mut()<span class="question-mark">?</span>;
 <a href=#492 id=492 data-nosnippet>492</a>
 <a href=#493 id=493 data-nosnippet>493</a>        <span class="kw">for </span>repr_instance <span class="kw">in </span><span class="kw-2">&amp;</span>reprs {
 <a href=#494 id=494 data-nosnippet>494</a>            repr_instance

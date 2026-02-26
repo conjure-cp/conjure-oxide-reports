@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["Parser","QuantifiedExpander","Rewriter","SatEncoding","SolverFamily"],"struct":["SolverArgs","SolverFamilyIter"]};
+window.SIDEBAR_ITEMS = {"enum":["Parser","QuantifiedExpander","Rewriter","SatEncoding","SolverFamily"],"fn":["comprehension_expander","current_parser","current_rewriter","current_solver_family","set_comprehension_expander","set_current_parser","set_current_rewriter","set_current_solver_family"],"struct":["SolverArgs","SolverFamilyIter"]};
