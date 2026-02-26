@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["semantic_errors","syntactic_errors"]};
+window.SIDEBAR_ITEMS = {"mod":["collect_errors"]};
