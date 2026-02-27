@@ -1,0 +1,236 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+        <title>Diff Coverage</title>
+        <style>
+            .src-snippet { margin-top: 2em; }
+            .src-name { font-weight: bold; }
+            .snippets {
+                border-top: 1px solid #bdbdbd;
+                border-bottom: 1px solid #bdbdbd;
+            }
+            pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.hll { background-color: #ffcccc }
+.c { color: #3D7B7B; font-style: italic } /* Comment */
+.err { border: 1px solid #F00 } /* Error */
+.k { color: #008000; font-weight: bold } /* Keyword */
+.o { color: #666 } /* Operator */
+.ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.cp { color: #9C6500 } /* Comment.Preproc */
+.cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.gd { color: #A00000 } /* Generic.Deleted */
+.ge { font-style: italic } /* Generic.Emph */
+.ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.gr { color: #E40000 } /* Generic.Error */
+.gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.gi { color: #008400 } /* Generic.Inserted */
+.go { color: #717171 } /* Generic.Output */
+.gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.gs { font-weight: bold } /* Generic.Strong */
+.gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.gt { color: #04D } /* Generic.Traceback */
+.kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.kp { color: #008000 } /* Keyword.Pseudo */
+.kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.kt { color: #B00040 } /* Keyword.Type */
+.m { color: #666 } /* Literal.Number */
+.s { color: #BA2121 } /* Literal.String */
+.na { color: #687822 } /* Name.Attribute */
+.nb { color: #008000 } /* Name.Builtin */
+.nc { color: #00F; font-weight: bold } /* Name.Class */
+.no { color: #800 } /* Name.Constant */
+.nd { color: #A2F } /* Name.Decorator */
+.ni { color: #717171; font-weight: bold } /* Name.Entity */
+.ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.nf { color: #00F } /* Name.Function */
+.nl { color: #767600 } /* Name.Label */
+.nn { color: #00F; font-weight: bold } /* Name.Namespace */
+.nt { color: #008000; font-weight: bold } /* Name.Tag */
+.nv { color: #19177C } /* Name.Variable */
+.ow { color: #A2F; font-weight: bold } /* Operator.Word */
+.w { color: #BBB } /* Text.Whitespace */
+.mb { color: #666 } /* Literal.Number.Bin */
+.mf { color: #666 } /* Literal.Number.Float */
+.mh { color: #666 } /* Literal.Number.Hex */
+.mi { color: #666 } /* Literal.Number.Integer */
+.mo { color: #666 } /* Literal.Number.Oct */
+.sa { color: #BA2121 } /* Literal.String.Affix */
+.sb { color: #BA2121 } /* Literal.String.Backtick */
+.sc { color: #BA2121 } /* Literal.String.Char */
+.dl { color: #BA2121 } /* Literal.String.Delimiter */
+.sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.s2 { color: #BA2121 } /* Literal.String.Double */
+.se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.sh { color: #BA2121 } /* Literal.String.Heredoc */
+.si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.sx { color: #008000 } /* Literal.String.Other */
+.sr { color: #A45A77 } /* Literal.String.Regex */
+.s1 { color: #BA2121 } /* Literal.String.Single */
+.ss { color: #19177C } /* Literal.String.Symbol */
+.bp { color: #008000 } /* Name.Builtin.Pseudo */
+.fm { color: #00F } /* Name.Function.Magic */
+.vc { color: #19177C } /* Name.Variable.Class */
+.vg { color: #19177C } /* Name.Variable.Global */
+.vi { color: #19177C } /* Name.Variable.Instance */
+.vm { color: #19177C } /* Name.Variable.Magic */
+.il { color: #666 } /* Literal.Number.Integer.Long */
+        </style>
+    </head>
+    <body>
+        <h1>Diff Coverage</h1>
+        <p>Diff: upstream/main...HEAD, staged and unstaged changes</p>
+        <ul>
+            <li><b>Total</b>: 27 lines</li>
+            <li><b>Missing</b>: 20 lines</li>
+            <li><b>Coverage</b>: 25%</li>
+        </ul>
+        <table border="1">
+            <tr>
+                <th>Source File</th>
+                <th>Diff Coverage (%)</th>
+                <th>Missing Lines</th>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-core/src/ast/abstract_comprehension.rs</td>
+                <td>20.0%</td>
+                <td>99-101,109,111-113,115,148-153,155-156,158,160-161,173</td>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-core/src/parse/parse_model.rs</td>
+                <td>100%</td>
+                <td>&nbsp;</td>
+            </tr>
+        </table>
+        <div class="src-snippet">
+            <div class="src-name">crates/conjure-cp-core/src/ast/abstract_comprehension.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-95" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-95"></a><span class="w">            </span><span class="n">symbols</span><span class="p">:</span><span class="w"> </span><span class="nc">SymbolTablePtr</span><span class="p">::</span><span class="n">with_parent</span><span class="p">(</span><span class="n">symbols</span><span class="p">.</span><span class="n">clone</span><span class="p">()),</span>
+<a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-96" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-96"></a><span class="w">        </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-97" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-97"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-98" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-98"></a>
+<a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-99" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-99"></a><span class="hll"><span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">add_domain_generator</span><span class="p">(</span><span class="k">mut</span><span class="w"> </span><span class="bp">self</span><span class="p">,</span><span class="w"> </span><span class="n">domain</span><span class="p">:</span><span class="w"> </span><span class="nc">DomainPtr</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">:</span><span class="w"> </span><span class="nc">Name</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-100" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-100"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">generator_decl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DeclarationPtr</span><span class="p">::</span><span class="n">new_quantified</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">domain</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-101" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-101"></a><span class="hll"><span class="w">        </span><span class="bp">self</span><span class="p">.</span><span class="n">symbols</span><span class="p">.</span><span class="n">write</span><span class="p">().</span><span class="n">update_insert</span><span class="p">(</span><span class="n">generator_decl</span><span class="p">.</span><span class="n">clone</span><span class="p">());</span>
+</span><a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-102" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-102"></a>
+<a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-103" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-103"></a><span class="w">        </span><span class="bp">self</span><span class="p">.</span><span class="n">qualifiers</span>
+<a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-104" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-104"></a><span class="w">            </span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">Qualifier</span><span class="p">::</span><span class="n">Generator</span><span class="p">(</span><span class="n">Generator</span><span class="p">::</span><span class="n">DomainGenerator</span><span class="p">(</span>
+<a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-105" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-105"></a><span class="w">                </span><span class="n">DomainGenerator</span><span class="w"> </span><span class="p">{</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-105" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-105"></a><span class="w">                </span><span class="n">DomainGenerator</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-106" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-106"></a><span class="w">                    </span><span class="n">decl</span><span class="p">:</span><span class="w"> </span><span class="nc">generator_decl</span><span class="p">.</span><span class="n">clone</span><span class="p">(),</span>
+<a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-107" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-107"></a><span class="w">                </span><span class="p">},</span>
+<a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-108" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-108"></a><span class="w">            </span><span class="p">)));</span>
+<a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-109" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-109"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-110" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-110"></a>
+<a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-111" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-111"></a><span class="hll"><span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">new_domain_generator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="w"> </span><span class="n">domain</span><span class="p">:</span><span class="w"> </span><span class="nc">DomainPtr</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">DeclarationPtr</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-112" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-112"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">generator_decl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="bp">self</span><span class="p">.</span><span class="n">symbols</span><span class="p">.</span><span class="n">write</span><span class="p">().</span><span class="n">gensym</span><span class="p">(</span><span class="o">&amp;</span><span class="n">domain</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-113" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-113"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">generator_decl</span><span class="p">.</span><span class="n">name</span><span class="p">().</span><span class="n">clone</span><span class="p">();</span>
+</span><a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-114" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-114"></a>
+<a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-115" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-115"></a><span class="hll"><span class="w">        </span><span class="bp">self</span><span class="p">.</span><span class="n">add_domain_generator</span><span class="p">(</span><span class="n">domain</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-116" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-116"></a>
+<a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-117" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-117"></a><span class="w">        </span><span class="n">generator_decl</span>
+<a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-118" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-118"></a><span class="w">    </span><span class="p">}</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-144" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-144"></a>
+<a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-145" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-145"></a><span class="w">        </span><span class="bp">self</span>
+<a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-146" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-146"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-147" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-147"></a>
+<a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-148" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-148"></a><span class="hll"><span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">new_expression_generator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="w"> </span><span class="n">expr</span><span class="p">:</span><span class="w"> </span><span class="nc">Expression</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">DeclarationPtr</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-149" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-149"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">domain</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">expr</span>
+</span><a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-150" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-150"></a><span class="hll"><span class="w">            </span><span class="p">.</span><span class="n">domain_of</span><span class="p">()</span>
+</span><a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-151" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-151"></a><span class="hll"><span class="w">            </span><span class="p">.</span><span class="n">expect</span><span class="p">(</span><span class="s">&quot;Expression must have a domain&quot;</span><span class="p">)</span>
+</span><a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-152" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-152"></a><span class="hll"><span class="w">            </span><span class="p">.</span><span class="n">element_domain</span><span class="p">()</span>
+</span><a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-153" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-153"></a><span class="hll"><span class="w">            </span><span class="p">.</span><span class="n">expect</span><span class="p">(</span><span class="s">&quot;Expression must contain elements with uniform domain&quot;</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-154" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-154"></a>
+<a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-155" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-155"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">decl_ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="bp">self</span><span class="p">.</span><span class="n">symbols</span><span class="p">.</span><span class="n">write</span><span class="p">().</span><span class="n">gensym</span><span class="p">(</span><span class="o">&amp;</span><span class="n">domain</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-156" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-156"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">decl_ptr</span><span class="p">.</span><span class="n">name</span><span class="p">().</span><span class="n">clone</span><span class="p">();</span>
+</span><a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-157" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-157"></a>
+<a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-158" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-158"></a><span class="hll"><span class="w">        </span><span class="bp">self</span><span class="p">.</span><span class="n">add_expression_generator</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-159" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-159"></a>
+<a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-160" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-160"></a><span class="hll"><span class="w">        </span><span class="n">decl_ptr</span>
+</span><a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-161" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-161"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-162" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-162"></a>
+<a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-163" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-163"></a><span class="w">    </span><span class="c1">//this is the same as the add guard method</span>
+<a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-164" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-164"></a><span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">add_condition</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="bp">self</span><span class="p">,</span><span class="w"> </span><span class="n">condition</span><span class="p">:</span><span class="w"> </span><span class="nc">Expression</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-165" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-165"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="n">condition</span><span class="p">.</span><span class="n">return_type</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">ReturnType</span><span class="p">::</span><span class="n">Bool</span><span class="w"> </span><span class="p">{</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-169" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-169"></a><span class="w">        </span><span class="bp">self</span><span class="p">.</span><span class="n">qualifiers</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">Qualifier</span><span class="p">::</span><span class="n">Condition</span><span class="p">(</span><span class="n">condition</span><span class="p">));</span>
+<a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-170" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-170"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-171" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-171"></a>
+<a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-172" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-172"></a><span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">new_letting</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="bp">self</span><span class="p">,</span><span class="w"> </span><span class="n">expression</span><span class="p">:</span><span class="w"> </span><span class="nc">Expression</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">DeclarationPtr</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-173" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-173"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">letting_decl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="bp">self</span><span class="p">.</span><span class="n">symbols</span><span class="p">.</span><span class="n">write</span><span class="p">().</span><span class="n">gensym</span><span class="p">(</span>
+</span><a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-174" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-174"></a><span class="w">            </span><span class="o">&amp;</span><span class="n">expression</span>
+<a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-175" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-175"></a><span class="w">                </span><span class="p">.</span><span class="n">domain_of</span><span class="p">()</span>
+<a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-176" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-176"></a><span class="w">                </span><span class="p">.</span><span class="n">expect</span><span class="p">(</span><span class="s">&quot;Expression must have a domain&quot;</span><span class="p">),</span>
+<a id="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-177" name="crates/conjure-cp-core/src/ast/abstract_comprehension.rs-177"></a><span class="w">        </span><span class="p">);</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+    </body>
+</html>
