@@ -5,7 +5,7 @@
 **tree-morph:** 22% with examples, 100% documented -- 6/38/38
 
 PR: [#1485](https://github.com/conjure-cp/conjure-oxide/pull/1485)
-Commit: [6340a98fb6450f20773708b4ccf7a460566334c1](https://github.com/conjure-cp/conjure-oxide/commit/6340a98fb6450f20773708b4ccf7a460566334c1)
+Commit: [610d14fd5e7e69dc437539d2bf4607317728db19](https://github.com/conjure-cp/conjure-oxide/commit/610d14fd5e7e69dc437539d2bf4607317728db19)
 
 ## Documentation coverage for `conjure-cp`
 
