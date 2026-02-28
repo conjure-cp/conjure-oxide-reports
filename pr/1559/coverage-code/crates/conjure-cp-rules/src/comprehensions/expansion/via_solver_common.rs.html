@@ -172,7 +172,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">        Model, Name, Reference, SubModel, SymbolTable, eval_constant, run_partial_evaluator,</pre>
+                <pre class="has-background-white py-0 px-2">        Model, Name, Reference, SymbolTable, eval_constant, run_partial_evaluator,</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -316,7 +316,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">&#x2F;&#x2F;&#x2F; Creates a temporary model wrapping the given submodel.</pre>
+                <pre class="has-background-white py-0 px-2">&#x2F;&#x2F;&#x2F; Configures a temporary model for solver-based comprehension expansion.</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -332,7 +332,7 @@
             </div>
             <div class="column has-background-success-light p-0"
                  role="cell">
-                <pre class="has-background-success-light py-0 px-2">pub(super) fn model_from_submodel(submodel: SubModel, search_order: Option&lt;Vec&lt;Name&gt;&gt;) -&gt; Model {</pre>
+                <pre class="has-background-success-light py-0 px-2">pub(super) fn with_temporary_model(model: Model, search_order: Option&lt;Vec&lt;Name&gt;&gt;) -&gt; Model {</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -348,7 +348,7 @@
             </div>
             <div class="column has-background-success-light p-0"
                  role="cell">
-                <pre class="has-background-success-light py-0 px-2">    let mut model = Model::new(Arc::new(RwLock::new(Context::default())));</pre>
+                <pre class="has-background-success-light py-0 px-2">    let mut model = model;</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -364,7 +364,7 @@
             </div>
             <div class="column has-background-success-light p-0"
                  role="cell">
-                <pre class="has-background-success-light py-0 px-2">    *model.as_submodel_mut() = submodel;</pre>
+                <pre class="has-background-success-light py-0 px-2">    model.context = Arc::new(RwLock::new(Context::default()));</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -812,7 +812,7 @@
             </div>
             <div class="column has-background-success-light p-0"
                  role="cell">
-                <pre class="has-background-success-light py-0 px-2">        let return_expression_submodel = return_expression_model.as_submodel().clone();</pre>
+                <pre class="has-background-success-light py-0 px-2">        let return_expression_model = return_expression_model.clone();</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -828,7 +828,7 @@
             </div>
             <div class="column has-background-success-light p-0"
                  role="cell">
-                <pre class="has-background-success-light py-0 px-2">        let child_symtab = return_expression_submodel.symbols().clone();</pre>
+                <pre class="has-background-success-light py-0 px-2">        let child_symtab = return_expression_model.symbols().clone();</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -844,7 +844,7 @@
             </div>
             <div class="column has-background-success-light p-0"
                  role="cell">
-                <pre class="has-background-success-light py-0 px-2">        let mut return_expression = return_expression_submodel.into_single_expression();</pre>
+                <pre class="has-background-success-light py-0 px-2">        let mut return_expression = return_expression_model.into_single_expression();</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -2695,8 +2695,8 @@
             </div>
             <div
                 class="column is-1 is-narrow p-0 has-text-centered has-text-success-light has-background-success"
-                role="cell" aria-label="89169">
-                89169
+                role="cell" aria-label="89175">
+                89175
             </div>
             <div class="column has-background-success-light p-0"
                  role="cell">
@@ -3852,7 +3852,7 @@
             </div>
             <div class="column has-background-white p-0"
                  role="cell">
-                <pre class="has-background-white py-0 px-2">&#x2F;&#x2F;&#x2F; Converts quantified declarations in `submodel` to temporary find declarations.</pre>
+                <pre class="has-background-white py-0 px-2">&#x2F;&#x2F;&#x2F; Converts quantified declarations in `model` to temporary find declarations.</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -3884,7 +3884,7 @@
             </div>
             <div class="column has-background-success-light p-0"
                  role="cell">
-                <pre class="has-background-success-light py-0 px-2">    submodel: &amp;SubModel,</pre>
+                <pre class="has-background-success-light py-0 px-2">    model: &amp;Model,</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -3932,7 +3932,7 @@
             </div>
             <div class="column has-background-success-light p-0"
                  role="cell">
-                <pre class="has-background-success-light py-0 px-2">    let symbols = submodel.symbols().clone();</pre>
+                <pre class="has-background-success-light py-0 px-2">    let symbols = model.symbols().clone();</pre>
             </div>
         </div><div class="columns p-0 m-0" role="row">
             <div
@@ -4243,7 +4243,7 @@
         <footer class="footer">
             
                 <div class="content has-text-centered">
-                    <p class="heading">Date: 2026-02-26 20:20</p>
+                    <p class="heading">Date: 2026-02-28 12:51</p>
                 </div>
             
         </footer>
