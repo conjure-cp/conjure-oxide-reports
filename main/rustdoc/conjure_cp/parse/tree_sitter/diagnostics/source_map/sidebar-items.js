@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["alloc_span","span_with_hover"],"struct":["HoverInfo","SourceMap","SourceSpan"],"type":["SpanId"]};
