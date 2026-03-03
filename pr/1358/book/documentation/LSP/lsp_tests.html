@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../searchindex-78beea49.js";
+            window.path_to_searchindex_js = "../../searchindex-c6eb60b7.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-2c0130f0.js"></script>
+        <script src="../../toc-13399f30.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -178,11 +178,11 @@
                     <main>
                         <!--
 author: Yi Xin Chong
-last updated: 20-12-2025 1:08am
+last updated: 3-3-2026
 -->
 <h1 id="lsp-error-testing"><a class="header" href="#lsp-error-testing">LSP Error Testing</a></h1>
 <h2 id="introduction"><a class="header" href="#introduction">Introduction</a></h2>
-<p>Conjure Oxide includes a server that uses a Language Server Protocol (LSP) to check Essence files for errors before the file is parsed. The LSP server communicates with the Diagnostics API to check for errors, and it will return the error message along with the range of the error. The server will then use the diagnosis to perform error underlining, and syntax and semantic highlighting (more details in <a href="./lsp-server-client.html">LSP Documentation</a> and <a href="./diagnostics_api.html">Diagnostics API documentation</a>).</p>
+<p>Conjure Oxide includes a server that uses a Language Server Protocol (LSP) to check Essence files for errors before the file is parsed. The LSP server communicates with the Diagnostics API to check for errors, and it will return the error message along with the range of where the error occured in the given Essence file. The server will then use the diagnosis to perform error underlining, and syntax and semantic highlighting (more details in <a href="./lsp-server-client.html">LSP Documentation</a> and <a href="./diagnostics_api.html">Diagnostics API documentation</a>).</p>
 <p>There are two types of error when trying to diagnose a given Essence file, which are <strong>syntactic</strong> and <strong>semantic errors</strong>:</p>
 <ul>
 <li><strong>Syntactic errors</strong> are errors that stem from the tokens in the Essence file not being in the correct syntax when given into the parser.</li>
@@ -192,7 +192,7 @@ last updated: 20-12-2025 1:08am
 <h2 id="testing"><a class="header" href="#testing">Testing</a></h2>
 <h3 id="parser"><a class="header" href="#parser">Parser</a></h3>
 <!-- TODO: Roundtrip testing does not exist -- waiting on an update from LSP team -->
-<p>Test cases that test the coverage of the Native parser use <a href="https://github.com/conjure-cp/conjure-oxide/tree/main/docs/src/documentation/testing/roundtrip/roundtrip_testing.md">Roundtrip testing</a>, and they are separated into the <code>syntax-error</code> and <code>semantic-error</code> directories in the <code>roundtrip\native-errors</code> directory of the <code>tests-integration</code> crate, and in the <code>config.toml</code> of all the test cases, only the Native parser is set to be used when testing.</p>
+<p>Test cases that test the coverage of the Native parser use <a href="../testing/roundtrip/roundtrip_testing.html">Roundtrip testing</a>. The <code>syntax-error</code> and <code>semantic-error</code> test directories exist in the <code>test-integration</code> crate as child directories of <code>roundtrip\native-errors</code>. Furthermore, <code>config.toml</code> sets only the Native parser to be used when testing test cases.</p>
 <p>These test cases will run alongside all the integration tests in the <code>tests-integration</code> crate, which can be done by using:</p>
 <pre><code class="language-bash">cargo test
 </code></pre>
@@ -232,6 +232,7 @@ last updated: 20-12-2025 1:08am
 </tbody>
 </table>
 </div>
+<p><em>Note: tests that have not been implemented will have an input file with a .disabled extension, these will be removed once the features are implemented.</em></p>
 <h3 id="diagnostics-api-error-tests"><a class="header" href="#diagnostics-api-error-tests">Diagnostics API error tests</a></h3>
 <div class="table-wrapper">
 <table>
