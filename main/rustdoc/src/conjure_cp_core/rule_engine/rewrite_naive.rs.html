@@ -1,7 +1,7 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/conjure-cp-core/src/rule_engine/rewrite_naive.rs`."><title>rewrite_naive.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-b7b9f40b.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="conjure_cp_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.96.0-nightly (d9563937f 2026-03-03)" data-channel="nightly" data-search-js="search-63369b7b.js" data-stringdex-js="stringdex-b897f86f.js" data-settings-js="settings-170eb4bf.js" ><script src="../../../static.files/storage-41dd4d93.js"></script><script defer src="../../../static.files/src-script-813739b1.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-5013f961.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-f7c3ffd8.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><a class="skip-main-content" href="#main-content">Skip to main content</a><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><section id="main-content" class="content" tabindex="-1"><div class="main-heading"><h1><div class="sub-heading">conjure_cp_core/rule_engine/</div>rewrite_naive.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-3"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="kw">use </span>super::{RewriteError, RuleSet, resolve_rules::RuleData};
 <a href=#2 id=2 data-nosnippet>2</a><span class="kw">use </span>crate::{
 <a href=#3 id=3 data-nosnippet>3</a>    Model,
-<a href=#4 id=4 data-nosnippet>4</a>    ast::Expression <span class="kw">as </span>Expr,
+<a href=#4 id=4 data-nosnippet>4</a>    ast::{Expression <span class="kw">as </span>Expr, assertions::debug_assert_model_well_formed},
 <a href=#5 id=5 data-nosnippet>5</a>    bug,
 <a href=#6 id=6 data-nosnippet>6</a>    rule_engine::{
 <a href=#7 id=7 data-nosnippet>7</a>        get_rules_grouped,
@@ -184,41 +184,50 @@
 <a href=#184 id=184 data-nosnippet>184</a>
 <a href=#185 id=185 data-nosnippet>185</a>            <span class="comment">// Apply new symbols and top level
 <a href=#186 id=186 data-nosnippet>186</a>            </span>result.reduction.clone().apply(submodel);
-<a href=#187 id=187 data-nosnippet>187</a>        }
-<a href=#188 id=188 data-nosnippet>188</a>    }
-<a href=#189 id=189 data-nosnippet>189</a>
-<a href=#190 id=190 data-nosnippet>190</a>    <span class="prelude-val">Some</span>(())
-<a href=#191 id=191 data-nosnippet>191</a>}
-<a href=#192 id=192 data-nosnippet>192</a>
-<a href=#193 id=193 data-nosnippet>193</a><span class="comment">// Exits with a bug if there are multiple equally applicable rules for an expression.
-<a href=#194 id=194 data-nosnippet>194</a></span><span class="kw">fn </span>assert_no_multiple_equally_applicable_rules&lt;CtxFnType&gt;(
-<a href=#195 id=195 data-nosnippet>195</a>    results: <span class="kw-2">&amp;</span>Vec&lt;ApplicableRule&lt;<span class="lifetime">'_</span>, CtxFnType&gt;&gt;,
-<a href=#196 id=196 data-nosnippet>196</a>    rules_grouped: <span class="kw-2">&amp;</span>Vec&lt;(u16, Vec&lt;RuleData&lt;<span class="lifetime">'_</span>&gt;&gt;)&gt;,
-<a href=#197 id=197 data-nosnippet>197</a>) {
-<a href=#198 id=198 data-nosnippet>198</a>    <span class="kw">if </span>results.len() &lt;= <span class="number">1 </span>{
-<a href=#199 id=199 data-nosnippet>199</a>        <span class="kw">return</span>;
-<a href=#200 id=200 data-nosnippet>200</a>    }
+<a href=#187 id=187 data-nosnippet>187</a>
+<a href=#188 id=188 data-nosnippet>188</a>            <span class="attr">#[cfg(debug_assertions)]
+<a href=#189 id=189 data-nosnippet>189</a>            </span>{
+<a href=#190 id=190 data-nosnippet>190</a>                <span class="kw">let </span>assertion_context = <span class="macro">format!</span>(
+<a href=#191 id=191 data-nosnippet>191</a>                    <span class="string">"naive rewriter after applying rule '{}'"</span>,
+<a href=#192 id=192 data-nosnippet>192</a>                    result.rule_data.rule.name
+<a href=#193 id=193 data-nosnippet>193</a>                );
+<a href=#194 id=194 data-nosnippet>194</a>                debug_assert_model_well_formed(submodel, <span class="kw-2">&amp;</span>assertion_context);
+<a href=#195 id=195 data-nosnippet>195</a>            }
+<a href=#196 id=196 data-nosnippet>196</a>        }
+<a href=#197 id=197 data-nosnippet>197</a>    }
+<a href=#198 id=198 data-nosnippet>198</a>
+<a href=#199 id=199 data-nosnippet>199</a>    <span class="prelude-val">Some</span>(())
+<a href=#200 id=200 data-nosnippet>200</a>}
 <a href=#201 id=201 data-nosnippet>201</a>
-<a href=#202 id=202 data-nosnippet>202</a>    <span class="kw">let </span>names: Vec&lt;<span class="kw">_</span>&gt; = results
-<a href=#203 id=203 data-nosnippet>203</a>        .iter()
-<a href=#204 id=204 data-nosnippet>204</a>        .map(|(result, <span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>)| result.rule_data.rule.name)
-<a href=#205 id=205 data-nosnippet>205</a>        .collect();
-<a href=#206 id=206 data-nosnippet>206</a>
-<a href=#207 id=207 data-nosnippet>207</a>    <span class="comment">// Extract the expression from the first result
-<a href=#208 id=208 data-nosnippet>208</a>    </span><span class="kw">let </span>expr = results[<span class="number">0</span>].<span class="number">2</span>.clone();
-<a href=#209 id=209 data-nosnippet>209</a>
-<a href=#210 id=210 data-nosnippet>210</a>    <span class="comment">// Construct a single string to display the names of the rules grouped by priority
-<a href=#211 id=211 data-nosnippet>211</a>    </span><span class="kw">let </span><span class="kw-2">mut </span>rules_by_priority_string = String::new();
-<a href=#212 id=212 data-nosnippet>212</a>    rules_by_priority_string.push_str(<span class="string">"Rules grouped by priority:\n"</span>);
-<a href=#213 id=213 data-nosnippet>213</a>    <span class="kw">for </span>(priority, rules) <span class="kw">in </span>rules_grouped.iter() {
-<a href=#214 id=214 data-nosnippet>214</a>        rules_by_priority_string.push_str(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"Priority {priority}:\n"</span>));
-<a href=#215 id=215 data-nosnippet>215</a>        <span class="kw">for </span>rd <span class="kw">in </span>rules {
-<a href=#216 id=216 data-nosnippet>216</a>            rules_by_priority_string.push_str(<span class="kw-2">&amp;</span><span class="macro">format!</span>(
-<a href=#217 id=217 data-nosnippet>217</a>                <span class="string">"  - {} (from {})\n"</span>,
-<a href=#218 id=218 data-nosnippet>218</a>                rd.rule.name, rd.rule_set.name
-<a href=#219 id=219 data-nosnippet>219</a>            ));
-<a href=#220 id=220 data-nosnippet>220</a>        }
-<a href=#221 id=221 data-nosnippet>221</a>    }
-<a href=#222 id=222 data-nosnippet>222</a>    <span class="macro">bug!</span>(<span class="string">"Multiple equally applicable rules for {expr}: {names:#?}\n\n{rules_by_priority_string}"</span>);
-<a href=#223 id=223 data-nosnippet>223</a>}
+<a href=#202 id=202 data-nosnippet>202</a><span class="comment">// Exits with a bug if there are multiple equally applicable rules for an expression.
+<a href=#203 id=203 data-nosnippet>203</a></span><span class="kw">fn </span>assert_no_multiple_equally_applicable_rules&lt;CtxFnType&gt;(
+<a href=#204 id=204 data-nosnippet>204</a>    results: <span class="kw-2">&amp;</span>Vec&lt;ApplicableRule&lt;<span class="lifetime">'_</span>, CtxFnType&gt;&gt;,
+<a href=#205 id=205 data-nosnippet>205</a>    rules_grouped: <span class="kw-2">&amp;</span>Vec&lt;(u16, Vec&lt;RuleData&lt;<span class="lifetime">'_</span>&gt;&gt;)&gt;,
+<a href=#206 id=206 data-nosnippet>206</a>) {
+<a href=#207 id=207 data-nosnippet>207</a>    <span class="kw">if </span>results.len() &lt;= <span class="number">1 </span>{
+<a href=#208 id=208 data-nosnippet>208</a>        <span class="kw">return</span>;
+<a href=#209 id=209 data-nosnippet>209</a>    }
+<a href=#210 id=210 data-nosnippet>210</a>
+<a href=#211 id=211 data-nosnippet>211</a>    <span class="kw">let </span>names: Vec&lt;<span class="kw">_</span>&gt; = results
+<a href=#212 id=212 data-nosnippet>212</a>        .iter()
+<a href=#213 id=213 data-nosnippet>213</a>        .map(|(result, <span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>)| result.rule_data.rule.name)
+<a href=#214 id=214 data-nosnippet>214</a>        .collect();
+<a href=#215 id=215 data-nosnippet>215</a>
+<a href=#216 id=216 data-nosnippet>216</a>    <span class="comment">// Extract the expression from the first result
+<a href=#217 id=217 data-nosnippet>217</a>    </span><span class="kw">let </span>expr = results[<span class="number">0</span>].<span class="number">2</span>.clone();
+<a href=#218 id=218 data-nosnippet>218</a>
+<a href=#219 id=219 data-nosnippet>219</a>    <span class="comment">// Construct a single string to display the names of the rules grouped by priority
+<a href=#220 id=220 data-nosnippet>220</a>    </span><span class="kw">let </span><span class="kw-2">mut </span>rules_by_priority_string = String::new();
+<a href=#221 id=221 data-nosnippet>221</a>    rules_by_priority_string.push_str(<span class="string">"Rules grouped by priority:\n"</span>);
+<a href=#222 id=222 data-nosnippet>222</a>    <span class="kw">for </span>(priority, rules) <span class="kw">in </span>rules_grouped.iter() {
+<a href=#223 id=223 data-nosnippet>223</a>        rules_by_priority_string.push_str(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">"Priority {priority}:\n"</span>));
+<a href=#224 id=224 data-nosnippet>224</a>        <span class="kw">for </span>rd <span class="kw">in </span>rules {
+<a href=#225 id=225 data-nosnippet>225</a>            rules_by_priority_string.push_str(<span class="kw-2">&amp;</span><span class="macro">format!</span>(
+<a href=#226 id=226 data-nosnippet>226</a>                <span class="string">"  - {} (from {})\n"</span>,
+<a href=#227 id=227 data-nosnippet>227</a>                rd.rule.name, rd.rule_set.name
+<a href=#228 id=228 data-nosnippet>228</a>            ));
+<a href=#229 id=229 data-nosnippet>229</a>        }
+<a href=#230 id=230 data-nosnippet>230</a>    }
+<a href=#231 id=231 data-nosnippet>231</a>    <span class="macro">bug!</span>(<span class="string">"Multiple equally applicable rules for {expr}: {names:#?}\n\n{rules_by_priority_string}"</span>);
+<a href=#232 id=232 data-nosnippet>232</a>}
 </code></pre></div></section></main></body></html>
