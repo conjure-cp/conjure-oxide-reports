@@ -1,0 +1,514 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+        <title>Diff Coverage</title>
+        <style>
+            .src-snippet { margin-top: 2em; }
+            .src-name { font-weight: bold; }
+            .snippets {
+                border-top: 1px solid #bdbdbd;
+                border-bottom: 1px solid #bdbdbd;
+            }
+            pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.hll { background-color: #ffcccc }
+.c { color: #3D7B7B; font-style: italic } /* Comment */
+.err { border: 1px solid #F00 } /* Error */
+.k { color: #008000; font-weight: bold } /* Keyword */
+.o { color: #666 } /* Operator */
+.ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.cp { color: #9C6500 } /* Comment.Preproc */
+.cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.gd { color: #A00000 } /* Generic.Deleted */
+.ge { font-style: italic } /* Generic.Emph */
+.ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.gr { color: #E40000 } /* Generic.Error */
+.gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.gi { color: #008400 } /* Generic.Inserted */
+.go { color: #717171 } /* Generic.Output */
+.gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.gs { font-weight: bold } /* Generic.Strong */
+.gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.gt { color: #04D } /* Generic.Traceback */
+.kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.kp { color: #008000 } /* Keyword.Pseudo */
+.kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.kt { color: #B00040 } /* Keyword.Type */
+.m { color: #666 } /* Literal.Number */
+.s { color: #BA2121 } /* Literal.String */
+.na { color: #687822 } /* Name.Attribute */
+.nb { color: #008000 } /* Name.Builtin */
+.nc { color: #00F; font-weight: bold } /* Name.Class */
+.no { color: #800 } /* Name.Constant */
+.nd { color: #A2F } /* Name.Decorator */
+.ni { color: #717171; font-weight: bold } /* Name.Entity */
+.ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.nf { color: #00F } /* Name.Function */
+.nl { color: #767600 } /* Name.Label */
+.nn { color: #00F; font-weight: bold } /* Name.Namespace */
+.nt { color: #008000; font-weight: bold } /* Name.Tag */
+.nv { color: #19177C } /* Name.Variable */
+.ow { color: #A2F; font-weight: bold } /* Operator.Word */
+.w { color: #BBB } /* Text.Whitespace */
+.mb { color: #666 } /* Literal.Number.Bin */
+.mf { color: #666 } /* Literal.Number.Float */
+.mh { color: #666 } /* Literal.Number.Hex */
+.mi { color: #666 } /* Literal.Number.Integer */
+.mo { color: #666 } /* Literal.Number.Oct */
+.sa { color: #BA2121 } /* Literal.String.Affix */
+.sb { color: #BA2121 } /* Literal.String.Backtick */
+.sc { color: #BA2121 } /* Literal.String.Char */
+.dl { color: #BA2121 } /* Literal.String.Delimiter */
+.sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.s2 { color: #BA2121 } /* Literal.String.Double */
+.se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.sh { color: #BA2121 } /* Literal.String.Heredoc */
+.si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.sx { color: #008000 } /* Literal.String.Other */
+.sr { color: #A45A77 } /* Literal.String.Regex */
+.s1 { color: #BA2121 } /* Literal.String.Single */
+.ss { color: #19177C } /* Literal.String.Symbol */
+.bp { color: #008000 } /* Name.Builtin.Pseudo */
+.fm { color: #00F } /* Name.Function.Magic */
+.vc { color: #19177C } /* Name.Variable.Class */
+.vg { color: #19177C } /* Name.Variable.Global */
+.vi { color: #19177C } /* Name.Variable.Instance */
+.vm { color: #19177C } /* Name.Variable.Magic */
+.il { color: #666 } /* Literal.Number.Integer.Long */
+        </style>
+    </head>
+    <body>
+        <h1>Diff Coverage</h1>
+        <p>Diff: upstream/main...HEAD, staged and unstaged changes</p>
+        <ul>
+            <li><b>Total</b>: 131 lines</li>
+            <li><b>Missing</b>: 49 lines</li>
+            <li><b>Coverage</b>: 62%</li>
+        </ul>
+        <table border="1">
+            <tr>
+                <th>Source File</th>
+                <th>Diff Coverage (%)</th>
+                <th>Missing Lines</th>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-essence-parser/src/parser/abstract_literal.rs</td>
+                <td>100%</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-essence-parser/src/parser/atom.rs</td>
+                <td>62.9%</td>
+                <td>11-12,56,169-170,179,185,215,219,229,234-248,283-290</td>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-essence-parser/src/parser/expression.rs</td>
+                <td>66.7%</td>
+                <td>50,94,100,106-111,113</td>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-essence-parser/src/parser/parse_model.rs</td>
+                <td>100%</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-essence-parser/src/parser/syntax_errors.rs</td>
+                <td>50.0%</td>
+                <td>137</td>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-essence-parser/src/parser/traversal.rs</td>
+                <td>100%</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-essence-parser/src/parser/util.rs</td>
+                <td>28.6%</td>
+                <td>57-58,60-62</td>
+            </tr>
+        </table>
+        <div class="src-snippet">
+            <div class="src-name">crates/conjure-cp-essence-parser/src/parser/atom.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-7" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-7"></a><span class="k">use</span><span class="w"> </span><span class="k">crate</span><span class="p">::</span><span class="n">parser</span><span class="p">::</span><span class="n">comprehension</span><span class="p">::</span><span class="n">parse_comprehension</span><span class="p">;</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-8" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-8"></a><span class="k">use</span><span class="w"> </span><span class="k">crate</span><span class="p">::</span><span class="n">util</span><span class="p">::{</span><span class="n">TypecheckingContext</span><span class="p">,</span><span class="w"> </span><span class="n">named_children</span><span class="p">};</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-9" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-9"></a><span class="k">use</span><span class="w"> </span><span class="k">crate</span><span class="p">::{</span><span class="n">field</span><span class="p">,</span><span class="w"> </span><span class="n">named_child</span><span class="p">};</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-10" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-10"></a><span class="k">use</span><span class="w"> </span><span class="n">conjure_cp_core</span><span class="p">::</span><span class="n">ast</span><span class="p">::{</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-11" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-11"></a><span class="hll"><span class="w">    </span><span class="n">Atom</span><span class="p">,</span><span class="w"> </span><span class="n">DeclarationPtr</span><span class="p">,</span><span class="w"> </span><span class="n">Expression</span><span class="p">,</span><span class="w"> </span><span class="n">GroundDomain</span><span class="p">,</span><span class="w"> </span><span class="n">Literal</span><span class="p">,</span><span class="w"> </span><span class="n">Metadata</span><span class="p">,</span><span class="w"> </span><span class="n">Moo</span><span class="p">,</span><span class="w"> </span><span class="n">Name</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-12" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-12"></a><span class="hll"><span class="p">};</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-13" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-13"></a><span class="k">use</span><span class="w"> </span><span class="n">tree_sitter</span><span class="p">::</span><span class="n">Node</span><span class="p">;</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-14" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-14"></a><span class="k">use</span><span class="w"> </span><span class="n">ustr</span><span class="p">::</span><span class="n">Ustr</span><span class="p">;</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-15" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-15"></a>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-16" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-16"></a><span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">parse_atom</span><span class="p">(</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-52" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-52"></a><span class="w">        </span><span class="p">}</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-53" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-53"></a><span class="w">        </span><span class="s">&quot;constant&quot;</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-54" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-54"></a><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">lit</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">parse_constant</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span><span class="w"> </span><span class="n">node</span><span class="p">)</span><span class="o">?</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-55" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-55"></a><span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="nb">Ok</span><span class="p">(</span><span class="nb">None</span><span class="p">);</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-56" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-56"></a><span class="hll"><span class="w">            </span><span class="p">};</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-57" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-57"></a><span class="w">            </span><span class="nb">Ok</span><span class="p">(</span><span class="nb">Some</span><span class="p">(</span><span class="n">Expression</span><span class="p">::</span><span class="n">Atomic</span><span class="p">(</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-58" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-58"></a><span class="w">                </span><span class="n">Metadata</span><span class="p">::</span><span class="n">new</span><span class="p">(),</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-59" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-59"></a><span class="w">                </span><span class="n">Atom</span><span class="p">::</span><span class="n">Literal</span><span class="p">(</span><span class="n">lit</span><span class="p">),</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-60" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-60"></a><span class="w">            </span><span class="p">)))</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-165" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-165"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">symbols</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ctx</span><span class="p">.</span><span class="n">symbols</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-166" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-166"></a><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">lookup_result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-167" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-167"></a><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="n">symbols_read</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">symbols</span><span class="p">.</span><span class="n">read</span><span class="p">();</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-168" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-168"></a><span class="w">            </span><span class="n">symbols_read</span><span class="p">.</span><span class="n">lookup</span><span class="p">(</span><span class="o">&amp;</span><span class="n">name</span><span class="p">).</span><span class="n">clone</span><span class="p">()</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-169" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-169"></a><span class="hll"><span class="w">        </span><span class="p">};</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-170" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-170"></a><span class="hll">
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-171" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-171"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">decl</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lookup_result</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-172" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-172"></a><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="n">hover</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HoverInfo</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-173" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-173"></a><span class="w">                </span><span class="n">description</span><span class="p">:</span><span class="w"> </span><span class="nc">format</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;Variable: {name}&quot;</span><span class="p">),</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-174" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-174"></a><span class="w">                </span><span class="n">kind</span><span class="p">:</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">SymbolKind</span><span class="p">::</span><span class="n">Decimal</span><span class="p">),</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-175" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-175"></a><span class="w">                </span><span class="n">ty</span><span class="p">:</span><span class="w"> </span><span class="nc">decl</span><span class="p">.</span><span class="n">domain</span><span class="p">().</span><span class="n">map</span><span class="p">(</span><span class="o">|</span><span class="n">d</span><span class="o">|</span><span class="w"> </span><span class="n">d</span><span class="p">.</span><span class="n">to_string</span><span class="p">()),</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-176" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-176"></a><span class="w">                </span><span class="n">decl_span</span><span class="p">:</span><span class="w"> </span><span class="nb">None</span><span class="p">,</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-177" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-177"></a><span class="w">            </span><span class="p">};</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-178" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-178"></a><span class="w">            </span><span class="n">span_with_hover</span><span class="p">(</span><span class="n">node</span><span class="p">,</span><span class="w"> </span><span class="n">ctx</span><span class="p">.</span><span class="n">source_code</span><span class="p">,</span><span class="w"> </span><span class="n">ctx</span><span class="p">.</span><span class="n">source_map</span><span class="p">,</span><span class="w"> </span><span class="n">hover</span><span class="p">);</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-179" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-179"></a><span class="hll">
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-180" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-180"></a><span class="w">            </span><span class="c1">// Type check the variable against the expected context</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-181" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-181"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">typecheck_variable</span><span class="p">(</span><span class="o">&amp;</span><span class="n">decl</span><span class="p">,</span><span class="w"> </span><span class="n">raw_name</span><span class="p">,</span><span class="w"> </span><span class="n">ctx</span><span class="p">.</span><span class="n">typechecking_context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-182" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-182"></a><span class="w">                </span><span class="n">ctx</span><span class="p">.</span><span class="n">record_error</span><span class="p">(</span><span class="n">RecoverableParseError</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="n">error_msg</span><span class="p">,</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="n">range</span><span class="p">())));</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-183" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-183"></a><span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="nb">Ok</span><span class="p">(</span><span class="nb">None</span><span class="p">);</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-181" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-181"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">typecheck_variable</span><span class="p">(</span><span class="o">&amp;</span><span class="n">decl</span><span class="p">,</span><span class="w"> </span><span class="n">raw_name</span><span class="p">,</span><span class="w"> </span><span class="n">ctx</span><span class="p">.</span><span class="n">typechecking_context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-182" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-182"></a><span class="w">                </span><span class="n">ctx</span><span class="p">.</span><span class="n">record_error</span><span class="p">(</span><span class="n">RecoverableParseError</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="n">error_msg</span><span class="p">,</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="n">range</span><span class="p">())));</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-183" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-183"></a><span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="nb">Ok</span><span class="p">(</span><span class="nb">None</span><span class="p">);</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-184" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-184"></a><span class="w">            </span><span class="p">}</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-185" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-185"></a><span class="hll">
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-186" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-186"></a><span class="w">            </span><span class="nb">Ok</span><span class="p">(</span><span class="nb">Some</span><span class="p">(</span><span class="n">Atom</span><span class="p">::</span><span class="n">Reference</span><span class="p">(</span><span class="n">conjure_cp_core</span><span class="p">::</span><span class="n">ast</span><span class="p">::</span><span class="n">Reference</span><span class="p">::</span><span class="n">new</span><span class="p">(</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-187" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-187"></a><span class="w">                </span><span class="n">decl</span><span class="p">,</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-188" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-188"></a><span class="w">            </span><span class="p">))))</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-189" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-189"></a><span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-211" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-211"></a><span class="w">    </span><span class="c1">// Only type check when context is known</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-212" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-212"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">context</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">TypecheckingContext</span><span class="p">::</span><span class="n">Unknown</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-213" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-213"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">None</span><span class="p">;</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-214" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-214"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-215" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-215"></a><span class="hll">
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-216" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-216"></a><span class="w">    </span><span class="c1">// Get the variable&#39;s domain and resolve it</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-217" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-217"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">domain</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">decl</span><span class="p">.</span><span class="n">domain</span><span class="p">()</span><span class="o">?</span><span class="p">;</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-218" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-218"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">ground_domain</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">domain</span><span class="p">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">?</span><span class="p">;</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-219" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-219"></a><span class="hll">
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-220" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-220"></a><span class="w">    </span><span class="k">match</span><span class="w"> </span><span class="p">(</span><span class="n">ground_domain</span><span class="p">.</span><span class="n">as_ref</span><span class="p">(),</span><span class="w"> </span><span class="n">context</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-221" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-221"></a><span class="w">        </span><span class="p">(</span><span class="n">GroundDomain</span><span class="p">::</span><span class="n">Int</span><span class="p">(</span><span class="n">_</span><span class="p">),</span><span class="w"> </span><span class="n">TypecheckingContext</span><span class="p">::</span><span class="n">Boolean</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="fm">format!</span><span class="p">(</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-222" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-222"></a><span class="w">            </span><span class="s">&quot;Type Error: Integer variable &#39;{}&#39; used in boolean context&quot;</span><span class="p">,</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-223" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-223"></a><span class="w">            </span><span class="n">var_name</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-225" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-225"></a><span class="w">        </span><span class="p">(</span><span class="n">GroundDomain</span><span class="p">::</span><span class="n">Bool</span><span class="p">,</span><span class="w"> </span><span class="n">TypecheckingContext</span><span class="p">::</span><span class="n">Arithmetic</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="fm">format!</span><span class="p">(</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-226" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-226"></a><span class="w">            </span><span class="s">&quot;Type Error: Boolean variable &#39;{}&#39; used in arithmetic context&quot;</span><span class="p">,</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-227" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-227"></a><span class="w">            </span><span class="n">var_name</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-228" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-228"></a><span class="w">        </span><span class="p">)),</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-229" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-229"></a><span class="hll"><span class="w">        </span><span class="p">(</span><span class="n">GroundDomain</span><span class="p">::</span><span class="n">Matrix</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">),</span><span class="w"> </span><span class="n">TypecheckingContext</span><span class="p">::</span><span class="n">Boolean</span><span class="p">)</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-230" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-230"></a><span class="w">        </span><span class="o">|</span><span class="w"> </span><span class="p">(</span><span class="n">GroundDomain</span><span class="p">::</span><span class="n">Matrix</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">),</span><span class="w"> </span><span class="n">TypecheckingContext</span><span class="p">::</span><span class="n">Arithmetic</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="fm">format!</span><span class="p">(</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-231" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-231"></a><span class="w">            </span><span class="s">&quot;Type Error: Matrix variable &#39;{}&#39; cannot be used directly in this context&quot;</span><span class="p">,</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-232" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-232"></a><span class="w">            </span><span class="n">var_name</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-233" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-233"></a><span class="w">        </span><span class="p">)),</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-234" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-234"></a><span class="hll"><span class="w">        </span><span class="p">(</span><span class="n">GroundDomain</span><span class="p">::</span><span class="n">Set</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">),</span><span class="w"> </span><span class="n">TypecheckingContext</span><span class="p">::</span><span class="n">Boolean</span><span class="p">)</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-235" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-235"></a><span class="hll"><span class="w">        </span><span class="o">|</span><span class="w"> </span><span class="p">(</span><span class="n">GroundDomain</span><span class="p">::</span><span class="n">Set</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">),</span><span class="w"> </span><span class="n">TypecheckingContext</span><span class="p">::</span><span class="n">Arithmetic</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="fm">format!</span><span class="p">(</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-236" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-236"></a><span class="hll"><span class="w">            </span><span class="s">&quot;Type Error: Set variable &#39;{}&#39; cannot be used directly in this context&quot;</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-237" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-237"></a><span class="hll"><span class="w">            </span><span class="n">var_name</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-238" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-238"></a><span class="hll"><span class="w">        </span><span class="p">)),</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-239" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-239"></a><span class="hll"><span class="w">        </span><span class="p">(</span><span class="n">GroundDomain</span><span class="p">::</span><span class="n">Tuple</span><span class="p">(</span><span class="n">_</span><span class="p">),</span><span class="w"> </span><span class="n">TypecheckingContext</span><span class="p">::</span><span class="n">Boolean</span><span class="p">)</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-240" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-240"></a><span class="hll"><span class="w">        </span><span class="o">|</span><span class="w"> </span><span class="p">(</span><span class="n">GroundDomain</span><span class="p">::</span><span class="n">Tuple</span><span class="p">(</span><span class="n">_</span><span class="p">),</span><span class="w"> </span><span class="n">TypecheckingContext</span><span class="p">::</span><span class="n">Arithmetic</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="fm">format!</span><span class="p">(</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-241" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-241"></a><span class="hll"><span class="w">            </span><span class="s">&quot;Type Error: Tuple variable &#39;{}&#39; cannot be used directly in this context&quot;</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-242" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-242"></a><span class="hll"><span class="w">            </span><span class="n">var_name</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-243" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-243"></a><span class="hll"><span class="w">        </span><span class="p">)),</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-244" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-244"></a><span class="hll"><span class="w">        </span><span class="p">(</span><span class="n">GroundDomain</span><span class="p">::</span><span class="n">Record</span><span class="p">(</span><span class="n">_</span><span class="p">),</span><span class="w"> </span><span class="n">TypecheckingContext</span><span class="p">::</span><span class="n">Boolean</span><span class="p">)</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-245" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-245"></a><span class="hll"><span class="w">        </span><span class="o">|</span><span class="w"> </span><span class="p">(</span><span class="n">GroundDomain</span><span class="p">::</span><span class="n">Record</span><span class="p">(</span><span class="n">_</span><span class="p">),</span><span class="w"> </span><span class="n">TypecheckingContext</span><span class="p">::</span><span class="n">Arithmetic</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="fm">format!</span><span class="p">(</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-246" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-246"></a><span class="hll"><span class="w">            </span><span class="s">&quot;Type Error: Record variable &#39;{}&#39; cannot be used directly in this context&quot;</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-247" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-247"></a><span class="hll"><span class="w">            </span><span class="n">var_name</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-248" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-248"></a><span class="hll"><span class="w">        </span><span class="p">)),</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-249" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-249"></a><span class="w">        </span><span class="c1">// Everything else is OK</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-250" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-250"></a><span class="w">        </span><span class="n">_</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">None</span><span class="p">,</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-251" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-251"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-252" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-252"></a><span class="p">}</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-279" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-279"></a><span class="w">            </span><span class="n">span_with_hover</span><span class="p">(</span><span class="o">&amp;</span><span class="n">inner</span><span class="p">,</span><span class="w"> </span><span class="n">ctx</span><span class="p">.</span><span class="n">source_code</span><span class="p">,</span><span class="w"> </span><span class="n">ctx</span><span class="p">.</span><span class="n">source_map</span><span class="p">,</span><span class="w"> </span><span class="n">hover</span><span class="p">);</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-280" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-280"></a><span class="w">            </span><span class="n">Literal</span><span class="p">::</span><span class="n">Bool</span><span class="p">(</span><span class="kc">false</span><span class="p">)</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-281" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-281"></a><span class="w">        </span><span class="p">}</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-282" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-282"></a><span class="w">        </span><span class="n">_</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-283" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-283"></a><span class="hll"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">FatalParseError</span><span class="p">::</span><span class="n">internal_error</span><span class="p">(</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-284" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-284"></a><span class="hll"><span class="w">                </span><span class="fm">format!</span><span class="p">(</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-285" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-285"></a><span class="hll"><span class="w">                    </span><span class="s">&quot;&#39;{}&#39; (kind: &#39;{}&#39;) is not a valid constant&quot;</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-286" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-286"></a><span class="hll"><span class="w">                    </span><span class="n">raw_value</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-287" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-287"></a><span class="hll"><span class="w">                    </span><span class="n">inner</span><span class="p">.</span><span class="n">kind</span><span class="p">()</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-288" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-288"></a><span class="hll"><span class="w">                </span><span class="p">),</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-289" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-289"></a><span class="hll"><span class="w">                </span><span class="nb">Some</span><span class="p">(</span><span class="n">inner</span><span class="p">.</span><span class="n">range</span><span class="p">()),</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-290" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-290"></a><span class="hll"><span class="w">            </span><span class="p">));</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-291" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-291"></a><span class="w">        </span><span class="p">}</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-292" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-292"></a><span class="w">    </span><span class="p">};</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-293" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-293"></a>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-294" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-294"></a><span class="w">    </span><span class="c1">// Type check the constant against the expected context</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/conjure-cp-essence-parser/src/parser/expression.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-46" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-46"></a><span class="w">        </span><span class="n">root</span><span class="p">:</span><span class="w"> </span><span class="nc">node</span><span class="p">,</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-47" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-47"></a><span class="w">        </span><span class="n">symbols</span><span class="p">:</span><span class="w"> </span><span class="nc">ctx</span><span class="p">.</span><span class="n">symbols</span><span class="p">.</span><span class="n">clone</span><span class="p">(),</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-48" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-48"></a><span class="w">        </span><span class="n">errors</span><span class="p">:</span><span class="w"> </span><span class="nc">ctx</span><span class="p">.</span><span class="n">errors</span><span class="p">,</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-49" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-49"></a><span class="w">        </span><span class="n">source_map</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">mut</span><span class="w"> </span><span class="o">*</span><span class="n">ctx</span><span class="p">.</span><span class="n">source_map</span><span class="p">,</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-50" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-50"></a><span class="hll"><span class="w">        </span><span class="n">typechecking_context</span><span class="p">:</span><span class="w"> </span><span class="nc">ctx</span><span class="p">.</span><span class="n">typechecking_context</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-51" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-51"></a><span class="w">    </span><span class="p">};</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-52" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-52"></a>
+<a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-53" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-53"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">inner</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">parse_expression</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">inner_ctx</span><span class="p">,</span><span class="w"> </span><span class="n">field</span><span class="o">!</span><span class="p">(</span><span class="n">node</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;expression&quot;</span><span class="p">))</span><span class="o">?</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-54" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-54"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">Ok</span><span class="p">(</span><span class="nb">None</span><span class="p">);</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">90</span>
+<span class="normal">91</span>
+<span class="normal">92</span>
+<span class="normal">93</span>
+<span class="normal">94</span>
+<span class="normal">95</span>
+<span class="normal">96</span>
+<span class="normal">97</span>
+<span class="normal">98</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-90" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-90"></a><span class="w">        </span><span class="s">&quot;arithmetic_comparison&quot;</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-91" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-91"></a><span class="w">            </span><span class="c1">// Arithmetic comparisons require arithmetic operands</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-92" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-92"></a><span class="w">            </span><span class="n">ctx</span><span class="p">.</span><span class="n">typechecking_context</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TypecheckingContext</span><span class="p">::</span><span class="n">Arithmetic</span><span class="p">;</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-93" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-93"></a><span class="w">            </span><span class="n">parse_binary_expression</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">inner</span><span class="p">)</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-94" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-94"></a><span class="hll"><span class="w">        </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-95" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-95"></a><span class="w">        </span><span class="s">&quot;equality_comparison&quot;</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-96" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-96"></a><span class="w">            </span><span class="c1">// Equality works on any type</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-97" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-97"></a><span class="w">            </span><span class="c1">// TODO: add type checking to ensure both sides have the same type</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-98" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-98"></a><span class="w">            </span><span class="n">ctx</span><span class="p">.</span><span class="n">typechecking_context</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TypecheckingContext</span><span class="p">::</span><span class="n">Unknown</span><span class="p">;</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-96" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-96"></a><span class="w">            </span><span class="c1">// Equality works on any type</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-97" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-97"></a><span class="w">            </span><span class="c1">// TODO: add type checking to ensure both sides have the same type</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-98" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-98"></a><span class="w">            </span><span class="n">ctx</span><span class="p">.</span><span class="n">typechecking_context</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TypecheckingContext</span><span class="p">::</span><span class="n">Unknown</span><span class="p">;</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-99" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-99"></a><span class="w">            </span><span class="n">parse_binary_expression</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">inner</span><span class="p">)</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-100" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-100"></a><span class="hll"><span class="w">        </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-101" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-101"></a><span class="w">        </span><span class="s">&quot;set_comparison&quot;</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-102" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-102"></a><span class="w">            </span><span class="c1">// Set comparisons require set operands (no specific type checking for now)</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-103" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-103"></a><span class="w">            </span><span class="c1">// TODO: add typechecking for sets</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-104" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-104"></a><span class="w">            </span><span class="n">ctx</span><span class="p">.</span><span class="n">typechecking_context</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TypecheckingContext</span><span class="p">::</span><span class="n">Unknown</span><span class="p">;</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-102" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-102"></a><span class="w">            </span><span class="c1">// Set comparisons require set operands (no specific type checking for now)</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-103" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-103"></a><span class="w">            </span><span class="c1">// TODO: add typechecking for sets</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-104" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-104"></a><span class="w">            </span><span class="n">ctx</span><span class="p">.</span><span class="n">typechecking_context</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TypecheckingContext</span><span class="p">::</span><span class="n">Unknown</span><span class="p">;</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-105" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-105"></a><span class="w">            </span><span class="n">parse_binary_expression</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">inner</span><span class="p">)</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-106" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-106"></a><span class="hll"><span class="w">        </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-107" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-107"></a><span class="hll"><span class="w">        </span><span class="n">_</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">FatalParseError</span><span class="p">::</span><span class="n">internal_error</span><span class="p">(</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-108" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-108"></a><span class="hll"><span class="w">            </span><span class="fm">format!</span><span class="p">(</span><span class="s">&quot;Expected comparison expression, found &#39;{}&#39;&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">inner</span><span class="p">.</span><span class="n">kind</span><span class="p">()),</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-109" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-109"></a><span class="hll"><span class="w">            </span><span class="nb">Some</span><span class="p">(</span><span class="n">inner</span><span class="p">.</span><span class="n">range</span><span class="p">()),</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-110" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-110"></a><span class="hll"><span class="w">        </span><span class="p">)),</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-111" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-111"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-112" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-112"></a><span class="p">}</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-113" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-113"></a><span class="hll">
+</span><a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-114" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-114"></a><span class="k">fn</span><span class="w"> </span><span class="nf">parse_boolean_expression</span><span class="p">(</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-115" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-115"></a><span class="w">    </span><span class="n">ctx</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">mut</span><span class="w"> </span><span class="n">ParseContext</span><span class="p">,</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-116" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-116"></a><span class="w">    </span><span class="n">node</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">Node</span><span class="p">,</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-117" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-117"></a><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nb">Result</span><span class="o">&lt;</span><span class="nb">Option</span><span class="o">&lt;</span><span class="n">Expression</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">FatalParseError</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/conjure-cp-essence-parser/src/parser/syntax_errors.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-essence-parser/src/parser/syntax_errors.rs-133" name="crates/conjure-cp-essence-parser/src/parser/syntax_errors.rs-133"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">root</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">grandparent</span><span class="p">.</span><span class="n">and_then</span><span class="p">(</span><span class="o">|</span><span class="n">n</span><span class="o">|</span><span class="w"> </span><span class="n">n</span><span class="p">.</span><span class="n">parent</span><span class="p">());</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/syntax_errors.rs-134" name="crates/conjure-cp-essence-parser/src/parser/syntax_errors.rs-134"></a>
+<a id="crates/conjure-cp-essence-parser/src/parser/syntax_errors.rs-135" name="crates/conjure-cp-essence-parser/src/parser/syntax_errors.rs-135"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="p">(</span><span class="nb">Some</span><span class="p">(</span><span class="n">parent</span><span class="p">),</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">grandparent</span><span class="p">),</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">root</span><span class="p">))</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">parent</span><span class="p">,</span><span class="w"> </span><span class="n">grandparent</span><span class="p">,</span><span class="w"> </span><span class="n">root</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/syntax_errors.rs-136" name="crates/conjure-cp-essence-parser/src/parser/syntax_errors.rs-136"></a><span class="w">        </span><span class="n">parent</span><span class="p">.</span><span class="n">kind</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;set_comparison&quot;</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/syntax_errors.rs-137" name="crates/conjure-cp-essence-parser/src/parser/syntax_errors.rs-137"></a><span class="hll"><span class="w">            </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">grandparent</span><span class="p">.</span><span class="n">kind</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;comparison_expr&quot;</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/syntax_errors.rs-138" name="crates/conjure-cp-essence-parser/src/parser/syntax_errors.rs-138"></a><span class="w">            </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">root</span><span class="p">.</span><span class="n">kind</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;program&quot;</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/syntax_errors.rs-139" name="crates/conjure-cp-essence-parser/src/parser/syntax_errors.rs-139"></a><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/syntax_errors.rs-140" name="crates/conjure-cp-essence-parser/src/parser/syntax_errors.rs-140"></a><span class="w">        </span><span class="kc">false</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/syntax_errors.rs-141" name="crates/conjure-cp-essence-parser/src/parser/syntax_errors.rs-141"></a><span class="w">    </span><span class="p">}</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/conjure-cp-essence-parser/src/parser/util.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-essence-parser/src/parser/util.rs-53" name="crates/conjure-cp-essence-parser/src/parser/util.rs-53"></a>
+<a id="crates/conjure-cp-essence-parser/src/parser/util.rs-54" name="crates/conjure-cp-essence-parser/src/parser/util.rs-54"></a><span class="c1">// Used to detect type mismatches during parsing.</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/util.rs-55" name="crates/conjure-cp-essence-parser/src/parser/util.rs-55"></a><span class="cp">#[derive(Debug, Clone, Copy, PartialEq, Eq)]</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/util.rs-56" name="crates/conjure-cp-essence-parser/src/parser/util.rs-56"></a><span class="k">pub</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nc">TypecheckingContext</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/util.rs-57" name="crates/conjure-cp-essence-parser/src/parser/util.rs-57"></a><span class="hll"><span class="w">    </span><span class="n">Boolean</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/util.rs-58" name="crates/conjure-cp-essence-parser/src/parser/util.rs-58"></a><span class="hll"><span class="w">    </span><span class="n">Arithmetic</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/util.rs-59" name="crates/conjure-cp-essence-parser/src/parser/util.rs-59"></a><span class="w">    </span><span class="sd">/// Context is unknown or flexible</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/util.rs-60" name="crates/conjure-cp-essence-parser/src/parser/util.rs-60"></a><span class="hll"><span class="w">    </span><span class="n">Unknown</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/util.rs-61" name="crates/conjure-cp-essence-parser/src/parser/util.rs-61"></a><span class="hll"><span class="p">}</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/util.rs-62" name="crates/conjure-cp-essence-parser/src/parser/util.rs-62"></a><span class="hll">
+</span><a id="crates/conjure-cp-essence-parser/src/parser/util.rs-63" name="crates/conjure-cp-essence-parser/src/parser/util.rs-63"></a><span class="sd">/// Parse the given source code into a syntax tree using tree-sitter.</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/util.rs-64" name="crates/conjure-cp-essence-parser/src/parser/util.rs-64"></a><span class="sd">///</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/util.rs-65" name="crates/conjure-cp-essence-parser/src/parser/util.rs-65"></a><span class="sd">/// If successful, returns a tuple containing the syntax tree and the raw source code.</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/util.rs-66" name="crates/conjure-cp-essence-parser/src/parser/util.rs-66"></a><span class="sd">/// If the source code is not valid Essence, returns None.</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+    </body>
+</html>
