@@ -3,7 +3,7 @@
 <a href=#3 id=3 data-nosnippet>3</a><span class="kw">use </span><span class="kw">crate</span>::field;
 <a href=#4 id=4 data-nosnippet>4</a><span class="kw">use </span><span class="kw">crate</span>::parser::ParseContext;
 <a href=#5 id=5 data-nosnippet>5</a><span class="kw">use </span><span class="kw">crate</span>::parser::domain::parse_domain;
-<a href=#6 id=6 data-nosnippet>6</a><span class="kw">use </span><span class="kw">crate</span>::util::named_children;
+<a href=#6 id=6 data-nosnippet>6</a><span class="kw">use </span><span class="kw">crate</span>::util::{TypecheckingContext, named_children};
 <a href=#7 id=7 data-nosnippet>7</a><span class="kw">use </span>conjure_cp_core::ast::{AbstractLiteral, DomainPtr, Expression};
 <a href=#8 id=8 data-nosnippet>8</a><span class="kw">use </span>conjure_cp_core::{domain_int, range};
 <a href=#9 id=9 data-nosnippet>9</a><span class="kw">use </span>tree_sitter::Node;
@@ -93,11 +93,12 @@
 <a href=#93 id=93 data-nosnippet>93</a>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;AbstractLiteral&lt;Expression&gt;&gt;, FatalParseError&gt; {
 <a href=#94 id=94 data-nosnippet>94</a>    <span class="kw">let </span><span class="kw-2">mut </span>elements = Vec::new();
 <a href=#95 id=95 data-nosnippet>95</a>    <span class="kw">for </span>child <span class="kw">in </span>named_children(node) {
-<a href=#96 id=96 data-nosnippet>96</a>        <span class="kw">let </span><span class="prelude-val">Some</span>(expr) = parse_expression(ctx, child)<span class="question-mark">? </span><span class="kw">else </span>{
-<a href=#97 id=97 data-nosnippet>97</a>            <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>);
-<a href=#98 id=98 data-nosnippet>98</a>        };
-<a href=#99 id=99 data-nosnippet>99</a>        elements.push(expr);
-<a href=#100 id=100 data-nosnippet>100</a>    }
-<a href=#101 id=101 data-nosnippet>101</a>    <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(AbstractLiteral::Set(elements)))
-<a href=#102 id=102 data-nosnippet>102</a>}
+<a href=#96 id=96 data-nosnippet>96</a>        ctx.typechecking_context = TypecheckingContext::Unknown;
+<a href=#97 id=97 data-nosnippet>97</a>        <span class="kw">let </span><span class="prelude-val">Some</span>(expr) = parse_expression(ctx, child)<span class="question-mark">? </span><span class="kw">else </span>{
+<a href=#98 id=98 data-nosnippet>98</a>            <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>);
+<a href=#99 id=99 data-nosnippet>99</a>        };
+<a href=#100 id=100 data-nosnippet>100</a>        elements.push(expr);
+<a href=#101 id=101 data-nosnippet>101</a>    }
+<a href=#102 id=102 data-nosnippet>102</a>    <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(AbstractLiteral::Set(elements)))
+<a href=#103 id=103 data-nosnippet>103</a>}
 </code></pre></div></section></main></body></html>
