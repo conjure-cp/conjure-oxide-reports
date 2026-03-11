@@ -90,9 +90,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
         <h1>Diff Coverage</h1>
         <p>Diff: upstream/main...HEAD, staged and unstaged changes</p>
         <ul>
-            <li><b>Total</b>: 28 lines</li>
-            <li><b>Missing</b>: 0 lines</li>
-            <li><b>Coverage</b>: 100%</li>
+            <li><b>Total</b>: 43 lines</li>
+            <li><b>Missing</b>: 15 lines</li>
+            <li><b>Coverage</b>: 65%</li>
         </ul>
         <table border="1">
             <tr>
@@ -102,14 +102,148 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
             </tr>
             <tr>
                 <td>crates/conjure-cp-essence-parser/src/parser/find.rs</td>
-                <td>100%</td>
-                <td>&nbsp;</td>
+                <td>75.0%</td>
+                <td>31,36-38,40</td>
             </tr>
             <tr>
                 <td>crates/conjure-cp-essence-parser/src/parser/letting.rs</td>
-                <td>100%</td>
-                <td>&nbsp;</td>
+                <td>56.5%</td>
+                <td>29,34-36,42,46,49-51,57</td>
             </tr>
         </table>
+        <div class="src-snippet">
+            <div class="src-name">crates/conjure-cp-essence-parser/src/parser/find.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-essence-parser/src/parser/find.rs-27" name="crates/conjure-cp-essence-parser/src/parser/find.rs-27"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">variable_list</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">field</span><span class="o">!</span><span class="p">(</span><span class="n">find_statement</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;variables&quot;</span><span class="p">);</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/find.rs-28" name="crates/conjure-cp-essence-parser/src/parser/find.rs-28"></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">variable</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">named_children</span><span class="p">(</span><span class="o">&amp;</span><span class="n">variable_list</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/find.rs-29" name="crates/conjure-cp-essence-parser/src/parser/find.rs-29"></a><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">variable_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ctx</span><span class="p">.</span><span class="n">source_code</span><span class="p">[</span><span class="n">variable</span><span class="p">.</span><span class="n">start_byte</span><span class="p">()</span><span class="o">..</span><span class="n">variable</span><span class="p">.</span><span class="n">end_byte</span><span class="p">()];</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/find.rs-30" name="crates/conjure-cp-essence-parser/src/parser/find.rs-30"></a><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Name</span><span class="p">::</span><span class="n">user</span><span class="p">(</span><span class="n">variable_name</span><span class="p">);</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/find.rs-31" name="crates/conjure-cp-essence-parser/src/parser/find.rs-31"></a><span class="hll">
+</span><a id="crates/conjure-cp-essence-parser/src/parser/find.rs-32" name="crates/conjure-cp-essence-parser/src/parser/find.rs-32"></a><span class="w">        </span><span class="c1">// Check for duplicate within the same statement</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/find.rs-33" name="crates/conjure-cp-essence-parser/src/parser/find.rs-33"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="n">vars</span><span class="p">.</span><span class="n">contains_key</span><span class="p">(</span><span class="o">&amp;</span><span class="n">name</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/find.rs-34" name="crates/conjure-cp-essence-parser/src/parser/find.rs-34"></a><span class="w">            </span><span class="n">ctx</span><span class="p">.</span><span class="n">errors</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">RecoverableParseError</span><span class="p">::</span><span class="n">new</span><span class="p">(</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/find.rs-35" name="crates/conjure-cp-essence-parser/src/parser/find.rs-35"></a><span class="w">                </span><span class="fm">format!</span><span class="p">(</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/find.rs-36" name="crates/conjure-cp-essence-parser/src/parser/find.rs-36"></a><span class="hll"><span class="w">                    </span><span class="s">&quot;Variable &#39;{}&#39; is already declared in this find statement&quot;</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/find.rs-37" name="crates/conjure-cp-essence-parser/src/parser/find.rs-37"></a><span class="hll"><span class="w">                    </span><span class="n">variable_name</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/find.rs-38" name="crates/conjure-cp-essence-parser/src/parser/find.rs-38"></a><span class="hll"><span class="w">                </span><span class="p">),</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/find.rs-39" name="crates/conjure-cp-essence-parser/src/parser/find.rs-39"></a><span class="w">                </span><span class="nb">Some</span><span class="p">(</span><span class="n">variable</span><span class="p">.</span><span class="n">range</span><span class="p">()),</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/find.rs-40" name="crates/conjure-cp-essence-parser/src/parser/find.rs-40"></a><span class="hll"><span class="w">            </span><span class="p">));</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/find.rs-41" name="crates/conjure-cp-essence-parser/src/parser/find.rs-41"></a><span class="w">            </span><span class="c1">// don&#39;t return here, as we can still add the other variables to the symbol table</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/find.rs-42" name="crates/conjure-cp-essence-parser/src/parser/find.rs-42"></a><span class="w">            </span><span class="k">continue</span><span class="p">;</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/find.rs-43" name="crates/conjure-cp-essence-parser/src/parser/find.rs-43"></a><span class="w">        </span><span class="p">}</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/conjure-cp-essence-parser/src/parser/letting.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-25" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-25"></a>
+<a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-26" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-26"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">variable_list</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">field</span><span class="o">!</span><span class="p">(</span><span class="n">letting_statement</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;variable_list&quot;</span><span class="p">);</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-27" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-27"></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">variable</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">named_children</span><span class="p">(</span><span class="o">&amp;</span><span class="n">variable_list</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-28" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-28"></a><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">variable_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ctx</span><span class="p">.</span><span class="n">source_code</span><span class="p">[</span><span class="n">variable</span><span class="p">.</span><span class="n">start_byte</span><span class="p">()</span><span class="o">..</span><span class="n">variable</span><span class="p">.</span><span class="n">end_byte</span><span class="p">()];</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-29" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-29"></a><span class="hll">
+</span><a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-30" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-30"></a><span class="w">        </span><span class="c1">// Check for duplicate within the same statement</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-31" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-31"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="n">temp_symbols</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="n">variable_name</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-32" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-32"></a><span class="w">            </span><span class="n">ctx</span><span class="p">.</span><span class="n">errors</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">RecoverableParseError</span><span class="p">::</span><span class="n">new</span><span class="p">(</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-33" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-33"></a><span class="w">                </span><span class="fm">format!</span><span class="p">(</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-34" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-34"></a><span class="hll"><span class="w">                    </span><span class="s">&quot;Variable &#39;{}&#39; is already declared in this letting statement&quot;</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-35" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-35"></a><span class="hll"><span class="w">                    </span><span class="n">variable_name</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-36" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-36"></a><span class="hll"><span class="w">                </span><span class="p">),</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-37" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-37"></a><span class="w">                </span><span class="nb">Some</span><span class="p">(</span><span class="n">variable</span><span class="p">.</span><span class="n">range</span><span class="p">()),</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-38" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-38"></a><span class="w">            </span><span class="p">));</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-39" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-39"></a><span class="w">            </span><span class="c1">// don&#39;t return here, as we can still add the other variables to the symbol table</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-40" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-40"></a><span class="w">            </span><span class="k">continue</span><span class="p">;</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-38" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-38"></a><span class="w">            </span><span class="p">));</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-39" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-39"></a><span class="w">            </span><span class="c1">// don&#39;t return here, as we can still add the other variables to the symbol table</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-40" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-40"></a><span class="w">            </span><span class="k">continue</span><span class="p">;</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-41" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-41"></a><span class="w">        </span><span class="p">}</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-42" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-42"></a><span class="hll">
+</span><a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-43" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-43"></a><span class="w">        </span><span class="c1">// Check for duplicate declaration across statements</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-44" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-44"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">symbols</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ctx</span><span class="p">.</span><span class="n">symbols</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-45" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-45"></a><span class="w">            </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">symbols</span><span class="p">.</span><span class="n">read</span><span class="p">().</span><span class="n">lookup</span><span class="p">(</span><span class="o">&amp;</span><span class="n">Name</span><span class="p">::</span><span class="n">user</span><span class="p">(</span><span class="n">variable_name</span><span class="p">)).</span><span class="n">is_some</span><span class="p">()</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-46" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-46"></a><span class="hll"><span class="w">        </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-47" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-47"></a><span class="w">            </span><span class="n">ctx</span><span class="p">.</span><span class="n">errors</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">RecoverableParseError</span><span class="p">::</span><span class="n">new</span><span class="p">(</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-48" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-48"></a><span class="w">                </span><span class="fm">format!</span><span class="p">(</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-49" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-49"></a><span class="hll"><span class="w">                    </span><span class="s">&quot;Variable &#39;{}&#39; is already declared in a previous statement&quot;</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-50" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-50"></a><span class="hll"><span class="w">                    </span><span class="n">variable_name</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-51" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-51"></a><span class="hll"><span class="w">                </span><span class="p">),</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-52" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-52"></a><span class="w">                </span><span class="nb">Some</span><span class="p">(</span><span class="n">variable</span><span class="p">.</span><span class="n">range</span><span class="p">()),</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-53" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-53"></a><span class="w">            </span><span class="p">));</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-54" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-54"></a><span class="w">            </span><span class="c1">// don&#39;t return here, as we can still add the other variables to the symbol table</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-55" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-55"></a><span class="w">            </span><span class="k">continue</span><span class="p">;</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-53" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-53"></a><span class="w">            </span><span class="p">));</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-54" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-54"></a><span class="w">            </span><span class="c1">// don&#39;t return here, as we can still add the other variables to the symbol table</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-55" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-55"></a><span class="w">            </span><span class="k">continue</span><span class="p">;</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-56" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-56"></a><span class="w">        </span><span class="p">}</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-57" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-57"></a><span class="hll">
+</span><a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-58" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-58"></a><span class="w">        </span><span class="n">temp_symbols</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="n">variable_name</span><span class="p">);</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-59" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-59"></a><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">hover</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">HoverInfo</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-60" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-60"></a><span class="w">            </span><span class="n">description</span><span class="p">:</span><span class="w"> </span><span class="nc">format</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;Letting variable: {variable_name}&quot;</span><span class="p">),</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-61" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-61"></a><span class="w">            </span><span class="n">kind</span><span class="p">:</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">SymbolKind</span><span class="p">::</span><span class="n">Letting</span><span class="p">),</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
     </body>
 </html>
