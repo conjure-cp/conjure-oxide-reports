@@ -38,7 +38,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-4c0a2262.js";
+            window.path_to_searchindex_js = "searchindex-cb956206.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-8e7b5813.js"></script>
@@ -194,8 +194,9 @@ St Andrews, but we also welcome outside contributors; for more information see t
 <p>The Conjure Oxide source and documentation are released under the <a href="https://github.com/conjure-cp/conjure-oxide/blob/main/LICENSE">Mozilla Public Licence v2.0</a>.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="installation"><a class="header" href="#installation">Installation</a></h1>
-<p>Currently, Conjure Oxide is installed by building from source.</p>
-<h2 id="dependencies"><a class="header" href="#dependencies">Dependencies</a></h2>
+<p>Currently, Conjure Oxide is installed either by <a href="#building-from-source">building from source</a> or by downloading a <a href="#downloading-a-nightly-release">nightly release</a>.</p>
+<h2 id="building-from-source"><a class="header" href="#building-from-source">Building From Source</a></h2>
+<h3 id="dependencies"><a class="header" href="#dependencies">Dependencies</a></h3>
 <p>The following dependencies are required to build and use Conjure Oxide:</p>
 <ul>
 <li><a href="https://conjure.readthedocs.io/en/latest/installation.html">Conjure</a> including solvers.
@@ -208,7 +209,7 @@ St Andrews, but we also welcome outside contributors; for more information see t
 <li><a href="https://cmake.org/download/">CMake</a>.</li>
 <li><a href="https://rust-lang.org/tools/install/">Rust</a> installed using rustup.</li>
 </ul>
-<h2 id="building-from-source"><a class="header" href="#building-from-source">Building From Source</a></h2>
+<h3 id="building"><a class="header" href="#building">Building</a></h3>
 <ol>
 <li>Clone the repository:
 <pre><code>git clone https://github.com/conjure-cp/conjure-oxide.git
@@ -216,7 +217,7 @@ cd conjure-oxide
 </code></pre>
 </li>
 <li>Run the install command to install <code>conjure-oxide</code> (this may take some time):
-<pre><code>cargo install --path crates/conjure-cp-cli
+<pre><code>cargo install --release --path crates/conjure-cp-cli
 </code></pre>
 </li>
 <li>Verify <code>conjure-oxide</code> is installed and working by running a command:
@@ -224,9 +225,42 @@ cd conjure-oxide
 </code></pre>
 </li>
 </ol>
+<h2 id="downloading-a-nightly-release"><a class="header" href="#downloading-a-nightly-release">Downloading a Nightly Release</a></h2>
+<ol>
+<li>Download the appropriate archive from the <a href="https://github.com/conjure-cp/conjure-oxide/releases/tag/nightly">latest nightly release</a>.
+<ul>
+<li>Make sure you choose the correct archive for your system. Conjure Oxide currently supports ARM-based macOS (<code>aarch64-darwin</code>) and x86-based Linux (<code>x86_64-linux-gnu</code>).</li>
+<li>Make sure you choose the correct archive containing the dependencies you need:
+<ul>
+<li>If you do not have Conjure or solvers on your system, download the archive for your system ending with <code>with-solvers</code>.</li>
+<li>If you have the solvers on your system but not Conjure, download the archive for your system ending with <code>with-conjure</code>.</li>
+<li>If you have both Conjure and the solvers on your system, download the archive for your system ending with <code>standalone</code>.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Extract the archive using your preferred method.</li>
+<li>Open a terminal in the extracted directory and run a test command:
+<pre><code>./conjure-oxide --help
+</code></pre>
+</li>
+</ol>
+<ul>
+<li>If you are on macOS, you may run into a problem with binaries being blocked from running. If this is the case, run the following command in the extracted directory:
+<pre><code>xattr -dr com.apple.quarantine .
+</code></pre>
+</li>
+<li>If you would like these commands to be available everywhere on your system, copy the binaries into a directory which is in your PATH.</li>
+</ul>
 <h2 id="troubleshooting"><a class="header" href="#troubleshooting">Troubleshooting</a></h2>
 <h3 id="unknown-command-conjure-oxide"><a class="header" href="#unknown-command-conjure-oxide"><code>Unknown command: conjure-oxide</code></a></h3>
 <p>Check the path at which <code>cargo install</code> places binaries (see <a href="https://doc.rust-lang.org/cargo/commands/cargo-install.html">cargo-install(1)</a>) and ensure it’s in your PATH environment variable. You may need to restart your shell for it to pick up these changes.</p>
+<h3 id="imagemagick-conflicts"><a class="header" href="#imagemagick-conflicts">ImageMagick Conflicts</a></h3>
+<p>If the <code>conjure</code> command that is part of ImageMagick conflicts with your Conjure installation, ensure that the directory containing Conjure binaries is earlier in your PATH than the directory containing ImageMagick binaries.</p>
+<h3 id="macos-quarantine"><a class="header" href="#macos-quarantine">macOS Quarantine</a></h3>
+<p>If you are running into problems on macOS, make sure you remove the quarantine attribute from all pre-built binaries using the following command in their containing directory:</p>
+<pre><code>xattr -dr com.apple.quarantine .
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="quick-start-guide-to-running-your-first-essence-model"><a class="header" href="#quick-start-guide-to-running-your-first-essence-model">Quick Start Guide to Running your first Essence Model</a></h1>
 <p>This guide walks you through running your first Essence model with Conjure Oxide.</p>
