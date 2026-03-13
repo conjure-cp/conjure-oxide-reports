@@ -37,7 +37,7 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../searchindex-ca434c6e.js";
+            window.path_to_searchindex_js = "../../searchindex-e67d0456.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-908e9a18.js"></script>
@@ -195,13 +195,13 @@ All unassigned child issues are available for anyone to work on!</p>
 </li>
 <li>
 <p>Link your child issue to a pr request.</p>
-<h4 id="file-type-and-naming-convention"><a class="header" href="#file-type-and-naming-convention">File type and naming convention:</a></h4>
+<h4 id="file-type-and-naming-convention"><a class="header" href="#file-type-and-naming-convention">File type and naming convention</a></h4>
 <p>All documentation for the Conjure Oxide book should be written in markdown. If you’re unfamiliar with markdown or need a refresher on its syntax, we recommend reviewing <a href="https://www.markdownguide.org/getting-started/">this guide</a>.</p>
 <p>When naming your documentation file, match the file name as closely as possible to the heading of the documentation and use underscores (‘_’) to replace spaces. For example, if your documentation page is titled “Creating Documentation,” name the file <code>creating_documentation.md</code>.</p>
-<h4 id="where-to-place-documentation"><a class="header" href="#where-to-place-documentation">Where to place documentation:</a></h4>
+<h4 id="where-to-place-documentation"><a class="header" href="#where-to-place-documentation">Where to place documentation</a></h4>
 <p>Place all documentation files in an appropriate location within the <code>/docs/src</code> directory. Each markdown file should be stored in the directory that matches its section in the documentation structure. For example, this file is located at <code>/docs/src/developers_guide/contributors_guide/</code>.</p>
 <p>If you know where your documentation belongs in the book, please place it in the appropriate directory. However, it’s not required to know the exact location—moving files is quick and easy. If you’re unsure where your documentation should go, place the file in <code>/docs/src/misc</code> so it can be relocated later to a more suitable section.</p>
-<h4 id="viewing-documentation-on-the-book"><a class="header" href="#viewing-documentation-on-the-book">Viewing documentation on the book:</a></h4>
+<h4 id="viewing-documentation-on-the-book"><a class="header" href="#viewing-documentation-on-the-book">Viewing documentation on the book</a></h4>
 <p>You must ensure that the documentation you write formats as expected in the book. To do so, follow these steps:</p>
 <ul>
 <li>Open <code>/docs/src/SUMMARY.md</code>.</li>
@@ -234,6 +234,80 @@ For instance:</p>
 </li>
 </ol>
 <hr>
+<h1 id="what-is-vale-how-does-conjure-oxide-ensure-that-our-documentation-is-high-quality-and-consistent"><a class="header" href="#what-is-vale-how-does-conjure-oxide-ensure-that-our-documentation-is-high-quality-and-consistent">What is Vale? How does Conjure-Oxide ensure that our documentation is high quality and consistent?</a></h1>
+<p><a href="https://vale.sh/docs/">Vale</a> is a prose linter. Think of it like <code>clippy</code>, but for documentation style, spelling, terminology, and consistency.</p>
+<p>At a high level, Vale works by:</p>
+<ol>
+<li>Reading a configuration file (<code>.vale.ini</code>).</li>
+<li>Loading one or more styles/rules.</li>
+<li>Scanning matching files (Markdown in our case).</li>
+<li>Emitting alerts (<code>suggestion</code>, <code>warning</code>, <code>error</code>).</li>
+</ol>
+<p>In this repository, Vale is primarily used for documentation quality checks under <code>docs/</code>.</p>
+<h2 id="how-this-repository-configures-vale"><a class="header" href="#how-this-repository-configures-vale">How this repository configures Vale</a></h2>
+<p>Our project config lives in <a href="../../../../.vale.ini"><code>/.vale.ini</code></a> and currently contains:</p>
+<ul>
+<li><code>StylesPath = tools/vale_styles</code></li>
+<li><code>Vocab = conjure_vocab</code></li>
+<li><code>[*.md]</code> + <code>BasedOnStyles = Conjure</code></li>
+</ul>
+<p>What this means:</p>
+<ul>
+<li><strong>StylesPath</strong> tells Vale where our local style definitions and vocabulary live.</li>
+<li><strong>Vocab</strong> enables the project vocabulary at:
+<ul>
+<li><code>tools/vale_styles/config/vocabularies/conjure_vocab/accept.txt</code></li>
+</ul>
+</li>
+<li><strong>BasedOnStyles = Conjure</strong> enables the rules in our <code>Conjure</code> style for Markdown files.</li>
+</ul>
+<p>For vocabulary behavior and format details, see Vale’s vocabulary docs: <a href="https://vale.sh/docs/keys/vocab">Vocabularies</a>.</p>
+<h2 id="fixing-pr-lint-failures-by-updating-the-dictionary"><a class="header" href="#fixing-pr-lint-failures-by-updating-the-dictionary">Fixing PR lint failures by updating the dictionary</a></h2>
+<p>When Vale flags a term that is valid for this codebase (domain-specific term, acronym, tool name, etc.), add it to:</p>
+<ul>
+<li><code>tools/vale_styles/config/vocabularies/conjure_vocab/accept.txt</code></li>
+</ul>
+<h3 id="file-format-rules"><a class="header" href="#file-format-rules">File format rules</a></h3>
+<p><code>accept.txt</code> supports one regex entry per line.</p>
+<ul>
+<li>Lines beginning with <code>#</code> are comments.</li>
+<li>Entries are regex patterns.</li>
+<li>Case sensitivity matters unless you explicitly make a pattern case-insensitive.</li>
+</ul>
+<p>Examples:</p>
+<ul>
+<li>Case-insensitive whole term: <code>(?i)API</code></li>
+<li>Character-class style: <code>[Jj]son</code></li>
+<li>Optional suffix: <code>Biplates?</code></li>
+</ul>
+<h3 id="practical-workflow-for-a-failing-pr"><a class="header" href="#practical-workflow-for-a-failing-pr">Practical workflow for a failing PR</a></h3>
+<ol>
+<li>Read the Vale error in the PR checks.</li>
+<li>Decide whether the word should be:
+<ul>
+<li>corrected in the doc text, or</li>
+<li>accepted as project vocabulary.</li>
+</ul>
+</li>
+<li>If it should be accepted, add a new entry to <code>accept.txt</code>.</li>
+<li>Keep the entry as narrow/specific as possible to avoid false positives.</li>
+<li>Commit and push; CI will re-run automatically.</li>
+</ol>
+<h3 id="when-not-to-add-something-to-accepttxt"><a class="header" href="#when-not-to-add-something-to-accepttxt">When <em>not</em> to add something to <code>accept.txt</code></a></h3>
+<p>Do <strong>not</strong> add entries that are just typos or inconsistent wording.</p>
+<p>The vocabulary should represent <strong>intentional project terminology</strong>, not bypass style checks globally.</p>
+<p>Good candidates:</p>
+<ul>
+<li>Domain terms (<code>SATInt</code>, <code>Uniplate</code>, <code>Savile</code>).</li>
+<li>Tool names (<code>rustc</code>, <code>Valgrind</code>).</li>
+<li>Project-specific identifiers (<code>conjure_essence_parser</code>).</li>
+<li>Variable names from the code that you might need to refer to.</li>
+</ul>
+<p>Bad candidates:</p>
+<ul>
+<li>Accidental misspellings.</li>
+<li>One-off casing mistakes that should be corrected in source text.</li>
+</ul>
 <h2 id="still-unsure"><a class="header" href="#still-unsure">Still unsure?</a></h2>
 <p>If you have any questions or concerns, please post them on the documentation discussion board. A book editor will respond to you promptly.
 Likewise, if you have suggestions for improving or streamlining this process, feel free to share your ideas with the book editors! Your feedback is always welcome.</p>
