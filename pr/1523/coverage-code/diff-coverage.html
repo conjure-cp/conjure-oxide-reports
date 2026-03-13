@@ -90,9 +90,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
         <h1>Diff Coverage</h1>
         <p>Diff: upstream/main...HEAD, staged and unstaged changes</p>
         <ul>
-            <li><b>Total</b>: 64 lines</li>
-            <li><b>Missing</b>: 6 lines</li>
-            <li><b>Coverage</b>: 90%</li>
+            <li><b>Total</b>: 62 lines</li>
+            <li><b>Missing</b>: 4 lines</li>
+            <li><b>Coverage</b>: 93%</li>
         </ul>
         <table border="1">
             <tr>
@@ -102,62 +102,20 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
             </tr>
             <tr>
                 <td>crates/conjure-cp-core/src/ast/eval.rs</td>
-                <td>33.3%</td>
-                <td>568,577</td>
+                <td>100%</td>
+                <td>&nbsp;</td>
             </tr>
             <tr>
                 <td>crates/conjure-cp-rules/src/sat/direct_int_ops.rs</td>
                 <td>93.4%</td>
-                <td>320,323,329,333</td>
+                <td>319,322,328,332</td>
             </tr>
         </table>
         <div class="src-snippet">
-            <div class="src-name">crates/conjure-cp-core/src/ast/eval.rs</div>
-            <div class="snippets">
-            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">564</span>
-<span class="normal">565</span>
-<span class="normal">566</span>
-<span class="normal">567</span>
-<span class="normal">568</span>
-<span class="normal">569</span>
-<span class="normal">570</span>
-<span class="normal">571</span>
-<span class="normal">572</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/ast/eval.rs-564" name="crates/conjure-cp-core/src/ast/eval.rs-564"></a><span class="w">                </span><span class="n">Lit</span><span class="p">::</span><span class="n">Bool</span><span class="p">(</span><span class="kc">false</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">Lit</span><span class="p">::</span><span class="n">Int</span><span class="p">(</span><span class="mi">0</span><span class="p">)),</span>
-<a id="crates/conjure-cp-core/src/ast/eval.rs-565" name="crates/conjure-cp-core/src/ast/eval.rs-565"></a><span class="w">                </span><span class="n">_</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">None</span><span class="p">,</span>
-<a id="crates/conjure-cp-core/src/ast/eval.rs-566" name="crates/conjure-cp-core/src/ast/eval.rs-566"></a><span class="w">            </span><span class="p">}</span>
-<a id="crates/conjure-cp-core/src/ast/eval.rs-567" name="crates/conjure-cp-core/src/ast/eval.rs-567"></a><span class="w">        </span><span class="p">}</span>
-<a id="crates/conjure-cp-core/src/ast/eval.rs-568" name="crates/conjure-cp-core/src/ast/eval.rs-568"></a><span class="hll"><span class="w">        </span><span class="n">Expr</span><span class="p">::</span><span class="n">SATInt</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
-</span><a id="crates/conjure-cp-core/src/ast/eval.rs-569" name="crates/conjure-cp-core/src/ast/eval.rs-569"></a><span class="w">            </span><span class="c1">// TODO: If this SATInt is composed of literals, we should evaluate it back to an</span>
-<a id="crates/conjure-cp-core/src/ast/eval.rs-570" name="crates/conjure-cp-core/src/ast/eval.rs-570"></a><span class="w">            </span><span class="c1">// integer literal.</span>
-<a id="crates/conjure-cp-core/src/ast/eval.rs-571" name="crates/conjure-cp-core/src/ast/eval.rs-571"></a><span class="w">            </span><span class="c1">//</span>
-<a id="crates/conjure-cp-core/src/ast/eval.rs-572" name="crates/conjure-cp-core/src/ast/eval.rs-572"></a><span class="w">            </span><span class="c1">// This is important because `is_all_constant` currently returns true for SATInts</span>
-</pre></div></td></tr></table></div>
-
-            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">573</span>
-<span class="normal">574</span>
-<span class="normal">575</span>
-<span class="normal">576</span>
-<span class="normal">577</span>
-<span class="normal">578</span>
-<span class="normal">579</span>
-<span class="normal">580</span>
-<span class="normal">581</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/ast/eval.rs-573" name="crates/conjure-cp-core/src/ast/eval.rs-573"></a><span class="w">            </span><span class="c1">// containing no references. If we don&#39;t evaluate them here, bubble rules will skip</span>
-<a id="crates/conjure-cp-core/src/ast/eval.rs-574" name="crates/conjure-cp-core/src/ast/eval.rs-574"></a><span class="w">            </span><span class="c1">// them (thinking they&#39;ll be constant-folded later), but they&#39;ll actually reach</span>
-<a id="crates/conjure-cp-core/src/ast/eval.rs-575" name="crates/conjure-cp-core/src/ast/eval.rs-575"></a><span class="w">            </span><span class="c1">// the solver adaptors as un-encoded unsafe operations, causing panics.</span>
-<a id="crates/conjure-cp-core/src/ast/eval.rs-576" name="crates/conjure-cp-core/src/ast/eval.rs-576"></a><span class="w">            </span><span class="nb">None</span>
-<a id="crates/conjure-cp-core/src/ast/eval.rs-577" name="crates/conjure-cp-core/src/ast/eval.rs-577"></a><span class="hll"><span class="w">        </span><span class="p">}</span>
-</span><a id="crates/conjure-cp-core/src/ast/eval.rs-578" name="crates/conjure-cp-core/src/ast/eval.rs-578"></a><span class="w">        </span><span class="n">Expr</span><span class="p">::</span><span class="n">PairwiseSum</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
-<a id="crates/conjure-cp-core/src/ast/eval.rs-579" name="crates/conjure-cp-core/src/ast/eval.rs-579"></a><span class="w">            </span><span class="k">match</span><span class="w"> </span><span class="p">(</span><span class="n">eval_constant</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">as_ref</span><span class="p">())</span><span class="o">?</span><span class="p">,</span><span class="w"> </span><span class="n">eval_constant</span><span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">as_ref</span><span class="p">())</span><span class="o">?</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<a id="crates/conjure-cp-core/src/ast/eval.rs-580" name="crates/conjure-cp-core/src/ast/eval.rs-580"></a><span class="w">                </span><span class="p">(</span><span class="n">Lit</span><span class="p">::</span><span class="n">Int</span><span class="p">(</span><span class="n">a_int</span><span class="p">),</span><span class="w"> </span><span class="n">Lit</span><span class="p">::</span><span class="n">Int</span><span class="p">(</span><span class="n">b_int</span><span class="p">))</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">Lit</span><span class="p">::</span><span class="n">Int</span><span class="p">(</span><span class="n">a_int</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">b_int</span><span class="p">)),</span>
-<a id="crates/conjure-cp-core/src/ast/eval.rs-581" name="crates/conjure-cp-core/src/ast/eval.rs-581"></a><span class="w">                </span><span class="n">_</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">None</span><span class="p">,</span>
-</pre></div></td></tr></table></div>
-
-            </div>
-        </div>
-        <div class="src-snippet">
             <div class="src-name">crates/conjure-cp-rules/src/sat/direct_int_ops.rs</div>
             <div class="snippets">
-            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">316</span>
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">315</span>
+<span class="normal">316</span>
 <span class="normal">317</span>
 <span class="normal">318</span>
 <span class="normal">319</span>
@@ -167,22 +125,22 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <span class="normal">323</span>
 <span class="normal">324</span>
 <span class="normal">325</span>
-<span class="normal">326</span>
-<span class="normal">327</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-316" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-316"></a>
-<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-317" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-317"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">Expr</span><span class="p">::</span><span class="n">SATInt</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">SATIntEncoding</span><span class="p">::</span><span class="n">Direct</span><span class="p">,</span><span class="w"> </span><span class="n">numer_inner</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">numer_min</span><span class="p">,</span><span class="w"> </span><span class="n">numer_max</span><span class="p">))</span><span class="w"> </span><span class="o">=</span>
-<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-318" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-318"></a><span class="w">        </span><span class="n">numer_expr</span><span class="p">.</span><span class="n">as_ref</span><span class="p">()</span>
-<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-319" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-319"></a><span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
-<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-320" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-320"></a><span class="hll"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">RuleNotApplicable</span><span class="p">);</span>
-</span><a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-321" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-321"></a><span class="w">    </span><span class="p">};</span>
-<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-322" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-322"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">numer_bits</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">numer_inner</span><span class="p">.</span><span class="n">as_ref</span><span class="p">().</span><span class="n">clone</span><span class="p">().</span><span class="n">unwrap_list</span><span class="p">()</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
-<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-323" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-323"></a><span class="hll"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">RuleNotApplicable</span><span class="p">);</span>
-</span><a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-324" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-324"></a><span class="w">    </span><span class="p">};</span>
-<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-325" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-325"></a>
-<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-326" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-326"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">Expr</span><span class="p">::</span><span class="n">SATInt</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">SATIntEncoding</span><span class="p">::</span><span class="n">Direct</span><span class="p">,</span><span class="w"> </span><span class="n">denom_inner</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">denom_min</span><span class="p">,</span><span class="w"> </span><span class="n">denom_max</span><span class="p">))</span><span class="w"> </span><span class="o">=</span>
-<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-327" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-327"></a><span class="w">        </span><span class="n">denom_expr</span><span class="p">.</span><span class="n">as_ref</span><span class="p">()</span>
+<span class="normal">326</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-315" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-315"></a>
+<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-316" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-316"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">Expr</span><span class="p">::</span><span class="n">SATInt</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">SATIntEncoding</span><span class="p">::</span><span class="n">Direct</span><span class="p">,</span><span class="w"> </span><span class="n">numer_inner</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">numer_min</span><span class="p">,</span><span class="w"> </span><span class="n">numer_max</span><span class="p">))</span><span class="w"> </span><span class="o">=</span>
+<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-317" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-317"></a><span class="w">        </span><span class="n">numer_expr</span><span class="p">.</span><span class="n">as_ref</span><span class="p">()</span>
+<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-318" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-318"></a><span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-319" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-319"></a><span class="hll"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">RuleNotApplicable</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-320" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-320"></a><span class="w">    </span><span class="p">};</span>
+<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-321" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-321"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">numer_bits</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">numer_inner</span><span class="p">.</span><span class="n">as_ref</span><span class="p">().</span><span class="n">clone</span><span class="p">().</span><span class="n">unwrap_list</span><span class="p">()</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-322" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-322"></a><span class="hll"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">RuleNotApplicable</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-323" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-323"></a><span class="w">    </span><span class="p">};</span>
+<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-324" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-324"></a>
+<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-325" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-325"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">Expr</span><span class="p">::</span><span class="n">SATInt</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">SATIntEncoding</span><span class="p">::</span><span class="n">Direct</span><span class="p">,</span><span class="w"> </span><span class="n">denom_inner</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">denom_min</span><span class="p">,</span><span class="w"> </span><span class="n">denom_max</span><span class="p">))</span><span class="w"> </span><span class="o">=</span>
+<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-326" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-326"></a><span class="w">        </span><span class="n">denom_expr</span><span class="p">.</span><span class="n">as_ref</span><span class="p">()</span>
 </pre></div></td></tr></table></div>
 
-            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">325</span>
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">324</span>
+<span class="normal">325</span>
 <span class="normal">326</span>
 <span class="normal">327</span>
 <span class="normal">328</span>
@@ -193,20 +151,19 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <span class="normal">333</span>
 <span class="normal">334</span>
 <span class="normal">335</span>
-<span class="normal">336</span>
-<span class="normal">337</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-325" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-325"></a>
-<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-326" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-326"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">Expr</span><span class="p">::</span><span class="n">SATInt</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">SATIntEncoding</span><span class="p">::</span><span class="n">Direct</span><span class="p">,</span><span class="w"> </span><span class="n">denom_inner</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">denom_min</span><span class="p">,</span><span class="w"> </span><span class="n">denom_max</span><span class="p">))</span><span class="w"> </span><span class="o">=</span>
-<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-327" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-327"></a><span class="w">        </span><span class="n">denom_expr</span><span class="p">.</span><span class="n">as_ref</span><span class="p">()</span>
-<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-328" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-328"></a><span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
-<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-329" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-329"></a><span class="hll"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">RuleNotApplicable</span><span class="p">);</span>
-</span><a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-330" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-330"></a><span class="w">    </span><span class="p">};</span>
-<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-331" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-331"></a>
-<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-332" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-332"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">denom_bits</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">denom_inner</span><span class="p">.</span><span class="n">as_ref</span><span class="p">().</span><span class="n">clone</span><span class="p">().</span><span class="n">unwrap_list</span><span class="p">()</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
-<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-333" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-333"></a><span class="hll"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">RuleNotApplicable</span><span class="p">);</span>
-</span><a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-334" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-334"></a><span class="w">    </span><span class="p">};</span>
-<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-335" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-335"></a>
-<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-336" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-336"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">quot_min</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">i32</span><span class="p">::</span><span class="n">MAX</span><span class="p">;</span>
-<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-337" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-337"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">quot_max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">i32</span><span class="p">::</span><span class="n">MIN</span><span class="p">;</span>
+<span class="normal">336</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-324" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-324"></a>
+<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-325" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-325"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">Expr</span><span class="p">::</span><span class="n">SATInt</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">SATIntEncoding</span><span class="p">::</span><span class="n">Direct</span><span class="p">,</span><span class="w"> </span><span class="n">denom_inner</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">denom_min</span><span class="p">,</span><span class="w"> </span><span class="n">denom_max</span><span class="p">))</span><span class="w"> </span><span class="o">=</span>
+<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-326" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-326"></a><span class="w">        </span><span class="n">denom_expr</span><span class="p">.</span><span class="n">as_ref</span><span class="p">()</span>
+<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-327" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-327"></a><span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-328" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-328"></a><span class="hll"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">RuleNotApplicable</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-329" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-329"></a><span class="w">    </span><span class="p">};</span>
+<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-330" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-330"></a>
+<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-331" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-331"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">denom_bits</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">denom_inner</span><span class="p">.</span><span class="n">as_ref</span><span class="p">().</span><span class="n">clone</span><span class="p">().</span><span class="n">unwrap_list</span><span class="p">()</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-332" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-332"></a><span class="hll"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">RuleNotApplicable</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-333" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-333"></a><span class="w">    </span><span class="p">};</span>
+<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-334" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-334"></a>
+<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-335" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-335"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">quot_min</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">i32</span><span class="p">::</span><span class="n">MAX</span><span class="p">;</span>
+<a id="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-336" name="crates/conjure-cp-rules/src/sat/direct_int_ops.rs-336"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">quot_max</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">i32</span><span class="p">::</span><span class="n">MIN</span><span class="p">;</span>
 </pre></div></td></tr></table></div>
 
             </div>
