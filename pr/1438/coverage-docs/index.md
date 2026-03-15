@@ -1,8 +1,8 @@
 # RustDoc Coverage Report
 
 **conjure-cp:** 0% with examples, 25% documented -- 0/1/4
-**conjure-cp-cli:** 0% with examples, 39% documented -- 0/44/114
-**conjure-cp-core:** 4% with examples, 50% documented -- 22/299/603
+**conjure-cp-cli:** 0% with examples, 40% documented -- 0/44/109
+**conjure-cp-core:** 4% with examples, 50% documented -- 22/299/604
 **conjure-cp-enum-compatibility-macro:** 33% with examples, 100% documented -- 1/3/3
 **conjure-cp-essence-macros:** 67% with examples, 67% documented -- 2/2/3
 **conjure-cp-essence-parser:** 0% with examples, 16% documented -- 0/22/137
@@ -15,7 +15,7 @@
 **tree-sitter-essence:** 33% with examples, 100% documented -- 1/3/3
 
 PR: [#1438](https://github.com/conjure-cp/conjure-oxide/pull/1438)
-Commit: [4113ab2a6e501755c87195b3149939e2bd48dd8f](https://github.com/Arnav-Bista/conjure-oxide/commit/4113ab2a6e501755c87195b3149939e2bd48dd8f)
+Commit: [268ed997b6a5e1ca838bb46463309faa82a42e42](https://github.com/Arnav-Bista/conjure-oxide/commit/268ed997b6a5e1ca838bb46463309faa82a42e42)
 
 ## RustDoc coverage for `conjure-cp`
 
@@ -36,9 +36,9 @@ Commit: [4113ab2a6e501755c87195b3149939e2bd48dd8f](https://github.com/Arnav-Bist
 | crates/conjure-cp-cli/src/pretty.rs | ❌ 20% *(1/5)* | ❌ 0% *(0/5)* |
 | crates/conjure-cp-cli/src/test_solve.rs | ❌ 25% *(1/4)* | ❌ 0% *(0/4)* |
 | crates/conjure-cp-cli/src/utils/testing.rs | ❌ 31% *(4/13)* | ❌ 0% *(0/13)* |
-| crates/conjure-cp-cli/src/solve.rs | ❌ 37% *(7/19)* | ❌ 0% *(0/19)* |
-| crates/conjure-cp-cli/src/cli.rs | ❌ 49% *(25/51)* | ❌ 0% *(0/51)* |
+| crates/conjure-cp-cli/src/solve.rs | ❌ 39% *(7/18)* | ❌ 0% *(0/18)* |
 | crates/conjure-cp-cli/src/find_conjure.rs | ❌ 50% *(1/2)* | ❌ 0% *(0/2)* |
+| crates/conjure-cp-cli/src/cli.rs | ❌ 53% *(25/47)* | ❌ 0% *(0/47)* |
 | crates/conjure-cp-cli/src/utils/json.rs | ❌ 67% *(2/3)* | ❌ 0% *(0/3)* |
 | crates/conjure-cp-cli/src/print_info_schema.rs | ✅ 100% *(2/2)* | ❌ 0% *(0/2)* |
 
@@ -60,7 +60,7 @@ Commit: [4113ab2a6e501755c87195b3149939e2bd48dd8f](https://github.com/Arnav-Bist
 | crates/conjure-cp-core/src/solver/adaptors/rustsat/mod.rs | ❌ 0% *(0/1)* | ❌ 0% *(0/1)* |
 | crates/conjure-cp-core/src/solver/adaptors/smt/mod.rs | ❌ 0% *(0/1)* | ❌ 0% *(0/1)* |
 | crates/conjure-cp-core/src/stats/mod.rs | ❌ 0% *(0/7)* | ❌ 0% *(0/7)* |
-| crates/conjure-cp-core/src/settings.rs | ❌ 2% *(1/45)* | ❌ 0% *(0/45)* |
+| crates/conjure-cp-core/src/settings.rs | ❌ 2% *(1/46)* | ❌ 0% *(0/46)* |
 | crates/conjure-cp-core/src/ast/eval.rs | ❌ 9% *(1/11)* | ❌ 0% *(0/11)* |
 | crates/conjure-cp-core/src/error.rs | ❌ 11% *(1/9)* | ❌ 0% *(0/9)* |
 | crates/conjure-cp-core/src/ast/domains/error.rs | ❌ 17% *(1/6)* | ❌ 0% *(0/6)* |
