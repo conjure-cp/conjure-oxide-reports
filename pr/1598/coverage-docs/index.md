@@ -1,11 +1,11 @@
-# Documentation Coverage Report
+# RustDoc Coverage Report
 
 **conjure-cp:** 0% with examples, 25% documented -- 0/1/4
 **minion-sys:** 25% with examples, 86% documented -- 2/31/119
 **tree-morph:** 22% with examples, 100% documented -- 6/38/38
 
 PR: [#1598](https://github.com/conjure-cp/conjure-oxide/pull/1598)
-Commit: [6044bbe5dad7b40912ba29cb09f55056e962f5fb](https://github.com/conjure-cp/conjure-oxide/commit/6044bbe5dad7b40912ba29cb09f55056e962f5fb)
+Commit: [28eed8b478ee127fb2cdd2925f2d04b50af16e60](https://github.com/conjure-cp/conjure-oxide/commit/28eed8b478ee127fb2cdd2925f2d04b50af16e60)
 
 ## Documentation coverage for `conjure-cp`
 
