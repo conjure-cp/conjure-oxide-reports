@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-89ec2c9d.js";
+            window.path_to_searchindex_js = "searchindex-7df0e333.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-4796bf5a.js"></script>
+        <script src="toc-b68c233e.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -4450,38 +4450,25 @@ such that x &gt; 10
 <p>See project documentation <a href="#fr-8-1">↩</a></p>
 </li>
 </ol>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="useful-links"><a class="header" href="#useful-links">Useful Links</a></h1>
-<h2 id="api-documentation"><a class="header" href="#api-documentation">API Documentation</a></h2>
-<ul>
-<li><a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_cp/index.html">conjure-cp</a></li>
-</ul>
-<!--- This link seems to be dead. Cannot find an equivalent on the docs --->
-<!-- md-dead-link-check: off -->
-<ul>
-<li><a href="https://conjure-cp.github.io/conjure-oxide/docs/tree_morph/index.html">tree-morph</a></li>
-</ul>
- <!-- md-dead-link-check: on -->
-<ul>
-<li><a href="https://conjure-cp.github.io/conjure-oxide/docs/minion_sys/index.html">minion-sys</a></li>
-</ul>
-<h3 id="internal-crates"><a class="header" href="#internal-crates">Internal crates</a></h3>
-<p>The following crates are internal, and are re-exported by <code>conjure-cp</code>:</p>
-<ul>
-<li><a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_cp_cli/index.html">conjure-cp-cli</a></li>
-<li><a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_cp_core/index.html">conjure-cp-core</a></li>
-<li><a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_cp_essence_macros/">conjure-cp-essence-macros</a></li>
-<li><a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_cp_essence_parser">conjure-cp-essence-parser</a></li>
-<li><a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_cp_rule_macros">conjure-cp-rule-macros</a></li>
-<li><a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_cp_enum_compatibility_macro">conjure-cp-enum-compatibility-macro</a></li>
-</ul>
-<h2 id="code-coverage-1"><a class="header" href="#code-coverage-1">Code Coverage</a></h2>
-<p>Code coverage reports can be found <a href="https://conjure-cp.github.io/conjure-oxide/coverage/main/">here</a>.</p>
-<h2 id="miscellaneous"><a class="header" href="#miscellaneous">Miscellaneous</a></h2>
-<ul>
-<li><a href="https://conjure-cp.github.io/conjure-oxide/tools/essence-feature-usage-stats/">Essence feature usage stats</a></li>
-<li><a href="https://conjure-cp.github.io/conjure-blocks/">Conjure blocks</a></li>
-</ul>
+<div style="break-before: page; page-break-before: always;"></div><!-- maturity: draft
+authors: Edward Lowe
+created: 21-12-25
+---- -->
+<h1 id="flatten"><a class="header" href="#flatten">Flatten</a></h1>
+<h2 id="usage-in-essence"><a class="header" href="#usage-in-essence">Usage in Essence</a></h2>
+<p>With one argument, <code>flatten(M)</code> returns a one-dimensional matrix containing all the elements of the input matrix.</p>
+<p>With two arguments, <code>flatten(n,M)</code> the first n+1 dimensions are flattened into one dimension.</p>
+<blockquote class="blockquote-tag blockquote-tag-warning">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575Zm1.763.707a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368Zm.53 3.996v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg>Warning</p>
+<p><code>flatten(n,M)</code> has not yet been implemented.</p>
+</blockquote>
+<h2 id="expression-variant"><a class="header" href="#expression-variant">Expression variant</a></h2>
+<p>The <code>Flatten</code> variant of <code>Expression</code> in the AST has structure defined as:</p>
+<pre><code>Flatten(Metadata, Option&lt;Moo&lt;Expression&gt;&gt;, Moo&lt;Expression&gt;)
+</code></pre>
+<p>The return type and domain of <code>Flatten</code> is a matrix of the innermost elements of the flattened matrix’s return type or domain. This has not yet been implemented in the case where the dimensions to flatten are provided.</p>
+<h2 id="flatten-rule"><a class="header" href="#flatten-rule">flatten rule</a></h2>
+<p>The flatten rule in <a href="https://github.com/conjure-cp/conjure-oxide/blob/7c0a88d8de7af41758b2020e93662db3a952ddeb/crates/conjure-cp-rules/src/matrix/flatten.rs">crates/conjure-cp-rules/src/matrix/flatten.rs</a> turns flatten expressions containing atomic matrix expressions into a flat matrix literal.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="testing-1"><a class="header" href="#testing-1">Testing</a></h1>
 <h2 id="types-of-tests"><a class="header" href="#types-of-tests">Types of Tests</a></h2>
@@ -4851,6 +4838,38 @@ last updated: 21-12-2025
 <p><img src="images/conjure_blocks.png" alt="Conjure Blocks website"></p>
 <p>Conjure blocks is an online block editor for Essence. This tool allows you to write constraint programs in blocks, which are then translated into Essence. <a href="https://conjure-aas.cs.st-andrews.ac.uk/">Conjure-aaS</a> is used to solve these problems. Conjure blocks is an ongoing project.</p>
 <p>See the the <a href="https://github.com/conjure-cp/conjure-blocks">Conjure Blocks repository</a>, the <a href="https://conjure-cp.github.io/conjure-blocks/docs/">Conjure Blocks Documentation</a> and the <a href="https://conjure-cp.github.io/conjure-blocks/">live site</a> for more information.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="useful-links"><a class="header" href="#useful-links">Useful Links</a></h1>
+<h2 id="api-documentation"><a class="header" href="#api-documentation">API Documentation</a></h2>
+<ul>
+<li><a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_cp/index.html">conjure-cp</a></li>
+</ul>
+<!--- This link seems to be dead. Cannot find an equivalent on the docs --->
+<!-- md-dead-link-check: off -->
+<ul>
+<li><a href="https://conjure-cp.github.io/conjure-oxide/docs/tree_morph/index.html">tree-morph</a></li>
+</ul>
+ <!-- md-dead-link-check: on -->
+<ul>
+<li><a href="https://conjure-cp.github.io/conjure-oxide/docs/minion_sys/index.html">minion-sys</a></li>
+</ul>
+<h3 id="internal-crates"><a class="header" href="#internal-crates">Internal crates</a></h3>
+<p>The following crates are internal, and are re-exported by <code>conjure-cp</code>:</p>
+<ul>
+<li><a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_cp_cli/index.html">conjure-cp-cli</a></li>
+<li><a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_cp_core/index.html">conjure-cp-core</a></li>
+<li><a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_cp_essence_macros/">conjure-cp-essence-macros</a></li>
+<li><a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_cp_essence_parser">conjure-cp-essence-parser</a></li>
+<li><a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_cp_rule_macros">conjure-cp-rule-macros</a></li>
+<li><a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_cp_enum_compatibility_macro">conjure-cp-enum-compatibility-macro</a></li>
+</ul>
+<h2 id="code-coverage-1"><a class="header" href="#code-coverage-1">Code Coverage</a></h2>
+<p>Code coverage reports can be found <a href="https://conjure-cp.github.io/conjure-oxide/coverage/main/">here</a>.</p>
+<h2 id="miscellaneous"><a class="header" href="#miscellaneous">Miscellaneous</a></h2>
+<ul>
+<li><a href="https://conjure-cp.github.io/conjure-oxide/tools/essence-feature-usage-stats/">Essence feature usage stats</a></li>
+<li><a href="https://conjure-cp.github.io/conjure-blocks/">Conjure blocks</a></li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="for-interested-students"><a class="header" href="#for-interested-students">For Interested Students</a></h1>
 <p>This project is developed as part of the “Artificial Intelligence for Decision
