@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-f5ad4913.js";
+            window.path_to_searchindex_js = "searchindex-036702ec.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-dfc00831.js"></script>
+        <script src="toc-e3e03d0c.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -3835,118 +3835,6 @@ Picking the first option: Question 1: [or([A_Occurrence[q5] /\ B_Occurrence[q5] 
 <h1 id="lsp-server-client"><a class="header" href="#lsp-server-client">LSP Server-Client</a></h1>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="diagnostics-api"><a class="header" href="#diagnostics-api">Diagnostics API</a></h1>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="syntax-errors"><a class="header" href="#syntax-errors">Syntax Errors</a></h1>
-<p>(Will produce an invalid CST)</p>
-<h3 id="1-missing-token-eg-variable-domain-expression"><a class="header" href="#1-missing-token-eg-variable-domain-expression">1. Missing Token (e.g variable, Domain, Expression)</a></h3>
-<p>Description: expected token is absent
-Detection: Empty node or a missing child node. (MISSING node is inserted)
-Example: missing variable name</p>
-<pre><code class="language-text">find: bool
-</code></pre>
-<p>Example: missing Expression</p>
-<pre><code class="language-text">letting x be 
-</code></pre>
-<h3 id="2-missing-keyword"><a class="header" href="#2-missing-keyword">2. Missing Keyword</a></h3>
-<p>Description: a token appears where a different token/keyword is expected
-Detection: ERROR node containing all the tokens where that failed to match the grammar</p>
-<p>Example: missing colon, <code>int</code> is unexpected (here <code>x</code> and <code>int</code> will be children of the ERROR node)</p>
-<pre><code class="language-text">find x int
-</code></pre>
-<h3 id="3-unexpected-token"><a class="header" href="#3-unexpected-token">3. Unexpected Token</a></h3>
-<p>Description: a token appearing after a valid construct is complete
-Detection: ERROR node containing the extra token (ERROR node will likely be the last child of a valid construct)
-Example: second <code>)</code> is extra</p>
-<pre><code class="language-text">find x: int(1..2))
-</code></pre>
-<h3 id="4-invalid-token"><a class="header" href="#4-invalid-token">4. Invalid Token</a></h3>
-<p>Description: token is malformed or not part of the grammar
-Detection: look for an ERROR node with the invalid token
-Example: <code>@int</code> is not a valid token (ERROR node with <code>@</code>)</p>
-<pre><code class="language-text">find x: @int
-</code></pre>
-<p>Conjure does not identify <code>int</code> at all, just says “Skipped token”, “Missing Domain”
-Tree-Sitter in conjure-oxide sees <code>int</code> as a valid token but has an ERROR node with <code>@</code> before.
-So in Conjure the same error as Missing Token but might make sense to separate due to different CST structures.</p>
-<h3 id="5-unclosed-delimiter"><a class="header" href="#5-unclosed-delimiter">5. Unclosed Delimiter</a></h3>
-<p>Description: unmatched or missing closing bracket, parenthesis, brace
-Detection: MISSING node “)”
-Example: missing <code>)</code></p>
-<pre><code class="language-text">find x: int(1..2
-</code></pre>
-<p>Conjure allows it but since out grammar enforces it Tree-Sitter produces an error.</p>
-<h3 id="6-unsupported-statements"><a class="header" href="#6-unsupported-statements">6. Unsupported Statements</a></h3>
-<p>Description: statement not recognised by Essence grammar
-Detection: ERROR node with the unrecognised statement
-Example:</p>
-<pre><code class="language-text">find x: int(1..5)
-print x 
-</code></pre>
-<p>Conjure doesn’t recognise <code>print x</code> as a separate invalid statement.</p>
-<h3 id="7-general-syntax-error"><a class="header" href="#7-general-syntax-error">7. General Syntax Error</a></h3>
-<p>All the other cases that cause an ERROR node in the CST tree.</p>
-<h1 id="semantic-errors"><a class="header" href="#semantic-errors">Semantic Errors</a></h1>
-<p>(Will produce a valid CST and AST, now can only detected at runtime, e.g type checking)</p>
-<h3 id="1-keywords-as-identifiers"><a class="header" href="#1-keywords-as-identifiers">1. Keywords as Identifiers</a></h3>
-<p>Description: token’s name is not allowed<br>Detection: compare the variable names against the set of keywords
-Example: Keyword “bool” used as a variable name</p>
-<pre><code class="language-text">find bool: bool
-</code></pre>
-<pre><code class="language-text">find x: letting
-</code></pre>
-<p>Conjure doesn’t allow it but Tree-Sitter does so we will have to check as part of semantic checks.</p>
-<h3 id="2-omitted-declaration"><a class="header" href="#2-omitted-declaration">2. Omitted Declaration</a></h3>
-<p>Description: variable not declared
-Detection: save the declared variables and check if the ones used in expressions are in the declared set
-Example: x was not declared before</p>
-<pre><code class="language-text">find y: int (1..4)
-such that x = 5
-</code></pre>
-<h3 id="3-invalid-domain"><a class="header" href="#3-invalid-domain">3. Invalid Domain</a></h3>
-<p>Description: logically or mathematically invalid bounds/domain + infinite domain</p>
-<p>Example: a bigger value before smaller</p>
-<pre><code class="language-text">find x: int(10..5)
-</code></pre>
-<p>Conjure doesn’t flag as error just says no solutions found.</p>
-<p>Example: infinite domain</p>
-<pre><code class="language-text">find x: int(1..) 
-</code></pre>
-<p>Might want to restrict infinite domain with the grammar so it could be a syntax error.</p>
-<h3 id="4-type-mismatch"><a class="header" href="#4-type-mismatch">4. Type Mismatch</a></h3>
-<p>Description: attempt to do an operation on illegal types</p>
-<p>Example: cannot add integer and boolean</p>
-<pre><code class="language-text">letting y be true 
-find x: int (5..10)
-such that 5 + y = 6
-</code></pre>
-<h3 id="5-unsafe-division"><a class="header" href="#5-unsafe-division">5. Unsafe division</a></h3>
-<p>Description: cannot divide/modulo by zero</p>
-<p>Example: cannot divide by zero</p>
-<pre><code class="language-text">find x: int(5..10)
-such that x/0 = 3
-</code></pre>
-<p>Conjure allows, proceeds to run the solver but just outputs no solutions. We should disallow.</p>
-<h3 id="6-invalid-indexing-in-tuples-and-matrices"><a class="header" href="#6-invalid-indexing-in-tuples-and-matrices">6. Invalid indexing in tuples and matrices</a></h3>
-<p>Description: Tuples and matrices are indexed from . Negative, zero or index out of bounds is invalid</p>
-<p>Example: s tuple index of out bounds</p>
-<pre><code class="language-text">letting s be tuple(0,1,1,0)
-letting t be tuple(0,0,0,1)
-find a : bool such that a = (s[5] = t[1]) $ true
-</code></pre>
-<h1 id="possible-semantic-errors-per-statement-type"><a class="header" href="#possible-semantic-errors-per-statement-type">Possible semantic errors per statement type</a></h1>
-<p>(All syntactic errors are relevant for each)</p>
-<h2 id="declarations"><a class="header" href="#declarations">Declarations</a></h2>
-<h3 id="find-statement"><a class="header" href="#find-statement">Find Statement</a></h3>
-<p>(Declaring decision variables)</p>
-<p>Format: <em>“find”</em> <strong>Name</strong> <em>“:”</em> <strong>Domain</strong></p>
-<p>Semantic Errors: Keyword as Token, Invalid Domain</p>
-<h3 id="letting-statement"><a class="header" href="#letting-statement">Letting Statement</a></h3>
-<p>(Declaring aliases)</p>
-<p>Formats: <em>“letting”</em> <strong>Name</strong> <em>“be”</em> <strong>Expression</strong> | <em>“letting”</em> <strong>Name</strong> <em>“be”</em> <em>“domain”</em> <strong>Domain</strong></p>
-<p>Semantic Errors: All except Omitted Declaration</p>
-<h3 id="constraints-1"><a class="header" href="#constraints-1">Constraints</a></h3>
-<p>Format: <em>“such that”</em> list(<strong>Expression</strong>, <em>“,”</em>)</p>
-<p>Semantic Errors: All except for Invalid Domain</p>
 <div style="break-before: page; page-break-before: always;"></div><!--
 author: Yi Xin Chong
 last updated: 3-3-2026
@@ -3959,7 +3847,7 @@ last updated: 3-3-2026
 <li><strong>Syntactic errors</strong> are errors that stem from the tokens in the Essence file not being in the correct syntax when given into the parser.</li>
 <li><strong>Semantic errors</strong> are errors that may pass the syntactic error checking (i.e. the file lines have the correct syntax), but ultimately is unable to be parsed due to errors relating to the entire context of the file.</li>
 </ul>
-<p>To be able to accurately diagnose the Essence files for errors, tests cases have been written for situations that <a href="documentation/diagnostics_api.html">Diagnostics API</a> and <a href="#essence-parser">Native parser</a> might encounter during diagnosing and parsing, referencing the <a href="#syntax-errors-1">Essence Error Classification</a>).</p>
+<p>To be able to accurately diagnose the Essence files for errors, tests cases have been written for situations that <a href="documentation/diagnostics_api.html">Diagnostics API</a> and <a href="#essence-parser">Native parser</a> might encounter during diagnosing and parsing, referencing the <a href="#syntax-errors">Essence Error Classification</a>).</p>
 <h2 id="testing"><a class="header" href="#testing">Testing</a></h2>
 <h3 id="parser"><a class="header" href="#parser">Parser</a></h3>
 <!-- TODO: Roundtrip testing does not exist -- waiting on an update from LSP team -->
@@ -4665,7 +4553,7 @@ let op_type = &amp;source_code[op.start_byte()..op.end_byte()];
 <p>Find and letting statements are parsed relatively intuitively. For find statements, the list of variables is iterated over and each is added to a hash map as the key. Then, the domain is parsed and added as the value for each variable it applies to. Once all variables and domains are parsed, the hash map is returned and the caller function iterates over it and adds each pair to the <code>SymbolTable</code>. For letting statements, a new <code>SymbolTable</code> is created. The variables are again iterated over and added to the table. Letting statements can either specify a domain or an expression for the variables so the type of node is checked and either parsed as an expression or domain before being added to the table. The <code>SymbolTable</code> is returned and the caller function adds it to the existing <code>SymbolTable</code> of the <code>Model</code>.</p>
 <h2 id="ground-vs-unresolved-domains"><a class="header" href="#ground-vs-unresolved-domains">Ground vs Unresolved Domains</a></h2>
 <p>The parser supports both <strong>ground domains</strong> (fully specified, e.g., <code>int(1..10)</code>) and <strong>unresolved domains</strong> (containing variable references, e.g., <code>int(1..n)</code>). For unresolved domains, the variable pointer must be retrieved from the existing <code>SymbolTable</code>, which was described in the previous section. Unresolved domains are resolved during later stages of processing once all variables are known.</p>
-<h2 id="constraints-2"><a class="header" href="#constraints-2">Constraints</a></h2>
+<h2 id="constraints-1"><a class="header" href="#constraints-1">Constraints</a></h2>
 <p>Adding constraints to the overall constraints <code>Expression</code> requires nesting <code>Expression</code> objects. Each constraint is parsed and then added to the model using the <code>add_constraints</code> function.</p>
 <p>Following the layered dispatch pattern, expressions are organized into types (again mirroring the grammar):</p>
 <ul>
@@ -4724,7 +4612,7 @@ let op_type = &amp;source_code[op.start_byte()..op.end_byte()];
 <div style="break-before: page; page-break-before: always;"></div>
 <p><strong>CST</strong> - Concrete Syntax Tree. Generated by the tree-sitter parser when parsing an essence file.</p>
 <p><strong>AST</strong> - Abstract Syntax Tree. Generated when the CST is parsed and Model struct is created.</p>
-<h1 id="syntax-errors-1"><a class="header" href="#syntax-errors-1">Syntax Errors</a></h1>
+<h1 id="syntax-errors"><a class="header" href="#syntax-errors">Syntax Errors</a></h1>
 <p>Surface level mistakes in the Essence format.
 Lead to an invalid CST. They are caught by the tree-sitter when an Essence expression does not match any rules in the current <a href="https://github.com/conjure-cp/conjure-oxide/blob/main/crates/tree-sitter-essence/grammar.js">grammar</a> and cause the CST to have <code>ERROR</code> nodes.</p>
 <p>Detected by inspecting and contextualising the CST.</p>
@@ -4773,9 +4661,9 @@ print x
 </code></pre>
 <h3 id="4-general-syntax-error"><a class="header" href="#4-general-syntax-error">4. General Syntax Error</a></h3>
 <p>Cases that cause an error in the CST but did not fall into any of the previous categories.</p>
-<h1 id="semantic-errors-1"><a class="header" href="#semantic-errors-1">Semantic Errors</a></h1>
+<h1 id="semantic-errors"><a class="header" href="#semantic-errors">Semantic Errors</a></h1>
 <p>These errors concern the logical context of an expression rather than its surface-level formatting. As a result, the expression may conform to the grammar and produce a valid CST, but still fail to parse into a valid AST. Such errors are detected during the phase that converts the CST into a <code>Model</code> struct.</p>
-<h2 id="1-keywords-as-identifiers-1"><a class="header" href="#1-keywords-as-identifiers-1">1. Keywords as Identifiers</a></h2>
+<h2 id="1-keywords-as-identifiers"><a class="header" href="#1-keywords-as-identifiers">1. Keywords as Identifiers</a></h2>
 <h3 id="description-3"><a class="header" href="#description-3">Description</a></h3>
 <p>Using grammar keywords (e.g <code>find</code>, <code>bool</code>) as a variable name.</p>
 <h3 id="detection-3"><a class="header" href="#detection-3">Detection</a></h3>
@@ -4786,7 +4674,7 @@ print x
 <h3 id="example-2-keyword-letting-used-as-an-identifier"><a class="header" href="#example-2-keyword-letting-used-as-an-identifier">Example 2: Keyword <code>letting</code> used as an identifier</a></h3>
 <pre><code class="language-text">find letting,b,c: int(1..3)
 </code></pre>
-<h2 id="2-omitted-declaration-1"><a class="header" href="#2-omitted-declaration-1">2. Omitted Declaration</a></h2>
+<h2 id="2-omitted-declaration"><a class="header" href="#2-omitted-declaration">2. Omitted Declaration</a></h2>
 <h3 id="description-4"><a class="header" href="#description-4">Description</a></h3>
 <p>Variable used but not declared.</p>
 <h3 id="detection-4"><a class="header" href="#detection-4">Detection</a></h3>
@@ -4795,14 +4683,14 @@ print x
 <pre><code class="language-text">find y: int (1..4)
 such that x = 5
 </code></pre>
-<h2 id="3-invalid-domain-1"><a class="header" href="#3-invalid-domain-1">3. Invalid Domain</a></h2>
+<h2 id="3-invalid-domain"><a class="header" href="#3-invalid-domain">3. Invalid Domain</a></h2>
 <p>(not yet supported)</p>
 <h3 id="description-5"><a class="header" href="#description-5">Description</a></h3>
 <p>Logically or mathematically invalid bounds.</p>
 <h3 id="example-a-bigger-value-before-smaller"><a class="header" href="#example-a-bigger-value-before-smaller">Example: a bigger value before smaller</a></h3>
 <pre><code class="language-text">find x: int(10..5)
 </code></pre>
-<h2 id="4-type-mismatch-1"><a class="header" href="#4-type-mismatch-1">4. Type Mismatch</a></h2>
+<h2 id="4-type-mismatch"><a class="header" href="#4-type-mismatch">4. Type Mismatch</a></h2>
 <h3 id="description-6"><a class="header" href="#description-6">Description</a></h3>
 <p>Attempt to do an operation on illegal types.</p>
 <h3 id="detection-5"><a class="header" href="#detection-5">Detection</a></h3>
@@ -4812,7 +4700,7 @@ such that x = 5
 find x: int (5..10)
 such that 5 + y = 6
 </code></pre>
-<h2 id="5-unsafe-division-1"><a class="header" href="#5-unsafe-division-1">5. Unsafe division</a></h2>
+<h2 id="5-unsafe-division"><a class="header" href="#5-unsafe-division">5. Unsafe division</a></h2>
 <p>(not yet implemented)</p>
 <h3 id="description-7"><a class="header" href="#description-7">Description</a></h3>
 <p>Attempt to divide/modulo by zero.</p>
