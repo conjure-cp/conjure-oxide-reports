@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["ConjureParseError","FatalParseError","ParseErrorCollection"],"struct":["RecoverableParseError"]};
+window.SIDEBAR_ITEMS = {"enum":["ConjureParseError","FatalParseError","ParseErrorCollection"],"struct":["InstantiateModelError","RecoverableParseError"]};
