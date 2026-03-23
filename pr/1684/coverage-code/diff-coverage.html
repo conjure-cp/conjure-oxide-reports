@@ -1,0 +1,334 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+        <title>Diff Coverage</title>
+        <style>
+            .src-snippet { margin-top: 2em; }
+            .src-name { font-weight: bold; }
+            .snippets {
+                border-top: 1px solid #bdbdbd;
+                border-bottom: 1px solid #bdbdbd;
+            }
+            pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.hll { background-color: #ffcccc }
+.c { color: #3D7B7B; font-style: italic } /* Comment */
+.err { border: 1px solid #F00 } /* Error */
+.k { color: #008000; font-weight: bold } /* Keyword */
+.o { color: #666 } /* Operator */
+.ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.cp { color: #9C6500 } /* Comment.Preproc */
+.cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.gd { color: #A00000 } /* Generic.Deleted */
+.ge { font-style: italic } /* Generic.Emph */
+.ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.gr { color: #E40000 } /* Generic.Error */
+.gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.gi { color: #008400 } /* Generic.Inserted */
+.go { color: #717171 } /* Generic.Output */
+.gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.gs { font-weight: bold } /* Generic.Strong */
+.gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.gt { color: #04D } /* Generic.Traceback */
+.kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.kp { color: #008000 } /* Keyword.Pseudo */
+.kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.kt { color: #B00040 } /* Keyword.Type */
+.m { color: #666 } /* Literal.Number */
+.s { color: #BA2121 } /* Literal.String */
+.na { color: #687822 } /* Name.Attribute */
+.nb { color: #008000 } /* Name.Builtin */
+.nc { color: #00F; font-weight: bold } /* Name.Class */
+.no { color: #800 } /* Name.Constant */
+.nd { color: #A2F } /* Name.Decorator */
+.ni { color: #717171; font-weight: bold } /* Name.Entity */
+.ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.nf { color: #00F } /* Name.Function */
+.nl { color: #767600 } /* Name.Label */
+.nn { color: #00F; font-weight: bold } /* Name.Namespace */
+.nt { color: #008000; font-weight: bold } /* Name.Tag */
+.nv { color: #19177C } /* Name.Variable */
+.ow { color: #A2F; font-weight: bold } /* Operator.Word */
+.w { color: #BBB } /* Text.Whitespace */
+.mb { color: #666 } /* Literal.Number.Bin */
+.mf { color: #666 } /* Literal.Number.Float */
+.mh { color: #666 } /* Literal.Number.Hex */
+.mi { color: #666 } /* Literal.Number.Integer */
+.mo { color: #666 } /* Literal.Number.Oct */
+.sa { color: #BA2121 } /* Literal.String.Affix */
+.sb { color: #BA2121 } /* Literal.String.Backtick */
+.sc { color: #BA2121 } /* Literal.String.Char */
+.dl { color: #BA2121 } /* Literal.String.Delimiter */
+.sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.s2 { color: #BA2121 } /* Literal.String.Double */
+.se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.sh { color: #BA2121 } /* Literal.String.Heredoc */
+.si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.sx { color: #008000 } /* Literal.String.Other */
+.sr { color: #A45A77 } /* Literal.String.Regex */
+.s1 { color: #BA2121 } /* Literal.String.Single */
+.ss { color: #19177C } /* Literal.String.Symbol */
+.bp { color: #008000 } /* Name.Builtin.Pseudo */
+.fm { color: #00F } /* Name.Function.Magic */
+.vc { color: #19177C } /* Name.Variable.Class */
+.vg { color: #19177C } /* Name.Variable.Global */
+.vi { color: #19177C } /* Name.Variable.Instance */
+.vm { color: #19177C } /* Name.Variable.Magic */
+.il { color: #666 } /* Literal.Number.Integer.Long */
+        </style>
+    </head>
+    <body>
+        <h1>Diff Coverage</h1>
+        <p>Diff: upstream/main...HEAD, staged and unstaged changes</p>
+        <ul>
+            <li><b>Total</b>: 154 lines</li>
+            <li><b>Missing</b>: 30 lines</li>
+            <li><b>Coverage</b>: 80%</li>
+        </ul>
+        <table border="1">
+            <tr>
+                <th>Source File</th>
+                <th>Diff Coverage (%)</th>
+                <th>Missing Lines</th>
+            </tr>
+            <tr>
+                <td>tests-integration/src/runners/integration_tests.rs</td>
+                <td>100%</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>tests-integration/src/runners/runcase.rs</td>
+                <td>100%</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>tests-integration/src/test.rs</td>
+                <td>77.9%</td>
+                <td>74,82-83,85-86,89-90,92-93,102,105,108-111,134,170-171,178,325-328,330,332,334-336,340,342</td>
+            </tr>
+        </table>
+        <div class="src-snippet">
+            <div class="src-name">tests-integration/src/test.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span></pre></div></td><td class="code"><div><pre><span></span><a id="tests-integration/src/test.rs-70" name="tests-integration/src/test.rs-70"></a><span class="w">                    </span><span class="n">std</span><span class="p">::</span><span class="n">fs</span><span class="p">::</span><span class="n">read_to_string</span><span class="p">(</span><span class="fm">format!</span><span class="p">(</span><span class="s">&quot;{path}/config.toml&quot;</span><span class="p">))</span>
+<a id="tests-integration/src/test.rs-71" name="tests-integration/src/test.rs-71"></a><span class="w">                </span><span class="p">{</span>
+<a id="tests-integration/src/test.rs-72" name="tests-integration/src/test.rs-72"></a><span class="w">                    </span><span class="n">toml</span><span class="p">::</span><span class="n">from_str</span><span class="p">(</span><span class="o">&amp;</span><span class="n">config_contents</span><span class="p">).</span><span class="n">unwrap</span><span class="p">()</span>
+<a id="tests-integration/src/test.rs-73" name="tests-integration/src/test.rs-73"></a><span class="w">                </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="tests-integration/src/test.rs-74" name="tests-integration/src/test.rs-74"></a><span class="hll"><span class="w">                    </span><span class="nb">Default</span><span class="p">::</span><span class="n">default</span><span class="p">()</span>
+</span><a id="tests-integration/src/test.rs-75" name="tests-integration/src/test.rs-75"></a><span class="w">                </span><span class="p">};</span>
+<a id="tests-integration/src/test.rs-76" name="tests-integration/src/test.rs-76"></a>
+<a id="tests-integration/src/test.rs-77" name="tests-integration/src/test.rs-77"></a><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="o">!</span><span class="n">config</span><span class="p">.</span><span class="n">skip</span><span class="w"> </span><span class="p">{</span>
+<a id="tests-integration/src/test.rs-78" name="tests-integration/src/test.rs-78"></a><span class="w">                    </span><span class="kd">let</span><span class="w"> </span><span class="n">validate_with_conjure</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">config</span><span class="p">.</span><span class="n">validate_with_conjure</span><span class="p">;</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span>
+<span class="normal">86</span>
+<span class="normal">87</span>
+<span class="normal">88</span>
+<span class="normal">89</span>
+<span class="normal">90</span>
+<span class="normal">91</span>
+<span class="normal">92</span>
+<span class="normal">93</span>
+<span class="normal">94</span>
+<span class="normal">95</span>
+<span class="normal">96</span>
+<span class="normal">97</span></pre></div></td><td class="code"><div><pre><span></span><a id="tests-integration/src/test.rs-78" name="tests-integration/src/test.rs-78"></a><span class="w">                    </span><span class="kd">let</span><span class="w"> </span><span class="n">validate_with_conjure</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">config</span><span class="p">.</span><span class="n">validate_with_conjure</span><span class="p">;</span>
+<a id="tests-integration/src/test.rs-79" name="tests-integration/src/test.rs-79"></a><span class="w">                    </span><span class="kd">let</span><span class="w"> </span><span class="n">minion_discrete_threshold</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">config</span><span class="p">.</span><span class="n">minion_discrete_threshold</span><span class="p">;</span>
+<a id="tests-integration/src/test.rs-80" name="tests-integration/src/test.rs-80"></a>
+<a id="tests-integration/src/test.rs-81" name="tests-integration/src/test.rs-81"></a><span class="w">                    </span><span class="kd">let</span><span class="w"> </span><span class="n">parsers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">config</span><span class="p">.</span><span class="n">configured_parsers</span><span class="p">().</span><span class="n">map_err</span><span class="p">(</span><span class="o">|</span><span class="n">err</span><span class="o">|</span><span class="w"> </span><span class="p">{</span>
+<a id="tests-integration/src/test.rs-82" name="tests-integration/src/test.rs-82"></a><span class="hll"><span class="w">                        </span><span class="n">std</span><span class="p">::</span><span class="n">io</span><span class="p">::</span><span class="n">Error</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="n">std</span><span class="p">::</span><span class="n">io</span><span class="p">::</span><span class="n">ErrorKind</span><span class="p">::</span><span class="n">InvalidInput</span><span class="p">,</span><span class="w"> </span><span class="n">err</span><span class="p">)</span>
+</span><a id="tests-integration/src/test.rs-83" name="tests-integration/src/test.rs-83"></a><span class="hll"><span class="w">                    </span><span class="p">})</span><span class="o">?</span><span class="p">;</span>
+</span><a id="tests-integration/src/test.rs-84" name="tests-integration/src/test.rs-84"></a><span class="w">                    </span><span class="kd">let</span><span class="w"> </span><span class="n">rewriters</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">config</span><span class="p">.</span><span class="n">configured_rewriters</span><span class="p">().</span><span class="n">map_err</span><span class="p">(</span><span class="o">|</span><span class="n">err</span><span class="o">|</span><span class="w"> </span><span class="p">{</span>
+<a id="tests-integration/src/test.rs-85" name="tests-integration/src/test.rs-85"></a><span class="hll"><span class="w">                        </span><span class="n">std</span><span class="p">::</span><span class="n">io</span><span class="p">::</span><span class="n">Error</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="n">std</span><span class="p">::</span><span class="n">io</span><span class="p">::</span><span class="n">ErrorKind</span><span class="p">::</span><span class="n">InvalidInput</span><span class="p">,</span><span class="w"> </span><span class="n">err</span><span class="p">)</span>
+</span><a id="tests-integration/src/test.rs-86" name="tests-integration/src/test.rs-86"></a><span class="hll"><span class="w">                    </span><span class="p">})</span><span class="o">?</span><span class="p">;</span>
+</span><a id="tests-integration/src/test.rs-87" name="tests-integration/src/test.rs-87"></a><span class="w">                    </span><span class="kd">let</span><span class="w"> </span><span class="n">comprehension_expanders</span><span class="w"> </span><span class="o">=</span>
+<a id="tests-integration/src/test.rs-88" name="tests-integration/src/test.rs-88"></a><span class="w">                        </span><span class="n">config</span><span class="p">.</span><span class="n">configured_comprehension_expanders</span><span class="p">().</span><span class="n">map_err</span><span class="p">(</span><span class="o">|</span><span class="n">err</span><span class="o">|</span><span class="w"> </span><span class="p">{</span>
+<a id="tests-integration/src/test.rs-89" name="tests-integration/src/test.rs-89"></a><span class="hll"><span class="w">                            </span><span class="n">std</span><span class="p">::</span><span class="n">io</span><span class="p">::</span><span class="n">Error</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="n">std</span><span class="p">::</span><span class="n">io</span><span class="p">::</span><span class="n">ErrorKind</span><span class="p">::</span><span class="n">InvalidInput</span><span class="p">,</span><span class="w"> </span><span class="n">err</span><span class="p">)</span>
+</span><a id="tests-integration/src/test.rs-90" name="tests-integration/src/test.rs-90"></a><span class="hll"><span class="w">                        </span><span class="p">})</span><span class="o">?</span><span class="p">;</span>
+</span><a id="tests-integration/src/test.rs-91" name="tests-integration/src/test.rs-91"></a><span class="w">                    </span><span class="kd">let</span><span class="w"> </span><span class="n">solvers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">config</span><span class="p">.</span><span class="n">configured_solvers</span><span class="p">().</span><span class="n">map_err</span><span class="p">(</span><span class="o">|</span><span class="n">err</span><span class="o">|</span><span class="w"> </span><span class="p">{</span>
+<a id="tests-integration/src/test.rs-92" name="tests-integration/src/test.rs-92"></a><span class="hll"><span class="w">                        </span><span class="n">std</span><span class="p">::</span><span class="n">io</span><span class="p">::</span><span class="n">Error</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="n">std</span><span class="p">::</span><span class="n">io</span><span class="p">::</span><span class="n">ErrorKind</span><span class="p">::</span><span class="n">InvalidInput</span><span class="p">,</span><span class="w"> </span><span class="n">err</span><span class="p">)</span>
+</span><a id="tests-integration/src/test.rs-93" name="tests-integration/src/test.rs-93"></a><span class="hll"><span class="w">                    </span><span class="p">})</span><span class="o">?</span><span class="p">;</span>
+</span><a id="tests-integration/src/test.rs-94" name="tests-integration/src/test.rs-94"></a><span class="w">                    </span><span class="c1">// Conjure output depends only on the input model, so cache it once per test case.</span>
+<a id="tests-integration/src/test.rs-95" name="tests-integration/src/test.rs-95"></a><span class="w">                    </span><span class="kd">let</span><span class="w"> </span><span class="n">model_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="fm">format!</span><span class="p">(</span><span class="s">&quot;{path}/{essence_base}.{extension}&quot;</span><span class="p">);</span>
+<a id="tests-integration/src/test.rs-96" name="tests-integration/src/test.rs-96"></a><span class="w">                    </span><span class="kd">let</span><span class="w"> </span><span class="n">conjure_solutions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">accept</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">validate_with_conjure</span><span class="w"> </span><span class="p">{</span>
+<a id="tests-integration/src/test.rs-97" name="tests-integration/src/test.rs-97"></a><span class="w">                        </span><span class="fm">eprintln!</span><span class="p">(</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span></pre></div></td><td class="code"><div><pre><span></span><a id="tests-integration/src/test.rs-98" name="tests-integration/src/test.rs-98"></a><span class="w">                            </span><span class="s">&quot;[integration] loading Conjure reference solutions for {model_path}&quot;</span>
+<a id="tests-integration/src/test.rs-99" name="tests-integration/src/test.rs-99"></a><span class="w">                        </span><span class="p">);</span>
+<a id="tests-integration/src/test.rs-100" name="tests-integration/src/test.rs-100"></a><span class="w">                        </span><span class="nb">Some</span><span class="p">(</span><span class="n">Arc</span><span class="p">::</span><span class="n">new</span><span class="p">(</span>
+<a id="tests-integration/src/test.rs-101" name="tests-integration/src/test.rs-101"></a><span class="w">                            </span><span class="n">get_solutions_from_conjure</span><span class="p">(</span><span class="o">&amp;</span><span class="n">model_path</span><span class="p">,</span><span class="w"> </span><span class="nb">None</span><span class="p">,</span><span class="w"> </span><span class="nb">Default</span><span class="p">::</span><span class="n">default</span><span class="p">()).</span><span class="n">map_err</span><span class="p">(</span><span class="o">|</span><span class="n">err</span><span class="o">|</span><span class="w"> </span><span class="p">{</span>
+<a id="tests-integration/src/test.rs-102" name="tests-integration/src/test.rs-102"></a><span class="hll"><span class="w">                                </span><span class="n">std</span><span class="p">::</span><span class="n">io</span><span class="p">::</span><span class="n">Error</span><span class="p">::</span><span class="n">other</span><span class="p">(</span><span class="fm">format!</span><span class="p">(</span>
+</span><a id="tests-integration/src/test.rs-103" name="tests-integration/src/test.rs-103"></a><span class="w">                                   </span><span class="s">&quot;failed to fetch Conjure reference solutions for {model_path}: {err}&quot;</span>
+<a id="tests-integration/src/test.rs-104" name="tests-integration/src/test.rs-104"></a><span class="w">                                </span><span class="p">))</span>
+<a id="tests-integration/src/test.rs-105" name="tests-integration/src/test.rs-105"></a><span class="hll"><span class="w">                            </span><span class="p">})</span><span class="o">?</span><span class="p">,</span>
+</span><a id="tests-integration/src/test.rs-106" name="tests-integration/src/test.rs-106"></a><span class="w">                        </span><span class="p">))</span>
+<a id="tests-integration/src/test.rs-107" name="tests-integration/src/test.rs-107"></a><span class="w">                    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="tests-integration/src/test.rs-108" name="tests-integration/src/test.rs-108"></a><span class="hll"><span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="n">accept</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">validate_with_conjure</span><span class="w"> </span><span class="p">{</span>
+</span><a id="tests-integration/src/test.rs-109" name="tests-integration/src/test.rs-109"></a><span class="hll"><span class="w">                            </span><span class="fm">eprintln!</span><span class="p">(</span><span class="s">&quot;[integration] skipping Conjure validation for {model_path}&quot;</span><span class="p">);</span>
+</span><a id="tests-integration/src/test.rs-110" name="tests-integration/src/test.rs-110"></a><span class="hll"><span class="w">                        </span><span class="p">}</span>
+</span><a id="tests-integration/src/test.rs-111" name="tests-integration/src/test.rs-111"></a><span class="hll"><span class="w">                        </span><span class="nb">None</span>
+</span><a id="tests-integration/src/test.rs-112" name="tests-integration/src/test.rs-112"></a><span class="w">                    </span><span class="p">};</span>
+<a id="tests-integration/src/test.rs-113" name="tests-integration/src/test.rs-113"></a>
+<a id="tests-integration/src/test.rs-114" name="tests-integration/src/test.rs-114"></a><span class="w">                    </span><span class="k">for</span><span class="w"> </span><span class="n">parser</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">parsers</span><span class="w"> </span><span class="p">{</span>
+<a id="tests-integration/src/test.rs-115" name="tests-integration/src/test.rs-115"></a><span class="w">                        </span><span class="k">for</span><span class="w"> </span><span class="n">rewriter</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">rewriters</span><span class="p">.</span><span class="n">clone</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span></pre></div></td><td class="code"><div><pre><span></span><a id="tests-integration/src/test.rs-130" name="tests-integration/src/test.rs-130"></a><span class="w">                                    </span><span class="kd">let</span><span class="w"> </span><span class="n">file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">File</span><span class="p">::</span><span class="n">create</span><span class="p">(</span><span class="fm">format!</span><span class="p">(</span>
+<a id="tests-integration/src/test.rs-131" name="tests-integration/src/test.rs-131"></a><span class="w">                                        </span><span class="s">&quot;{path}/{}-{}-generated-rule-trace.txt&quot;</span><span class="p">,</span>
+<a id="tests-integration/src/test.rs-132" name="tests-integration/src/test.rs-132"></a><span class="w">                                        </span><span class="n">run_case</span><span class="p">.</span><span class="n">case_name</span><span class="p">,</span>
+<a id="tests-integration/src/test.rs-133" name="tests-integration/src/test.rs-133"></a><span class="w">                                        </span><span class="n">run_case</span><span class="p">.</span><span class="n">solver</span><span class="p">.</span><span class="n">as_str</span><span class="p">()</span>
+<a id="tests-integration/src/test.rs-134" name="tests-integration/src/test.rs-134"></a><span class="hll"><span class="w">                                    </span><span class="p">))</span><span class="o">?</span><span class="p">;</span>
+</span><a id="tests-integration/src/test.rs-135" name="tests-integration/src/test.rs-135"></a><span class="w">                                    </span><span class="kd">let</span><span class="w"> </span><span class="n">subscriber</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Arc</span><span class="p">::</span><span class="n">new</span><span class="p">(</span>
+<a id="tests-integration/src/test.rs-136" name="tests-integration/src/test.rs-136"></a><span class="w">                                        </span><span class="n">tracing_subscriber</span><span class="p">::</span><span class="n">registry</span><span class="p">().</span><span class="n">with</span><span class="p">(</span>
+<a id="tests-integration/src/test.rs-137" name="tests-integration/src/test.rs-137"></a><span class="w">                                            </span><span class="n">fmt</span><span class="p">::</span><span class="n">layer</span><span class="p">()</span>
+<a id="tests-integration/src/test.rs-138" name="tests-integration/src/test.rs-138"></a><span class="w">                                                </span><span class="p">.</span><span class="n">with_writer</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span></pre></div></td><td class="code"><div><pre><span></span><a id="tests-integration/src/test.rs-166" name="tests-integration/src/test.rs-166"></a><span class="w">                                            </span><span class="n">accept</span><span class="p">,</span>
+<a id="tests-integration/src/test.rs-167" name="tests-integration/src/test.rs-167"></a><span class="w">                                        </span><span class="p">)</span>
+<a id="tests-integration/src/test.rs-168" name="tests-integration/src/test.rs-168"></a><span class="w">                                    </span><span class="p">})</span>
+<a id="tests-integration/src/test.rs-169" name="tests-integration/src/test.rs-169"></a><span class="w">                                    </span><span class="p">.</span><span class="n">map_err</span><span class="p">(</span><span class="o">|</span><span class="n">err</span><span class="o">|</span><span class="w"> </span><span class="p">{</span>
+<a id="tests-integration/src/test.rs-170" name="tests-integration/src/test.rs-170"></a><span class="hll"><span class="w">                                        </span><span class="n">std</span><span class="p">::</span><span class="n">io</span><span class="p">::</span><span class="n">Error</span><span class="p">::</span><span class="n">other</span><span class="p">(</span><span class="fm">format!</span><span class="p">(</span><span class="s">&quot;{run_label}: {err}&quot;</span><span class="p">))</span>
+</span><a id="tests-integration/src/test.rs-171" name="tests-integration/src/test.rs-171"></a><span class="hll"><span class="w">                                    </span><span class="p">})</span><span class="o">?</span><span class="p">;</span>
+</span><a id="tests-integration/src/test.rs-172" name="tests-integration/src/test.rs-172"></a><span class="w">                                </span><span class="p">}</span>
+<a id="tests-integration/src/test.rs-173" name="tests-integration/src/test.rs-173"></a><span class="w">                            </span><span class="p">}</span>
+<a id="tests-integration/src/test.rs-174" name="tests-integration/src/test.rs-174"></a><span class="w">                        </span><span class="p">}</span>
+<a id="tests-integration/src/test.rs-175" name="tests-integration/src/test.rs-175"></a><span class="w">                    </span><span class="p">}</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span></pre></div></td><td class="code"><div><pre><span></span><a id="tests-integration/src/test.rs-174" name="tests-integration/src/test.rs-174"></a><span class="w">                        </span><span class="p">}</span>
+<a id="tests-integration/src/test.rs-175" name="tests-integration/src/test.rs-175"></a><span class="w">                    </span><span class="p">}</span>
+<a id="tests-integration/src/test.rs-176" name="tests-integration/src/test.rs-176"></a><span class="w">                </span><span class="p">}</span>
+<a id="tests-integration/src/test.rs-177" name="tests-integration/src/test.rs-177"></a><span class="w">            </span><span class="p">}</span>
+<a id="tests-integration/src/test.rs-178" name="tests-integration/src/test.rs-178"></a><span class="hll"><span class="w">        </span><span class="p">}</span>
+</span><a id="tests-integration/src/test.rs-179" name="tests-integration/src/test.rs-179"></a><span class="w">    </span><span class="p">}</span>
+<a id="tests-integration/src/test.rs-180" name="tests-integration/src/test.rs-180"></a>
+<a id="tests-integration/src/test.rs-181" name="tests-integration/src/test.rs-181"></a><span class="w">    </span><span class="c1">// Custom Tests</span>
+<a id="tests-integration/src/test.rs-182" name="tests-integration/src/test.rs-182"></a><span class="w">    </span><span class="c1">// let dest_custom = Path::new(&amp;out_dir).join(&quot;gen_tests_custom.rs&quot;);</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">321</span>
+<span class="normal">322</span>
+<span class="normal">323</span>
+<span class="normal">324</span>
+<span class="normal">325</span>
+<span class="normal">326</span>
+<span class="normal">327</span>
+<span class="normal">328</span>
+<span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span>
+<span class="normal">332</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span>
+<span class="normal">338</span>
+<span class="normal">339</span>
+<span class="normal">340</span>
+<span class="normal">341</span>
+<span class="normal">342</span>
+<span class="normal">343</span>
+<span class="normal">344</span>
+<span class="normal">345</span>
+<span class="normal">346</span></pre></div></td><td class="code"><div><pre><span></span><a id="tests-integration/src/test.rs-321" name="tests-integration/src/test.rs-321"></a>
+<a id="tests-integration/src/test.rs-322" name="tests-integration/src/test.rs-322"></a><span class="w">    </span><span class="nb">Ok</span><span class="p">(())</span>
+<a id="tests-integration/src/test.rs-323" name="tests-integration/src/test.rs-323"></a><span class="p">}</span>
+<a id="tests-integration/src/test.rs-324" name="tests-integration/src/test.rs-324"></a>
+<a id="tests-integration/src/test.rs-325" name="tests-integration/src/test.rs-325"></a><span class="hll"><span class="k">fn</span><span class="w"> </span><span class="nf">read_config_or_default</span><span class="p">(</span><span class="n">path</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="kt">str</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">TestConfig</span><span class="w"> </span><span class="p">{</span>
+</span><a id="tests-integration/src/test.rs-326" name="tests-integration/src/test.rs-326"></a><span class="hll"><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">config_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="fm">format!</span><span class="p">(</span><span class="s">&quot;{}/config.toml&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">path</span><span class="p">);</span>
+</span><a id="tests-integration/src/test.rs-327" name="tests-integration/src/test.rs-327"></a><span class="hll"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nb">Ok</span><span class="p">(</span><span class="n">contents</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="p">::</span><span class="n">fs</span><span class="p">::</span><span class="n">read_to_string</span><span class="p">(</span><span class="o">&amp;</span><span class="n">config_path</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><a id="tests-integration/src/test.rs-328" name="tests-integration/src/test.rs-328"></a><span class="hll"><span class="w">        </span><span class="n">toml</span><span class="p">::</span><span class="n">from_str</span><span class="p">(</span><span class="o">&amp;</span><span class="n">contents</span><span class="p">).</span><span class="n">unwrap_or_default</span><span class="p">()</span>
+</span><a id="tests-integration/src/test.rs-329" name="tests-integration/src/test.rs-329"></a><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="tests-integration/src/test.rs-330" name="tests-integration/src/test.rs-330"></a><span class="hll"><span class="w">        </span><span class="n">TestConfig</span><span class="p">::</span><span class="n">default</span><span class="p">()</span>
+</span><a id="tests-integration/src/test.rs-331" name="tests-integration/src/test.rs-331"></a><span class="w">    </span><span class="p">}</span>
+<a id="tests-integration/src/test.rs-332" name="tests-integration/src/test.rs-332"></a><span class="hll"><span class="p">}</span>
+</span><a id="tests-integration/src/test.rs-333" name="tests-integration/src/test.rs-333"></a>
+<a id="tests-integration/src/test.rs-334" name="tests-integration/src/test.rs-334"></a><span class="hll"><span class="k">fn</span><span class="w"> </span><span class="nf">get_ignore_attr</span><span class="p">(</span><span class="n">cfg</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">TestConfig</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nb">String</span><span class="w"> </span><span class="p">{</span>
+</span><a id="tests-integration/src/test.rs-335" name="tests-integration/src/test.rs-335"></a><span class="hll"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">cfg</span><span class="p">.</span><span class="n">skip</span><span class="w"> </span><span class="p">{</span>
+</span><a id="tests-integration/src/test.rs-336" name="tests-integration/src/test.rs-336"></a><span class="hll"><span class="w">        </span><span class="nb">String</span><span class="p">::</span><span class="n">from</span><span class="p">(</span>
+</span><a id="tests-integration/src/test.rs-337" name="tests-integration/src/test.rs-337"></a><span class="w">            </span><span class="s">&quot;#[ignore = </span><span class="se">\&quot;</span><span class="s">this test has been disabled (&#39;skip=true&#39; in its config.toml)</span><span class="se">\&quot;</span><span class="s">]</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span>
+<a id="tests-integration/src/test.rs-338" name="tests-integration/src/test.rs-338"></a><span class="w">        </span><span class="p">)</span>
+<a id="tests-integration/src/test.rs-339" name="tests-integration/src/test.rs-339"></a><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="tests-integration/src/test.rs-340" name="tests-integration/src/test.rs-340"></a><span class="hll"><span class="w">        </span><span class="nb">String</span><span class="p">::</span><span class="n">new</span><span class="p">()</span>
+</span><a id="tests-integration/src/test.rs-341" name="tests-integration/src/test.rs-341"></a><span class="w">    </span><span class="p">}</span>
+<a id="tests-integration/src/test.rs-342" name="tests-integration/src/test.rs-342"></a><span class="hll"><span class="p">}</span>
+</span><a id="tests-integration/src/test.rs-343" name="tests-integration/src/test.rs-343"></a>
+<a id="tests-integration/src/test.rs-344" name="tests-integration/src/test.rs-344"></a><span class="c1">// fn write_integration_test(</span>
+<a id="tests-integration/src/test.rs-345" name="tests-integration/src/test.rs-345"></a><span class="c1">//     file: &amp;mut File,</span>
+<a id="tests-integration/src/test.rs-346" name="tests-integration/src/test.rs-346"></a><span class="c1">//     path: String,</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+    </body>
+</html>
