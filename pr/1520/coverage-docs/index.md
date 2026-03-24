@@ -1,11 +1,11 @@
 # RustDoc Coverage Report
 
 **conjure-cp:** 0% with examples, 25% documented -- 0/1/4
-**conjure-cp-cli:** 0% with examples, 41% documented -- 0/45/111
-**conjure-cp-core:** 4% with examples, 51% documented -- 23/303/593
+**conjure-cp-cli:** 0% with examples, 41% documented -- 0/45/110
+**conjure-cp-core:** 4% with examples, 51% documented -- 23/304/595
 **conjure-cp-enum-compatibility-macro:** 50% with examples, 100% documented -- 1/2/2
 **conjure-cp-essence-macros:** 67% with examples, 67% documented -- 2/2/3
-**conjure-cp-essence-parser:** 0% with examples, 16% documented -- 0/22/140
+**conjure-cp-essence-parser:** 0% with examples, 17% documented -- 0/24/144
 **conjure-cp-lsp:** 0% with examples, 0% documented -- 0/0/28
 **conjure-cp-rule-macros:** 33% with examples, 67% documented -- 1/2/3
 **conjure-cp-rules:** 0% with examples, 100% documented -- 0/1/1
@@ -14,7 +14,7 @@
 **tree-sitter-essence:** 33% with examples, 100% documented -- 1/3/3
 
 PR: [#1520](https://github.com/conjure-cp/conjure-oxide/pull/1520)
-Commit: [b5f649c9f1779b8a76bb6ff00cae8c917d68ed4e](https://github.com/conjure-cp/conjure-oxide/commit/b5f649c9f1779b8a76bb6ff00cae8c917d68ed4e)
+Commit: [3e42f2e8710933caec2453bd496fe747f007a84d](https://github.com/conjure-cp/conjure-oxide/commit/3e42f2e8710933caec2453bd496fe747f007a84d)
 
 ## RustDoc coverage for `conjure-cp`
 
@@ -34,7 +34,7 @@ Commit: [b5f649c9f1779b8a76bb6ff00cae8c917d68ed4e](https://github.com/conjure-cp
 | crates/conjure-cp-cli/src/main.rs | ❌ 14% *(1/7)* | ❌ 0% *(0/7)* |
 | crates/conjure-cp-cli/src/pretty.rs | ❌ 20% *(1/5)* | ❌ 0% *(0/5)* |
 | crates/conjure-cp-cli/src/utils/testing.rs | ❌ 31% *(4/13)* | ❌ 0% *(0/13)* |
-| crates/conjure-cp-cli/src/solve.rs | ❌ 38% *(8/21)* | ❌ 0% *(0/21)* |
+| crates/conjure-cp-cli/src/solve.rs | ❌ 40% *(8/20)* | ❌ 0% *(0/20)* |
 | crates/conjure-cp-cli/src/test_solve.rs | ❌ 40% *(2/5)* | ❌ 0% *(0/5)* |
 | crates/conjure-cp-cli/src/find_conjure.rs | ❌ 50% *(1/2)* | ❌ 0% *(0/2)* |
 | crates/conjure-cp-cli/src/cli.rs | ❌ 53% *(24/45)* | ❌ 0% *(0/45)* |
@@ -78,6 +78,7 @@ Commit: [b5f649c9f1779b8a76bb6ff00cae8c917d68ed4e](https://github.com/conjure-cp
 | crates/conjure-cp-core/src/ast/reference.rs | ❌ 50% *(1/2)* | ❌ 0% *(0/2)* |
 | crates/conjure-cp-core/src/ast/symbol_table.rs | ❌ 50% *(1/2)* | ❌ 0% *(0/2)* |
 | crates/conjure-cp-core/src/ast/variables.rs | ❌ 50% *(1/2)* | ❌ 0% *(0/2)* |
+| crates/conjure-cp-core/src/instantiate.rs | ❌ 50% *(1/2)* | ❌ 0% *(0/2)* |
 | crates/conjure-cp-core/src/rule_engine/rewriter_common.rs | ❌ 50% *(1/2)* | ❌ 0% *(0/2)* |
 | crates/conjure-cp-core/src/rule_engine/resolve_rules.rs | ❌ 57% *(4/7)* | ❌ 0% *(0/7)* |
 | crates/conjure-cp-core/src/solver/states.rs | ❌ 64% *(7/11)* | ❌ 0% *(0/11)* |
@@ -134,12 +135,12 @@ Commit: [b5f649c9f1779b8a76bb6ff00cae8c917d68ed4e](https://github.com/conjure-cp
 | crates/conjure-cp-essence-parser/src/parser/mod.rs | ❌ 0% *(0/1)* | ❌ 0% *(0/1)* |
 | crates/conjure-cp-essence-parser/src/parser/parse_exprs.rs | ❌ 0% *(0/3)* | ❌ 0% *(0/3)* |
 | crates/conjure-cp-essence-parser/src/parser/parse_literal.rs | ❌ 0% *(0/2)* | ❌ 0% *(0/2)* |
-| crates/conjure-cp-essence-parser/src/parser/syntax_errors.rs | ❌ 0% *(0/2)* | ❌ 0% *(0/2)* |
 | crates/conjure-cp-essence-parser/src/parser_legacy.rs | ❌ 0% *(0/2)* | ❌ 0% *(0/2)* |
 | crates/conjure-cp-essence-parser/src/parser/parse_model.rs | ❌ 20% *(1/5)* | ❌ 0% *(0/5)* |
-| crates/conjure-cp-essence-parser/src/errors.rs | ❌ 21% *(5/24)* | ❌ 0% *(0/24)* |
+| crates/conjure-cp-essence-parser/src/errors.rs | ❌ 22% *(6/27)* | ❌ 0% *(0/27)* |
 | crates/conjure-cp-essence-parser/src/diagnostics/error_detection/collect_errors.rs | ❌ 25% *(1/4)* | ❌ 0% *(0/4)* |
 | crates/conjure-cp-essence-parser/src/parser/domain.rs | ❌ 33% *(1/3)* | ❌ 0% *(0/3)* |
+| crates/conjure-cp-essence-parser/src/parser/syntax_errors.rs | ❌ 33% *(1/3)* | ❌ 0% *(0/3)* |
 | crates/conjure-cp-essence-parser/src/parser/traversal.rs | ❌ 33% *(2/6)* | ❌ 0% *(0/6)* |
 | crates/conjure-cp-essence-parser/src/parser/util.rs | ❌ 35% *(7/20)* | ❌ 0% *(0/20)* |
 | crates/conjure-cp-essence-parser/src/parser/find.rs | ❌ 50% *(1/2)* | ❌ 0% *(0/2)* |
