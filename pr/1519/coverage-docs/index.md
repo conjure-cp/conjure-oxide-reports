@@ -5,7 +5,7 @@
 **conjure-cp-core:** 4% with examples, 51% documented -- 23/304/595
 **conjure-cp-enum-compatibility-macro:** 50% with examples, 100% documented -- 1/2/2
 **conjure-cp-essence-macros:** 67% with examples, 67% documented -- 2/2/3
-**conjure-cp-essence-parser:** 0% with examples, 16% documented -- 0/23/142
+**conjure-cp-essence-parser:** 0% with examples, 16% documented -- 0/23/146
 **conjure-cp-lsp:** 0% with examples, 0% documented -- 0/0/16
 **conjure-cp-rule-macros:** 33% with examples, 67% documented -- 1/2/3
 **conjure-cp-rules:** 0% with examples, 100% documented -- 0/1/1
@@ -14,7 +14,7 @@
 **tree-sitter-essence:** 33% with examples, 100% documented -- 1/3/3
 
 PR: [#1519](https://github.com/conjure-cp/conjure-oxide/pull/1519)
-Commit: [0e9001d7374afc5a4eb38c8a05e49e51bdb1fff0](https://github.com/S-andres0694/conjure-oxide/commit/0e9001d7374afc5a4eb38c8a05e49e51bdb1fff0)
+Commit: [4b925c4285b248fa81c55290cf5288d07b08a94a](https://github.com/S-andres0694/conjure-oxide/commit/4b925c4285b248fa81c55290cf5288d07b08a94a)
 
 ## RustDoc coverage for `conjure-cp`
 
@@ -140,9 +140,9 @@ Commit: [0e9001d7374afc5a4eb38c8a05e49e51bdb1fff0](https://github.com/S-andres06
 | crates/conjure-cp-essence-parser/src/parser/parse_model.rs | ❌ 20% *(1/5)* | ❌ 0% *(0/5)* |
 | crates/conjure-cp-essence-parser/src/errors.rs | ❌ 22% *(6/27)* | ❌ 0% *(0/27)* |
 | crates/conjure-cp-essence-parser/src/diagnostics/error_detection/collect_errors.rs | ❌ 25% *(1/4)* | ❌ 0% *(0/4)* |
+| crates/conjure-cp-essence-parser/src/parser/util.rs | ❌ 29% *(7/24)* | ❌ 0% *(0/24)* |
 | crates/conjure-cp-essence-parser/src/parser/domain.rs | ❌ 33% *(1/3)* | ❌ 0% *(0/3)* |
 | crates/conjure-cp-essence-parser/src/parser/traversal.rs | ❌ 33% *(2/6)* | ❌ 0% *(0/6)* |
-| crates/conjure-cp-essence-parser/src/parser/util.rs | ❌ 35% *(7/20)* | ❌ 0% *(0/20)* |
 | crates/conjure-cp-essence-parser/src/parser/find.rs | ❌ 50% *(1/2)* | ❌ 0% *(0/2)* |
 | crates/conjure-cp-essence-parser/src/parser/letting.rs | ❌ 50% *(1/2)* | ❌ 0% *(0/2)* |
 | crates/conjure-cp-essence-parser/src/parser/macros.rs | ✅ 100% *(3/3)* | ❌ 0% *(0/3)* |
