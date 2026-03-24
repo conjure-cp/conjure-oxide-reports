@@ -1,0 +1,690 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+        <title>Diff Coverage</title>
+        <style>
+            .src-snippet { margin-top: 2em; }
+            .src-name { font-weight: bold; }
+            .snippets {
+                border-top: 1px solid #bdbdbd;
+                border-bottom: 1px solid #bdbdbd;
+            }
+            pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.hll { background-color: #ffcccc }
+.c { color: #3D7B7B; font-style: italic } /* Comment */
+.err { border: 1px solid #F00 } /* Error */
+.k { color: #008000; font-weight: bold } /* Keyword */
+.o { color: #666 } /* Operator */
+.ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.cp { color: #9C6500 } /* Comment.Preproc */
+.cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.gd { color: #A00000 } /* Generic.Deleted */
+.ge { font-style: italic } /* Generic.Emph */
+.ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.gr { color: #E40000 } /* Generic.Error */
+.gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.gi { color: #008400 } /* Generic.Inserted */
+.go { color: #717171 } /* Generic.Output */
+.gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.gs { font-weight: bold } /* Generic.Strong */
+.gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.gt { color: #04D } /* Generic.Traceback */
+.kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.kp { color: #008000 } /* Keyword.Pseudo */
+.kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.kt { color: #B00040 } /* Keyword.Type */
+.m { color: #666 } /* Literal.Number */
+.s { color: #BA2121 } /* Literal.String */
+.na { color: #687822 } /* Name.Attribute */
+.nb { color: #008000 } /* Name.Builtin */
+.nc { color: #00F; font-weight: bold } /* Name.Class */
+.no { color: #800 } /* Name.Constant */
+.nd { color: #A2F } /* Name.Decorator */
+.ni { color: #717171; font-weight: bold } /* Name.Entity */
+.ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.nf { color: #00F } /* Name.Function */
+.nl { color: #767600 } /* Name.Label */
+.nn { color: #00F; font-weight: bold } /* Name.Namespace */
+.nt { color: #008000; font-weight: bold } /* Name.Tag */
+.nv { color: #19177C } /* Name.Variable */
+.ow { color: #A2F; font-weight: bold } /* Operator.Word */
+.w { color: #BBB } /* Text.Whitespace */
+.mb { color: #666 } /* Literal.Number.Bin */
+.mf { color: #666 } /* Literal.Number.Float */
+.mh { color: #666 } /* Literal.Number.Hex */
+.mi { color: #666 } /* Literal.Number.Integer */
+.mo { color: #666 } /* Literal.Number.Oct */
+.sa { color: #BA2121 } /* Literal.String.Affix */
+.sb { color: #BA2121 } /* Literal.String.Backtick */
+.sc { color: #BA2121 } /* Literal.String.Char */
+.dl { color: #BA2121 } /* Literal.String.Delimiter */
+.sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.s2 { color: #BA2121 } /* Literal.String.Double */
+.se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.sh { color: #BA2121 } /* Literal.String.Heredoc */
+.si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.sx { color: #008000 } /* Literal.String.Other */
+.sr { color: #A45A77 } /* Literal.String.Regex */
+.s1 { color: #BA2121 } /* Literal.String.Single */
+.ss { color: #19177C } /* Literal.String.Symbol */
+.bp { color: #008000 } /* Name.Builtin.Pseudo */
+.fm { color: #00F } /* Name.Function.Magic */
+.vc { color: #19177C } /* Name.Variable.Class */
+.vg { color: #19177C } /* Name.Variable.Global */
+.vi { color: #19177C } /* Name.Variable.Instance */
+.vm { color: #19177C } /* Name.Variable.Magic */
+.il { color: #666 } /* Literal.Number.Integer.Long */
+        </style>
+    </head>
+    <body>
+        <h1>Diff Coverage</h1>
+        <p>Diff: upstream/main...HEAD, staged and unstaged changes</p>
+        <ul>
+            <li><b>Total</b>: 194 lines</li>
+            <li><b>Missing</b>: 49 lines</li>
+            <li><b>Coverage</b>: 74%</li>
+        </ul>
+        <table border="1">
+            <tr>
+                <th>Source File</th>
+                <th>Diff Coverage (%)</th>
+                <th>Missing Lines</th>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-core/src/rule_engine/rule.rs</td>
+                <td>0.0%</td>
+                <td>242-244,262-264</td>
+            </tr>
+            <tr>
+                <td>crates/tree-morph-macros/src/lib.rs</td>
+                <td>78.8%</td>
+                <td>43,71,75,79,85,89,93</td>
+            </tr>
+            <tr>
+                <td>crates/tree-morph/src/engine.rs</td>
+                <td>79.1%</td>
+                <td>224,234-235,298-299,304,309-310,312</td>
+            </tr>
+            <tr>
+                <td>crates/tree-morph/src/engine_builder.rs</td>
+                <td>92.3%</td>
+                <td>100</td>
+            </tr>
+            <tr>
+                <td>crates/tree-morph/src/events.rs</td>
+                <td>96.0%</td>
+                <td>20</td>
+            </tr>
+            <tr>
+                <td>crates/tree-morph/src/helpers.rs</td>
+                <td>42.3%</td>
+                <td>50,52-53,58,85,87-88,147,158,160-161,168,177,179-180</td>
+            </tr>
+            <tr>
+                <td>crates/tree-morph/src/rule.rs</td>
+                <td>50.0%</td>
+                <td>99-101,210-212</td>
+            </tr>
+            <tr>
+                <td>crates/tree-morph/tests/dirty_clean.rs</td>
+                <td>88.9%</td>
+                <td>24,31,48-49</td>
+            </tr>
+        </table>
+        <div class="src-snippet">
+            <div class="src-name">crates/conjure-cp-core/src/rule_engine/rule.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/rule_engine/rule.rs-238" name="crates/conjure-cp-core/src/rule_engine/rule.rs-238"></a><span class="w">        </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/rule_engine/rule.rs-239" name="crates/conjure-cp-core/src/rule_engine/rule.rs-239"></a><span class="w">        </span><span class="nb">Some</span><span class="p">(</span><span class="n">reduction</span><span class="p">.</span><span class="n">new_expression</span><span class="p">)</span>
+<a id="crates/conjure-cp-core/src/rule_engine/rule.rs-240" name="crates/conjure-cp-core/src/rule_engine/rule.rs-240"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/rule_engine/rule.rs-241" name="crates/conjure-cp-core/src/rule_engine/rule.rs-241"></a>
+<a id="crates/conjure-cp-core/src/rule_engine/rule.rs-242" name="crates/conjure-cp-core/src/rule_engine/rule.rs-242"></a><span class="hll"><span class="w">    </span><span class="k">fn</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="o">&amp;</span><span class="bp">self</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="kp">&amp;</span><span class="kt">str</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rule.rs-243" name="crates/conjure-cp-core/src/rule_engine/rule.rs-243"></a><span class="hll"><span class="w">        </span><span class="bp">self</span><span class="p">.</span><span class="n">name</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rule.rs-244" name="crates/conjure-cp-core/src/rule_engine/rule.rs-244"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rule.rs-245" name="crates/conjure-cp-core/src/rule_engine/rule.rs-245"></a><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/rule_engine/rule.rs-246" name="crates/conjure-cp-core/src/rule_engine/rule.rs-246"></a>
+<a id="crates/conjure-cp-core/src/rule_engine/rule.rs-247" name="crates/conjure-cp-core/src/rule_engine/rule.rs-247"></a><span class="k">impl</span><span class="w"> </span><span class="n">MorphRule</span><span class="o">&lt;</span><span class="n">Expression</span><span class="p">,</span><span class="w"> </span><span class="n">SymbolTable</span><span class="o">&gt;</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="o">&amp;</span><span class="n">Rule</span><span class="o">&lt;&#39;</span><span class="nb">_</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/rule_engine/rule.rs-248" name="crates/conjure-cp-core/src/rule_engine/rule.rs-248"></a><span class="w">    </span><span class="k">fn</span><span class="w"> </span><span class="nf">apply</span><span class="p">(</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/rule_engine/rule.rs-258" name="crates/conjure-cp-core/src/rule_engine/rule.rs-258"></a><span class="w">        </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/rule_engine/rule.rs-259" name="crates/conjure-cp-core/src/rule_engine/rule.rs-259"></a><span class="w">        </span><span class="nb">Some</span><span class="p">(</span><span class="n">reduction</span><span class="p">.</span><span class="n">new_expression</span><span class="p">)</span>
+<a id="crates/conjure-cp-core/src/rule_engine/rule.rs-260" name="crates/conjure-cp-core/src/rule_engine/rule.rs-260"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/rule_engine/rule.rs-261" name="crates/conjure-cp-core/src/rule_engine/rule.rs-261"></a>
+<a id="crates/conjure-cp-core/src/rule_engine/rule.rs-262" name="crates/conjure-cp-core/src/rule_engine/rule.rs-262"></a><span class="hll"><span class="w">    </span><span class="k">fn</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="o">&amp;</span><span class="bp">self</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="kp">&amp;</span><span class="kt">str</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rule.rs-263" name="crates/conjure-cp-core/src/rule_engine/rule.rs-263"></a><span class="hll"><span class="w">        </span><span class="bp">self</span><span class="p">.</span><span class="n">name</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rule.rs-264" name="crates/conjure-cp-core/src/rule_engine/rule.rs-264"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rule.rs-265" name="crates/conjure-cp-core/src/rule_engine/rule.rs-265"></a><span class="p">}</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/tree-morph-macros/src/lib.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/tree-morph-macros/src/lib.rs-39" name="crates/tree-morph-macros/src/lib.rs-39"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">function</span><span class="p">.</span><span class="n">sig</span><span class="p">.</span><span class="n">ident</span><span class="p">;</span>
+<a id="crates/tree-morph-macros/src/lib.rs-40" name="crates/tree-morph-macros/src/lib.rs-40"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">vis</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">function</span><span class="p">.</span><span class="n">vis</span><span class="p">;</span>
+<a id="crates/tree-morph-macros/src/lib.rs-41" name="crates/tree-morph-macros/src/lib.rs-41"></a>
+<a id="crates/tree-morph-macros/src/lib.rs-42" name="crates/tree-morph-macros/src/lib.rs-42"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">rule_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">attr</span><span class="p">.</span><span class="n">is_empty</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/tree-morph-macros/src/lib.rs-43" name="crates/tree-morph-macros/src/lib.rs-43"></a><span class="hll"><span class="w">        </span><span class="n">name</span><span class="p">.</span><span class="n">to_string</span><span class="p">()</span>
+</span><a id="crates/tree-morph-macros/src/lib.rs-44" name="crates/tree-morph-macros/src/lib.rs-44"></a><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/tree-morph-macros/src/lib.rs-45" name="crates/tree-morph-macros/src/lib.rs-45"></a><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">name_lit</span><span class="p">:</span><span class="w"> </span><span class="nc">syn</span><span class="p">::</span><span class="n">LitStr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">parse_macro_input</span><span class="o">!</span><span class="p">(</span><span class="n">attr</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">syn</span><span class="p">::</span><span class="n">LitStr</span><span class="p">);</span>
+<a id="crates/tree-morph-macros/src/lib.rs-46" name="crates/tree-morph-macros/src/lib.rs-46"></a><span class="w">        </span><span class="n">name_lit</span><span class="p">.</span><span class="n">value</span><span class="p">()</span>
+<a id="crates/tree-morph-macros/src/lib.rs-47" name="crates/tree-morph-macros/src/lib.rs-47"></a><span class="w">    </span><span class="p">};</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/tree-morph-macros/src/lib.rs-67" name="crates/tree-morph-macros/src/lib.rs-67"></a><span class="p">}</span>
+<a id="crates/tree-morph-macros/src/lib.rs-68" name="crates/tree-morph-macros/src/lib.rs-68"></a>
+<a id="crates/tree-morph-macros/src/lib.rs-69" name="crates/tree-morph-macros/src/lib.rs-69"></a><span class="k">fn</span><span class="w"> </span><span class="nf">extract_commands_types</span><span class="p">(</span><span class="n">param</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">syn</span><span class="p">::</span><span class="n">FnArg</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="p">(</span><span class="n">syn</span><span class="p">::</span><span class="n">Type</span><span class="p">,</span><span class="w"> </span><span class="n">syn</span><span class="p">::</span><span class="n">Type</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/tree-morph-macros/src/lib.rs-70" name="crates/tree-morph-macros/src/lib.rs-70"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">FnArg</span><span class="p">::</span><span class="n">Typed</span><span class="p">(</span><span class="n">pat_type</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">param</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/tree-morph-macros/src/lib.rs-71" name="crates/tree-morph-macros/src/lib.rs-71"></a><span class="hll"><span class="w">        </span><span class="fm">panic!</span><span class="p">(</span><span class="s">&quot;Expected typed parameter&quot;</span><span class="p">);</span>
+</span><a id="crates/tree-morph-macros/src/lib.rs-72" name="crates/tree-morph-macros/src/lib.rs-72"></a><span class="w">    </span><span class="p">};</span>
+<a id="crates/tree-morph-macros/src/lib.rs-73" name="crates/tree-morph-macros/src/lib.rs-73"></a>
+<a id="crates/tree-morph-macros/src/lib.rs-74" name="crates/tree-morph-macros/src/lib.rs-74"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">Type</span><span class="p">::</span><span class="n">Reference</span><span class="p">(</span><span class="n">type_ref</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;*</span><span class="n">pat_type</span><span class="p">.</span><span class="n">ty</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/tree-morph-macros/src/lib.rs-75" name="crates/tree-morph-macros/src/lib.rs-75"></a><span class="hll"><span class="w">        </span><span class="fm">panic!</span><span class="p">(</span><span class="s">&quot;Expected reference type&quot;</span><span class="p">);</span>
+</span><a id="crates/tree-morph-macros/src/lib.rs-76" name="crates/tree-morph-macros/src/lib.rs-76"></a><span class="w">    </span><span class="p">};</span>
+<a id="crates/tree-morph-macros/src/lib.rs-77" name="crates/tree-morph-macros/src/lib.rs-77"></a>
+<a id="crates/tree-morph-macros/src/lib.rs-78" name="crates/tree-morph-macros/src/lib.rs-78"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">Type</span><span class="p">::</span><span class="n">Path</span><span class="p">(</span><span class="n">type_path</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;*</span><span class="n">type_ref</span><span class="p">.</span><span class="n">elem</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/tree-morph-macros/src/lib.rs-79" name="crates/tree-morph-macros/src/lib.rs-79"></a><span class="hll"><span class="w">        </span><span class="fm">panic!</span><span class="p">(</span><span class="s">&quot;Expected path type&quot;</span><span class="p">);</span>
+</span><a id="crates/tree-morph-macros/src/lib.rs-80" name="crates/tree-morph-macros/src/lib.rs-80"></a><span class="w">    </span><span class="p">};</span>
+<a id="crates/tree-morph-macros/src/lib.rs-81" name="crates/tree-morph-macros/src/lib.rs-81"></a>
+<a id="crates/tree-morph-macros/src/lib.rs-82" name="crates/tree-morph-macros/src/lib.rs-82"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">segment</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">type_path</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">segments</span><span class="p">.</span><span class="n">last</span><span class="p">().</span><span class="n">unwrap</span><span class="p">();</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span>
+<span class="normal">86</span>
+<span class="normal">87</span>
+<span class="normal">88</span>
+<span class="normal">89</span>
+<span class="normal">90</span>
+<span class="normal">91</span>
+<span class="normal">92</span>
+<span class="normal">93</span>
+<span class="normal">94</span>
+<span class="normal">95</span>
+<span class="normal">96</span>
+<span class="normal">97</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/tree-morph-macros/src/lib.rs-81" name="crates/tree-morph-macros/src/lib.rs-81"></a>
+<a id="crates/tree-morph-macros/src/lib.rs-82" name="crates/tree-morph-macros/src/lib.rs-82"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">segment</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">type_path</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">segments</span><span class="p">.</span><span class="n">last</span><span class="p">().</span><span class="n">unwrap</span><span class="p">();</span>
+<a id="crates/tree-morph-macros/src/lib.rs-83" name="crates/tree-morph-macros/src/lib.rs-83"></a>
+<a id="crates/tree-morph-macros/src/lib.rs-84" name="crates/tree-morph-macros/src/lib.rs-84"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">PathArguments</span><span class="p">::</span><span class="n">AngleBracketed</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">segment</span><span class="p">.</span><span class="n">arguments</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/tree-morph-macros/src/lib.rs-85" name="crates/tree-morph-macros/src/lib.rs-85"></a><span class="hll"><span class="w">        </span><span class="fm">panic!</span><span class="p">(</span><span class="s">&quot;Commands must have type parameters&quot;</span><span class="p">);</span>
+</span><a id="crates/tree-morph-macros/src/lib.rs-86" name="crates/tree-morph-macros/src/lib.rs-86"></a><span class="w">    </span><span class="p">};</span>
+<a id="crates/tree-morph-macros/src/lib.rs-87" name="crates/tree-morph-macros/src/lib.rs-87"></a>
+<a id="crates/tree-morph-macros/src/lib.rs-88" name="crates/tree-morph-macros/src/lib.rs-88"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">GenericArgument</span><span class="p">::</span><span class="n">Type</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">args</span><span class="p">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/tree-morph-macros/src/lib.rs-89" name="crates/tree-morph-macros/src/lib.rs-89"></a><span class="hll"><span class="w">        </span><span class="fm">panic!</span><span class="p">(</span><span class="s">&quot;First argument must be a type&quot;</span><span class="p">);</span>
+</span><a id="crates/tree-morph-macros/src/lib.rs-90" name="crates/tree-morph-macros/src/lib.rs-90"></a><span class="w">    </span><span class="p">};</span>
+<a id="crates/tree-morph-macros/src/lib.rs-91" name="crates/tree-morph-macros/src/lib.rs-91"></a>
+<a id="crates/tree-morph-macros/src/lib.rs-92" name="crates/tree-morph-macros/src/lib.rs-92"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">GenericArgument</span><span class="p">::</span><span class="n">Type</span><span class="p">(</span><span class="n">m</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">args</span><span class="p">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/tree-morph-macros/src/lib.rs-93" name="crates/tree-morph-macros/src/lib.rs-93"></a><span class="hll"><span class="w">        </span><span class="fm">panic!</span><span class="p">(</span><span class="s">&quot;Second argument must be a type&quot;</span><span class="p">);</span>
+</span><a id="crates/tree-morph-macros/src/lib.rs-94" name="crates/tree-morph-macros/src/lib.rs-94"></a><span class="w">    </span><span class="p">};</span>
+<a id="crates/tree-morph-macros/src/lib.rs-95" name="crates/tree-morph-macros/src/lib.rs-95"></a>
+<a id="crates/tree-morph-macros/src/lib.rs-96" name="crates/tree-morph-macros/src/lib.rs-96"></a><span class="w">    </span><span class="p">(</span><span class="n">t</span><span class="p">.</span><span class="n">clone</span><span class="p">(),</span><span class="w"> </span><span class="n">m</span><span class="p">.</span><span class="n">clone</span><span class="p">())</span>
+<a id="crates/tree-morph-macros/src/lib.rs-97" name="crates/tree-morph-macros/src/lib.rs-97"></a><span class="p">}</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/tree-morph/src/engine.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/tree-morph/src/engine.rs-220" name="crates/tree-morph/src/engine.rs-220"></a><span class="w">                            </span><span class="p">.</span><span class="n">commands</span>
+<a id="crates/tree-morph/src/engine.rs-221" name="crates/tree-morph/src/engine.rs-221"></a><span class="w">                            </span><span class="p">.</span><span class="n">apply</span><span class="p">(</span><span class="n">zipper</span><span class="p">.</span><span class="n">inner</span><span class="p">.</span><span class="n">focus</span><span class="p">().</span><span class="n">clone</span><span class="p">(),</span><span class="w"> </span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">zipper</span><span class="p">.</span><span class="n">meta</span><span class="p">);</span>
+<a id="crates/tree-morph/src/engine.rs-222" name="crates/tree-morph/src/engine.rs-222"></a>
+<a id="crates/tree-morph/src/engine.rs-223" name="crates/tree-morph/src/engine.rs-223"></a><span class="w">                        </span><span class="k">if</span><span class="w"> </span><span class="n">root_transformed</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/tree-morph/src/engine.rs-224" name="crates/tree-morph/src/engine.rs-224"></a><span class="hll"><span class="w">                            </span><span class="n">trace</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;Root transformed, clearing state.&quot;</span><span class="p">);</span>
+</span><a id="crates/tree-morph/src/engine.rs-225" name="crates/tree-morph/src/engine.rs-225"></a><span class="w">                            </span><span class="c1">// This must unfortunately throw all node states away,</span>
+<a id="crates/tree-morph/src/engine.rs-226" name="crates/tree-morph/src/engine.rs-226"></a><span class="w">                            </span><span class="c1">// since the `transform` command may redefine the whole tree</span>
+<a id="crates/tree-morph/src/engine.rs-227" name="crates/tree-morph/src/engine.rs-227"></a><span class="w">                            </span><span class="n">zipper</span><span class="p">.</span><span class="n">inner</span><span class="p">.</span><span class="n">replace_focus</span><span class="p">(</span><span class="n">new_tree</span><span class="p">);</span>
+<a id="crates/tree-morph/src/engine.rs-228" name="crates/tree-morph/src/engine.rs-228"></a><span class="w">                        </span><span class="p">}</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/tree-morph/src/engine.rs-230" name="crates/tree-morph/src/engine.rs-230"></a><span class="w">                        </span><span class="bp">self</span><span class="p">.</span><span class="n">event_handlers</span><span class="p">.</span><span class="n">trigger_on_apply</span><span class="p">(</span>
+<a id="crates/tree-morph/src/engine.rs-231" name="crates/tree-morph/src/engine.rs-231"></a><span class="w">                            </span><span class="n">zipper</span><span class="p">.</span><span class="n">inner</span><span class="p">.</span><span class="n">focus</span><span class="p">(),</span>
+<a id="crates/tree-morph/src/engine.rs-232" name="crates/tree-morph/src/engine.rs-232"></a><span class="w">                            </span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">zipper</span><span class="p">.</span><span class="n">meta</span><span class="p">,</span>
+<a id="crates/tree-morph/src/engine.rs-233" name="crates/tree-morph/src/engine.rs-233"></a><span class="w">                            </span><span class="n">rule</span><span class="p">,</span>
+<a id="crates/tree-morph/src/engine.rs-234" name="crates/tree-morph/src/engine.rs-234"></a><span class="hll"><span class="w">                        </span><span class="p">);</span>
+</span><a id="crates/tree-morph/src/engine.rs-235" name="crates/tree-morph/src/engine.rs-235"></a><span class="hll">
+</span><a id="crates/tree-morph/src/engine.rs-236" name="crates/tree-morph/src/engine.rs-236"></a><span class="w">                        </span><span class="k">continue</span><span class="w"> </span><span class="nl">&#39;main</span><span class="p">;</span>
+<a id="crates/tree-morph/src/engine.rs-237" name="crates/tree-morph/src/engine.rs-237"></a><span class="w">                    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/tree-morph/src/engine.rs-238" name="crates/tree-morph/src/engine.rs-238"></a><span class="w">                        </span><span class="n">debug</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;Nothing Applicable&quot;</span><span class="p">);</span>
+<a id="crates/tree-morph/src/engine.rs-239" name="crates/tree-morph/src/engine.rs-239"></a><span class="w">                        </span><span class="n">zipper</span><span class="p">.</span><span class="n">set_dirty_from</span><span class="p">(</span><span class="n">level</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span>
+<span class="normal">299</span>
+<span class="normal">300</span>
+<span class="normal">301</span>
+<span class="normal">302</span>
+<span class="normal">303</span>
+<span class="normal">304</span>
+<span class="normal">305</span>
+<span class="normal">306</span>
+<span class="normal">307</span>
+<span class="normal">308</span>
+<span class="normal">309</span>
+<span class="normal">310</span>
+<span class="normal">311</span>
+<span class="normal">312</span>
+<span class="normal">313</span>
+<span class="normal">314</span>
+<span class="normal">315</span>
+<span class="normal">316</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/tree-morph/src/engine.rs-294" name="crates/tree-morph/src/engine.rs-294"></a><span class="w">    </span><span class="p">};</span>
+<a id="crates/tree-morph/src/engine.rs-295" name="crates/tree-morph/src/engine.rs-295"></a><span class="p">}</span>
+<a id="crates/tree-morph/src/engine.rs-296" name="crates/tree-morph/src/engine.rs-296"></a>
+<a id="crates/tree-morph/src/engine.rs-297" name="crates/tree-morph/src/engine.rs-297"></a><span class="sd">/// A Zipper with optimisations for tree transformation.</span>
+<a id="crates/tree-morph/src/engine.rs-298" name="crates/tree-morph/src/engine.rs-298"></a><span class="hll"><span class="k">struct</span><span class="w"> </span><span class="nc">EngineZipper</span><span class="o">&lt;&#39;</span><span class="na">events</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">M</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span>
+</span><a id="crates/tree-morph/src/engine.rs-299" name="crates/tree-morph/src/engine.rs-299"></a><span class="hll"><span class="k">where</span>
+</span><a id="crates/tree-morph/src/engine.rs-300" name="crates/tree-morph/src/engine.rs-300"></a><span class="w">    </span><span class="n">T</span><span class="p">:</span><span class="w"> </span><span class="nc">Uniplate</span><span class="p">,</span>
+<a id="crates/tree-morph/src/engine.rs-301" name="crates/tree-morph/src/engine.rs-301"></a><span class="w">    </span><span class="n">R</span><span class="p">:</span><span class="w"> </span><span class="nc">Rule</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">M</span><span class="o">&gt;</span><span class="p">,</span>
+<a id="crates/tree-morph/src/engine.rs-302" name="crates/tree-morph/src/engine.rs-302"></a><span class="p">{</span>
+<a id="crates/tree-morph/src/engine.rs-303" name="crates/tree-morph/src/engine.rs-303"></a><span class="w">    </span><span class="n">inner</span><span class="p">:</span><span class="w"> </span><span class="nc">TaggedZipper</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">EngineNodeState</span><span class="p">,</span><span class="w"> </span><span class="k">fn</span><span class="p">(</span><span class="o">&amp;</span><span class="n">T</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">EngineNodeState</span><span class="o">&gt;</span><span class="p">,</span>
+<a id="crates/tree-morph/src/engine.rs-304" name="crates/tree-morph/src/engine.rs-304"></a><span class="hll"><span class="w">    </span><span class="n">event_handlers</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="o">&#39;</span><span class="na">events</span><span class="w"> </span><span class="nc">EventHandlers</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">M</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="p">,</span>
+</span><a id="crates/tree-morph/src/engine.rs-305" name="crates/tree-morph/src/engine.rs-305"></a><span class="w">    </span><span class="n">meta</span><span class="p">:</span><span class="w"> </span><span class="nc">M</span><span class="p">,</span>
+<a id="crates/tree-morph/src/engine.rs-306" name="crates/tree-morph/src/engine.rs-306"></a><span class="p">}</span>
+<a id="crates/tree-morph/src/engine.rs-307" name="crates/tree-morph/src/engine.rs-307"></a>
+<a id="crates/tree-morph/src/engine.rs-308" name="crates/tree-morph/src/engine.rs-308"></a><span class="k">impl</span><span class="o">&lt;&#39;</span><span class="na">events</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">M</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">EngineZipper</span><span class="o">&lt;&#39;</span><span class="na">events</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">M</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span>
+<a id="crates/tree-morph/src/engine.rs-309" name="crates/tree-morph/src/engine.rs-309"></a><span class="hll"><span class="k">where</span>
+</span><a id="crates/tree-morph/src/engine.rs-310" name="crates/tree-morph/src/engine.rs-310"></a><span class="hll"><span class="w">    </span><span class="n">T</span><span class="p">:</span><span class="w"> </span><span class="nc">Uniplate</span><span class="p">,</span>
+</span><a id="crates/tree-morph/src/engine.rs-311" name="crates/tree-morph/src/engine.rs-311"></a><span class="w">    </span><span class="n">R</span><span class="p">:</span><span class="w"> </span><span class="nc">Rule</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">M</span><span class="o">&gt;</span><span class="p">,</span>
+<a id="crates/tree-morph/src/engine.rs-312" name="crates/tree-morph/src/engine.rs-312"></a><span class="hll"><span class="p">{</span>
+</span><a id="crates/tree-morph/src/engine.rs-313" name="crates/tree-morph/src/engine.rs-313"></a><span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">new</span><span class="p">(</span><span class="n">tree</span><span class="p">:</span><span class="w"> </span><span class="nc">T</span><span class="p">,</span><span class="w"> </span><span class="n">meta</span><span class="p">:</span><span class="w"> </span><span class="nc">M</span><span class="p">,</span><span class="w"> </span><span class="n">event_handlers</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="o">&#39;</span><span class="na">events</span><span class="w"> </span><span class="nc">EventHandlers</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">M</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">Self</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/tree-morph/src/engine.rs-314" name="crates/tree-morph/src/engine.rs-314"></a><span class="w">        </span><span class="n">EngineZipper</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/tree-morph/src/engine.rs-315" name="crates/tree-morph/src/engine.rs-315"></a><span class="w">            </span><span class="n">inner</span><span class="p">:</span><span class="w"> </span><span class="nc">TaggedZipper</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span><span class="w"> </span><span class="n">EngineNodeState</span><span class="p">::</span><span class="n">new</span><span class="p">),</span>
+<a id="crates/tree-morph/src/engine.rs-316" name="crates/tree-morph/src/engine.rs-316"></a><span class="w">            </span><span class="n">event_handlers</span><span class="p">,</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/tree-morph/src/engine_builder.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/tree-morph/src/engine_builder.rs-96" name="crates/tree-morph/src/engine_builder.rs-96"></a><span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">add_before_rule</span><span class="p">(</span><span class="k">mut</span><span class="w"> </span><span class="bp">self</span><span class="p">,</span><span class="w"> </span><span class="n">handler</span><span class="p">:</span><span class="w"> </span><span class="nc">fn</span><span class="p">(</span><span class="o">&amp;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">M</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">R</span><span class="p">))</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">Self</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/tree-morph/src/engine_builder.rs-97" name="crates/tree-morph/src/engine_builder.rs-97"></a><span class="w">        </span><span class="bp">self</span><span class="p">.</span><span class="n">event_handlers</span><span class="p">.</span><span class="n">add_before_rule</span><span class="p">(</span><span class="n">handler</span><span class="p">);</span>
+<a id="crates/tree-morph/src/engine_builder.rs-98" name="crates/tree-morph/src/engine_builder.rs-98"></a><span class="w">        </span><span class="bp">self</span>
+<a id="crates/tree-morph/src/engine_builder.rs-99" name="crates/tree-morph/src/engine_builder.rs-99"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/tree-morph/src/engine_builder.rs-100" name="crates/tree-morph/src/engine_builder.rs-100"></a><span class="hll">
+</span><a id="crates/tree-morph/src/engine_builder.rs-101" name="crates/tree-morph/src/engine_builder.rs-101"></a><span class="w">    </span><span class="sd">/// Register an event handler to be called after attempting a rule</span>
+<a id="crates/tree-morph/src/engine_builder.rs-102" name="crates/tree-morph/src/engine_builder.rs-102"></a><span class="w">    </span><span class="sd">/// The boolean signifies whether the rule is applicable</span>
+<a id="crates/tree-morph/src/engine_builder.rs-103" name="crates/tree-morph/src/engine_builder.rs-103"></a><span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">add_after_rule</span><span class="p">(</span><span class="k">mut</span><span class="w"> </span><span class="bp">self</span><span class="p">,</span><span class="w"> </span><span class="n">handler</span><span class="p">:</span><span class="w"> </span><span class="nc">fn</span><span class="p">(</span><span class="o">&amp;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">M</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">R</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="p">))</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">Self</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/tree-morph/src/engine_builder.rs-104" name="crates/tree-morph/src/engine_builder.rs-104"></a><span class="w">        </span><span class="bp">self</span><span class="p">.</span><span class="n">event_handlers</span><span class="p">.</span><span class="n">add_after_rule</span><span class="p">(</span><span class="n">handler</span><span class="p">);</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/tree-morph/src/events.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/tree-morph/src/events.rs-16" name="crates/tree-morph/src/events.rs-16"></a><span class="w">            </span><span class="n">after_rule</span><span class="p">:</span><span class="w"> </span><span class="nb">Vec</span><span class="o">&lt;</span><span class="k">fn</span><span class="p">(</span><span class="o">&amp;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">M</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">R</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="p">)</span><span class="o">&gt;</span><span class="p">,</span>
+<a id="crates/tree-morph/src/events.rs-17" name="crates/tree-morph/src/events.rs-17"></a><span class="w">            </span><span class="n">after_apply</span><span class="p">:</span><span class="w"> </span><span class="nb">Vec</span><span class="o">&lt;</span><span class="k">fn</span><span class="p">(</span><span class="o">&amp;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">M</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">R</span><span class="p">)</span><span class="o">&gt;</span><span class="p">,</span>
+<a id="crates/tree-morph/src/events.rs-18" name="crates/tree-morph/src/events.rs-18"></a><span class="w">        </span><span class="p">}</span>
+<a id="crates/tree-morph/src/events.rs-19" name="crates/tree-morph/src/events.rs-19"></a>
+<a id="crates/tree-morph/src/events.rs-20" name="crates/tree-morph/src/events.rs-20"></a><span class="hll"><span class="w">        </span><span class="k">impl</span><span class="o">&lt;</span><span class="n">T</span><span class="p">:</span><span class="w"> </span><span class="nc">Uniplate</span><span class="p">,</span><span class="w"> </span><span class="n">M</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="n">EventHandlers</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">M</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/tree-morph/src/events.rs-21" name="crates/tree-morph/src/events.rs-21"></a><span class="w">            </span><span class="k">pub</span><span class="p">(</span><span class="k">crate</span><span class="p">)</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">new</span><span class="p">()</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">Self</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/tree-morph/src/events.rs-22" name="crates/tree-morph/src/events.rs-22"></a><span class="w">                </span><span class="bp">Self</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/tree-morph/src/events.rs-23" name="crates/tree-morph/src/events.rs-23"></a><span class="w">                    </span><span class="cp">$(</span>
+<a id="crates/tree-morph/src/events.rs-24" name="crates/tree-morph/src/events.rs-24"></a><span class="w">                        </span><span class="p">[</span><span class="o">&lt;</span><span class="n">before_</span><span class="w"> </span><span class="cp">$dir</span><span class="o">&gt;</span><span class="p">]:</span><span class="w"> </span><span class="nc">vec</span><span class="o">!</span><span class="p">[],</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/tree-morph/src/helpers.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/tree-morph/src/helpers.rs-46" name="crates/tree-morph/src/helpers.rs-46"></a><span class="sd">/// This is a good default selection strategy, especially when you expect only one possible</span>
+<a id="crates/tree-morph/src/helpers.rs-47" name="crates/tree-morph/src/helpers.rs-47"></a><span class="sd">/// rule to apply to any one term.</span>
+<a id="crates/tree-morph/src/helpers.rs-48" name="crates/tree-morph/src/helpers.rs-48"></a><span class="sd">///</span>
+<a id="crates/tree-morph/src/helpers.rs-49" name="crates/tree-morph/src/helpers.rs-49"></a><span class="sd">/// See the module-level documentation for more information.</span>
+<a id="crates/tree-morph/src/helpers.rs-50" name="crates/tree-morph/src/helpers.rs-50"></a><span class="hll"><span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">select_first</span><span class="o">&lt;&#39;</span><span class="na">rule</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">M</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="p">(</span>
+</span><a id="crates/tree-morph/src/helpers.rs-51" name="crates/tree-morph/src/helpers.rs-51"></a><span class="w">    </span><span class="n">_</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">T</span><span class="p">,</span>
+<a id="crates/tree-morph/src/helpers.rs-52" name="crates/tree-morph/src/helpers.rs-52"></a><span class="hll"><span class="w">    </span><span class="n">rs</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">mut</span><span class="w"> </span><span class="k">dyn</span><span class="w"> </span><span class="nb">Iterator</span><span class="o">&lt;</span><span class="n">Item</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="o">&amp;&#39;</span><span class="na">rule</span><span class="w"> </span><span class="n">R</span><span class="p">,</span><span class="w"> </span><span class="n">Update</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">M</span><span class="o">&gt;</span><span class="p">)</span><span class="o">&gt;</span><span class="p">,</span>
+</span><a id="crates/tree-morph/src/helpers.rs-53" name="crates/tree-morph/src/helpers.rs-53"></a><span class="hll"><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nb">Option</span><span class="o">&lt;</span><span class="p">(</span><span class="o">&amp;&#39;</span><span class="na">rule</span><span class="w"> </span><span class="n">R</span><span class="p">,</span><span class="w"> </span><span class="n">Update</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">M</span><span class="o">&gt;</span><span class="p">)</span><span class="o">&gt;</span>
+</span><a id="crates/tree-morph/src/helpers.rs-54" name="crates/tree-morph/src/helpers.rs-54"></a><span class="k">where</span>
+<a id="crates/tree-morph/src/helpers.rs-55" name="crates/tree-morph/src/helpers.rs-55"></a><span class="w">    </span><span class="n">T</span><span class="p">:</span><span class="w"> </span><span class="nc">Uniplate</span><span class="p">,</span>
+<a id="crates/tree-morph/src/helpers.rs-56" name="crates/tree-morph/src/helpers.rs-56"></a><span class="w">    </span><span class="n">R</span><span class="p">:</span><span class="w"> </span><span class="nc">Rule</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">M</span><span class="o">&gt;</span><span class="p">,</span>
+<a id="crates/tree-morph/src/helpers.rs-57" name="crates/tree-morph/src/helpers.rs-57"></a><span class="p">{</span>
+<a id="crates/tree-morph/src/helpers.rs-58" name="crates/tree-morph/src/helpers.rs-58"></a><span class="hll"><span class="w">    </span><span class="n">rs</span><span class="p">.</span><span class="n">next</span><span class="p">()</span>
+</span><a id="crates/tree-morph/src/helpers.rs-59" name="crates/tree-morph/src/helpers.rs-59"></a><span class="p">}</span>
+<a id="crates/tree-morph/src/helpers.rs-60" name="crates/tree-morph/src/helpers.rs-60"></a>
+<a id="crates/tree-morph/src/helpers.rs-61" name="crates/tree-morph/src/helpers.rs-61"></a><span class="sd">/// Panics when called by the engine, printing the original subtree and all applicable rules</span>
+<a id="crates/tree-morph/src/helpers.rs-62" name="crates/tree-morph/src/helpers.rs-62"></a><span class="sd">/// and their results.</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span>
+<span class="normal">86</span>
+<span class="normal">87</span>
+<span class="normal">88</span>
+<span class="normal">89</span>
+<span class="normal">90</span>
+<span class="normal">91</span>
+<span class="normal">92</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/tree-morph/src/helpers.rs-81" name="crates/tree-morph/src/helpers.rs-81"></a>
+<a id="crates/tree-morph/src/helpers.rs-82" name="crates/tree-morph/src/helpers.rs-82"></a><span class="sd">/// Selects a ([`Rule`], [`Update`]) based on user input through stdin.</span>
+<a id="crates/tree-morph/src/helpers.rs-83" name="crates/tree-morph/src/helpers.rs-83"></a><span class="sd">///</span>
+<a id="crates/tree-morph/src/helpers.rs-84" name="crates/tree-morph/src/helpers.rs-84"></a><span class="sd">/// See the module-level documentation for more information.</span>
+<a id="crates/tree-morph/src/helpers.rs-85" name="crates/tree-morph/src/helpers.rs-85"></a><span class="hll"><span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">select_user_input</span><span class="o">&lt;&#39;</span><span class="na">rule</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">M</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="p">(</span>
+</span><a id="crates/tree-morph/src/helpers.rs-86" name="crates/tree-morph/src/helpers.rs-86"></a><span class="w">    </span><span class="n">t</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">T</span><span class="p">,</span>
+<a id="crates/tree-morph/src/helpers.rs-87" name="crates/tree-morph/src/helpers.rs-87"></a><span class="hll"><span class="w">    </span><span class="n">rs</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">mut</span><span class="w"> </span><span class="k">dyn</span><span class="w"> </span><span class="nb">Iterator</span><span class="o">&lt;</span><span class="n">Item</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="o">&amp;&#39;</span><span class="na">rule</span><span class="w"> </span><span class="n">R</span><span class="p">,</span><span class="w"> </span><span class="n">Update</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">M</span><span class="o">&gt;</span><span class="p">)</span><span class="o">&gt;</span><span class="p">,</span>
+</span><a id="crates/tree-morph/src/helpers.rs-88" name="crates/tree-morph/src/helpers.rs-88"></a><span class="hll"><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nb">Option</span><span class="o">&lt;</span><span class="p">(</span><span class="o">&amp;&#39;</span><span class="na">rule</span><span class="w"> </span><span class="n">R</span><span class="p">,</span><span class="w"> </span><span class="n">Update</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">M</span><span class="o">&gt;</span><span class="p">)</span><span class="o">&gt;</span>
+</span><a id="crates/tree-morph/src/helpers.rs-89" name="crates/tree-morph/src/helpers.rs-89"></a><span class="k">where</span>
+<a id="crates/tree-morph/src/helpers.rs-90" name="crates/tree-morph/src/helpers.rs-90"></a><span class="w">    </span><span class="n">T</span><span class="p">:</span><span class="w"> </span><span class="nc">Uniplate</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Display</span><span class="p">,</span>
+<a id="crates/tree-morph/src/helpers.rs-91" name="crates/tree-morph/src/helpers.rs-91"></a><span class="w">    </span><span class="n">R</span><span class="p">:</span><span class="w"> </span><span class="nc">Rule</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">M</span><span class="o">&gt;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">Display</span><span class="p">,</span>
+<a id="crates/tree-morph/src/helpers.rs-92" name="crates/tree-morph/src/helpers.rs-92"></a><span class="p">{</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/tree-morph/src/helpers.rs-143" name="crates/tree-morph/src/helpers.rs-143"></a><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nb">Ok</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="p">.</span><span class="n">parse</span><span class="p">::</span><span class="o">&lt;</span><span class="kt">usize</span><span class="o">&gt;</span><span class="p">()</span>
+<a id="crates/tree-morph/src/helpers.rs-144" name="crates/tree-morph/src/helpers.rs-144"></a><span class="w">                    </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span>
+<a id="crates/tree-morph/src/helpers.rs-145" name="crates/tree-morph/src/helpers.rs-145"></a><span class="w">                    </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">choices</span><span class="p">.</span><span class="n">len</span><span class="p">()</span>
+<a id="crates/tree-morph/src/helpers.rs-146" name="crates/tree-morph/src/helpers.rs-146"></a><span class="w">                </span><span class="p">{</span>
+<a id="crates/tree-morph/src/helpers.rs-147" name="crates/tree-morph/src/helpers.rs-147"></a><span class="hll"><span class="w">                    </span><span class="kd">let</span><span class="w"> </span><span class="n">ret</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">choices</span><span class="p">.</span><span class="n">swap_remove</span><span class="p">(</span><span class="n">n</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+</span><a id="crates/tree-morph/src/helpers.rs-148" name="crates/tree-morph/src/helpers.rs-148"></a><span class="w">                    </span><span class="k">return</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">ret</span><span class="p">);</span>
+<a id="crates/tree-morph/src/helpers.rs-149" name="crates/tree-morph/src/helpers.rs-149"></a><span class="w">                </span><span class="p">}</span>
+<a id="crates/tree-morph/src/helpers.rs-150" name="crates/tree-morph/src/helpers.rs-150"></a><span class="w">            </span><span class="p">}</span>
+<a id="crates/tree-morph/src/helpers.rs-151" name="crates/tree-morph/src/helpers.rs-151"></a><span class="w">        </span><span class="p">}</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/tree-morph/src/helpers.rs-154" name="crates/tree-morph/src/helpers.rs-154"></a>
+<a id="crates/tree-morph/src/helpers.rs-155" name="crates/tree-morph/src/helpers.rs-155"></a><span class="sd">/// Selects a random ([`Rule`], [`Update`]) from the iterator.</span>
+<a id="crates/tree-morph/src/helpers.rs-156" name="crates/tree-morph/src/helpers.rs-156"></a><span class="sd">///</span>
+<a id="crates/tree-morph/src/helpers.rs-157" name="crates/tree-morph/src/helpers.rs-157"></a><span class="sd">/// See the module-level documentation for more information.</span>
+<a id="crates/tree-morph/src/helpers.rs-158" name="crates/tree-morph/src/helpers.rs-158"></a><span class="hll"><span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">select_random</span><span class="o">&lt;&#39;</span><span class="na">rule</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">M</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="p">(</span>
+</span><a id="crates/tree-morph/src/helpers.rs-159" name="crates/tree-morph/src/helpers.rs-159"></a><span class="w">    </span><span class="n">_</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">T</span><span class="p">,</span>
+<a id="crates/tree-morph/src/helpers.rs-160" name="crates/tree-morph/src/helpers.rs-160"></a><span class="hll"><span class="w">    </span><span class="n">rs</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">mut</span><span class="w"> </span><span class="k">dyn</span><span class="w"> </span><span class="nb">Iterator</span><span class="o">&lt;</span><span class="n">Item</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="o">&amp;&#39;</span><span class="na">rule</span><span class="w"> </span><span class="n">R</span><span class="p">,</span><span class="w"> </span><span class="n">Update</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">M</span><span class="o">&gt;</span><span class="p">)</span><span class="o">&gt;</span><span class="p">,</span>
+</span><a id="crates/tree-morph/src/helpers.rs-161" name="crates/tree-morph/src/helpers.rs-161"></a><span class="hll"><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nb">Option</span><span class="o">&lt;</span><span class="p">(</span><span class="o">&amp;&#39;</span><span class="na">rule</span><span class="w"> </span><span class="n">R</span><span class="p">,</span><span class="w"> </span><span class="n">Update</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">M</span><span class="o">&gt;</span><span class="p">)</span><span class="o">&gt;</span>
+</span><a id="crates/tree-morph/src/helpers.rs-162" name="crates/tree-morph/src/helpers.rs-162"></a><span class="k">where</span>
+<a id="crates/tree-morph/src/helpers.rs-163" name="crates/tree-morph/src/helpers.rs-163"></a><span class="w">    </span><span class="n">T</span><span class="p">:</span><span class="w"> </span><span class="nc">Uniplate</span><span class="p">,</span>
+<a id="crates/tree-morph/src/helpers.rs-164" name="crates/tree-morph/src/helpers.rs-164"></a><span class="w">    </span><span class="n">R</span><span class="p">:</span><span class="w"> </span><span class="nc">Rule</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">M</span><span class="o">&gt;</span><span class="p">,</span>
+<a id="crates/tree-morph/src/helpers.rs-165" name="crates/tree-morph/src/helpers.rs-165"></a><span class="p">{</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/tree-morph/src/helpers.rs-164" name="crates/tree-morph/src/helpers.rs-164"></a><span class="w">    </span><span class="n">R</span><span class="p">:</span><span class="w"> </span><span class="nc">Rule</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">M</span><span class="o">&gt;</span><span class="p">,</span>
+<a id="crates/tree-morph/src/helpers.rs-165" name="crates/tree-morph/src/helpers.rs-165"></a><span class="p">{</span>
+<a id="crates/tree-morph/src/helpers.rs-166" name="crates/tree-morph/src/helpers.rs-166"></a><span class="w">    </span><span class="k">use</span><span class="w"> </span><span class="n">rand</span><span class="p">::</span><span class="n">seq</span><span class="p">::</span><span class="n">IteratorRandom</span><span class="p">;</span>
+<a id="crates/tree-morph/src/helpers.rs-167" name="crates/tree-morph/src/helpers.rs-167"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">rng</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rand</span><span class="p">::</span><span class="n">rng</span><span class="p">();</span>
+<a id="crates/tree-morph/src/helpers.rs-168" name="crates/tree-morph/src/helpers.rs-168"></a><span class="hll"><span class="w">    </span><span class="n">rs</span><span class="p">.</span><span class="n">choose</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">rng</span><span class="p">)</span>
+</span><a id="crates/tree-morph/src/helpers.rs-169" name="crates/tree-morph/src/helpers.rs-169"></a><span class="p">}</span>
+<a id="crates/tree-morph/src/helpers.rs-170" name="crates/tree-morph/src/helpers.rs-170"></a>
+<a id="crates/tree-morph/src/helpers.rs-171" name="crates/tree-morph/src/helpers.rs-171"></a><span class="sd">/// Selects the ([`Rule`], [`Update`]) which results in the smallest subtree.</span>
+<a id="crates/tree-morph/src/helpers.rs-172" name="crates/tree-morph/src/helpers.rs-172"></a><span class="sd">///</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/tree-morph/src/helpers.rs-173" name="crates/tree-morph/src/helpers.rs-173"></a><span class="sd">/// Subtree size is determined by maximum depth.</span>
+<a id="crates/tree-morph/src/helpers.rs-174" name="crates/tree-morph/src/helpers.rs-174"></a><span class="sd">/// Among trees with the same depth, the first in the iterator order is selected.</span>
+<a id="crates/tree-morph/src/helpers.rs-175" name="crates/tree-morph/src/helpers.rs-175"></a><span class="sd">///</span>
+<a id="crates/tree-morph/src/helpers.rs-176" name="crates/tree-morph/src/helpers.rs-176"></a><span class="sd">/// See the module-level documentation for more information.</span>
+<a id="crates/tree-morph/src/helpers.rs-177" name="crates/tree-morph/src/helpers.rs-177"></a><span class="hll"><span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">select_smallest_subtree</span><span class="o">&lt;&#39;</span><span class="na">rule</span><span class="p">,</span><span class="w"> </span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">M</span><span class="p">,</span><span class="w"> </span><span class="n">R</span><span class="o">&gt;</span><span class="p">(</span>
+</span><a id="crates/tree-morph/src/helpers.rs-178" name="crates/tree-morph/src/helpers.rs-178"></a><span class="w">    </span><span class="n">_</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">T</span><span class="p">,</span>
+<a id="crates/tree-morph/src/helpers.rs-179" name="crates/tree-morph/src/helpers.rs-179"></a><span class="hll"><span class="w">    </span><span class="n">rs</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">mut</span><span class="w"> </span><span class="k">dyn</span><span class="w"> </span><span class="nb">Iterator</span><span class="o">&lt;</span><span class="n">Item</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="o">&amp;&#39;</span><span class="na">rule</span><span class="w"> </span><span class="n">R</span><span class="p">,</span><span class="w"> </span><span class="n">Update</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">M</span><span class="o">&gt;</span><span class="p">)</span><span class="o">&gt;</span><span class="p">,</span>
+</span><a id="crates/tree-morph/src/helpers.rs-180" name="crates/tree-morph/src/helpers.rs-180"></a><span class="hll"><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nb">Option</span><span class="o">&lt;</span><span class="p">(</span><span class="o">&amp;&#39;</span><span class="na">rule</span><span class="w"> </span><span class="n">R</span><span class="p">,</span><span class="w"> </span><span class="n">Update</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">M</span><span class="o">&gt;</span><span class="p">)</span><span class="o">&gt;</span>
+</span><a id="crates/tree-morph/src/helpers.rs-181" name="crates/tree-morph/src/helpers.rs-181"></a><span class="k">where</span>
+<a id="crates/tree-morph/src/helpers.rs-182" name="crates/tree-morph/src/helpers.rs-182"></a><span class="w">    </span><span class="n">T</span><span class="p">:</span><span class="w"> </span><span class="nc">Uniplate</span><span class="p">,</span>
+<a id="crates/tree-morph/src/helpers.rs-183" name="crates/tree-morph/src/helpers.rs-183"></a><span class="w">    </span><span class="n">R</span><span class="p">:</span><span class="w"> </span><span class="nc">Rule</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">M</span><span class="o">&gt;</span><span class="p">,</span>
+<a id="crates/tree-morph/src/helpers.rs-184" name="crates/tree-morph/src/helpers.rs-184"></a><span class="p">{</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/tree-morph/src/rule.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/tree-morph/src/rule.rs-95" name="crates/tree-morph/src/rule.rs-95"></a><span class="w">    </span><span class="sd">/// See the [Rule] trait documentation for more information.</span>
+<a id="crates/tree-morph/src/rule.rs-96" name="crates/tree-morph/src/rule.rs-96"></a><span class="w">    </span><span class="k">fn</span><span class="w"> </span><span class="nf">apply</span><span class="p">(</span><span class="o">&amp;</span><span class="bp">self</span><span class="p">,</span><span class="w"> </span><span class="n">commands</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">mut</span><span class="w"> </span><span class="n">Commands</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">M</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">subtree</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">T</span><span class="p">,</span><span class="w"> </span><span class="n">meta</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">M</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nb">Option</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">;</span>
+<a id="crates/tree-morph/src/rule.rs-97" name="crates/tree-morph/src/rule.rs-97"></a>
+<a id="crates/tree-morph/src/rule.rs-98" name="crates/tree-morph/src/rule.rs-98"></a><span class="w">    </span><span class="sd">/// Return the name of the rule, will default to anonymous if not specified.</span>
+<a id="crates/tree-morph/src/rule.rs-99" name="crates/tree-morph/src/rule.rs-99"></a><span class="hll"><span class="w">    </span><span class="k">fn</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="o">&amp;</span><span class="bp">self</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="kp">&amp;</span><span class="kt">str</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/tree-morph/src/rule.rs-100" name="crates/tree-morph/src/rule.rs-100"></a><span class="hll"><span class="w">        </span><span class="s">&quot;Anonymous Rule&quot;</span>
+</span><a id="crates/tree-morph/src/rule.rs-101" name="crates/tree-morph/src/rule.rs-101"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="crates/tree-morph/src/rule.rs-102" name="crates/tree-morph/src/rule.rs-102"></a><span class="p">}</span>
+<a id="crates/tree-morph/src/rule.rs-103" name="crates/tree-morph/src/rule.rs-103"></a>
+<a id="crates/tree-morph/src/rule.rs-104" name="crates/tree-morph/src/rule.rs-104"></a><span class="c1">// Allows the user to pass closures and function pointers directly as rules</span>
+<a id="crates/tree-morph/src/rule.rs-105" name="crates/tree-morph/src/rule.rs-105"></a><span class="k">impl</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">M</span><span class="p">,</span><span class="w"> </span><span class="n">F</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Rule</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">M</span><span class="o">&gt;</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">F</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/tree-morph/src/rule.rs-206" name="crates/tree-morph/src/rule.rs-206"></a><span class="p">}</span>
+<a id="crates/tree-morph/src/rule.rs-207" name="crates/tree-morph/src/rule.rs-207"></a>
+<a id="crates/tree-morph/src/rule.rs-208" name="crates/tree-morph/src/rule.rs-208"></a><span class="k">impl</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;</span><span class="w"> </span><span class="n">NamedRule</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/tree-morph/src/rule.rs-209" name="crates/tree-morph/src/rule.rs-209"></a><span class="w">    </span><span class="sd">/// Create a Rule with a specified name.</span>
+<a id="crates/tree-morph/src/rule.rs-210" name="crates/tree-morph/src/rule.rs-210"></a><span class="hll"><span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">new</span><span class="p">(</span><span class="n">name</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="o">&#39;</span><span class="nb">static</span><span class="w"> </span><span class="kt">str</span><span class="p">,</span><span class="w"> </span><span class="n">function</span><span class="p">:</span><span class="w"> </span><span class="nc">F</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">Self</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/tree-morph/src/rule.rs-211" name="crates/tree-morph/src/rule.rs-211"></a><span class="hll"><span class="w">        </span><span class="bp">Self</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">function</span><span class="w"> </span><span class="p">}</span>
+</span><a id="crates/tree-morph/src/rule.rs-212" name="crates/tree-morph/src/rule.rs-212"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="crates/tree-morph/src/rule.rs-213" name="crates/tree-morph/src/rule.rs-213"></a><span class="p">}</span>
+<a id="crates/tree-morph/src/rule.rs-214" name="crates/tree-morph/src/rule.rs-214"></a>
+<a id="crates/tree-morph/src/rule.rs-215" name="crates/tree-morph/src/rule.rs-215"></a><span class="k">impl</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">M</span><span class="p">,</span><span class="w"> </span><span class="n">F</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Rule</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">M</span><span class="o">&gt;</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">NamedRule</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;</span>
+<a id="crates/tree-morph/src/rule.rs-216" name="crates/tree-morph/src/rule.rs-216"></a><span class="k">where</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/tree-morph/tests/dirty_clean.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/tree-morph/tests/dirty_clean.rs-20" name="crates/tree-morph/tests/dirty_clean.rs-20"></a><span class="w">        </span><span class="n">Expr</span><span class="p">::</span><span class="n">Add</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">match</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">as_ref</span><span class="p">(),</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">as_ref</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/tree-morph/tests/dirty_clean.rs-21" name="crates/tree-morph/tests/dirty_clean.rs-21"></a><span class="w">            </span><span class="p">(</span><span class="n">Expr</span><span class="p">::</span><span class="n">Val</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="w"> </span><span class="n">Expr</span><span class="p">::</span><span class="n">Val</span><span class="p">(</span><span class="n">y</span><span class="p">))</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/tree-morph/tests/dirty_clean.rs-22" name="crates/tree-morph/tests/dirty_clean.rs-22"></a><span class="w">                </span><span class="n">cmd</span><span class="p">.</span><span class="n">mut_meta</span><span class="p">(</span><span class="nb">Box</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="o">|</span><span class="n">m</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">mut</span><span class="w"> </span><span class="n">Meta</span><span class="o">|</span><span class="w"> </span><span class="n">m</span><span class="p">.</span><span class="n">num_applications</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span><span class="p">));</span>
+<a id="crates/tree-morph/tests/dirty_clean.rs-23" name="crates/tree-morph/tests/dirty_clean.rs-23"></a><span class="w">                </span><span class="nb">Some</span><span class="p">(</span><span class="n">Expr</span><span class="p">::</span><span class="n">Val</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">y</span><span class="p">))</span>
+<a id="crates/tree-morph/tests/dirty_clean.rs-24" name="crates/tree-morph/tests/dirty_clean.rs-24"></a><span class="hll"><span class="w">            </span><span class="p">}</span>
+</span><a id="crates/tree-morph/tests/dirty_clean.rs-25" name="crates/tree-morph/tests/dirty_clean.rs-25"></a><span class="w">            </span><span class="n">_</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">None</span><span class="p">,</span>
+<a id="crates/tree-morph/tests/dirty_clean.rs-26" name="crates/tree-morph/tests/dirty_clean.rs-26"></a><span class="w">        </span><span class="p">},</span>
+<a id="crates/tree-morph/tests/dirty_clean.rs-27" name="crates/tree-morph/tests/dirty_clean.rs-27"></a><span class="w">        </span><span class="n">_</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">None</span><span class="p">,</span>
+<a id="crates/tree-morph/tests/dirty_clean.rs-28" name="crates/tree-morph/tests/dirty_clean.rs-28"></a><span class="w">    </span><span class="p">}</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/tree-morph/tests/dirty_clean.rs-27" name="crates/tree-morph/tests/dirty_clean.rs-27"></a><span class="w">        </span><span class="n">_</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">None</span><span class="p">,</span>
+<a id="crates/tree-morph/tests/dirty_clean.rs-28" name="crates/tree-morph/tests/dirty_clean.rs-28"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/tree-morph/tests/dirty_clean.rs-29" name="crates/tree-morph/tests/dirty_clean.rs-29"></a><span class="p">}</span>
+<a id="crates/tree-morph/tests/dirty_clean.rs-30" name="crates/tree-morph/tests/dirty_clean.rs-30"></a>
+<a id="crates/tree-morph/tests/dirty_clean.rs-31" name="crates/tree-morph/tests/dirty_clean.rs-31"></a><span class="hll"><span class="cp">#[named_rule(</span><span class="s">&quot;Eval Mul&quot;</span><span class="cp">)]</span>
+</span><a id="crates/tree-morph/tests/dirty_clean.rs-32" name="crates/tree-morph/tests/dirty_clean.rs-32"></a><span class="k">fn</span><span class="w"> </span><span class="nf">rule_eval_mul</span><span class="p">(</span><span class="n">cmd</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">mut</span><span class="w"> </span><span class="n">Commands</span><span class="o">&lt;</span><span class="n">Expr</span><span class="p">,</span><span class="w"> </span><span class="n">Meta</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">expr</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">Expr</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">Meta</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nb">Option</span><span class="o">&lt;</span><span class="n">Expr</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/tree-morph/tests/dirty_clean.rs-33" name="crates/tree-morph/tests/dirty_clean.rs-33"></a><span class="w">    </span><span class="k">match</span><span class="w"> </span><span class="n">expr</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/tree-morph/tests/dirty_clean.rs-34" name="crates/tree-morph/tests/dirty_clean.rs-34"></a><span class="w">        </span><span class="n">Expr</span><span class="p">::</span><span class="n">Mul</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">match</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">as_ref</span><span class="p">(),</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">as_ref</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/tree-morph/tests/dirty_clean.rs-35" name="crates/tree-morph/tests/dirty_clean.rs-35"></a><span class="w">            </span><span class="p">(</span><span class="n">Expr</span><span class="p">::</span><span class="n">Val</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="w"> </span><span class="n">Expr</span><span class="p">::</span><span class="n">Val</span><span class="p">(</span><span class="n">y</span><span class="p">))</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/tree-morph/tests/dirty_clean.rs-44" name="crates/tree-morph/tests/dirty_clean.rs-44"></a>
+<a id="crates/tree-morph/tests/dirty_clean.rs-45" name="crates/tree-morph/tests/dirty_clean.rs-45"></a><span class="cp">#[derive(Debug)]</span>
+<a id="crates/tree-morph/tests/dirty_clean.rs-46" name="crates/tree-morph/tests/dirty_clean.rs-46"></a><span class="k">struct</span><span class="w"> </span><span class="nc">Meta</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/tree-morph/tests/dirty_clean.rs-47" name="crates/tree-morph/tests/dirty_clean.rs-47"></a><span class="w">    </span><span class="n">num_applications</span><span class="p">:</span><span class="w"> </span><span class="kt">u32</span><span class="p">,</span>
+<a id="crates/tree-morph/tests/dirty_clean.rs-48" name="crates/tree-morph/tests/dirty_clean.rs-48"></a><span class="hll"><span class="w">    </span><span class="n">attempted</span><span class="p">:</span><span class="w"> </span><span class="nc">HashMap</span><span class="o">&lt;</span><span class="nb">String</span><span class="p">,</span><span class="w"> </span><span class="kt">usize</span><span class="o">&gt;</span><span class="p">,</span>
+</span><a id="crates/tree-morph/tests/dirty_clean.rs-49" name="crates/tree-morph/tests/dirty_clean.rs-49"></a><span class="hll"><span class="w">    </span><span class="n">applicable</span><span class="p">:</span><span class="w"> </span><span class="nc">HashMap</span><span class="o">&lt;</span><span class="nb">String</span><span class="p">,</span><span class="w"> </span><span class="kt">usize</span><span class="o">&gt;</span><span class="p">,</span>
+</span><a id="crates/tree-morph/tests/dirty_clean.rs-50" name="crates/tree-morph/tests/dirty_clean.rs-50"></a><span class="p">}</span>
+<a id="crates/tree-morph/tests/dirty_clean.rs-51" name="crates/tree-morph/tests/dirty_clean.rs-51"></a>
+<a id="crates/tree-morph/tests/dirty_clean.rs-52" name="crates/tree-morph/tests/dirty_clean.rs-52"></a><span class="cp">#[test]</span>
+<a id="crates/tree-morph/tests/dirty_clean.rs-53" name="crates/tree-morph/tests/dirty_clean.rs-53"></a><span class="k">fn</span><span class="w"> </span><span class="nf">left_branch_clean</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+    </body>
+</html>
