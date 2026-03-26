@@ -6,7 +6,7 @@
 <a href=#6 id=6 data-nosnippet>6</a><span class="kw">use </span>rangemap::RangeMap;
 <a href=#7 id=7 data-nosnippet>7</a><span class="kw">pub type </span>SpanId = u32;
 <a href=#8 id=8 data-nosnippet>8</a>
-<a href=#9 id=9 data-nosnippet>9</a><span class="attr">#[derive(Debug)]
+<a href=#9 id=9 data-nosnippet>9</a><span class="attr">#[derive(Debug, Clone)]
 <a href=#10 id=10 data-nosnippet>10</a></span><span class="kw">pub struct </span>HoverInfo {
 <a href=#11 id=11 data-nosnippet>11</a>    <span class="kw">pub </span>description: String,       <span class="comment">// keyword description, type info...
 <a href=#12 id=12 data-nosnippet>12</a>    </span><span class="kw">pub </span>kind: <span class="prelude-ty">Option</span>&lt;SymbolKind&gt;,  <span class="comment">// var, domain, function...
@@ -15,7 +15,7 @@
 <a href=#15 id=15 data-nosnippet>15</a></span>}
 <a href=#16 id=16 data-nosnippet>16</a><span class="comment">// source span with start and end positions
 <a href=#17 id=17 data-nosnippet>17</a>// in the essence source code
-<a href=#18 id=18 data-nosnippet>18</a></span><span class="attr">#[derive(Debug)]
+<a href=#18 id=18 data-nosnippet>18</a></span><span class="attr">#[derive(Debug, Clone)]
 <a href=#19 id=19 data-nosnippet>19</a></span><span class="kw">pub struct </span>SourceSpan {
 <a href=#20 id=20 data-nosnippet>20</a>    <span class="kw">pub </span>start_byte: usize, <span class="comment">// byte offset in the source code
 <a href=#21 id=21 data-nosnippet>21</a>    </span><span class="kw">pub </span>end_byte: usize,
@@ -25,7 +25,7 @@
 <a href=#25 id=25 data-nosnippet>25</a>}
 <a href=#26 id=26 data-nosnippet>26</a>
 <a href=#27 id=27 data-nosnippet>27</a><span class="comment">// can add more metadata for hovering and stuff
-<a href=#28 id=28 data-nosnippet>28</a></span><span class="attr">#[derive(Debug, Default)]
+<a href=#28 id=28 data-nosnippet>28</a></span><span class="attr">#[derive(Debug, Default, Clone)]
 <a href=#29 id=29 data-nosnippet>29</a></span><span class="kw">pub struct </span>SourceMap {
 <a href=#30 id=30 data-nosnippet>30</a>    <span class="kw">pub </span>spans: Vec&lt;SourceSpan&gt;,
 <a href=#31 id=31 data-nosnippet>31</a>    <span class="kw">pub </span>by_byte: RangeMap&lt;usize, SpanId&gt;,
@@ -64,16 +64,23 @@
 <a href=#64 id=64 data-nosnippet>64</a>    </span><span class="kw">pub fn </span>span_id_at_byte(<span class="kw-2">&amp;</span><span class="self">self</span>, byte: usize) -&gt; <span class="prelude-ty">Option</span>&lt;SpanId&gt; {
 <a href=#65 id=65 data-nosnippet>65</a>        <span class="self">self</span>.by_byte.get(<span class="kw-2">&amp;</span>byte).copied()
 <a href=#66 id=66 data-nosnippet>66</a>    }
-<a href=#67 id=67 data-nosnippet>67</a>}
-<a href=#68 id=68 data-nosnippet>68</a>
-<a href=#69 id=69 data-nosnippet>69</a><span class="comment">// helper to allocate a span with hover info directly from a tree-sitter node
-<a href=#70 id=70 data-nosnippet>70</a>// source is not used yet but could be for more complex hover info (e.g. showing the actual code snippet)
-<a href=#71 id=71 data-nosnippet>71</a></span><span class="kw">pub fn </span>span_with_hover(
-<a href=#72 id=72 data-nosnippet>72</a>    node: <span class="kw-2">&amp;</span>tree_sitter::Node,
-<a href=#73 id=73 data-nosnippet>73</a>    _source: <span class="kw-2">&amp;</span>str,
-<a href=#74 id=74 data-nosnippet>74</a>    map: <span class="kw-2">&amp;mut </span>SourceMap,
-<a href=#75 id=75 data-nosnippet>75</a>    info: HoverInfo,
-<a href=#76 id=76 data-nosnippet>76</a>) -&gt; SpanId {
-<a href=#77 id=77 data-nosnippet>77</a>    alloc_span(node.range(), map, <span class="prelude-val">Some</span>(info))
-<a href=#78 id=78 data-nosnippet>78</a>}
+<a href=#67 id=67 data-nosnippet>67</a>
+<a href=#68 id=68 data-nosnippet>68</a>    <span class="comment">// helper to get hover info for a given byte offset (e.g. cursor position)
+<a href=#69 id=69 data-nosnippet>69</a>    </span><span class="kw">pub fn </span>hover_info_at_byte(<span class="kw-2">&amp;</span><span class="self">self</span>, byte: usize) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>HoverInfo&gt; {
+<a href=#70 id=70 data-nosnippet>70</a>        <span class="self">self</span>.span_id_at_byte(byte)
+<a href=#71 id=71 data-nosnippet>71</a>            .and_then(|span_id| <span class="self">self</span>.spans.get(span_id <span class="kw">as </span>usize))
+<a href=#72 id=72 data-nosnippet>72</a>            .and_then(|span| span.hover_info.as_ref())
+<a href=#73 id=73 data-nosnippet>73</a>    }
+<a href=#74 id=74 data-nosnippet>74</a>}
+<a href=#75 id=75 data-nosnippet>75</a>
+<a href=#76 id=76 data-nosnippet>76</a><span class="comment">// helper to allocate a span with hover info directly from a tree-sitter node
+<a href=#77 id=77 data-nosnippet>77</a>// source is not used yet but could be for more complex hover info (e.g. showing the actual code snippet)
+<a href=#78 id=78 data-nosnippet>78</a></span><span class="kw">pub fn </span>span_with_hover(
+<a href=#79 id=79 data-nosnippet>79</a>    node: <span class="kw-2">&amp;</span>tree_sitter::Node,
+<a href=#80 id=80 data-nosnippet>80</a>    _source: <span class="kw-2">&amp;</span>str,
+<a href=#81 id=81 data-nosnippet>81</a>    map: <span class="kw-2">&amp;mut </span>SourceMap,
+<a href=#82 id=82 data-nosnippet>82</a>    info: HoverInfo,
+<a href=#83 id=83 data-nosnippet>83</a>) -&gt; SpanId {
+<a href=#84 id=84 data-nosnippet>84</a>    alloc_span(node.range(), map, <span class="prelude-val">Some</span>(info))
+<a href=#85 id=85 data-nosnippet>85</a>}
 </code></pre></div></section></main></body></html>

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["detect_syntactic_errors"]};
+window.SIDEBAR_ITEMS = {"fn":["detect_syntactic_errors","is_malformed_line_error"]};
