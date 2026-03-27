@@ -147,7 +147,7 @@
 <a href=#147 id=147 data-nosnippet>147</a>    <span class="kw">let </span>generated_json_str = serialize_model(model)<span class="question-mark">?</span>;
 <a href=#148 id=148 data-nosnippet>148</a>    <span class="kw">let </span>generated_json_str = maybe_truncate_serialised_json(generated_json_str, test_stage);
 <a href=#149 id=149 data-nosnippet>149</a>    <span class="kw">let </span>filename = <span class="macro">format!</span>(<span class="string">"{path}/{test_name}-{marker}.generated-{test_stage}.serialised.json"</span>);
-<a href=#150 id=150 data-nosnippet>150</a>    <span class="macro">println!</span>(<span class="string">"saving: {}"</span>, filename);
+<a href=#150 id=150 data-nosnippet>150</a>    <span class="macro">println!</span>(<span class="string">"saving: {filename}"</span>);
 <a href=#151 id=151 data-nosnippet>151</a>    File::create(<span class="kw-2">&amp;</span>filename)<span class="question-mark">?</span>.write_all(generated_json_str.as_bytes())<span class="question-mark">?</span>;
 <a href=#152 id=152 data-nosnippet>152</a>    <span class="prelude-val">Ok</span>(())
 <a href=#153 id=153 data-nosnippet>153</a>}
@@ -176,7 +176,7 @@
 <a href=#176 id=176 data-nosnippet>176</a><span class="doccomment">/// Reads a file into a `String`, providing a clearer error message that includes the file path.
 <a href=#177 id=177 data-nosnippet>177</a></span><span class="kw">fn </span>read_with_path(path: String) -&gt; <span class="prelude-ty">Result</span>&lt;String, std::io::Error&gt; {
 <a href=#178 id=178 data-nosnippet>178</a>    std::fs::read_to_string(<span class="kw-2">&amp;</span>path)
-<a href=#179 id=179 data-nosnippet>179</a>        .map_err(|e| io::Error::new(e.kind(), <span class="macro">format!</span>(<span class="string">"{} (path: {})"</span>, e, path)))
+<a href=#179 id=179 data-nosnippet>179</a>        .map_err(|e| io::Error::new(e.kind(), <span class="macro">format!</span>(<span class="string">"{e} (path: {path})"</span>)))
 <a href=#180 id=180 data-nosnippet>180</a>}
 <a href=#181 id=181 data-nosnippet>181</a>
 <a href=#182 id=182 data-nosnippet>182</a><span class="kw">pub fn </span>read_model_json(
@@ -206,7 +206,7 @@
 <a href=#206 id=206 data-nosnippet>206</a>) -&gt; <span class="prelude-ty">Result</span>&lt;String, std::io::Error&gt; {
 <a href=#207 id=207 data-nosnippet>207</a>    <span class="kw">let </span>marker = solver.as_str();
 <a href=#208 id=208 data-nosnippet>208</a>    <span class="kw">let </span>filename = <span class="macro">format!</span>(<span class="string">"{path}/{test_name}-{marker}.{prefix}-{test_stage}.serialised.json"</span>);
-<a href=#209 id=209 data-nosnippet>209</a>    <span class="macro">println!</span>(<span class="string">"reading: {}"</span>, filename);
+<a href=#209 id=209 data-nosnippet>209</a>    <span class="macro">println!</span>(<span class="string">"reading: {filename}"</span>);
 <a href=#210 id=210 data-nosnippet>210</a>    read_first_n_lines(filename, max_lines)
 <a href=#211 id=211 data-nosnippet>211</a>}
 <a href=#212 id=212 data-nosnippet>212</a>
