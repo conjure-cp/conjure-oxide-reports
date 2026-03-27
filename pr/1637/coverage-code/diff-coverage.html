@@ -90,9 +90,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
         <h1>Diff Coverage</h1>
         <p>Diff: upstream/main...HEAD, staged and unstaged changes</p>
         <ul>
-            <li><b>Total</b>: 93 lines</li>
+            <li><b>Total</b>: 105 lines</li>
             <li><b>Missing</b>: 36 lines</li>
-            <li><b>Coverage</b>: 61%</li>
+            <li><b>Coverage</b>: 65%</li>
         </ul>
         <table border="1">
             <tr>
@@ -132,13 +132,18 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
             </tr>
             <tr>
                 <td>crates/conjure-cp-rules/src/comprehensions/expansion.rs</td>
-                <td>71.4%</td>
-                <td>80,123,166,168</td>
+                <td>85.7%</td>
+                <td>80,168</td>
             </tr>
             <tr>
                 <td>crates/conjure-cp-rules/src/comprehensions/expansion/expand_native.rs</td>
                 <td>0.0%</td>
                 <td>71,73</td>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-rules/src/smt/smt_rules.rs</td>
+                <td>83.3%</td>
+                <td>271-272</td>
             </tr>
             <tr>
                 <td>tests-integration/tests/roundtrip_tests.rs</td>
@@ -497,40 +502,17 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <a id="crates/conjure-cp-rules/src/comprehensions/expansion.rs-84" name="crates/conjure-cp-rules/src/comprehensions/expansion.rs-84"></a><span class="w">        </span><span class="p">}</span>
 </pre></div></td></tr></table></div>
 
-            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">119</span>
-<span class="normal">120</span>
-<span class="normal">121</span>
-<span class="normal">122</span>
-<span class="normal">123</span>
-<span class="normal">124</span>
-<span class="normal">125</span>
-<span class="normal">126</span>
-<span class="normal">127</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-rules/src/comprehensions/expansion.rs-119" name="crates/conjure-cp-rules/src/comprehensions/expansion.rs-119"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">comprehension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">comprehension</span><span class="p">.</span><span class="n">as_ref</span><span class="p">().</span><span class="n">clone</span><span class="p">();</span>
-<a id="crates/conjure-cp-rules/src/comprehensions/expansion.rs-120" name="crates/conjure-cp-rules/src/comprehensions/expansion.rs-120"></a>
-<a id="crates/conjure-cp-rules/src/comprehensions/expansion.rs-121" name="crates/conjure-cp-rules/src/comprehensions/expansion.rs-121"></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">qual</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="o">&amp;</span><span class="n">comprehension</span><span class="p">.</span><span class="n">qualifiers</span><span class="w"> </span><span class="p">{</span>
-<a id="crates/conjure-cp-rules/src/comprehensions/expansion.rs-122" name="crates/conjure-cp-rules/src/comprehensions/expansion.rs-122"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="n">ComprehensionQualifier</span><span class="p">::</span><span class="n">ExpressionGenerator</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="o">..</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">qual</span><span class="w"> </span><span class="p">{</span>
-<a id="crates/conjure-cp-rules/src/comprehensions/expansion.rs-123" name="crates/conjure-cp-rules/src/comprehensions/expansion.rs-123"></a><span class="hll"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">RuleNotApplicable</span><span class="p">);</span>
-</span><a id="crates/conjure-cp-rules/src/comprehensions/expansion.rs-124" name="crates/conjure-cp-rules/src/comprehensions/expansion.rs-124"></a><span class="w">        </span><span class="p">}</span>
-<a id="crates/conjure-cp-rules/src/comprehensions/expansion.rs-125" name="crates/conjure-cp-rules/src/comprehensions/expansion.rs-125"></a><span class="w">    </span><span class="p">}</span>
-<a id="crates/conjure-cp-rules/src/comprehensions/expansion.rs-126" name="crates/conjure-cp-rules/src/comprehensions/expansion.rs-126"></a>
-<a id="crates/conjure-cp-rules/src/comprehensions/expansion.rs-127" name="crates/conjure-cp-rules/src/comprehensions/expansion.rs-127"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">results</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">expand_via_solver</span><span class="p">(</span><span class="n">comprehension</span><span class="p">)</span>
-</pre></div></td></tr></table></div>
-
-            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">162</span>
-<span class="normal">163</span>
-<span class="normal">164</span>
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">164</span>
 <span class="normal">165</span>
 <span class="normal">166</span>
 <span class="normal">167</span>
 <span class="normal">168</span>
 <span class="normal">169</span>
 <span class="normal">170</span>
-<span class="normal">171</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-rules/src/comprehensions/expansion.rs-162" name="crates/conjure-cp-rules/src/comprehensions/expansion.rs-162"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">comprehension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">as_single_comprehension</span><span class="p">(</span><span class="o">&amp;</span><span class="n">expr</span><span class="p">.</span><span class="n">children</span><span class="p">()[</span><span class="mi">0</span><span class="p">]).</span><span class="n">ok_or</span><span class="p">(</span><span class="n">RuleNotApplicable</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
-<a id="crates/conjure-cp-rules/src/comprehensions/expansion.rs-163" name="crates/conjure-cp-rules/src/comprehensions/expansion.rs-163"></a>
-<a id="crates/conjure-cp-rules/src/comprehensions/expansion.rs-164" name="crates/conjure-cp-rules/src/comprehensions/expansion.rs-164"></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">qual</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="o">&amp;</span><span class="n">comprehension</span><span class="p">.</span><span class="n">qualifiers</span><span class="w"> </span><span class="p">{</span>
+<span class="normal">171</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-rules/src/comprehensions/expansion.rs-164" name="crates/conjure-cp-rules/src/comprehensions/expansion.rs-164"></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">qual</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="o">&amp;</span><span class="n">comprehension</span><span class="p">.</span><span class="n">qualifiers</span><span class="w"> </span><span class="p">{</span>
 <a id="crates/conjure-cp-rules/src/comprehensions/expansion.rs-165" name="crates/conjure-cp-rules/src/comprehensions/expansion.rs-165"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="n">ComprehensionQualifier</span><span class="p">::</span><span class="n">ExpressionGenerator</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="o">..</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">qual</span><span class="w"> </span><span class="p">{</span>
-<a id="crates/conjure-cp-rules/src/comprehensions/expansion.rs-166" name="crates/conjure-cp-rules/src/comprehensions/expansion.rs-166"></a><span class="hll"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">RuleNotApplicable</span><span class="p">);</span>
-</span><a id="crates/conjure-cp-rules/src/comprehensions/expansion.rs-167" name="crates/conjure-cp-rules/src/comprehensions/expansion.rs-167"></a><span class="w">        </span><span class="p">}</span>
+<a id="crates/conjure-cp-rules/src/comprehensions/expansion.rs-166" name="crates/conjure-cp-rules/src/comprehensions/expansion.rs-166"></a><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">RuleNotApplicable</span><span class="p">);</span>
+<a id="crates/conjure-cp-rules/src/comprehensions/expansion.rs-167" name="crates/conjure-cp-rules/src/comprehensions/expansion.rs-167"></a><span class="w">        </span><span class="p">}</span>
 <a id="crates/conjure-cp-rules/src/comprehensions/expansion.rs-168" name="crates/conjure-cp-rules/src/comprehensions/expansion.rs-168"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
 </span><a id="crates/conjure-cp-rules/src/comprehensions/expansion.rs-169" name="crates/conjure-cp-rules/src/comprehensions/expansion.rs-169"></a>
 <a id="crates/conjure-cp-rules/src/comprehensions/expansion.rs-170" name="crates/conjure-cp-rules/src/comprehensions/expansion.rs-170"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">results</span><span class="w"> </span><span class="o">=</span>
@@ -563,6 +545,32 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <a id="crates/conjure-cp-rules/src/comprehensions/expansion/expand_native.rs-75" name="crates/conjure-cp-rules/src/comprehensions/expansion/expand_native.rs-75"></a>
 <a id="crates/conjure-cp-rules/src/comprehensions/expansion/expand_native.rs-76" name="crates/conjure-cp-rules/src/comprehensions/expansion/expand_native.rs-76"></a><span class="w">    </span><span class="nb">Ok</span><span class="p">(())</span>
 <a id="crates/conjure-cp-rules/src/comprehensions/expansion/expand_native.rs-77" name="crates/conjure-cp-rules/src/comprehensions/expansion/expand_native.rs-77"></a><span class="p">}</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/conjure-cp-rules/src/smt/smt_rules.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-rules/src/smt/smt_rules.rs-267" name="crates/conjure-cp-rules/src/smt/smt_rules.rs-267"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">RuleNotApplicable</span><span class="p">);</span>
+<a id="crates/conjure-cp-rules/src/smt/smt_rules.rs-268" name="crates/conjure-cp-rules/src/smt/smt_rules.rs-268"></a><span class="w">    </span><span class="p">};</span>
+<a id="crates/conjure-cp-rules/src/smt/smt_rules.rs-269" name="crates/conjure-cp-rules/src/smt/smt_rules.rs-269"></a>
+<a id="crates/conjure-cp-rules/src/smt/smt_rules.rs-270" name="crates/conjure-cp-rules/src/smt/smt_rules.rs-270"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="p">[</span><span class="n">ComprehensionQualifier</span><span class="p">::</span><span class="n">ExpressionGenerator</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">ptr</span><span class="w"> </span><span class="p">}]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">comp</span><span class="p">.</span><span class="n">qualifiers</span><span class="p">[</span><span class="o">..</span><span class="p">]</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-rules/src/smt/smt_rules.rs-271" name="crates/conjure-cp-rules/src/smt/smt_rules.rs-271"></a><span class="hll"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">RuleNotApplicable</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-rules/src/smt/smt_rules.rs-272" name="crates/conjure-cp-rules/src/smt/smt_rules.rs-272"></a><span class="hll"><span class="w">    </span><span class="p">};</span>
+</span><a id="crates/conjure-cp-rules/src/smt/smt_rules.rs-273" name="crates/conjure-cp-rules/src/smt/smt_rules.rs-273"></a>
+<a id="crates/conjure-cp-rules/src/smt/smt_rules.rs-274" name="crates/conjure-cp-rules/src/smt/smt_rules.rs-274"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">set</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ptr</span>
+<a id="crates/conjure-cp-rules/src/smt/smt_rules.rs-275" name="crates/conjure-cp-rules/src/smt/smt_rules.rs-275"></a><span class="w">        </span><span class="p">.</span><span class="n">as_quantified_expr</span><span class="p">()</span>
+<a id="crates/conjure-cp-rules/src/smt/smt_rules.rs-276" name="crates/conjure-cp-rules/src/smt/smt_rules.rs-276"></a><span class="w">        </span><span class="p">.</span><span class="n">map</span><span class="p">(</span><span class="o">|</span><span class="n">expr_guard</span><span class="o">|</span><span class="w"> </span><span class="n">expr_guard</span><span class="p">.</span><span class="n">clone</span><span class="p">())</span>
 </pre></div></td></tr></table></div>
 
             </div>
