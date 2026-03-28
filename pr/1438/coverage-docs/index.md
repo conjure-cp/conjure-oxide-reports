@@ -1,7 +1,7 @@
 # RustDoc Coverage Report
 
 **conjure-cp:** 0% with examples, 25% documented -- 0/1/4
-**conjure-cp-cli:** 0% with examples, 41% documented -- 0/46/111
+**conjure-cp-cli:** 0% with examples, 41% documented -- 0/45/110
 **conjure-cp-core:** 4% with examples, 50% documented -- 23/306/609
 **conjure-cp-enum-compatibility-macro:** 33% with examples, 100% documented -- 1/3/3
 **conjure-cp-essence-macros:** 67% with examples, 67% documented -- 2/2/3
@@ -10,12 +10,12 @@
 **conjure-cp-rule-macros:** 33% with examples, 67% documented -- 1/2/3
 **conjure-cp-rules:** 0% with examples, 100% documented -- 0/1/1
 **minion-sys:** 2% with examples, 26% documented -- 2/31/119
-**tree-morph:** 8% with examples, 100% documented -- 7/88/88
+**tree-morph:** 7% with examples, 100% documented -- 7/95/95
 **tree-morph-macros:** 50% with examples, 50% documented -- 1/1/2
 **tree-sitter-essence:** 33% with examples, 100% documented -- 1/3/3
 
 PR: [#1438](https://github.com/conjure-cp/conjure-oxide/pull/1438)
-Commit: [1c6d69c5d3696dfd6de2724aac3bf1252c61e60a](https://github.com/Arnav-Bista/conjure-oxide/commit/1c6d69c5d3696dfd6de2724aac3bf1252c61e60a)
+Commit: [8e6a0f1eab5667cdf069c670f70b2e911e5c8d74](https://github.com/Arnav-Bista/conjure-oxide/commit/8e6a0f1eab5667cdf069c670f70b2e911e5c8d74)
 
 ## RustDoc coverage for `conjure-cp`
 
@@ -38,7 +38,7 @@ Commit: [1c6d69c5d3696dfd6de2724aac3bf1252c61e60a](https://github.com/Arnav-Bist
 | crates/conjure-cp-cli/src/solve.rs | ❌ 40% *(8/20)* | ❌ 0% *(0/20)* |
 | crates/conjure-cp-cli/src/test_solve.rs | ❌ 40% *(2/5)* | ❌ 0% *(0/5)* |
 | crates/conjure-cp-cli/src/find_conjure.rs | ❌ 50% *(1/2)* | ❌ 0% *(0/2)* |
-| crates/conjure-cp-cli/src/cli.rs | ❌ 54% *(25/46)* | ❌ 0% *(0/46)* |
+| crates/conjure-cp-cli/src/cli.rs | ❌ 53% *(24/45)* | ❌ 0% *(0/45)* |
 | crates/conjure-cp-cli/src/utils/json.rs | ❌ 67% *(2/3)* | ❌ 0% *(0/3)* |
 | crates/conjure-cp-cli/src/print_info_schema.rs | ✅ 100% *(2/2)* | ❌ 0% *(0/2)* |
 
@@ -184,7 +184,7 @@ Commit: [1c6d69c5d3696dfd6de2724aac3bf1252c61e60a](https://github.com/Arnav-Bist
 
 | File | Percentage Documented | Percentage with examples |
 |----|----|----|
-| crates/tree-morph/src/cache.rs | ✅ 100% *(24/24)* | ❌ 0% *(0/24)* |
+| crates/tree-morph/src/cache.rs | ✅ 100% *(31/31)* | ❌ 0% *(0/31)* |
 | crates/tree-morph/src/commands.rs | ✅ 100% *(5/5)* | ❌ 20% *(1/5)* |
 | crates/tree-morph/src/engine.rs | ✅ 100% *(4/4)* | ❌ 25% *(1/4)* |
 | crates/tree-morph/src/engine_builder.rs | ✅ 100% *(24/24)* | ❌ 0% *(0/24)* |
