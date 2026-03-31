@@ -10,48 +10,76 @@
 <a href=#10 id=10 data-nosnippet>10</a>/// in `param_model`, checks it is a constant and within the given domain, and replaces the `given`
 <a href=#11 id=11 data-nosnippet>11</a>/// with a value-letting in the returned model.
 <a href=#12 id=12 data-nosnippet>12</a></span><span class="kw">pub fn </span>instantiate_model(problem_model: Model, param_model: Model) -&gt; anyhow::Result&lt;Model&gt; {
-<a href=#13 id=13 data-nosnippet>13</a>    <span class="kw">let </span><span class="kw-2">mut </span>symbol_table = problem_model.symbols_ptr_unchecked().write();
+<a href=#13 id=13 data-nosnippet>13</a>    <span class="kw">let </span>symbol_table = problem_model.symbols_ptr_unchecked().write();
 <a href=#14 id=14 data-nosnippet>14</a>    <span class="kw">let </span>param_table = param_model.symbols_ptr_unchecked().write();
-<a href=#15 id=15 data-nosnippet>15</a>
-<a href=#16 id=16 data-nosnippet>16</a>    <span class="kw">for </span>(name, decl) <span class="kw">in </span>symbol_table.iter_local_mut() {
-<a href=#17 id=17 data-nosnippet>17</a>        <span class="kw">let </span><span class="prelude-val">Some</span>(domain) = decl.as_given() <span class="kw">else </span>{
-<a href=#18 id=18 data-nosnippet>18</a>            <span class="kw">continue</span>;
-<a href=#19 id=19 data-nosnippet>19</a>        };
-<a href=#20 id=20 data-nosnippet>20</a>
-<a href=#21 id=21 data-nosnippet>21</a>        <span class="kw">let </span>param_decl = param_table.lookup(name);
-<a href=#22 id=22 data-nosnippet>22</a>        <span class="kw">let </span>expr = param_decl
-<a href=#23 id=23 data-nosnippet>23</a>            .as_ref()
-<a href=#24 id=24 data-nosnippet>24</a>            .and_then(DeclarationPtr::as_value_letting)
-<a href=#25 id=25 data-nosnippet>25</a>            .ok_or_else(|| {
-<a href=#26 id=26 data-nosnippet>26</a>                <span class="macro">anyhow!</span>(
-<a href=#27 id=27 data-nosnippet>27</a>                    <span class="string">"Given declaration `{name}` does not have corresponding letting in parameter file"
-<a href=#28 id=28 data-nosnippet>28</a>                </span>)
-<a href=#29 id=29 data-nosnippet>29</a>            })<span class="question-mark">?</span>;
-<a href=#30 id=30 data-nosnippet>30</a>
-<a href=#31 id=31 data-nosnippet>31</a>        <span class="kw">let </span>expr_value = eval_constant(<span class="kw-2">&amp;</span>expr)
-<a href=#32 id=32 data-nosnippet>32</a>            .ok_or_else(|| <span class="macro">anyhow!</span>(<span class="string">"Letting expression `{expr}` cannot be evaluated"</span>))<span class="question-mark">?</span>;
-<a href=#33 id=33 data-nosnippet>33</a>
-<a href=#34 id=34 data-nosnippet>34</a>        <span class="kw">let </span>ground_domain = domain
-<a href=#35 id=35 data-nosnippet>35</a>            .resolve()
-<a href=#36 id=36 data-nosnippet>36</a>            .ok_or_else(|| <span class="macro">anyhow!</span>(<span class="string">"Domain of given statement `{name}` cannot be resolved"</span>))<span class="question-mark">?</span>;
-<a href=#37 id=37 data-nosnippet>37</a>
-<a href=#38 id=38 data-nosnippet>38</a>        <span class="kw">if </span>!ground_domain.contains(<span class="kw-2">&amp;</span>expr_value).unwrap() {
-<a href=#39 id=39 data-nosnippet>39</a>            <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(
-<a href=#40 id=40 data-nosnippet>40</a>                <span class="string">"Domain of given statement `{name}` does not contain letting value"
-<a href=#41 id=41 data-nosnippet>41</a>            </span>));
-<a href=#42 id=42 data-nosnippet>42</a>        }
-<a href=#43 id=43 data-nosnippet>43</a>
-<a href=#44 id=44 data-nosnippet>44</a>        <span class="kw">let </span>new_decl = Declaration::new(
-<a href=#45 id=45 data-nosnippet>45</a>            name.clone(),
-<a href=#46 id=46 data-nosnippet>46</a>            DeclarationKind::ValueLetting(expr.clone(), <span class="prelude-val">Some</span>(domain.clone())),
-<a href=#47 id=47 data-nosnippet>47</a>        );
-<a href=#48 id=48 data-nosnippet>48</a>        drop(domain);
-<a href=#49 id=49 data-nosnippet>49</a>        decl.replace(new_decl);
+<a href=#15 id=15 data-nosnippet>15</a>    <span class="kw">let </span><span class="kw-2">mut </span>pending_givens = symbol_table
+<a href=#16 id=16 data-nosnippet>16</a>        .iter_local()
+<a href=#17 id=17 data-nosnippet>17</a>        .filter_map(|(name, decl)| decl.as_given().map(|<span class="kw">_</span>| name.clone()))
+<a href=#18 id=18 data-nosnippet>18</a>        .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
+<a href=#19 id=19 data-nosnippet>19</a>
+<a href=#20 id=20 data-nosnippet>20</a>    <span class="kw">while </span>!pending_givens.is_empty() {
+<a href=#21 id=21 data-nosnippet>21</a>        <span class="kw">let </span><span class="kw-2">mut </span>next_pending = Vec::new();
+<a href=#22 id=22 data-nosnippet>22</a>        <span class="kw">let </span><span class="kw-2">mut </span>made_progress = <span class="bool-val">false</span>;
+<a href=#23 id=23 data-nosnippet>23</a>
+<a href=#24 id=24 data-nosnippet>24</a>        <span class="kw">for </span>name <span class="kw">in </span>pending_givens {
+<a href=#25 id=25 data-nosnippet>25</a>            <span class="kw">let </span><span class="kw-2">mut </span>decl = symbol_table
+<a href=#26 id=26 data-nosnippet>26</a>                .lookup_local(<span class="kw-2">&amp;</span>name)
+<a href=#27 id=27 data-nosnippet>27</a>                .ok_or_else(|| <span class="macro">anyhow!</span>(<span class="string">"Given declaration `{name}` not found in problem model"</span>))<span class="question-mark">?</span>;
+<a href=#28 id=28 data-nosnippet>28</a>
+<a href=#29 id=29 data-nosnippet>29</a>            <span class="kw">let </span><span class="prelude-val">Some</span>(domain) = decl.as_given() <span class="kw">else </span>{
+<a href=#30 id=30 data-nosnippet>30</a>                <span class="kw">continue</span>;
+<a href=#31 id=31 data-nosnippet>31</a>            };
+<a href=#32 id=32 data-nosnippet>32</a>
+<a href=#33 id=33 data-nosnippet>33</a>            <span class="kw">let </span>param_decl = param_table.lookup(<span class="kw-2">&amp;</span>name);
+<a href=#34 id=34 data-nosnippet>34</a>            <span class="kw">let </span>expr = param_decl
+<a href=#35 id=35 data-nosnippet>35</a>                .as_ref()
+<a href=#36 id=36 data-nosnippet>36</a>                .and_then(DeclarationPtr::as_value_letting)
+<a href=#37 id=37 data-nosnippet>37</a>                .ok_or_else(|| {
+<a href=#38 id=38 data-nosnippet>38</a>                    <span class="macro">anyhow!</span>(
+<a href=#39 id=39 data-nosnippet>39</a>                        <span class="string">"Given declaration `{name}` does not have corresponding letting in parameter file"
+<a href=#40 id=40 data-nosnippet>40</a>                    </span>)
+<a href=#41 id=41 data-nosnippet>41</a>                })<span class="question-mark">?</span>;
+<a href=#42 id=42 data-nosnippet>42</a>
+<a href=#43 id=43 data-nosnippet>43</a>            <span class="kw">let </span>expr_value = eval_constant(<span class="kw-2">&amp;</span>expr)
+<a href=#44 id=44 data-nosnippet>44</a>                .ok_or_else(|| <span class="macro">anyhow!</span>(<span class="string">"Letting expression `{expr}` cannot be evaluated"</span>))<span class="question-mark">?</span>;
+<a href=#45 id=45 data-nosnippet>45</a>
+<a href=#46 id=46 data-nosnippet>46</a>            <span class="kw">let </span><span class="prelude-val">Some</span>(ground_domain) = domain.resolve() <span class="kw">else </span>{
+<a href=#47 id=47 data-nosnippet>47</a>                next_pending.push(name);
+<a href=#48 id=48 data-nosnippet>48</a>                <span class="kw">continue</span>;
+<a href=#49 id=49 data-nosnippet>49</a>            };
 <a href=#50 id=50 data-nosnippet>50</a>
-<a href=#51 id=51 data-nosnippet>51</a>        <span class="macro">tracing::info!</span>(<span class="string">"Replaced {name} given with letting."</span>);
-<a href=#52 id=52 data-nosnippet>52</a>    }
-<a href=#53 id=53 data-nosnippet>53</a>
-<a href=#54 id=54 data-nosnippet>54</a>    drop(symbol_table);
-<a href=#55 id=55 data-nosnippet>55</a>    <span class="prelude-val">Ok</span>(problem_model)
-<a href=#56 id=56 data-nosnippet>56</a>}
+<a href=#51 id=51 data-nosnippet>51</a>            <span class="kw">if </span>!ground_domain.contains(<span class="kw-2">&amp;</span>expr_value).unwrap() {
+<a href=#52 id=52 data-nosnippet>52</a>                <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(
+<a href=#53 id=53 data-nosnippet>53</a>                    <span class="string">"Domain of given statement `{name}` does not contain letting value"
+<a href=#54 id=54 data-nosnippet>54</a>                </span>));
+<a href=#55 id=55 data-nosnippet>55</a>            }
+<a href=#56 id=56 data-nosnippet>56</a>
+<a href=#57 id=57 data-nosnippet>57</a>            <span class="kw">let </span>new_decl = Declaration::new(
+<a href=#58 id=58 data-nosnippet>58</a>                name.clone(),
+<a href=#59 id=59 data-nosnippet>59</a>                DeclarationKind::ValueLetting(expr.clone(), <span class="prelude-val">Some</span>(domain.clone())),
+<a href=#60 id=60 data-nosnippet>60</a>            );
+<a href=#61 id=61 data-nosnippet>61</a>            drop(domain);
+<a href=#62 id=62 data-nosnippet>62</a>            decl.replace(new_decl);
+<a href=#63 id=63 data-nosnippet>63</a>            made_progress = <span class="bool-val">true</span>;
+<a href=#64 id=64 data-nosnippet>64</a>
+<a href=#65 id=65 data-nosnippet>65</a>            <span class="macro">tracing::info!</span>(<span class="string">"Replaced {name} given with letting."</span>);
+<a href=#66 id=66 data-nosnippet>66</a>        }
+<a href=#67 id=67 data-nosnippet>67</a>
+<a href=#68 id=68 data-nosnippet>68</a>        <span class="kw">if </span>next_pending.is_empty() {
+<a href=#69 id=69 data-nosnippet>69</a>            <span class="kw">break</span>;
+<a href=#70 id=70 data-nosnippet>70</a>        }
+<a href=#71 id=71 data-nosnippet>71</a>
+<a href=#72 id=72 data-nosnippet>72</a>        <span class="kw">if </span>!made_progress {
+<a href=#73 id=73 data-nosnippet>73</a>            <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(
+<a href=#74 id=74 data-nosnippet>74</a>                <span class="string">"Domain of given statement `{}` cannot be resolved"</span>,
+<a href=#75 id=75 data-nosnippet>75</a>                next_pending[<span class="number">0</span>]
+<a href=#76 id=76 data-nosnippet>76</a>            ));
+<a href=#77 id=77 data-nosnippet>77</a>        }
+<a href=#78 id=78 data-nosnippet>78</a>
+<a href=#79 id=79 data-nosnippet>79</a>        pending_givens = next_pending;
+<a href=#80 id=80 data-nosnippet>80</a>    }
+<a href=#81 id=81 data-nosnippet>81</a>
+<a href=#82 id=82 data-nosnippet>82</a>    drop(symbol_table);
+<a href=#83 id=83 data-nosnippet>83</a>    <span class="prelude-val">Ok</span>(problem_model)
+<a href=#84 id=84 data-nosnippet>84</a>}
 </code></pre></div></section></main></body></html>
