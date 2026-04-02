@@ -1,8 +1,8 @@
 # RustDoc Coverage Report
 
 **conjure-cp:** 0% with examples, 25% documented -- 0/1/4
-**conjure-cp-cli:** 0% with examples, 41% documented -- 0/45/111
-**conjure-cp-core:** 4% with examples, 51% documented -- 23/308/604
+**conjure-cp-cli:** 0% with examples, 41% documented -- 0/46/112
+**conjure-cp-core:** 4% with examples, 51% documented -- 23/308/606
 **conjure-cp-enum-compatibility-macro:** 50% with examples, 100% documented -- 1/2/2
 **conjure-cp-essence-macros:** 67% with examples, 67% documented -- 2/2/3
 **conjure-cp-essence-parser:** 0% with examples, 16% documented -- 0/24/148
@@ -14,7 +14,7 @@
 **tree-sitter-essence:** 33% with examples, 100% documented -- 1/3/3
 
 PR: [#1619](https://github.com/conjure-cp/conjure-oxide/pull/1619)
-Commit: [6db6a993d8967aa5d20fa1b4e1c155fd9c406ada](https://github.com/TronciuVlad/conjure-oxide/commit/6db6a993d8967aa5d20fa1b4e1c155fd9c406ada)
+Commit: [ace9fe6ee079af861736223b3e823888493efd47](https://github.com/TronciuVlad/conjure-oxide/commit/ace9fe6ee079af861736223b3e823888493efd47)
 
 ## RustDoc coverage for `conjure-cp`
 
@@ -37,7 +37,7 @@ Commit: [6db6a993d8967aa5d20fa1b4e1c155fd9c406ada](https://github.com/TronciuVla
 | crates/conjure-cp-cli/src/solve.rs | ❌ 40% *(8/20)* | ❌ 0% *(0/20)* |
 | crates/conjure-cp-cli/src/test_solve.rs | ❌ 40% *(2/5)* | ❌ 0% *(0/5)* |
 | crates/conjure-cp-cli/src/find_conjure.rs | ❌ 50% *(1/2)* | ❌ 0% *(0/2)* |
-| crates/conjure-cp-cli/src/cli.rs | ❌ 53% *(24/45)* | ❌ 0% *(0/45)* |
+| crates/conjure-cp-cli/src/cli.rs | ❌ 54% *(25/46)* | ❌ 0% *(0/46)* |
 | crates/conjure-cp-cli/src/utils/json.rs | ❌ 67% *(2/3)* | ❌ 0% *(0/3)* |
 | crates/conjure-cp-cli/src/print_info_schema.rs | ✅ 100% *(2/2)* | ❌ 0% *(0/2)* |
 
@@ -59,7 +59,7 @@ Commit: [6db6a993d8967aa5d20fa1b4e1c155fd9c406ada](https://github.com/TronciuVla
 | crates/conjure-cp-core/src/solver/adaptors/rustsat/mod.rs | ❌ 0% *(0/1)* | ❌ 0% *(0/1)* |
 | crates/conjure-cp-core/src/solver/adaptors/smt/mod.rs | ❌ 0% *(0/1)* | ❌ 0% *(0/1)* |
 | crates/conjure-cp-core/src/stats/mod.rs | ❌ 0% *(0/7)* | ❌ 0% *(0/7)* |
-| crates/conjure-cp-core/src/settings.rs | ❌ 3% *(1/36)* | ❌ 0% *(0/36)* |
+| crates/conjure-cp-core/src/settings.rs | ❌ 3% *(1/38)* | ❌ 0% *(0/38)* |
 | crates/conjure-cp-core/src/ast/eval.rs | ❌ 9% *(1/11)* | ❌ 0% *(0/11)* |
 | crates/conjure-cp-core/src/error.rs | ❌ 11% *(1/9)* | ❌ 0% *(0/9)* |
 | crates/conjure-cp-core/src/ast/domains/error.rs | ❌ 17% *(1/6)* | ❌ 0% *(0/6)* |
