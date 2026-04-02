@@ -138,7 +138,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
             <tr>
                 <td>tests-integration/tests/integration_tests.rs</td>
                 <td>73.3%</td>
-                <td>137,219-220,253,255,321-323,340-343</td>
+                <td>137,225-226,261,265,309-311,328-331</td>
             </tr>
         </table>
         <div class="src-snippet">
@@ -1392,101 +1392,105 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <a id="tests-integration/tests/integration_tests.rs-136" name="tests-integration/tests/integration_tests.rs-136"></a><span class="w">                        </span><span class="n">accept</span><span class="p">,</span>
 <a id="tests-integration/tests/integration_tests.rs-137" name="tests-integration/tests/integration_tests.rs-137"></a><span class="hll"><span class="w">                    </span><span class="p">)</span>
 </span><a id="tests-integration/tests/integration_tests.rs-138" name="tests-integration/tests/integration_tests.rs-138"></a><span class="w">                    </span><span class="p">.</span><span class="n">map_err</span><span class="p">(</span><span class="o">|</span><span class="n">err</span><span class="o">|</span><span class="w"> </span><span class="n">std</span><span class="p">::</span><span class="n">io</span><span class="p">::</span><span class="n">Error</span><span class="p">::</span><span class="n">other</span><span class="p">(</span><span class="fm">format!</span><span class="p">(</span><span class="s">&quot;{run_label}: {err}&quot;</span><span class="p">)))</span><span class="o">?</span><span class="p">;</span>
-<a id="tests-integration/tests/integration_tests.rs-139" name="tests-integration/tests/integration_tests.rs-139"></a><span class="w">                </span><span class="p">}</span>
-<a id="tests-integration/tests/integration_tests.rs-140" name="tests-integration/tests/integration_tests.rs-140"></a><span class="w">            </span><span class="p">}</span>
-<a id="tests-integration/tests/integration_tests.rs-141" name="tests-integration/tests/integration_tests.rs-141"></a><span class="w">        </span><span class="p">}</span>
+<a id="tests-integration/tests/integration_tests.rs-139" name="tests-integration/tests/integration_tests.rs-139"></a><span class="w">                    </span><span class="n">allowed_expected_files</span><span class="p">.</span><span class="n">extend</span><span class="p">(</span><span class="n">expected_integration_files_for_case</span><span class="p">(</span>
+<a id="tests-integration/tests/integration_tests.rs-140" name="tests-integration/tests/integration_tests.rs-140"></a><span class="w">                        </span><span class="n">run_case</span><span class="p">.</span><span class="n">case_name</span><span class="p">,</span>
+<a id="tests-integration/tests/integration_tests.rs-141" name="tests-integration/tests/integration_tests.rs-141"></a><span class="w">                        </span><span class="n">solver</span><span class="p">,</span>
 </pre></div></td></tr></table></div>
 
-            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">215</span>
-<span class="normal">216</span>
-<span class="normal">217</span>
-<span class="normal">218</span>
-<span class="normal">219</span>
-<span class="normal">220</span>
-<span class="normal">221</span>
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">221</span>
 <span class="normal">222</span>
 <span class="normal">223</span>
-<span class="normal">224</span></pre></div></td><td class="code"><div><pre><span></span><a id="tests-integration/tests/integration_tests.rs-215" name="tests-integration/tests/integration_tests.rs-215"></a><span class="w">    </span><span class="c1">// Solver-time CDP rewrites happen later, outside this subscriber scope, so</span>
-<a id="tests-integration/tests/integration_tests.rs-216" name="tests-integration/tests/integration_tests.rs-216"></a><span class="w">    </span><span class="c1">// dominance models can still have stable initial traces.</span>
-<a id="tests-integration/tests/integration_tests.rs-217" name="tests-integration/tests/integration_tests.rs-217"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">should_validate_rule_trace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="fm">matches!</span><span class="p">(</span><span class="n">rewriter</span><span class="p">,</span><span class="w"> </span><span class="n">Rewriter</span><span class="p">::</span><span class="n">Naive</span><span class="p">);</span>
-<a id="tests-integration/tests/integration_tests.rs-218" name="tests-integration/tests/integration_tests.rs-218"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">generated_trace_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="fm">format!</span><span class="p">(</span>
-<a id="tests-integration/tests/integration_tests.rs-219" name="tests-integration/tests/integration_tests.rs-219"></a><span class="hll"><span class="w">        </span><span class="s">&quot;{path}/{}-{}-generated-rule-trace.txt&quot;</span><span class="p">,</span>
-</span><a id="tests-integration/tests/integration_tests.rs-220" name="tests-integration/tests/integration_tests.rs-220"></a><span class="hll"><span class="w">        </span><span class="n">case_name</span><span class="p">,</span>
-</span><a id="tests-integration/tests/integration_tests.rs-221" name="tests-integration/tests/integration_tests.rs-221"></a><span class="w">        </span><span class="n">solver_fam</span><span class="p">.</span><span class="n">as_str</span><span class="p">()</span>
-<a id="tests-integration/tests/integration_tests.rs-222" name="tests-integration/tests/integration_tests.rs-222"></a><span class="w">    </span><span class="p">);</span>
-<a id="tests-integration/tests/integration_tests.rs-223" name="tests-integration/tests/integration_tests.rs-223"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">!</span><span class="n">should_validate_rule_trace</span><span class="w"> </span><span class="p">{</span>
-<a id="tests-integration/tests/integration_tests.rs-224" name="tests-integration/tests/integration_tests.rs-224"></a><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fs</span><span class="p">::</span><span class="n">remove_file</span><span class="p">(</span><span class="o">&amp;</span><span class="n">generated_trace_path</span><span class="p">);</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span></pre></div></td><td class="code"><div><pre><span></span><a id="tests-integration/tests/integration_tests.rs-221" name="tests-integration/tests/integration_tests.rs-221"></a><span class="w">    </span><span class="c1">// Solver-time CDP rewrites happen later, outside this subscriber scope, so</span>
+<a id="tests-integration/tests/integration_tests.rs-222" name="tests-integration/tests/integration_tests.rs-222"></a><span class="w">    </span><span class="c1">// dominance models can still have stable initial traces.</span>
+<a id="tests-integration/tests/integration_tests.rs-223" name="tests-integration/tests/integration_tests.rs-223"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">should_validate_rule_trace</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="fm">matches!</span><span class="p">(</span><span class="n">rewriter</span><span class="p">,</span><span class="w"> </span><span class="n">Rewriter</span><span class="p">::</span><span class="n">Naive</span><span class="p">);</span>
+<a id="tests-integration/tests/integration_tests.rs-224" name="tests-integration/tests/integration_tests.rs-224"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">generated_trace_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="fm">format!</span><span class="p">(</span>
+<a id="tests-integration/tests/integration_tests.rs-225" name="tests-integration/tests/integration_tests.rs-225"></a><span class="hll"><span class="w">        </span><span class="s">&quot;{path}/{}-{}-generated-rule-trace.txt&quot;</span><span class="p">,</span>
+</span><a id="tests-integration/tests/integration_tests.rs-226" name="tests-integration/tests/integration_tests.rs-226"></a><span class="hll"><span class="w">        </span><span class="n">case_name</span><span class="p">,</span>
+</span><a id="tests-integration/tests/integration_tests.rs-227" name="tests-integration/tests/integration_tests.rs-227"></a><span class="w">        </span><span class="n">solver_fam</span><span class="p">.</span><span class="n">as_str</span><span class="p">()</span>
+<a id="tests-integration/tests/integration_tests.rs-228" name="tests-integration/tests/integration_tests.rs-228"></a><span class="w">    </span><span class="p">);</span>
+<a id="tests-integration/tests/integration_tests.rs-229" name="tests-integration/tests/integration_tests.rs-229"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">!</span><span class="n">should_validate_rule_trace</span><span class="w"> </span><span class="p">{</span>
+<a id="tests-integration/tests/integration_tests.rs-230" name="tests-integration/tests/integration_tests.rs-230"></a><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fs</span><span class="p">::</span><span class="n">remove_file</span><span class="p">(</span><span class="o">&amp;</span><span class="n">generated_trace_path</span><span class="p">);</span>
 </pre></div></td></tr></table></div>
 
-            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">249</span>
-<span class="normal">250</span>
-<span class="normal">251</span>
-<span class="normal">252</span>
-<span class="normal">253</span>
-<span class="normal">254</span>
-<span class="normal">255</span>
-<span class="normal">256</span>
-<span class="normal">257</span>
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">257</span>
 <span class="normal">258</span>
-<span class="normal">259</span></pre></div></td><td class="code"><div><pre><span></span><a id="tests-integration/tests/integration_tests.rs-249" name="tests-integration/tests/integration_tests.rs-249"></a><span class="w">                        </span><span class="p">.</span><span class="n">without_time</span><span class="p">()</span>
-<a id="tests-integration/tests/integration_tests.rs-250" name="tests-integration/tests/integration_tests.rs-250"></a><span class="w">                        </span><span class="p">.</span><span class="n">with_target</span><span class="p">(</span><span class="kc">false</span><span class="p">)</span>
-<a id="tests-integration/tests/integration_tests.rs-251" name="tests-integration/tests/integration_tests.rs-251"></a><span class="w">                        </span><span class="p">.</span><span class="n">with_filter</span><span class="p">(</span><span class="n">EnvFilter</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;rule_engine_human=trace&quot;</span><span class="p">))</span>
-<a id="tests-integration/tests/integration_tests.rs-252" name="tests-integration/tests/integration_tests.rs-252"></a><span class="w">                        </span><span class="p">.</span><span class="n">with_filter</span><span class="p">(</span><span class="n">FilterFn</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="o">|</span><span class="n">meta</span><span class="o">|</span><span class="w"> </span><span class="n">meta</span><span class="p">.</span><span class="n">target</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;rule_engine_human&quot;</span><span class="p">)),</span>
-<a id="tests-integration/tests/integration_tests.rs-253" name="tests-integration/tests/integration_tests.rs-253"></a><span class="hll"><span class="w">                </span><span class="p">),</span>
-</span><a id="tests-integration/tests/integration_tests.rs-254" name="tests-integration/tests/integration_tests.rs-254"></a><span class="w">            </span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">Arc</span><span class="o">&lt;</span><span class="k">dyn</span><span class="w"> </span><span class="n">tracing</span><span class="p">::</span><span class="n">Subscriber</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">Send</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">Sync</span><span class="o">&gt;</span><span class="p">;</span>
-<a id="tests-integration/tests/integration_tests.rs-255" name="tests-integration/tests/integration_tests.rs-255"></a><span class="hll">
-</span><a id="tests-integration/tests/integration_tests.rs-256" name="tests-integration/tests/integration_tests.rs-256"></a><span class="w">            </span><span class="n">tracing</span><span class="p">::</span><span class="n">subscriber</span><span class="p">::</span><span class="n">with_default</span><span class="p">(</span><span class="n">subscriber</span><span class="p">,</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">{</span>
-<a id="tests-integration/tests/integration_tests.rs-257" name="tests-integration/tests/integration_tests.rs-257"></a><span class="w">                </span><span class="n">rewrite_naive</span><span class="p">(</span><span class="o">&amp;</span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">rule_sets</span><span class="p">,</span><span class="w"> </span><span class="kc">false</span><span class="p">)</span>
-<a id="tests-integration/tests/integration_tests.rs-258" name="tests-integration/tests/integration_tests.rs-258"></a><span class="w">            </span><span class="p">})</span><span class="o">?</span>
-<a id="tests-integration/tests/integration_tests.rs-259" name="tests-integration/tests/integration_tests.rs-259"></a><span class="w">        </span><span class="p">}</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span></pre></div></td><td class="code"><div><pre><span></span><a id="tests-integration/tests/integration_tests.rs-257" name="tests-integration/tests/integration_tests.rs-257"></a><span class="w">                        </span><span class="p">.</span><span class="n">with_filter</span><span class="p">(</span><span class="n">EnvFilter</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;rule_engine_human=trace&quot;</span><span class="p">))</span>
+<a id="tests-integration/tests/integration_tests.rs-258" name="tests-integration/tests/integration_tests.rs-258"></a><span class="w">                        </span><span class="p">.</span><span class="n">with_filter</span><span class="p">(</span><span class="n">FilterFn</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="o">|</span><span class="n">meta</span><span class="o">|</span><span class="w"> </span><span class="n">meta</span><span class="p">.</span><span class="n">target</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;rule_engine_human&quot;</span><span class="p">)),</span>
+<a id="tests-integration/tests/integration_tests.rs-259" name="tests-integration/tests/integration_tests.rs-259"></a><span class="w">                </span><span class="p">),</span>
+<a id="tests-integration/tests/integration_tests.rs-260" name="tests-integration/tests/integration_tests.rs-260"></a><span class="w">            </span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">Arc</span><span class="o">&lt;</span><span class="k">dyn</span><span class="w"> </span><span class="n">tracing</span><span class="p">::</span><span class="n">Subscriber</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">Send</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">Sync</span><span class="o">&gt;</span><span class="p">;</span>
+<a id="tests-integration/tests/integration_tests.rs-261" name="tests-integration/tests/integration_tests.rs-261"></a><span class="hll">
+</span><a id="tests-integration/tests/integration_tests.rs-262" name="tests-integration/tests/integration_tests.rs-262"></a><span class="w">            </span><span class="n">tracing</span><span class="p">::</span><span class="n">subscriber</span><span class="p">::</span><span class="n">with_default</span><span class="p">(</span><span class="n">subscriber</span><span class="p">,</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">{</span>
+<a id="tests-integration/tests/integration_tests.rs-263" name="tests-integration/tests/integration_tests.rs-263"></a><span class="w">                </span><span class="n">rewrite_naive</span><span class="p">(</span><span class="o">&amp;</span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">rule_sets</span><span class="p">,</span><span class="w"> </span><span class="kc">false</span><span class="p">)</span>
+<a id="tests-integration/tests/integration_tests.rs-264" name="tests-integration/tests/integration_tests.rs-264"></a><span class="w">            </span><span class="p">})</span><span class="o">?</span>
+<a id="tests-integration/tests/integration_tests.rs-265" name="tests-integration/tests/integration_tests.rs-265"></a><span class="hll"><span class="w">        </span><span class="p">}</span>
+</span><a id="tests-integration/tests/integration_tests.rs-266" name="tests-integration/tests/integration_tests.rs-266"></a><span class="w">        </span><span class="n">Rewriter</span><span class="p">::</span><span class="n">Naive</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">rewrite_naive</span><span class="p">(</span><span class="o">&amp;</span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">rule_sets</span><span class="p">,</span><span class="w"> </span><span class="kc">false</span><span class="p">)</span><span class="o">?</span><span class="p">,</span>
+<a id="tests-integration/tests/integration_tests.rs-267" name="tests-integration/tests/integration_tests.rs-267"></a><span class="w">        </span><span class="n">Rewriter</span><span class="p">::</span><span class="n">Morph</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">rewrite_morph</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">rule_sets</span><span class="p">,</span><span class="w"> </span><span class="kc">false</span><span class="p">),</span>
+<a id="tests-integration/tests/integration_tests.rs-268" name="tests-integration/tests/integration_tests.rs-268"></a><span class="w">    </span><span class="p">};</span>
+<a id="tests-integration/tests/integration_tests.rs-269" name="tests-integration/tests/integration_tests.rs-269"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">solver_input_file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">None</span><span class="p">;</span>
 </pre></div></td></tr></table></div>
 
-            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">317</span>
-<span class="normal">318</span>
-<span class="normal">319</span>
-<span class="normal">320</span>
-<span class="normal">321</span>
-<span class="normal">322</span>
-<span class="normal">323</span>
-<span class="normal">324</span>
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">305</span>
+<span class="normal">306</span>
+<span class="normal">307</span>
+<span class="normal">308</span>
+<span class="normal">309</span>
+<span class="normal">310</span>
+<span class="normal">311</span>
+<span class="normal">312</span>
+<span class="normal">313</span>
+<span class="normal">314</span>
+<span class="normal">315</span></pre></div></td><td class="code"><div><pre><span></span><a id="tests-integration/tests/integration_tests.rs-305" name="tests-integration/tests/integration_tests.rs-305"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">accept</span><span class="w"> </span><span class="p">{</span>
+<a id="tests-integration/tests/integration_tests.rs-306" name="tests-integration/tests/integration_tests.rs-306"></a><span class="w">        </span><span class="c1">// Always overwrite these ones. Unlike the rest, we don&#39;t need to selectively do these</span>
+<a id="tests-integration/tests/integration_tests.rs-307" name="tests-integration/tests/integration_tests.rs-307"></a><span class="w">        </span><span class="c1">// based on the test results, so they don&#39;t get done later.</span>
+<a id="tests-integration/tests/integration_tests.rs-308" name="tests-integration/tests/integration_tests.rs-308"></a><span class="w">        </span><span class="n">copy_generated_to_expected</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="n">case_name</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;solutions&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;json&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">solver_fam</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
+<a id="tests-integration/tests/integration_tests.rs-309" name="tests-integration/tests/integration_tests.rs-309"></a><span class="hll"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="n">should_validate_rule_trace</span><span class="w"> </span><span class="p">{</span>
+</span><a id="tests-integration/tests/integration_tests.rs-310" name="tests-integration/tests/integration_tests.rs-310"></a><span class="hll"><span class="w">            </span><span class="n">copy_human_trace_generated_to_expected</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="n">case_name</span><span class="p">,</span><span class="w"> </span><span class="n">solver_fam</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
+</span><a id="tests-integration/tests/integration_tests.rs-311" name="tests-integration/tests/integration_tests.rs-311"></a><span class="hll"><span class="w">        </span><span class="p">}</span>
+</span><a id="tests-integration/tests/integration_tests.rs-312" name="tests-integration/tests/integration_tests.rs-312"></a><span class="w">    </span><span class="p">}</span>
+<a id="tests-integration/tests/integration_tests.rs-313" name="tests-integration/tests/integration_tests.rs-313"></a>
+<a id="tests-integration/tests/integration_tests.rs-314" name="tests-integration/tests/integration_tests.rs-314"></a><span class="w">    </span><span class="c1">// Check Stage 3a (solutions)</span>
+<a id="tests-integration/tests/integration_tests.rs-315" name="tests-integration/tests/integration_tests.rs-315"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">expected_solutions_json</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">read_solutions_json</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="n">case_name</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;expected&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">solver_fam</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">324</span>
 <span class="normal">325</span>
 <span class="normal">326</span>
-<span class="normal">327</span></pre></div></td><td class="code"><div><pre><span></span><a id="tests-integration/tests/integration_tests.rs-317" name="tests-integration/tests/integration_tests.rs-317"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">accept</span><span class="w"> </span><span class="p">{</span>
-<a id="tests-integration/tests/integration_tests.rs-318" name="tests-integration/tests/integration_tests.rs-318"></a><span class="w">        </span><span class="c1">// Always overwrite these ones. Unlike the rest, we don&#39;t need to selectively do these</span>
-<a id="tests-integration/tests/integration_tests.rs-319" name="tests-integration/tests/integration_tests.rs-319"></a><span class="w">        </span><span class="c1">// based on the test results, so they don&#39;t get done later.</span>
-<a id="tests-integration/tests/integration_tests.rs-320" name="tests-integration/tests/integration_tests.rs-320"></a><span class="w">        </span><span class="n">copy_generated_to_expected</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="n">case_name</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;solutions&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;json&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">solver_fam</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
-<a id="tests-integration/tests/integration_tests.rs-321" name="tests-integration/tests/integration_tests.rs-321"></a><span class="hll"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="n">should_validate_rule_trace</span><span class="w"> </span><span class="p">{</span>
-</span><a id="tests-integration/tests/integration_tests.rs-322" name="tests-integration/tests/integration_tests.rs-322"></a><span class="hll"><span class="w">            </span><span class="n">copy_human_trace_generated_to_expected</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="n">case_name</span><span class="p">,</span><span class="w"> </span><span class="n">solver_fam</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
-</span><a id="tests-integration/tests/integration_tests.rs-323" name="tests-integration/tests/integration_tests.rs-323"></a><span class="hll"><span class="w">        </span><span class="p">}</span>
-</span><a id="tests-integration/tests/integration_tests.rs-324" name="tests-integration/tests/integration_tests.rs-324"></a><span class="w">    </span><span class="p">}</span>
-<a id="tests-integration/tests/integration_tests.rs-325" name="tests-integration/tests/integration_tests.rs-325"></a>
-<a id="tests-integration/tests/integration_tests.rs-326" name="tests-integration/tests/integration_tests.rs-326"></a><span class="w">    </span><span class="c1">// Check Stage 3a (solutions)</span>
-<a id="tests-integration/tests/integration_tests.rs-327" name="tests-integration/tests/integration_tests.rs-327"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">expected_solutions_json</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">read_solutions_json</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="n">case_name</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;expected&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">solver_fam</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
-</pre></div></td></tr></table></div>
-
-            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">336</span>
-<span class="normal">337</span>
-<span class="normal">338</span>
-<span class="normal">339</span>
-<span class="normal">340</span>
-<span class="normal">341</span>
-<span class="normal">342</span>
-<span class="normal">343</span>
-<span class="normal">344</span>
-<span class="normal">345</span>
-<span class="normal">346</span>
-<span class="normal">347</span></pre></div></td><td class="code"><div><pre><span></span><a id="tests-integration/tests/integration_tests.rs-336" name="tests-integration/tests/integration_tests.rs-336"></a><span class="w">                </span><span class="kd">let</span><span class="w"> </span><span class="n">generated</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">read_human_rule_trace</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="n">case_name</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;generated&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">solver_fam</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
-<a id="tests-integration/tests/integration_tests.rs-337" name="tests-integration/tests/integration_tests.rs-337"></a><span class="w">                </span><span class="kd">let</span><span class="w"> </span><span class="n">expected</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">read_human_rule_trace</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="n">case_name</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;expected&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">solver_fam</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
-<a id="tests-integration/tests/integration_tests.rs-338" name="tests-integration/tests/integration_tests.rs-338"></a>
-<a id="tests-integration/tests/integration_tests.rs-339" name="tests-integration/tests/integration_tests.rs-339"></a><span class="w">                </span><span class="fm">assert_eq!</span><span class="p">(</span>
-<a id="tests-integration/tests/integration_tests.rs-340" name="tests-integration/tests/integration_tests.rs-340"></a><span class="hll"><span class="w">                    </span><span class="n">expected</span><span class="p">,</span><span class="w"> </span><span class="n">generated</span><span class="p">,</span>
-</span><a id="tests-integration/tests/integration_tests.rs-341" name="tests-integration/tests/integration_tests.rs-341"></a><span class="hll"><span class="w">                    </span><span class="s">&quot;Generated rule trace does not match the expected trace!&quot;</span>
-</span><a id="tests-integration/tests/integration_tests.rs-342" name="tests-integration/tests/integration_tests.rs-342"></a><span class="hll"><span class="w">                </span><span class="p">);</span>
-</span><a id="tests-integration/tests/integration_tests.rs-343" name="tests-integration/tests/integration_tests.rs-343"></a><span class="hll"><span class="w">            </span><span class="p">}</span>
-</span><a id="tests-integration/tests/integration_tests.rs-344" name="tests-integration/tests/integration_tests.rs-344"></a><span class="w">        </span><span class="p">}</span>
-<a id="tests-integration/tests/integration_tests.rs-345" name="tests-integration/tests/integration_tests.rs-345"></a><span class="w">    </span><span class="p">}</span>
-<a id="tests-integration/tests/integration_tests.rs-346" name="tests-integration/tests/integration_tests.rs-346"></a>
-<a id="tests-integration/tests/integration_tests.rs-347" name="tests-integration/tests/integration_tests.rs-347"></a><span class="w">    </span><span class="n">save_stats_json</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="n">case_name</span><span class="p">,</span><span class="w"> </span><span class="n">solver_fam</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
+<span class="normal">327</span>
+<span class="normal">328</span>
+<span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span>
+<span class="normal">332</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span></pre></div></td><td class="code"><div><pre><span></span><a id="tests-integration/tests/integration_tests.rs-324" name="tests-integration/tests/integration_tests.rs-324"></a><span class="w">                </span><span class="kd">let</span><span class="w"> </span><span class="n">generated</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">read_human_rule_trace</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="n">case_name</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;generated&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">solver_fam</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
+<a id="tests-integration/tests/integration_tests.rs-325" name="tests-integration/tests/integration_tests.rs-325"></a><span class="w">                </span><span class="kd">let</span><span class="w"> </span><span class="n">expected</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">read_human_rule_trace</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="n">case_name</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;expected&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">solver_fam</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
+<a id="tests-integration/tests/integration_tests.rs-326" name="tests-integration/tests/integration_tests.rs-326"></a>
+<a id="tests-integration/tests/integration_tests.rs-327" name="tests-integration/tests/integration_tests.rs-327"></a><span class="w">                </span><span class="fm">assert_eq!</span><span class="p">(</span>
+<a id="tests-integration/tests/integration_tests.rs-328" name="tests-integration/tests/integration_tests.rs-328"></a><span class="hll"><span class="w">                    </span><span class="n">expected</span><span class="p">,</span><span class="w"> </span><span class="n">generated</span><span class="p">,</span>
+</span><a id="tests-integration/tests/integration_tests.rs-329" name="tests-integration/tests/integration_tests.rs-329"></a><span class="hll"><span class="w">                    </span><span class="s">&quot;Generated rule trace does not match the expected trace!&quot;</span>
+</span><a id="tests-integration/tests/integration_tests.rs-330" name="tests-integration/tests/integration_tests.rs-330"></a><span class="hll"><span class="w">                </span><span class="p">);</span>
+</span><a id="tests-integration/tests/integration_tests.rs-331" name="tests-integration/tests/integration_tests.rs-331"></a><span class="hll"><span class="w">            </span><span class="p">}</span>
+</span><a id="tests-integration/tests/integration_tests.rs-332" name="tests-integration/tests/integration_tests.rs-332"></a><span class="w">        </span><span class="p">}</span>
+<a id="tests-integration/tests/integration_tests.rs-333" name="tests-integration/tests/integration_tests.rs-333"></a><span class="w">    </span><span class="p">}</span>
+<a id="tests-integration/tests/integration_tests.rs-334" name="tests-integration/tests/integration_tests.rs-334"></a>
+<a id="tests-integration/tests/integration_tests.rs-335" name="tests-integration/tests/integration_tests.rs-335"></a><span class="w">    </span><span class="n">save_stats_json</span><span class="p">(</span><span class="n">context</span><span class="p">,</span><span class="w"> </span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="n">case_name</span><span class="p">,</span><span class="w"> </span><span class="n">solver_fam</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
 </pre></div></td></tr></table></div>
 
             </div>
