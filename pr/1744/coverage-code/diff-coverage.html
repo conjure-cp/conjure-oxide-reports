@@ -1,0 +1,397 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+        <title>Diff Coverage</title>
+        <style>
+            .src-snippet { margin-top: 2em; }
+            .src-name { font-weight: bold; }
+            .snippets {
+                border-top: 1px solid #bdbdbd;
+                border-bottom: 1px solid #bdbdbd;
+            }
+            pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.hll { background-color: #ffcccc }
+.c { color: #3D7B7B; font-style: italic } /* Comment */
+.err { border: 1px solid #F00 } /* Error */
+.k { color: #008000; font-weight: bold } /* Keyword */
+.o { color: #666 } /* Operator */
+.ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.cp { color: #9C6500 } /* Comment.Preproc */
+.cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.gd { color: #A00000 } /* Generic.Deleted */
+.ge { font-style: italic } /* Generic.Emph */
+.ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.gr { color: #E40000 } /* Generic.Error */
+.gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.gi { color: #008400 } /* Generic.Inserted */
+.go { color: #717171 } /* Generic.Output */
+.gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.gs { font-weight: bold } /* Generic.Strong */
+.gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.gt { color: #04D } /* Generic.Traceback */
+.kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.kp { color: #008000 } /* Keyword.Pseudo */
+.kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.kt { color: #B00040 } /* Keyword.Type */
+.m { color: #666 } /* Literal.Number */
+.s { color: #BA2121 } /* Literal.String */
+.na { color: #687822 } /* Name.Attribute */
+.nb { color: #008000 } /* Name.Builtin */
+.nc { color: #00F; font-weight: bold } /* Name.Class */
+.no { color: #800 } /* Name.Constant */
+.nd { color: #A2F } /* Name.Decorator */
+.ni { color: #717171; font-weight: bold } /* Name.Entity */
+.ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.nf { color: #00F } /* Name.Function */
+.nl { color: #767600 } /* Name.Label */
+.nn { color: #00F; font-weight: bold } /* Name.Namespace */
+.nt { color: #008000; font-weight: bold } /* Name.Tag */
+.nv { color: #19177C } /* Name.Variable */
+.ow { color: #A2F; font-weight: bold } /* Operator.Word */
+.w { color: #BBB } /* Text.Whitespace */
+.mb { color: #666 } /* Literal.Number.Bin */
+.mf { color: #666 } /* Literal.Number.Float */
+.mh { color: #666 } /* Literal.Number.Hex */
+.mi { color: #666 } /* Literal.Number.Integer */
+.mo { color: #666 } /* Literal.Number.Oct */
+.sa { color: #BA2121 } /* Literal.String.Affix */
+.sb { color: #BA2121 } /* Literal.String.Backtick */
+.sc { color: #BA2121 } /* Literal.String.Char */
+.dl { color: #BA2121 } /* Literal.String.Delimiter */
+.sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.s2 { color: #BA2121 } /* Literal.String.Double */
+.se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.sh { color: #BA2121 } /* Literal.String.Heredoc */
+.si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.sx { color: #008000 } /* Literal.String.Other */
+.sr { color: #A45A77 } /* Literal.String.Regex */
+.s1 { color: #BA2121 } /* Literal.String.Single */
+.ss { color: #19177C } /* Literal.String.Symbol */
+.bp { color: #008000 } /* Name.Builtin.Pseudo */
+.fm { color: #00F } /* Name.Function.Magic */
+.vc { color: #19177C } /* Name.Variable.Class */
+.vg { color: #19177C } /* Name.Variable.Global */
+.vi { color: #19177C } /* Name.Variable.Instance */
+.vm { color: #19177C } /* Name.Variable.Magic */
+.il { color: #666 } /* Literal.Number.Integer.Long */
+        </style>
+    </head>
+    <body>
+        <h1>Diff Coverage</h1>
+        <p>Diff: upstream/main...HEAD, staged and unstaged changes</p>
+        <ul>
+            <li><b>Total</b>: 119 lines</li>
+            <li><b>Missing</b>: 20 lines</li>
+            <li><b>Coverage</b>: 83%</li>
+        </ul>
+        <table border="1">
+            <tr>
+                <th>Source File</th>
+                <th>Diff Coverage (%)</th>
+                <th>Missing Lines</th>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs</td>
+                <td>95.8%</td>
+                <td>99</td>
+            </tr>
+            <tr>
+                <td>crates/minion-sys/src/error.rs</td>
+                <td>0.0%</td>
+                <td>60,62</td>
+            </tr>
+            <tr>
+                <td>crates/minion-sys/src/ffi.rs</td>
+                <td>92.9%</td>
+                <td>104</td>
+            </tr>
+            <tr>
+                <td>crates/minion-sys/src/run.rs</td>
+                <td>75.0%</td>
+                <td>127,133,135-137,141,144,146,152,216-218</td>
+            </tr>
+            <tr>
+                <td>crates/minion-sys/tests/test_negative_tables.rs</td>
+                <td>81.8%</td>
+                <td>54-55</td>
+            </tr>
+            <tr>
+                <td>crates/minion-sys/tests/test_tables.rs</td>
+                <td>90.0%</td>
+                <td>57</td>
+            </tr>
+            <tr>
+                <td>crates/minion-sys/tests/test_watchedor_reifyimply_1.rs</td>
+                <td>90.0%</td>
+                <td>52</td>
+            </tr>
+        </table>
+        <div class="src-snippet">
+            <div class="src-name">crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-95" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-95"></a><span class="w">        </span><span class="n">_</span><span class="p">:</span><span class="w"> </span><span class="nc">private</span><span class="p">::</span><span class="n">Internal</span><span class="p">,</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-96" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-96"></a><span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nb">Result</span><span class="o">&lt;</span><span class="n">SolveSuccess</span><span class="p">,</span><span class="w"> </span><span class="n">SolverError</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-97" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-97"></a><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">any_solutions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-98" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-98"></a><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">user_terminated</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-99" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-99"></a><span class="hll">
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-100" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-100"></a><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">solver_ctx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">run_minion</span><span class="p">(</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-101" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-101"></a><span class="w">            </span><span class="bp">self</span><span class="p">.</span><span class="n">model</span><span class="p">.</span><span class="n">clone</span><span class="p">().</span><span class="n">expect</span><span class="p">(</span><span class="s">&quot;STATE MACHINE ERR&quot;</span><span class="p">),</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-102" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-102"></a><span class="w">            </span><span class="nb">Box</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="o">|</span><span class="n">solutions</span><span class="o">|</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-103" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-103"></a><span class="w">                </span><span class="n">any_solutions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/minion-sys/src/error.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/minion-sys/src/error.rs-56" name="crates/minion-sys/src/error.rs-56"></a><span class="w">        </span><span class="k">match</span><span class="w"> </span><span class="n">return_code</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/minion-sys/src/error.rs-57" name="crates/minion-sys/src/error.rs-57"></a><span class="w">            </span><span class="cp">#[allow(non_upper_case_globals)]</span>
+<a id="crates/minion-sys/src/error.rs-58" name="crates/minion-sys/src/error.rs-58"></a><span class="w">            </span><span class="n">ffi</span><span class="p">::</span><span class="n">ReturnCodes_INVALID_INSTANCE</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">RuntimeError</span><span class="p">::</span><span class="n">InvalidInstance</span><span class="p">,</span>
+<a id="crates/minion-sys/src/error.rs-59" name="crates/minion-sys/src/error.rs-59"></a><span class="w">            </span><span class="cp">#[allow(non_upper_case_globals)]</span>
+<a id="crates/minion-sys/src/error.rs-60" name="crates/minion-sys/src/error.rs-60"></a><span class="hll"><span class="w">            </span><span class="n">ffi</span><span class="p">::</span><span class="n">ReturnCodes_TIMEOUT</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">RuntimeError</span><span class="p">::</span><span class="n">Timeout</span><span class="p">,</span>
+</span><a id="crates/minion-sys/src/error.rs-61" name="crates/minion-sys/src/error.rs-61"></a><span class="w">            </span><span class="cp">#[allow(non_upper_case_globals)]</span>
+<a id="crates/minion-sys/src/error.rs-62" name="crates/minion-sys/src/error.rs-62"></a><span class="hll"><span class="w">            </span><span class="n">ffi</span><span class="p">::</span><span class="n">ReturnCodes_MEMORY_ERROR</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">RuntimeError</span><span class="p">::</span><span class="n">MemoryError</span><span class="p">,</span>
+</span><a id="crates/minion-sys/src/error.rs-63" name="crates/minion-sys/src/error.rs-63"></a><span class="w">            </span><span class="n">_</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">RuntimeError</span><span class="p">::</span><span class="n">UnknownError</span><span class="p">,</span>
+<a id="crates/minion-sys/src/error.rs-64" name="crates/minion-sys/src/error.rs-64"></a><span class="w">        </span><span class="p">}</span>
+<a id="crates/minion-sys/src/error.rs-65" name="crates/minion-sys/src/error.rs-65"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/minion-sys/src/error.rs-66" name="crates/minion-sys/src/error.rs-66"></a><span class="p">}</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/minion-sys/src/ffi.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/minion-sys/src/ffi.rs-100" name="crates/minion-sys/src/ffi.rs-100"></a><span class="w">                </span><span class="n">args</span><span class="p">,</span>
+<a id="crates/minion-sys/src/ffi.rs-101" name="crates/minion-sys/src/ffi.rs-101"></a><span class="w">                </span><span class="n">instance</span><span class="p">,</span>
+<a id="crates/minion-sys/src/ffi.rs-102" name="crates/minion-sys/src/ffi.rs-102"></a><span class="w">                </span><span class="nb">Some</span><span class="p">(</span><span class="n">hello_from_rust</span><span class="p">),</span>
+<a id="crates/minion-sys/src/ffi.rs-103" name="crates/minion-sys/src/ffi.rs-103"></a><span class="w">                </span><span class="n">std</span><span class="p">::</span><span class="n">ptr</span><span class="p">::</span><span class="n">null_mut</span><span class="p">(),</span>
+<a id="crates/minion-sys/src/ffi.rs-104" name="crates/minion-sys/src/ffi.rs-104"></a><span class="hll"><span class="w">            </span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-105" name="crates/minion-sys/src/ffi.rs-105"></a>
+<a id="crates/minion-sys/src/ffi.rs-106" name="crates/minion-sys/src/ffi.rs-106"></a><span class="w">            </span><span class="c1">// does it get this far?</span>
+<a id="crates/minion-sys/src/ffi.rs-107" name="crates/minion-sys/src/ffi.rs-107"></a><span class="w">            </span><span class="fm">assert_eq!</span><span class="p">(</span><span class="n">res</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/minion-sys/src/run.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/minion-sys/src/run.rs-123" name="crates/minion-sys/src/run.rs-123"></a><span class="k">impl</span><span class="w"> </span><span class="n">SolverContext</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/minion-sys/src/run.rs-124" name="crates/minion-sys/src/run.rs-124"></a><span class="w">    </span><span class="sd">/// Gets a value from Minion&#39;s TableOut (where it stores run statistics).</span>
+<a id="crates/minion-sys/src/run.rs-125" name="crates/minion-sys/src/run.rs-125"></a><span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">get_from_table</span><span class="p">(</span><span class="o">&amp;</span><span class="bp">self</span><span class="p">,</span><span class="w"> </span><span class="n">key</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nb">Option</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/minion-sys/src/run.rs-126" name="crates/minion-sys/src/run.rs-126"></a><span class="w">        </span><span class="k">unsafe</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/minion-sys/src/run.rs-127" name="crates/minion-sys/src/run.rs-127"></a><span class="hll"><span class="w">            </span><span class="cp">#[allow(clippy::expect_used)]</span>
+</span><a id="crates/minion-sys/src/run.rs-128" name="crates/minion-sys/src/run.rs-128"></a><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="n">c_string</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CString</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="n">key</span><span class="p">).</span><span class="n">expect</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">);</span>
+<a id="crates/minion-sys/src/run.rs-129" name="crates/minion-sys/src/run.rs-129"></a><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="n">key_ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">c_string</span><span class="p">.</span><span class="n">into_raw</span><span class="p">();</span>
+<a id="crates/minion-sys/src/run.rs-130" name="crates/minion-sys/src/run.rs-130"></a><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="n">val_ptr</span><span class="p">:</span><span class="w"> </span><span class="o">*</span><span class="k">mut</span><span class="w"> </span><span class="n">c_char</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ffi</span><span class="p">::</span><span class="n">TableOut_get</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">ctx</span><span class="p">,</span><span class="w"> </span><span class="n">key_ptr</span><span class="p">);</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/minion-sys/src/run.rs-129" name="crates/minion-sys/src/run.rs-129"></a><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="n">key_ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">c_string</span><span class="p">.</span><span class="n">into_raw</span><span class="p">();</span>
+<a id="crates/minion-sys/src/run.rs-130" name="crates/minion-sys/src/run.rs-130"></a><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="n">val_ptr</span><span class="p">:</span><span class="w"> </span><span class="o">*</span><span class="k">mut</span><span class="w"> </span><span class="n">c_char</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ffi</span><span class="p">::</span><span class="n">TableOut_get</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">ctx</span><span class="p">,</span><span class="w"> </span><span class="n">key_ptr</span><span class="p">);</span>
+<a id="crates/minion-sys/src/run.rs-131" name="crates/minion-sys/src/run.rs-131"></a>
+<a id="crates/minion-sys/src/run.rs-132" name="crates/minion-sys/src/run.rs-132"></a><span class="w">            </span><span class="nb">drop</span><span class="p">(</span><span class="n">CString</span><span class="p">::</span><span class="n">from_raw</span><span class="p">(</span><span class="n">key_ptr</span><span class="p">));</span>
+<a id="crates/minion-sys/src/run.rs-133" name="crates/minion-sys/src/run.rs-133"></a><span class="hll">
+</span><a id="crates/minion-sys/src/run.rs-134" name="crates/minion-sys/src/run.rs-134"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="n">val_ptr</span><span class="p">.</span><span class="n">is_null</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/minion-sys/src/run.rs-135" name="crates/minion-sys/src/run.rs-135"></a><span class="hll"><span class="w">                </span><span class="nb">None</span>
+</span><a id="crates/minion-sys/src/run.rs-136" name="crates/minion-sys/src/run.rs-136"></a><span class="hll"><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/minion-sys/src/run.rs-137" name="crates/minion-sys/src/run.rs-137"></a><span class="hll"><span class="w">                </span><span class="cp">#[allow(clippy::unwrap_used)]</span>
+</span><a id="crates/minion-sys/src/run.rs-138" name="crates/minion-sys/src/run.rs-138"></a><span class="w">                </span><span class="kd">let</span><span class="w"> </span><span class="n">res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CStr</span><span class="p">::</span><span class="n">from_ptr</span><span class="p">(</span><span class="n">val_ptr</span><span class="p">).</span><span class="n">to_str</span><span class="p">().</span><span class="n">unwrap</span><span class="p">().</span><span class="n">to_owned</span><span class="p">();</span>
+<a id="crates/minion-sys/src/run.rs-139" name="crates/minion-sys/src/run.rs-139"></a><span class="w">                </span><span class="n">libc</span><span class="p">::</span><span class="n">free</span><span class="p">(</span><span class="n">val_ptr</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">_</span><span class="p">);</span>
+<a id="crates/minion-sys/src/run.rs-140" name="crates/minion-sys/src/run.rs-140"></a><span class="w">                </span><span class="nb">Some</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+<a id="crates/minion-sys/src/run.rs-141" name="crates/minion-sys/src/run.rs-141"></a><span class="hll"><span class="w">            </span><span class="p">}</span>
+</span><a id="crates/minion-sys/src/run.rs-142" name="crates/minion-sys/src/run.rs-142"></a><span class="w">        </span><span class="p">}</span>
+<a id="crates/minion-sys/src/run.rs-143" name="crates/minion-sys/src/run.rs-143"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/minion-sys/src/run.rs-144" name="crates/minion-sys/src/run.rs-144"></a><span class="hll"><span class="p">}</span>
+</span><a id="crates/minion-sys/src/run.rs-145" name="crates/minion-sys/src/run.rs-145"></a>
+<a id="crates/minion-sys/src/run.rs-146" name="crates/minion-sys/src/run.rs-146"></a><span class="hll"><span class="k">impl</span><span class="w"> </span><span class="nb">Drop</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">SolverContext</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/minion-sys/src/run.rs-147" name="crates/minion-sys/src/run.rs-147"></a><span class="w">    </span><span class="k">fn</span><span class="w"> </span><span class="nf">drop</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="bp">self</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/minion-sys/src/run.rs-148" name="crates/minion-sys/src/run.rs-148"></a><span class="w">        </span><span class="k">unsafe</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/minion-sys/src/run.rs-149" name="crates/minion-sys/src/run.rs-149"></a><span class="w">            </span><span class="n">ffi</span><span class="p">::</span><span class="n">minion_freeContext</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">ctx</span><span class="p">);</span>
+<a id="crates/minion-sys/src/run.rs-150" name="crates/minion-sys/src/run.rs-150"></a><span class="w">        </span><span class="p">}</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/minion-sys/src/run.rs-148" name="crates/minion-sys/src/run.rs-148"></a><span class="w">        </span><span class="k">unsafe</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/minion-sys/src/run.rs-149" name="crates/minion-sys/src/run.rs-149"></a><span class="w">            </span><span class="n">ffi</span><span class="p">::</span><span class="n">minion_freeContext</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">ctx</span><span class="p">);</span>
+<a id="crates/minion-sys/src/run.rs-150" name="crates/minion-sys/src/run.rs-150"></a><span class="w">        </span><span class="p">}</span>
+<a id="crates/minion-sys/src/run.rs-151" name="crates/minion-sys/src/run.rs-151"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/minion-sys/src/run.rs-152" name="crates/minion-sys/src/run.rs-152"></a><span class="hll"><span class="p">}</span>
+</span><a id="crates/minion-sys/src/run.rs-153" name="crates/minion-sys/src/run.rs-153"></a>
+<a id="crates/minion-sys/src/run.rs-154" name="crates/minion-sys/src/run.rs-154"></a><span class="sd">/// The C callback passed to `runMinion`. Receives the active context and our</span>
+<a id="crates/minion-sys/src/run.rs-155" name="crates/minion-sys/src/run.rs-155"></a><span class="sd">/// `CallbackState` via the userdata pointer.</span>
+<a id="crates/minion-sys/src/run.rs-156" name="crates/minion-sys/src/run.rs-156"></a><span class="k">unsafe</span><span class="w"> </span><span class="k">extern</span><span class="w"> </span><span class="s">&quot;C&quot;</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">run_callback</span><span class="p">(</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/minion-sys/src/run.rs-212" name="crates/minion-sys/src/run.rs-212"></a><span class="w">        </span><span class="n">ffi</span><span class="p">::</span><span class="n">instance_free</span><span class="p">(</span><span class="n">search_instance</span><span class="p">);</span>
+<a id="crates/minion-sys/src/run.rs-213" name="crates/minion-sys/src/run.rs-213"></a>
+<a id="crates/minion-sys/src/run.rs-214" name="crates/minion-sys/src/run.rs-214"></a><span class="w">        </span><span class="k">match</span><span class="w"> </span><span class="n">res</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/minion-sys/src/run.rs-215" name="crates/minion-sys/src/run.rs-215"></a><span class="w">            </span><span class="mi">0</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">Ok</span><span class="p">(</span><span class="n">SolverContext</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">ctx</span><span class="w"> </span><span class="p">}),</span>
+<a id="crates/minion-sys/src/run.rs-216" name="crates/minion-sys/src/run.rs-216"></a><span class="hll"><span class="w">            </span><span class="n">x</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/minion-sys/src/run.rs-217" name="crates/minion-sys/src/run.rs-217"></a><span class="hll"><span class="w">                </span><span class="n">ffi</span><span class="p">::</span><span class="n">minion_freeContext</span><span class="p">(</span><span class="n">ctx</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/run.rs-218" name="crates/minion-sys/src/run.rs-218"></a><span class="hll"><span class="w">                </span><span class="nb">Err</span><span class="p">(</span><span class="n">MinionError</span><span class="p">::</span><span class="n">from</span><span class="p">(</span><span class="n">RuntimeError</span><span class="p">::</span><span class="n">from</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+</span><a id="crates/minion-sys/src/run.rs-219" name="crates/minion-sys/src/run.rs-219"></a><span class="w">            </span><span class="p">}</span>
+<a id="crates/minion-sys/src/run.rs-220" name="crates/minion-sys/src/run.rs-220"></a><span class="w">        </span><span class="p">}</span>
+<a id="crates/minion-sys/src/run.rs-221" name="crates/minion-sys/src/run.rs-221"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/minion-sys/src/run.rs-222" name="crates/minion-sys/src/run.rs-222"></a><span class="p">}</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/minion-sys/tests/test_negative_tables.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/minion-sys/tests/test_negative_tables.rs-50" name="crates/minion-sys/tests/test_negative_tables.rs-50"></a><span class="w">        </span><span class="nb">Box</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="o">|</span><span class="n">_</span><span class="o">|</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/minion-sys/tests/test_negative_tables.rs-51" name="crates/minion-sys/tests/test_negative_tables.rs-51"></a><span class="w">            </span><span class="n">sols_counter</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<a id="crates/minion-sys/tests/test_negative_tables.rs-52" name="crates/minion-sys/tests/test_negative_tables.rs-52"></a><span class="w">            </span><span class="kc">true</span>
+<a id="crates/minion-sys/tests/test_negative_tables.rs-53" name="crates/minion-sys/tests/test_negative_tables.rs-53"></a><span class="w">        </span><span class="p">}),</span>
+<a id="crates/minion-sys/tests/test_negative_tables.rs-54" name="crates/minion-sys/tests/test_negative_tables.rs-54"></a><span class="hll"><span class="w">    </span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
+</span><a id="crates/minion-sys/tests/test_negative_tables.rs-55" name="crates/minion-sys/tests/test_negative_tables.rs-55"></a><span class="hll">
+</span><a id="crates/minion-sys/tests/test_negative_tables.rs-56" name="crates/minion-sys/tests/test_negative_tables.rs-56"></a><span class="w">    </span><span class="c1">// Asserts that we found exactly 6 solutions</span>
+<a id="crates/minion-sys/tests/test_negative_tables.rs-57" name="crates/minion-sys/tests/test_negative_tables.rs-57"></a><span class="w">    </span><span class="fm">assert_eq!</span><span class="p">(</span><span class="n">sols_counter</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span><span class="p">);</span>
+<a id="crates/minion-sys/tests/test_negative_tables.rs-58" name="crates/minion-sys/tests/test_negative_tables.rs-58"></a><span class="w">    </span><span class="fm">assert_ne!</span><span class="p">(</span><span class="n">solver_ctx</span><span class="p">.</span><span class="n">get_from_table</span><span class="p">(</span><span class="s">&quot;Nodes&quot;</span><span class="p">.</span><span class="n">into</span><span class="p">()),</span><span class="w"> </span><span class="nb">None</span><span class="p">);</span>
+<a id="crates/minion-sys/tests/test_negative_tables.rs-59" name="crates/minion-sys/tests/test_negative_tables.rs-59"></a><span class="w">    </span><span class="nb">Ok</span><span class="p">(())</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/minion-sys/tests/test_tables.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/minion-sys/tests/test_tables.rs-53" name="crates/minion-sys/tests/test_tables.rs-53"></a><span class="w">        </span><span class="nb">Box</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="o">|</span><span class="n">_</span><span class="o">|</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/minion-sys/tests/test_tables.rs-54" name="crates/minion-sys/tests/test_tables.rs-54"></a><span class="w">            </span><span class="n">sols_counter</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<a id="crates/minion-sys/tests/test_tables.rs-55" name="crates/minion-sys/tests/test_tables.rs-55"></a><span class="w">            </span><span class="kc">true</span>
+<a id="crates/minion-sys/tests/test_tables.rs-56" name="crates/minion-sys/tests/test_tables.rs-56"></a><span class="w">        </span><span class="p">}),</span>
+<a id="crates/minion-sys/tests/test_tables.rs-57" name="crates/minion-sys/tests/test_tables.rs-57"></a><span class="hll"><span class="w">    </span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
+</span><a id="crates/minion-sys/tests/test_tables.rs-58" name="crates/minion-sys/tests/test_tables.rs-58"></a>
+<a id="crates/minion-sys/tests/test_tables.rs-59" name="crates/minion-sys/tests/test_tables.rs-59"></a><span class="w">    </span><span class="c1">// Asserts that we found exactly 3 solutions (one for each row in the table)</span>
+<a id="crates/minion-sys/tests/test_tables.rs-60" name="crates/minion-sys/tests/test_tables.rs-60"></a><span class="w">    </span><span class="fm">assert_eq!</span><span class="p">(</span><span class="n">sols_counter</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">);</span>
+<a id="crates/minion-sys/tests/test_tables.rs-61" name="crates/minion-sys/tests/test_tables.rs-61"></a><span class="w">    </span><span class="fm">assert_ne!</span><span class="p">(</span><span class="n">solver_ctx</span><span class="p">.</span><span class="n">get_from_table</span><span class="p">(</span><span class="s">&quot;Nodes&quot;</span><span class="p">.</span><span class="n">into</span><span class="p">()),</span><span class="w"> </span><span class="nb">None</span><span class="p">);</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/minion-sys/tests/test_watchedor_reifyimply_1.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/minion-sys/tests/test_watchedor_reifyimply_1.rs-48" name="crates/minion-sys/tests/test_watchedor_reifyimply_1.rs-48"></a><span class="w">        </span><span class="nb">Box</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="o">|</span><span class="n">_</span><span class="o">|</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/minion-sys/tests/test_watchedor_reifyimply_1.rs-49" name="crates/minion-sys/tests/test_watchedor_reifyimply_1.rs-49"></a><span class="w">            </span><span class="n">sols_counter</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<a id="crates/minion-sys/tests/test_watchedor_reifyimply_1.rs-50" name="crates/minion-sys/tests/test_watchedor_reifyimply_1.rs-50"></a><span class="w">            </span><span class="kc">true</span>
+<a id="crates/minion-sys/tests/test_watchedor_reifyimply_1.rs-51" name="crates/minion-sys/tests/test_watchedor_reifyimply_1.rs-51"></a><span class="w">        </span><span class="p">}),</span>
+<a id="crates/minion-sys/tests/test_watchedor_reifyimply_1.rs-52" name="crates/minion-sys/tests/test_watchedor_reifyimply_1.rs-52"></a><span class="hll"><span class="w">    </span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
+</span><a id="crates/minion-sys/tests/test_watchedor_reifyimply_1.rs-53" name="crates/minion-sys/tests/test_watchedor_reifyimply_1.rs-53"></a>
+<a id="crates/minion-sys/tests/test_watchedor_reifyimply_1.rs-54" name="crates/minion-sys/tests/test_watchedor_reifyimply_1.rs-54"></a><span class="w">    </span><span class="fm">assert_eq!</span><span class="p">(</span><span class="n">sols_counter</span><span class="p">,</span><span class="w"> </span><span class="mi">7</span><span class="p">);</span>
+<a id="crates/minion-sys/tests/test_watchedor_reifyimply_1.rs-55" name="crates/minion-sys/tests/test_watchedor_reifyimply_1.rs-55"></a><span class="w">    </span><span class="fm">assert_ne!</span><span class="p">(</span><span class="n">solver_ctx</span><span class="p">.</span><span class="n">get_from_table</span><span class="p">(</span><span class="s">&quot;Nodes&quot;</span><span class="p">.</span><span class="n">into</span><span class="p">()),</span><span class="w"> </span><span class="nb">None</span><span class="p">);</span>
+<a id="crates/minion-sys/tests/test_watchedor_reifyimply_1.rs-56" name="crates/minion-sys/tests/test_watchedor_reifyimply_1.rs-56"></a><span class="w">    </span><span class="nb">Ok</span><span class="p">(())</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+    </body>
+</html>
