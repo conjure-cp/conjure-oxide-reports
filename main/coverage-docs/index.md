@@ -1,11 +1,11 @@
 # RustDoc Coverage Report
 
 **conjure-cp:** 0% with examples, 25% documented -- 0/1/4
-**conjure-cp-cli:** 0% with examples, 41% documented -- 0/45/111
-**conjure-cp-core:** 4% with examples, 51% documented -- 23/307/603
+**conjure-cp-cli:** 0% with examples, 41% documented -- 0/46/112
+**conjure-cp-core:** 4% with examples, 51% documented -- 23/308/606
 **conjure-cp-enum-compatibility-macro:** 50% with examples, 100% documented -- 1/2/2
 **conjure-cp-essence-macros:** 67% with examples, 67% documented -- 2/2/3
-**conjure-cp-essence-parser:** 0% with examples, 16% documented -- 0/24/148
+**conjure-cp-essence-parser:** 0% with examples, 15% documented -- 0/23/151
 **conjure-cp-lsp:** 0% with examples, 0% documented -- 0/0/28
 **conjure-cp-rule-macros:** 33% with examples, 67% documented -- 1/2/3
 **conjure-cp-rules:** 0% with examples, 100% documented -- 0/1/1
@@ -13,7 +13,7 @@
 **tree-morph:** 16% with examples, 100% documented -- 6/38/38
 **tree-sitter-essence:** 33% with examples, 100% documented -- 1/3/3
 
-Commit: [a849ee7516face43abf8b494443ba5190fe2d640](https://github.com/conjure-cp/conjure-oxide/commit/a849ee7516face43abf8b494443ba5190fe2d640)
+Commit: [d5051f5fdc2e8edb349dcdf2ac01d140bfe4ce0d](https://github.com/conjure-cp/conjure-oxide/commit/d5051f5fdc2e8edb349dcdf2ac01d140bfe4ce0d)
 
 ## RustDoc coverage for `conjure-cp`
 
@@ -36,7 +36,7 @@ Commit: [a849ee7516face43abf8b494443ba5190fe2d640](https://github.com/conjure-cp
 | crates/conjure-cp-cli/src/solve.rs | ❌ 40% *(8/20)* | ❌ 0% *(0/20)* |
 | crates/conjure-cp-cli/src/test_solve.rs | ❌ 40% *(2/5)* | ❌ 0% *(0/5)* |
 | crates/conjure-cp-cli/src/find_conjure.rs | ❌ 50% *(1/2)* | ❌ 0% *(0/2)* |
-| crates/conjure-cp-cli/src/cli.rs | ❌ 53% *(24/45)* | ❌ 0% *(0/45)* |
+| crates/conjure-cp-cli/src/cli.rs | ❌ 54% *(25/46)* | ❌ 0% *(0/46)* |
 | crates/conjure-cp-cli/src/utils/json.rs | ❌ 67% *(2/3)* | ❌ 0% *(0/3)* |
 | crates/conjure-cp-cli/src/print_info_schema.rs | ✅ 100% *(2/2)* | ❌ 0% *(0/2)* |
 
@@ -58,7 +58,7 @@ Commit: [a849ee7516face43abf8b494443ba5190fe2d640](https://github.com/conjure-cp
 | crates/conjure-cp-core/src/solver/adaptors/rustsat/mod.rs | ❌ 0% *(0/1)* | ❌ 0% *(0/1)* |
 | crates/conjure-cp-core/src/solver/adaptors/smt/mod.rs | ❌ 0% *(0/1)* | ❌ 0% *(0/1)* |
 | crates/conjure-cp-core/src/stats/mod.rs | ❌ 0% *(0/7)* | ❌ 0% *(0/7)* |
-| crates/conjure-cp-core/src/settings.rs | ❌ 3% *(1/36)* | ❌ 0% *(0/36)* |
+| crates/conjure-cp-core/src/settings.rs | ❌ 3% *(1/38)* | ❌ 0% *(0/38)* |
 | crates/conjure-cp-core/src/ast/eval.rs | ❌ 9% *(1/11)* | ❌ 0% *(0/11)* |
 | crates/conjure-cp-core/src/error.rs | ❌ 11% *(1/9)* | ❌ 0% *(0/9)* |
 | crates/conjure-cp-core/src/ast/domains/error.rs | ❌ 17% *(1/6)* | ❌ 0% *(0/6)* |
@@ -84,8 +84,8 @@ Commit: [a849ee7516face43abf8b494443ba5190fe2d640](https://github.com/conjure-cp
 | crates/conjure-cp-core/src/ast/domains/domain.rs | ❌ 67% *(4/6)* | ❌ 0% *(0/6)* |
 | crates/conjure-cp-core/src/ast/domains/ground.rs | ❌ 69% *(9/13)* | ❌ 0% *(0/13)* |
 | crates/conjure-cp-core/src/solver/model_modifier.rs | ❌ 70% *(7/10)* | ❌ 0% *(0/10)* |
-| crates/conjure-cp-core/src/rule_engine/mod.rs | ❌ 71% *(5/7)* | ❌ 71% *(5/7)* |
 | crates/conjure-cp-core/src/lib.rs | ❌ 75% *(3/4)* | ❌ 50% *(2/4)* |
+| crates/conjure-cp-core/src/rule_engine/mod.rs | ❌ 75% *(6/8)* | ❌ 63% *(5/8)* |
 | crates/conjure-cp-core/src/solver/adaptors/smt/theories.rs | ❌ 75% *(9/12)* | ❌ 0% *(0/12)* |
 | crates/conjure-cp-core/src/ast/declaration.rs | ❌ 77% *(34/44)* | ❌ 27% *(12/44)* |
 | crates/conjure-cp-core/src/ast/mod.rs | ❌ 80% *(4/5)* | ❌ 0% *(0/5)* |
@@ -124,12 +124,13 @@ Commit: [a849ee7516face43abf8b494443ba5190fe2d640](https://github.com/conjure-cp
 
 | File | Percentage Documented | Percentage with examples |
 |----|----|----|
-| crates/conjure-cp-essence-parser/src/diagnostics/diagnostics_api.rs | ❌ 0% *(0/33)* | ❌ 0% *(0/33)* |
+| crates/conjure-cp-essence-parser/src/diagnostics/diagnostics_api.rs | ❌ 0% *(0/34)* | ❌ 0% *(0/34)* |
 | crates/conjure-cp-essence-parser/src/diagnostics/error_detection/mod.rs | ❌ 0% *(0/1)* | ❌ 0% *(0/1)* |
 | crates/conjure-cp-essence-parser/src/diagnostics/mod.rs | ❌ 0% *(0/1)* | ❌ 0% *(0/1)* |
 | crates/conjure-cp-essence-parser/src/diagnostics/source_map.rs | ❌ 0% *(0/20)* | ❌ 0% *(0/20)* |
 | crates/conjure-cp-essence-parser/src/lib.rs | ❌ 0% *(0/1)* | ❌ 0% *(0/1)* |
 | crates/conjure-cp-essence-parser/src/parser/expression.rs | ❌ 0% *(0/3)* | ❌ 0% *(0/3)* |
+| crates/conjure-cp-essence-parser/src/parser/find.rs | ❌ 0% *(0/4)* | ❌ 0% *(0/4)* |
 | crates/conjure-cp-essence-parser/src/parser/keyword_checks.rs | ❌ 0% *(0/2)* | ❌ 0% *(0/2)* |
 | crates/conjure-cp-essence-parser/src/parser/mod.rs | ❌ 0% *(0/1)* | ❌ 0% *(0/1)* |
 | crates/conjure-cp-essence-parser/src/parser/parse_exprs.rs | ❌ 0% *(0/3)* | ❌ 0% *(0/3)* |
@@ -142,7 +143,6 @@ Commit: [a849ee7516face43abf8b494443ba5190fe2d640](https://github.com/conjure-cp
 | crates/conjure-cp-essence-parser/src/parser/domain.rs | ❌ 33% *(1/3)* | ❌ 0% *(0/3)* |
 | crates/conjure-cp-essence-parser/src/parser/syntax_errors.rs | ❌ 33% *(1/3)* | ❌ 0% *(0/3)* |
 | crates/conjure-cp-essence-parser/src/parser/traversal.rs | ❌ 33% *(2/6)* | ❌ 0% *(0/6)* |
-| crates/conjure-cp-essence-parser/src/parser/find.rs | ❌ 50% *(1/2)* | ❌ 0% *(0/2)* |
 | crates/conjure-cp-essence-parser/src/parser/letting.rs | ❌ 50% *(1/2)* | ❌ 0% *(0/2)* |
 | crates/conjure-cp-essence-parser/src/parser/macros.rs | ✅ 100% *(3/3)* | ❌ 0% *(0/3)* |
 
