@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"macro":["rule_fns"],"mod":["commands","engine","engine_builder","helpers","prelude","rule"]};
+window.SIDEBAR_ITEMS = {"macro":["rule_fns"],"mod":["cache","commands","engine","engine_builder","engine_zipper","helpers","prelude","rule"]};

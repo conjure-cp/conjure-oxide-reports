@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"attr":["document_compatibility"]};
+window.SIDEBAR_ITEMS = {"attr":["document_compatibility","generate_discriminants"]};
