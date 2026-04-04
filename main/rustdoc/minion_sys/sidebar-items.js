@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["get_from_table","run_minion"],"mod":["ast","error","print"],"type":["Callback"]};
+window.SIDEBAR_ITEMS = {"fn":["run_minion"],"mod":["ast","error","print"],"struct":["SolverContext"],"type":["Callback"]};
