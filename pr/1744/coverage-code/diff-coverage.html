@@ -90,9 +90,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
         <h1>Diff Coverage</h1>
         <p>Diff: upstream/main...HEAD, staged and unstaged changes</p>
         <ul>
-            <li><b>Total</b>: 119 lines</li>
+            <li><b>Total</b>: 116 lines</li>
             <li><b>Missing</b>: 20 lines</li>
-            <li><b>Coverage</b>: 83%</li>
+            <li><b>Coverage</b>: 82%</li>
         </ul>
         <table border="1">
             <tr>
@@ -117,8 +117,8 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
             </tr>
             <tr>
                 <td>crates/minion-sys/src/run.rs</td>
-                <td>75.0%</td>
-                <td>127,133,135-137,141,144,146,152,216-218</td>
+                <td>73.3%</td>
+                <td>127,133,135-137,141,144,146,152,213-215</td>
             </tr>
             <tr>
                 <td>crates/minion-sys/tests/test_negative_tables.rs</td>
@@ -291,30 +291,30 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </span><a id="crates/minion-sys/src/run.rs-153" name="crates/minion-sys/src/run.rs-153"></a>
 <a id="crates/minion-sys/src/run.rs-154" name="crates/minion-sys/src/run.rs-154"></a><span class="sd">/// The C callback passed to `runMinion`. Receives the active context and our</span>
 <a id="crates/minion-sys/src/run.rs-155" name="crates/minion-sys/src/run.rs-155"></a><span class="sd">/// `CallbackState` via the userdata pointer.</span>
-<a id="crates/minion-sys/src/run.rs-156" name="crates/minion-sys/src/run.rs-156"></a><span class="k">unsafe</span><span class="w"> </span><span class="k">extern</span><span class="w"> </span><span class="s">&quot;C&quot;</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">run_callback</span><span class="p">(</span>
+<a id="crates/minion-sys/src/run.rs-156" name="crates/minion-sys/src/run.rs-156"></a><span class="k">unsafe</span><span class="w"> </span><span class="k">extern</span><span class="w"> </span><span class="s">&quot;C&quot;</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">run_callback</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span><span class="w"> </span><span class="o">*</span><span class="k">mut</span><span class="w"> </span><span class="n">ffi</span><span class="p">::</span><span class="n">MinionContext</span><span class="p">,</span><span class="w"> </span><span class="n">userdata</span><span class="p">:</span><span class="w"> </span><span class="o">*</span><span class="k">mut</span><span class="w"> </span><span class="n">c_void</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="p">{</span>
 </pre></div></td></tr></table></div>
 
-            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">212</span>
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
 <span class="normal">213</span>
 <span class="normal">214</span>
 <span class="normal">215</span>
 <span class="normal">216</span>
 <span class="normal">217</span>
 <span class="normal">218</span>
-<span class="normal">219</span>
-<span class="normal">220</span>
-<span class="normal">221</span>
-<span class="normal">222</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/minion-sys/src/run.rs-212" name="crates/minion-sys/src/run.rs-212"></a><span class="w">        </span><span class="n">ffi</span><span class="p">::</span><span class="n">instance_free</span><span class="p">(</span><span class="n">search_instance</span><span class="p">);</span>
-<a id="crates/minion-sys/src/run.rs-213" name="crates/minion-sys/src/run.rs-213"></a>
-<a id="crates/minion-sys/src/run.rs-214" name="crates/minion-sys/src/run.rs-214"></a><span class="w">        </span><span class="k">match</span><span class="w"> </span><span class="n">res</span><span class="w"> </span><span class="p">{</span>
-<a id="crates/minion-sys/src/run.rs-215" name="crates/minion-sys/src/run.rs-215"></a><span class="w">            </span><span class="mi">0</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">Ok</span><span class="p">(</span><span class="n">SolverContext</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">ctx</span><span class="w"> </span><span class="p">}),</span>
-<a id="crates/minion-sys/src/run.rs-216" name="crates/minion-sys/src/run.rs-216"></a><span class="hll"><span class="w">            </span><span class="n">x</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
-</span><a id="crates/minion-sys/src/run.rs-217" name="crates/minion-sys/src/run.rs-217"></a><span class="hll"><span class="w">                </span><span class="n">ffi</span><span class="p">::</span><span class="n">minion_freeContext</span><span class="p">(</span><span class="n">ctx</span><span class="p">);</span>
-</span><a id="crates/minion-sys/src/run.rs-218" name="crates/minion-sys/src/run.rs-218"></a><span class="hll"><span class="w">                </span><span class="nb">Err</span><span class="p">(</span><span class="n">MinionError</span><span class="p">::</span><span class="n">from</span><span class="p">(</span><span class="n">RuntimeError</span><span class="p">::</span><span class="n">from</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
-</span><a id="crates/minion-sys/src/run.rs-219" name="crates/minion-sys/src/run.rs-219"></a><span class="w">            </span><span class="p">}</span>
-<a id="crates/minion-sys/src/run.rs-220" name="crates/minion-sys/src/run.rs-220"></a><span class="w">        </span><span class="p">}</span>
-<a id="crates/minion-sys/src/run.rs-221" name="crates/minion-sys/src/run.rs-221"></a><span class="w">    </span><span class="p">}</span>
-<a id="crates/minion-sys/src/run.rs-222" name="crates/minion-sys/src/run.rs-222"></a><span class="p">}</span>
+<span class="normal">219</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/minion-sys/src/run.rs-209" name="crates/minion-sys/src/run.rs-209"></a><span class="w">        </span><span class="n">ffi</span><span class="p">::</span><span class="n">instance_free</span><span class="p">(</span><span class="n">search_instance</span><span class="p">);</span>
+<a id="crates/minion-sys/src/run.rs-210" name="crates/minion-sys/src/run.rs-210"></a>
+<a id="crates/minion-sys/src/run.rs-211" name="crates/minion-sys/src/run.rs-211"></a><span class="w">        </span><span class="k">match</span><span class="w"> </span><span class="n">res</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/minion-sys/src/run.rs-212" name="crates/minion-sys/src/run.rs-212"></a><span class="w">            </span><span class="mi">0</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">Ok</span><span class="p">(</span><span class="n">SolverContext</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">ctx</span><span class="w"> </span><span class="p">}),</span>
+<a id="crates/minion-sys/src/run.rs-213" name="crates/minion-sys/src/run.rs-213"></a><span class="hll"><span class="w">            </span><span class="n">x</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/minion-sys/src/run.rs-214" name="crates/minion-sys/src/run.rs-214"></a><span class="hll"><span class="w">                </span><span class="n">ffi</span><span class="p">::</span><span class="n">minion_freeContext</span><span class="p">(</span><span class="n">ctx</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/run.rs-215" name="crates/minion-sys/src/run.rs-215"></a><span class="hll"><span class="w">                </span><span class="nb">Err</span><span class="p">(</span><span class="n">MinionError</span><span class="p">::</span><span class="n">from</span><span class="p">(</span><span class="n">RuntimeError</span><span class="p">::</span><span class="n">from</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+</span><a id="crates/minion-sys/src/run.rs-216" name="crates/minion-sys/src/run.rs-216"></a><span class="w">            </span><span class="p">}</span>
+<a id="crates/minion-sys/src/run.rs-217" name="crates/minion-sys/src/run.rs-217"></a><span class="w">        </span><span class="p">}</span>
+<a id="crates/minion-sys/src/run.rs-218" name="crates/minion-sys/src/run.rs-218"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/minion-sys/src/run.rs-219" name="crates/minion-sys/src/run.rs-219"></a><span class="p">}</span>
 </pre></div></td></tr></table></div>
 
             </div>
