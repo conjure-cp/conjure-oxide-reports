@@ -6,7 +6,7 @@
 <a href=#6 id=6 data-nosnippet>6</a><span class="kw">use </span>conjure_cp::ast::{Atom, DeclarationKind, Expression, GroundDomain, Literal, Metadata, Name};
 <a href=#7 id=7 data-nosnippet>7</a><span class="kw">use </span>conjure_cp::bug;
 <a href=#8 id=8 data-nosnippet>8</a><span class="kw">use </span>conjure_cp::context::Context;
-<a href=#9 id=9 data-nosnippet>9</a><span class="kw">use </span>conjure_cp::settings::set_rule_trace_enabled;
+<a href=#9 id=9 data-nosnippet>9</a><span class="kw">use </span>conjure_cp::settings::{configured_rule_trace_enabled, set_rule_trace_enabled};
 <a href=#10 id=10 data-nosnippet>10</a>
 <a href=#11 id=11 data-nosnippet>11</a><span class="kw">use </span>serde_json::{Map, Value <span class="kw">as </span>JsonValue};
 <a href=#12 id=12 data-nosnippet>12</a>
@@ -129,7 +129,7 @@
 <a href=#129 id=129 data-nosnippet>129</a>    solver_input_file: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;PathBuf&gt;,
 <a href=#130 id=130 data-nosnippet>130</a>    rule_trace_cdp: bool,
 <a href=#131 id=131 data-nosnippet>131</a>) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;BTreeMap&lt;Name, Literal&gt;&gt;, anyhow::Error&gt; {
-<a href=#132 id=132 data-nosnippet>132</a>    set_rule_trace_enabled(rule_trace_cdp);
+<a href=#132 id=132 data-nosnippet>132</a>    set_rule_trace_enabled(rule_trace_cdp &amp;&amp; configured_rule_trace_enabled());
 <a href=#133 id=133 data-nosnippet>133</a>
 <a href=#134 id=134 data-nosnippet>134</a>    <span class="kw">let </span>dominance_expression = model.dominance.as_ref().map(|expr| <span class="kw">match </span>expr {
 <a href=#135 id=135 data-nosnippet>135</a>        Expression::DominanceRelation(<span class="kw">_</span>, inner) =&gt; inner.as_ref().clone(),

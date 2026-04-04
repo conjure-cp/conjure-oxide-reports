@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["main","run","run_completion_command","run_lsp_server","run_subcommand","setup_logging"],"mod":["cli","pretty","print_info_schema","solve","test_solve"],"static":["GLOBAL"]};
+window.SIDEBAR_ITEMS = {"fn":["main","run","run_completion_command","run_lsp_server","run_subcommand","setup_logging"],"mod":["cli","pretty","print_info_schema","rule_trace_aggregates","solve","test_solve"],"static":["GLOBAL"],"struct":["LoggingState"]};

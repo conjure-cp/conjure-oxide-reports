@@ -388,106 +388,143 @@
 <a href=#388 id=388 data-nosnippet>388</a>    </span><span class="kw">static </span>MINION_DISCRETE_THRESHOLD: Cell&lt;usize&gt; =
 <a href=#389 id=389 data-nosnippet>389</a>        <span class="kw">const </span>{ Cell::new(DEFAULT_MINION_DISCRETE_THRESHOLD) };
 <a href=#390 id=390 data-nosnippet>390</a>
-<a href=#391 id=391 data-nosnippet>391</a>    <span class="doccomment">/// Thread-local setting controlling whether human-readable rule traces are emitted.
+<a href=#391 id=391 data-nosnippet>391</a>    <span class="doccomment">/// Thread-local setting controlling whether rule-trace outputs are active in this phase.
 <a href=#392 id=392 data-nosnippet>392</a>    ///
 <a href=#393 id=393 data-nosnippet>393</a>    /// This is intentionally off by default and can be disabled before solver-time rewrites so
 <a href=#394 id=394 data-nosnippet>394</a>    /// follow-up dominance-blocking rewrites do not pollute the initial rewrite trace.
 <a href=#395 id=395 data-nosnippet>395</a>    </span><span class="kw">static </span>RULE_TRACE_ENABLED: Cell&lt;bool&gt; = <span class="kw">const </span>{ Cell::new(<span class="bool-val">false</span>) };
-<a href=#396 id=396 data-nosnippet>396</a>}
-<a href=#397 id=397 data-nosnippet>397</a>
-<a href=#398 id=398 data-nosnippet>398</a><span class="kw">pub fn </span>set_current_solver_family(solver_family: SolverFamily) {
-<a href=#399 id=399 data-nosnippet>399</a>    CURRENT_SOLVER_FAMILY.with(|current| current.set(<span class="prelude-val">Some</span>(solver_family)));
-<a href=#400 id=400 data-nosnippet>400</a>}
-<a href=#401 id=401 data-nosnippet>401</a>
-<a href=#402 id=402 data-nosnippet>402</a><span class="kw">pub fn </span>current_solver_family() -&gt; SolverFamily {
-<a href=#403 id=403 data-nosnippet>403</a>    CURRENT_SOLVER_FAMILY.with(|current| {
-<a href=#404 id=404 data-nosnippet>404</a>        current.get().unwrap_or_else(|| {
-<a href=#405 id=405 data-nosnippet>405</a>            <span class="comment">// loud failure on purpose, so we don't end up using the default
-<a href=#406 id=406 data-nosnippet>406</a>            </span><span class="macro">bug!</span>(
-<a href=#407 id=407 data-nosnippet>407</a>                <span class="string">"current solver family not set for this thread; call set_current_solver_family first"
-<a href=#408 id=408 data-nosnippet>408</a>            </span>)
-<a href=#409 id=409 data-nosnippet>409</a>        })
-<a href=#410 id=410 data-nosnippet>410</a>    })
-<a href=#411 id=411 data-nosnippet>411</a>}
-<a href=#412 id=412 data-nosnippet>412</a>
-<a href=#413 id=413 data-nosnippet>413</a><span class="kw">pub fn </span>set_minion_discrete_threshold(threshold: usize) {
-<a href=#414 id=414 data-nosnippet>414</a>    MINION_DISCRETE_THRESHOLD.with(|current| current.set(threshold));
-<a href=#415 id=415 data-nosnippet>415</a>}
-<a href=#416 id=416 data-nosnippet>416</a>
-<a href=#417 id=417 data-nosnippet>417</a><span class="kw">pub fn </span>minion_discrete_threshold() -&gt; usize {
-<a href=#418 id=418 data-nosnippet>418</a>    MINION_DISCRETE_THRESHOLD.with(|current| current.get())
-<a href=#419 id=419 data-nosnippet>419</a>}
-<a href=#420 id=420 data-nosnippet>420</a>
-<a href=#421 id=421 data-nosnippet>421</a><span class="kw">pub fn </span>set_rule_trace_enabled(enabled: bool) {
-<a href=#422 id=422 data-nosnippet>422</a>    RULE_TRACE_ENABLED.with(|current| current.set(enabled));
-<a href=#423 id=423 data-nosnippet>423</a>}
-<a href=#424 id=424 data-nosnippet>424</a>
-<a href=#425 id=425 data-nosnippet>425</a><span class="kw">pub fn </span>rule_trace_enabled() -&gt; bool {
-<a href=#426 id=426 data-nosnippet>426</a>    RULE_TRACE_ENABLED.with(|current| current.get())
-<a href=#427 id=427 data-nosnippet>427</a>}
-<a href=#428 id=428 data-nosnippet>428</a>
-<a href=#429 id=429 data-nosnippet>429</a><span class="kw">impl </span>FromStr <span class="kw">for </span>SolverFamily {
-<a href=#430 id=430 data-nosnippet>430</a>    <span class="kw">type </span><span class="prelude-val">Err </span>= String;
-<a href=#431 id=431 data-nosnippet>431</a>
-<a href=#432 id=432 data-nosnippet>432</a>    <span class="kw">fn </span>from_str(s: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, <span class="self">Self</span>::Err&gt; {
-<a href=#433 id=433 data-nosnippet>433</a>        <span class="kw">let </span>s = s.trim().to_ascii_lowercase();
-<a href=#434 id=434 data-nosnippet>434</a>
-<a href=#435 id=435 data-nosnippet>435</a>        <span class="kw">match </span>s.as_str() {
-<a href=#436 id=436 data-nosnippet>436</a>            <span class="string">"minion" </span>=&gt; <span class="prelude-val">Ok</span>(SolverFamily::Minion),
-<a href=#437 id=437 data-nosnippet>437</a>            <span class="string">"sat" </span>| <span class="string">"sat-log" </span>=&gt; <span class="prelude-val">Ok</span>(SolverFamily::Sat(SatEncoding::Log)),
-<a href=#438 id=438 data-nosnippet>438</a>            <span class="string">"sat-direct" </span>=&gt; <span class="prelude-val">Ok</span>(SolverFamily::Sat(SatEncoding::Direct)),
-<a href=#439 id=439 data-nosnippet>439</a>            <span class="string">"sat-order" </span>=&gt; <span class="prelude-val">Ok</span>(SolverFamily::Sat(SatEncoding::Order)),
-<a href=#440 id=440 data-nosnippet>440</a>            <span class="string">"smt" </span>=&gt; <span class="prelude-val">Ok</span>(SolverFamily::Smt(TheoryConfig::default())),
-<a href=#441 id=441 data-nosnippet>441</a>            other =&gt; {
-<a href=#442 id=442 data-nosnippet>442</a>                <span class="comment">// allow forms like `smt-bv-atomic` or `smt-lia-arrays`
-<a href=#443 id=443 data-nosnippet>443</a>                </span><span class="kw">if </span>other.starts_with(<span class="string">"smt-"</span>) {
-<a href=#444 id=444 data-nosnippet>444</a>                    <span class="kw">let </span>parts = other.split(<span class="string">'-'</span>).skip(<span class="number">1</span>);
-<a href=#445 id=445 data-nosnippet>445</a>                    <span class="kw">let </span><span class="kw-2">mut </span>ints = IntTheory::default();
-<a href=#446 id=446 data-nosnippet>446</a>                    <span class="kw">let </span><span class="kw-2">mut </span>matrices = MatrixTheory::default();
-<a href=#447 id=447 data-nosnippet>447</a>                    <span class="kw">let </span><span class="kw-2">mut </span>unwrap_alldiff = <span class="bool-val">false</span>;
-<a href=#448 id=448 data-nosnippet>448</a>
-<a href=#449 id=449 data-nosnippet>449</a>                    <span class="kw">for </span>token <span class="kw">in </span>parts {
-<a href=#450 id=450 data-nosnippet>450</a>                        <span class="kw">match </span>token {
-<a href=#451 id=451 data-nosnippet>451</a>                            <span class="string">"" </span>=&gt; {}
-<a href=#452 id=452 data-nosnippet>452</a>                            <span class="string">"lia" </span>=&gt; ints = IntTheory::Lia,
-<a href=#453 id=453 data-nosnippet>453</a>                            <span class="string">"bv" </span>=&gt; ints = IntTheory::Bv,
-<a href=#454 id=454 data-nosnippet>454</a>                            <span class="string">"arrays" </span>=&gt; matrices = MatrixTheory::Arrays,
-<a href=#455 id=455 data-nosnippet>455</a>                            <span class="string">"atomic" </span>=&gt; matrices = MatrixTheory::Atomic,
-<a href=#456 id=456 data-nosnippet>456</a>                            <span class="string">"nodiscrete" </span>=&gt; unwrap_alldiff = <span class="bool-val">true</span>,
-<a href=#457 id=457 data-nosnippet>457</a>                            other_token =&gt; {
-<a href=#458 id=458 data-nosnippet>458</a>                                <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">format!</span>(
-<a href=#459 id=459 data-nosnippet>459</a>                                    <span class="string">"unknown SMT theory option '{other_token}', must be one of bv|lia|arrays|atomic|nodiscrete"
-<a href=#460 id=460 data-nosnippet>460</a>                                </span>));
-<a href=#461 id=461 data-nosnippet>461</a>                            }
-<a href=#462 id=462 data-nosnippet>462</a>                        }
-<a href=#463 id=463 data-nosnippet>463</a>                    }
-<a href=#464 id=464 data-nosnippet>464</a>
-<a href=#465 id=465 data-nosnippet>465</a>                    <span class="kw">return </span><span class="prelude-val">Ok</span>(SolverFamily::Smt(TheoryConfig {
-<a href=#466 id=466 data-nosnippet>466</a>                        ints,
-<a href=#467 id=467 data-nosnippet>467</a>                        matrices,
-<a href=#468 id=468 data-nosnippet>468</a>                        unwrap_alldiff,
-<a href=#469 id=469 data-nosnippet>469</a>                    }));
-<a href=#470 id=470 data-nosnippet>470</a>                }
-<a href=#471 id=471 data-nosnippet>471</a>                <span class="prelude-val">Err</span>(<span class="macro">format!</span>(
-<a href=#472 id=472 data-nosnippet>472</a>                    <span class="string">"unknown solver family '{other}', expected one of: minion, sat-log, sat-direct, sat-order, smt[(bv|lia)-(arrays|atomic)][-nodiscrete]"
-<a href=#473 id=473 data-nosnippet>473</a>                </span>))
-<a href=#474 id=474 data-nosnippet>474</a>            }
-<a href=#475 id=475 data-nosnippet>475</a>        }
-<a href=#476 id=476 data-nosnippet>476</a>    }
-<a href=#477 id=477 data-nosnippet>477</a>}
-<a href=#478 id=478 data-nosnippet>478</a>
-<a href=#479 id=479 data-nosnippet>479</a><span class="kw">impl </span>SolverFamily {
-<a href=#480 id=480 data-nosnippet>480</a>    <span class="kw">pub fn </span>as_str(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; String {
-<a href=#481 id=481 data-nosnippet>481</a>        <span class="kw">match </span><span class="self">self </span>{
-<a href=#482 id=482 data-nosnippet>482</a>            SolverFamily::Minion =&gt; <span class="string">"minion"</span>.to_owned(),
-<a href=#483 id=483 data-nosnippet>483</a>            SolverFamily::Sat(encoding) =&gt; <span class="macro">format!</span>(<span class="string">"sat-{}"</span>, encoding.as_str()),
-<a href=#484 id=484 data-nosnippet>484</a>            SolverFamily::Smt(theory_config) =&gt; <span class="macro">format!</span>(<span class="string">"smt-{}"</span>, theory_config.as_str()),
-<a href=#485 id=485 data-nosnippet>485</a>        }
-<a href=#486 id=486 data-nosnippet>486</a>    }
-<a href=#487 id=487 data-nosnippet>487</a>}
-<a href=#488 id=488 data-nosnippet>488</a>
-<a href=#489 id=489 data-nosnippet>489</a><span class="attr">#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Hash)]
-<a href=#490 id=490 data-nosnippet>490</a></span><span class="kw">pub struct </span>SolverArgs {
-<a href=#491 id=491 data-nosnippet>491</a>    <span class="kw">pub </span>timeout_ms: <span class="prelude-ty">Option</span>&lt;u64&gt;,
-<a href=#492 id=492 data-nosnippet>492</a>}
+<a href=#396 id=396 data-nosnippet>396</a>
+<a href=#397 id=397 data-nosnippet>397</a>    <span class="doccomment">/// Thread-local setting controlling whether default rule traces are configured.
+<a href=#398 id=398 data-nosnippet>398</a>    </span><span class="kw">static </span>DEFAULT_RULE_TRACE_ENABLED: Cell&lt;bool&gt; = <span class="kw">const </span>{ Cell::new(<span class="bool-val">false</span>) };
+<a href=#399 id=399 data-nosnippet>399</a>
+<a href=#400 id=400 data-nosnippet>400</a>    <span class="doccomment">/// Thread-local setting controlling whether verbose rule-attempt traces are configured.
+<a href=#401 id=401 data-nosnippet>401</a>    </span><span class="kw">static </span>RULE_TRACE_VERBOSE_ENABLED: Cell&lt;bool&gt; = <span class="kw">const </span>{ Cell::new(<span class="bool-val">false</span>) };
+<a href=#402 id=402 data-nosnippet>402</a>
+<a href=#403 id=403 data-nosnippet>403</a>    <span class="doccomment">/// Thread-local setting controlling whether aggregate rule-application traces are configured.
+<a href=#404 id=404 data-nosnippet>404</a>    </span><span class="kw">static </span>RULE_TRACE_AGGREGATES_ENABLED: Cell&lt;bool&gt; = <span class="kw">const </span>{ Cell::new(<span class="bool-val">false</span>) };
+<a href=#405 id=405 data-nosnippet>405</a>}
+<a href=#406 id=406 data-nosnippet>406</a>
+<a href=#407 id=407 data-nosnippet>407</a><span class="kw">pub fn </span>set_current_solver_family(solver_family: SolverFamily) {
+<a href=#408 id=408 data-nosnippet>408</a>    CURRENT_SOLVER_FAMILY.with(|current| current.set(<span class="prelude-val">Some</span>(solver_family)));
+<a href=#409 id=409 data-nosnippet>409</a>}
+<a href=#410 id=410 data-nosnippet>410</a>
+<a href=#411 id=411 data-nosnippet>411</a><span class="kw">pub fn </span>current_solver_family() -&gt; SolverFamily {
+<a href=#412 id=412 data-nosnippet>412</a>    CURRENT_SOLVER_FAMILY.with(|current| {
+<a href=#413 id=413 data-nosnippet>413</a>        current.get().unwrap_or_else(|| {
+<a href=#414 id=414 data-nosnippet>414</a>            <span class="comment">// loud failure on purpose, so we don't end up using the default
+<a href=#415 id=415 data-nosnippet>415</a>            </span><span class="macro">bug!</span>(
+<a href=#416 id=416 data-nosnippet>416</a>                <span class="string">"current solver family not set for this thread; call set_current_solver_family first"
+<a href=#417 id=417 data-nosnippet>417</a>            </span>)
+<a href=#418 id=418 data-nosnippet>418</a>        })
+<a href=#419 id=419 data-nosnippet>419</a>    })
+<a href=#420 id=420 data-nosnippet>420</a>}
+<a href=#421 id=421 data-nosnippet>421</a>
+<a href=#422 id=422 data-nosnippet>422</a><span class="kw">pub fn </span>set_minion_discrete_threshold(threshold: usize) {
+<a href=#423 id=423 data-nosnippet>423</a>    MINION_DISCRETE_THRESHOLD.with(|current| current.set(threshold));
+<a href=#424 id=424 data-nosnippet>424</a>}
+<a href=#425 id=425 data-nosnippet>425</a>
+<a href=#426 id=426 data-nosnippet>426</a><span class="kw">pub fn </span>minion_discrete_threshold() -&gt; usize {
+<a href=#427 id=427 data-nosnippet>427</a>    MINION_DISCRETE_THRESHOLD.with(|current| current.get())
+<a href=#428 id=428 data-nosnippet>428</a>}
+<a href=#429 id=429 data-nosnippet>429</a>
+<a href=#430 id=430 data-nosnippet>430</a><span class="kw">pub fn </span>set_rule_trace_enabled(enabled: bool) {
+<a href=#431 id=431 data-nosnippet>431</a>    RULE_TRACE_ENABLED.with(|current| current.set(enabled));
+<a href=#432 id=432 data-nosnippet>432</a>}
+<a href=#433 id=433 data-nosnippet>433</a>
+<a href=#434 id=434 data-nosnippet>434</a><span class="kw">pub fn </span>rule_trace_enabled() -&gt; bool {
+<a href=#435 id=435 data-nosnippet>435</a>    RULE_TRACE_ENABLED.with(|current| current.get())
+<a href=#436 id=436 data-nosnippet>436</a>}
+<a href=#437 id=437 data-nosnippet>437</a>
+<a href=#438 id=438 data-nosnippet>438</a><span class="kw">pub fn </span>set_default_rule_trace_enabled(enabled: bool) {
+<a href=#439 id=439 data-nosnippet>439</a>    DEFAULT_RULE_TRACE_ENABLED.with(|current| current.set(enabled));
+<a href=#440 id=440 data-nosnippet>440</a>}
+<a href=#441 id=441 data-nosnippet>441</a>
+<a href=#442 id=442 data-nosnippet>442</a><span class="kw">pub fn </span>default_rule_trace_enabled() -&gt; bool {
+<a href=#443 id=443 data-nosnippet>443</a>    DEFAULT_RULE_TRACE_ENABLED.with(|current| current.get())
+<a href=#444 id=444 data-nosnippet>444</a>}
+<a href=#445 id=445 data-nosnippet>445</a>
+<a href=#446 id=446 data-nosnippet>446</a><span class="kw">pub fn </span>set_rule_trace_verbose_enabled(enabled: bool) {
+<a href=#447 id=447 data-nosnippet>447</a>    RULE_TRACE_VERBOSE_ENABLED.with(|current| current.set(enabled));
+<a href=#448 id=448 data-nosnippet>448</a>}
+<a href=#449 id=449 data-nosnippet>449</a>
+<a href=#450 id=450 data-nosnippet>450</a><span class="kw">pub fn </span>rule_trace_verbose_enabled() -&gt; bool {
+<a href=#451 id=451 data-nosnippet>451</a>    RULE_TRACE_VERBOSE_ENABLED.with(|current| current.get())
+<a href=#452 id=452 data-nosnippet>452</a>}
+<a href=#453 id=453 data-nosnippet>453</a>
+<a href=#454 id=454 data-nosnippet>454</a><span class="kw">pub fn </span>set_rule_trace_aggregates_enabled(enabled: bool) {
+<a href=#455 id=455 data-nosnippet>455</a>    RULE_TRACE_AGGREGATES_ENABLED.with(|current| current.set(enabled));
+<a href=#456 id=456 data-nosnippet>456</a>}
+<a href=#457 id=457 data-nosnippet>457</a>
+<a href=#458 id=458 data-nosnippet>458</a><span class="kw">pub fn </span>rule_trace_aggregates_enabled() -&gt; bool {
+<a href=#459 id=459 data-nosnippet>459</a>    RULE_TRACE_AGGREGATES_ENABLED.with(|current| current.get())
+<a href=#460 id=460 data-nosnippet>460</a>}
+<a href=#461 id=461 data-nosnippet>461</a>
+<a href=#462 id=462 data-nosnippet>462</a><span class="kw">pub fn </span>configured_rule_trace_enabled() -&gt; bool {
+<a href=#463 id=463 data-nosnippet>463</a>    default_rule_trace_enabled() || rule_trace_verbose_enabled() || rule_trace_aggregates_enabled()
+<a href=#464 id=464 data-nosnippet>464</a>}
+<a href=#465 id=465 data-nosnippet>465</a>
+<a href=#466 id=466 data-nosnippet>466</a><span class="kw">impl </span>FromStr <span class="kw">for </span>SolverFamily {
+<a href=#467 id=467 data-nosnippet>467</a>    <span class="kw">type </span><span class="prelude-val">Err </span>= String;
+<a href=#468 id=468 data-nosnippet>468</a>
+<a href=#469 id=469 data-nosnippet>469</a>    <span class="kw">fn </span>from_str(s: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, <span class="self">Self</span>::Err&gt; {
+<a href=#470 id=470 data-nosnippet>470</a>        <span class="kw">let </span>s = s.trim().to_ascii_lowercase();
+<a href=#471 id=471 data-nosnippet>471</a>
+<a href=#472 id=472 data-nosnippet>472</a>        <span class="kw">match </span>s.as_str() {
+<a href=#473 id=473 data-nosnippet>473</a>            <span class="string">"minion" </span>=&gt; <span class="prelude-val">Ok</span>(SolverFamily::Minion),
+<a href=#474 id=474 data-nosnippet>474</a>            <span class="string">"sat" </span>| <span class="string">"sat-log" </span>=&gt; <span class="prelude-val">Ok</span>(SolverFamily::Sat(SatEncoding::Log)),
+<a href=#475 id=475 data-nosnippet>475</a>            <span class="string">"sat-direct" </span>=&gt; <span class="prelude-val">Ok</span>(SolverFamily::Sat(SatEncoding::Direct)),
+<a href=#476 id=476 data-nosnippet>476</a>            <span class="string">"sat-order" </span>=&gt; <span class="prelude-val">Ok</span>(SolverFamily::Sat(SatEncoding::Order)),
+<a href=#477 id=477 data-nosnippet>477</a>            <span class="string">"smt" </span>=&gt; <span class="prelude-val">Ok</span>(SolverFamily::Smt(TheoryConfig::default())),
+<a href=#478 id=478 data-nosnippet>478</a>            other =&gt; {
+<a href=#479 id=479 data-nosnippet>479</a>                <span class="comment">// allow forms like `smt-bv-atomic` or `smt-lia-arrays`
+<a href=#480 id=480 data-nosnippet>480</a>                </span><span class="kw">if </span>other.starts_with(<span class="string">"smt-"</span>) {
+<a href=#481 id=481 data-nosnippet>481</a>                    <span class="kw">let </span>parts = other.split(<span class="string">'-'</span>).skip(<span class="number">1</span>);
+<a href=#482 id=482 data-nosnippet>482</a>                    <span class="kw">let </span><span class="kw-2">mut </span>ints = IntTheory::default();
+<a href=#483 id=483 data-nosnippet>483</a>                    <span class="kw">let </span><span class="kw-2">mut </span>matrices = MatrixTheory::default();
+<a href=#484 id=484 data-nosnippet>484</a>                    <span class="kw">let </span><span class="kw-2">mut </span>unwrap_alldiff = <span class="bool-val">false</span>;
+<a href=#485 id=485 data-nosnippet>485</a>
+<a href=#486 id=486 data-nosnippet>486</a>                    <span class="kw">for </span>token <span class="kw">in </span>parts {
+<a href=#487 id=487 data-nosnippet>487</a>                        <span class="kw">match </span>token {
+<a href=#488 id=488 data-nosnippet>488</a>                            <span class="string">"" </span>=&gt; {}
+<a href=#489 id=489 data-nosnippet>489</a>                            <span class="string">"lia" </span>=&gt; ints = IntTheory::Lia,
+<a href=#490 id=490 data-nosnippet>490</a>                            <span class="string">"bv" </span>=&gt; ints = IntTheory::Bv,
+<a href=#491 id=491 data-nosnippet>491</a>                            <span class="string">"arrays" </span>=&gt; matrices = MatrixTheory::Arrays,
+<a href=#492 id=492 data-nosnippet>492</a>                            <span class="string">"atomic" </span>=&gt; matrices = MatrixTheory::Atomic,
+<a href=#493 id=493 data-nosnippet>493</a>                            <span class="string">"nodiscrete" </span>=&gt; unwrap_alldiff = <span class="bool-val">true</span>,
+<a href=#494 id=494 data-nosnippet>494</a>                            other_token =&gt; {
+<a href=#495 id=495 data-nosnippet>495</a>                                <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">format!</span>(
+<a href=#496 id=496 data-nosnippet>496</a>                                    <span class="string">"unknown SMT theory option '{other_token}', must be one of bv|lia|arrays|atomic|nodiscrete"
+<a href=#497 id=497 data-nosnippet>497</a>                                </span>));
+<a href=#498 id=498 data-nosnippet>498</a>                            }
+<a href=#499 id=499 data-nosnippet>499</a>                        }
+<a href=#500 id=500 data-nosnippet>500</a>                    }
+<a href=#501 id=501 data-nosnippet>501</a>
+<a href=#502 id=502 data-nosnippet>502</a>                    <span class="kw">return </span><span class="prelude-val">Ok</span>(SolverFamily::Smt(TheoryConfig {
+<a href=#503 id=503 data-nosnippet>503</a>                        ints,
+<a href=#504 id=504 data-nosnippet>504</a>                        matrices,
+<a href=#505 id=505 data-nosnippet>505</a>                        unwrap_alldiff,
+<a href=#506 id=506 data-nosnippet>506</a>                    }));
+<a href=#507 id=507 data-nosnippet>507</a>                }
+<a href=#508 id=508 data-nosnippet>508</a>                <span class="prelude-val">Err</span>(<span class="macro">format!</span>(
+<a href=#509 id=509 data-nosnippet>509</a>                    <span class="string">"unknown solver family '{other}', expected one of: minion, sat-log, sat-direct, sat-order, smt[(bv|lia)-(arrays|atomic)][-nodiscrete]"
+<a href=#510 id=510 data-nosnippet>510</a>                </span>))
+<a href=#511 id=511 data-nosnippet>511</a>            }
+<a href=#512 id=512 data-nosnippet>512</a>        }
+<a href=#513 id=513 data-nosnippet>513</a>    }
+<a href=#514 id=514 data-nosnippet>514</a>}
+<a href=#515 id=515 data-nosnippet>515</a>
+<a href=#516 id=516 data-nosnippet>516</a><span class="kw">impl </span>SolverFamily {
+<a href=#517 id=517 data-nosnippet>517</a>    <span class="kw">pub fn </span>as_str(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; String {
+<a href=#518 id=518 data-nosnippet>518</a>        <span class="kw">match </span><span class="self">self </span>{
+<a href=#519 id=519 data-nosnippet>519</a>            SolverFamily::Minion =&gt; <span class="string">"minion"</span>.to_owned(),
+<a href=#520 id=520 data-nosnippet>520</a>            SolverFamily::Sat(encoding) =&gt; <span class="macro">format!</span>(<span class="string">"sat-{}"</span>, encoding.as_str()),
+<a href=#521 id=521 data-nosnippet>521</a>            SolverFamily::Smt(theory_config) =&gt; <span class="macro">format!</span>(<span class="string">"smt-{}"</span>, theory_config.as_str()),
+<a href=#522 id=522 data-nosnippet>522</a>        }
+<a href=#523 id=523 data-nosnippet>523</a>    }
+<a href=#524 id=524 data-nosnippet>524</a>}
+<a href=#525 id=525 data-nosnippet>525</a>
+<a href=#526 id=526 data-nosnippet>526</a><span class="attr">#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Hash)]
+<a href=#527 id=527 data-nosnippet>527</a></span><span class="kw">pub struct </span>SolverArgs {
+<a href=#528 id=528 data-nosnippet>528</a>    <span class="kw">pub </span>timeout_ms: <span class="prelude-ty">Option</span>&lt;u64&gt;,
+<a href=#529 id=529 data-nosnippet>529</a>}
 </code></pre></div></section></main></body></html>
