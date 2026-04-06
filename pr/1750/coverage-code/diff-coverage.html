@@ -1,0 +1,579 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+        <title>Diff Coverage</title>
+        <style>
+            .src-snippet { margin-top: 2em; }
+            .src-name { font-weight: bold; }
+            .snippets {
+                border-top: 1px solid #bdbdbd;
+                border-bottom: 1px solid #bdbdbd;
+            }
+            pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.hll { background-color: #ffcccc }
+.c { color: #3D7B7B; font-style: italic } /* Comment */
+.err { border: 1px solid #F00 } /* Error */
+.k { color: #008000; font-weight: bold } /* Keyword */
+.o { color: #666 } /* Operator */
+.ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.cp { color: #9C6500 } /* Comment.Preproc */
+.cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.gd { color: #A00000 } /* Generic.Deleted */
+.ge { font-style: italic } /* Generic.Emph */
+.ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.gr { color: #E40000 } /* Generic.Error */
+.gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.gi { color: #008400 } /* Generic.Inserted */
+.go { color: #717171 } /* Generic.Output */
+.gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.gs { font-weight: bold } /* Generic.Strong */
+.gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.gt { color: #04D } /* Generic.Traceback */
+.kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.kp { color: #008000 } /* Keyword.Pseudo */
+.kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.kt { color: #B00040 } /* Keyword.Type */
+.m { color: #666 } /* Literal.Number */
+.s { color: #BA2121 } /* Literal.String */
+.na { color: #687822 } /* Name.Attribute */
+.nb { color: #008000 } /* Name.Builtin */
+.nc { color: #00F; font-weight: bold } /* Name.Class */
+.no { color: #800 } /* Name.Constant */
+.nd { color: #A2F } /* Name.Decorator */
+.ni { color: #717171; font-weight: bold } /* Name.Entity */
+.ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.nf { color: #00F } /* Name.Function */
+.nl { color: #767600 } /* Name.Label */
+.nn { color: #00F; font-weight: bold } /* Name.Namespace */
+.nt { color: #008000; font-weight: bold } /* Name.Tag */
+.nv { color: #19177C } /* Name.Variable */
+.ow { color: #A2F; font-weight: bold } /* Operator.Word */
+.w { color: #BBB } /* Text.Whitespace */
+.mb { color: #666 } /* Literal.Number.Bin */
+.mf { color: #666 } /* Literal.Number.Float */
+.mh { color: #666 } /* Literal.Number.Hex */
+.mi { color: #666 } /* Literal.Number.Integer */
+.mo { color: #666 } /* Literal.Number.Oct */
+.sa { color: #BA2121 } /* Literal.String.Affix */
+.sb { color: #BA2121 } /* Literal.String.Backtick */
+.sc { color: #BA2121 } /* Literal.String.Char */
+.dl { color: #BA2121 } /* Literal.String.Delimiter */
+.sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.s2 { color: #BA2121 } /* Literal.String.Double */
+.se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.sh { color: #BA2121 } /* Literal.String.Heredoc */
+.si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.sx { color: #008000 } /* Literal.String.Other */
+.sr { color: #A45A77 } /* Literal.String.Regex */
+.s1 { color: #BA2121 } /* Literal.String.Single */
+.ss { color: #19177C } /* Literal.String.Symbol */
+.bp { color: #008000 } /* Name.Builtin.Pseudo */
+.fm { color: #00F } /* Name.Function.Magic */
+.vc { color: #19177C } /* Name.Variable.Class */
+.vg { color: #19177C } /* Name.Variable.Global */
+.vi { color: #19177C } /* Name.Variable.Instance */
+.vm { color: #19177C } /* Name.Variable.Magic */
+.il { color: #666 } /* Literal.Number.Integer.Long */
+        </style>
+    </head>
+    <body>
+        <h1>Diff Coverage</h1>
+        <p>Diff: upstream/main...HEAD, staged and unstaged changes</p>
+        <ul>
+            <li><b>Total</b>: 353 lines</li>
+            <li><b>Missing</b>: 38 lines</li>
+            <li><b>Coverage</b>: 89%</li>
+        </ul>
+        <table border="1">
+            <tr>
+                <th>Source File</th>
+                <th>Diff Coverage (%)</th>
+                <th>Missing Lines</th>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-core/src/ast/expressions.rs</td>
+                <td>100%</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-core/src/ast/matrix.rs</td>
+                <td>96.6%</td>
+                <td>280-281</td>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-core/src/ast/partial_eval.rs</td>
+                <td>84.2%</td>
+                <td>24,46,53,80,94,97,100,110,116,140-143,145,147-152,155,178,400,501,506,509,512,515,736-739</td>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-core/src/rule_engine/rewrite_morph.rs</td>
+                <td>100%</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-rules/src/constant_eval.rs</td>
+                <td>100%</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-rules/src/matrix/bubble.rs</td>
+                <td>91.2%</td>
+                <td>38,53,78</td>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-rules/src/matrix/indexed_flatten.rs</td>
+                <td>100%</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-rules/src/matrix/remove_dimension.rs</td>
+                <td>100%</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-rules/src/minion.rs</td>
+                <td>92.9%</td>
+                <td>50</td>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-rules/src/smt/smt_rules.rs</td>
+                <td>100%</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>tests-integration/tests/integration_tests.rs</td>
+                <td>100%</td>
+                <td>&nbsp;</td>
+            </tr>
+        </table>
+        <div class="src-snippet">
+            <div class="src-name">crates/conjure-cp-core/src/ast/matrix.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/ast/matrix.rs-276" name="crates/conjure-cp-core/src/ast/matrix.rs-276"></a><span class="k">fn</span><span class="w"> </span><span class="nf">bound_index_domain_from_length</span><span class="p">(</span><span class="k">mut</span><span class="w"> </span><span class="n">domain</span><span class="p">:</span><span class="w"> </span><span class="nc">Moo</span><span class="o">&lt;</span><span class="n">GroundDomain</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">len</span><span class="p">:</span><span class="w"> </span><span class="kt">usize</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">Moo</span><span class="o">&lt;</span><span class="n">GroundDomain</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/ast/matrix.rs-277" name="crates/conjure-cp-core/src/ast/matrix.rs-277"></a><span class="w">    </span><span class="k">match</span><span class="w"> </span><span class="n">Moo</span><span class="p">::</span><span class="n">make_mut</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">domain</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/ast/matrix.rs-278" name="crates/conjure-cp-core/src/ast/matrix.rs-278"></a><span class="w">        </span><span class="n">GroundDomain</span><span class="p">::</span><span class="n">Int</span><span class="p">(</span><span class="n">ranges</span><span class="p">)</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">ranges</span><span class="p">.</span><span class="n">len</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">len</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/ast/matrix.rs-279" name="crates/conjure-cp-core/src/ast/matrix.rs-279"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="n">Range</span><span class="p">::</span><span class="n">UnboundedR</span><span class="p">(</span><span class="n">start</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ranges</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/ast/matrix.rs-280" name="crates/conjure-cp-core/src/ast/matrix.rs-280"></a><span class="hll"><span class="w">                </span><span class="kd">let</span><span class="w"> </span><span class="n">end</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">start</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="n">len</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">i32</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-core/src/ast/matrix.rs-281" name="crates/conjure-cp-core/src/ast/matrix.rs-281"></a><span class="hll"><span class="w">                </span><span class="n">ranges</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Range</span><span class="p">::</span><span class="n">Bounded</span><span class="p">(</span><span class="n">start</span><span class="p">,</span><span class="w"> </span><span class="n">end</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-core/src/ast/matrix.rs-282" name="crates/conjure-cp-core/src/ast/matrix.rs-282"></a><span class="w">            </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/ast/matrix.rs-283" name="crates/conjure-cp-core/src/ast/matrix.rs-283"></a><span class="w">            </span><span class="n">domain</span>
+<a id="crates/conjure-cp-core/src/ast/matrix.rs-284" name="crates/conjure-cp-core/src/ast/matrix.rs-284"></a><span class="w">        </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/ast/matrix.rs-285" name="crates/conjure-cp-core/src/ast/matrix.rs-285"></a><span class="w">        </span><span class="n">_</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/conjure-cp-core/src/ast/partial_eval.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-20" name="crates/conjure-cp-core/src/ast/partial_eval.rs-20"></a><span class="w">                </span><span class="p">.</span><span class="n">iter</span><span class="p">()</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-21" name="crates/conjure-cp-core/src/ast/partial_eval.rs-21"></a><span class="w">                </span><span class="p">.</span><span class="n">map</span><span class="p">(</span><span class="o">|</span><span class="n">range</span><span class="o">|</span><span class="w"> </span><span class="n">Range</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="n">range</span><span class="p">.</span><span class="n">low</span><span class="p">().</span><span class="n">copied</span><span class="p">(),</span><span class="w"> </span><span class="n">range</span><span class="p">.</span><span class="n">high</span><span class="p">().</span><span class="n">copied</span><span class="p">()))</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-22" name="crates/conjure-cp-core/src/ast/partial_eval.rs-22"></a><span class="w">                </span><span class="p">.</span><span class="n">collect</span><span class="p">::</span><span class="o">&lt;</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="n">_</span><span class="o">&gt;&gt;</span><span class="p">(),</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-23" name="crates/conjure-cp-core/src/ast/partial_eval.rs-23"></a><span class="w">        </span><span class="p">)),</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-24" name="crates/conjure-cp-core/src/ast/partial_eval.rs-24"></a><span class="hll"><span class="w">        </span><span class="n">_</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">domain</span><span class="p">.</span><span class="n">clone</span><span class="p">(),</span>
+</span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-25" name="crates/conjure-cp-core/src/ast/partial_eval.rs-25"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-26" name="crates/conjure-cp-core/src/ast/partial_eval.rs-26"></a><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-27" name="crates/conjure-cp-core/src/ast/partial_eval.rs-27"></a>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-28" name="crates/conjure-cp-core/src/ast/partial_eval.rs-28"></a><span class="sd">/// Returns whether `expr` is safe after resolving any referenced expressions.</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-42" name="crates/conjure-cp-core/src/ast/partial_eval.rs-42"></a><span class="w">            </span><span class="p">};</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-43" name="crates/conjure-cp-core/src/ast/partial_eval.rs-43"></a>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-44" name="crates/conjure-cp-core/src/ast/partial_eval.rs-44"></a><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">reference</span><span class="p">.</span><span class="n">id</span><span class="p">();</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-45" name="crates/conjure-cp-core/src/ast/partial_eval.rs-45"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="o">!</span><span class="n">resolving</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="n">id</span><span class="p">.</span><span class="n">clone</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-46" name="crates/conjure-cp-core/src/ast/partial_eval.rs-46"></a><span class="hll"><span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+</span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-47" name="crates/conjure-cp-core/src/ast/partial_eval.rs-47"></a><span class="w">            </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-48" name="crates/conjure-cp-core/src/ast/partial_eval.rs-48"></a>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-49" name="crates/conjure-cp-core/src/ast/partial_eval.rs-49"></a><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="n">is_safe</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">helper</span><span class="p">(</span><span class="o">&amp;</span><span class="n">resolved</span><span class="p">,</span><span class="w"> </span><span class="n">resolving</span><span class="p">);</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-50" name="crates/conjure-cp-core/src/ast/partial_eval.rs-50"></a><span class="w">            </span><span class="n">resolving</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="o">&amp;</span><span class="n">id</span><span class="p">);</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-49" name="crates/conjure-cp-core/src/ast/partial_eval.rs-49"></a><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="n">is_safe</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">helper</span><span class="p">(</span><span class="o">&amp;</span><span class="n">resolved</span><span class="p">,</span><span class="w"> </span><span class="n">resolving</span><span class="p">);</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-50" name="crates/conjure-cp-core/src/ast/partial_eval.rs-50"></a><span class="w">            </span><span class="n">resolving</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="o">&amp;</span><span class="n">id</span><span class="p">);</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-51" name="crates/conjure-cp-core/src/ast/partial_eval.rs-51"></a>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-52" name="crates/conjure-cp-core/src/ast/partial_eval.rs-52"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="o">!</span><span class="n">is_safe</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-53" name="crates/conjure-cp-core/src/ast/partial_eval.rs-53"></a><span class="hll"><span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+</span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-54" name="crates/conjure-cp-core/src/ast/partial_eval.rs-54"></a><span class="w">            </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-55" name="crates/conjure-cp-core/src/ast/partial_eval.rs-55"></a><span class="w">        </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-56" name="crates/conjure-cp-core/src/ast/partial_eval.rs-56"></a>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-57" name="crates/conjure-cp-core/src/ast/partial_eval.rs-57"></a><span class="w">        </span><span class="kc">true</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-76" name="crates/conjure-cp-core/src/ast/partial_eval.rs-76"></a>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-77" name="crates/conjure-cp-core/src/ast/partial_eval.rs-77"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nb">Ok</span><span class="p">(</span><span class="n">values_in_domain</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">intersection</span><span class="p">.</span><span class="n">values_i32</span><span class="p">()</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-78" name="crates/conjure-cp-core/src/ast/partial_eval.rs-78"></a><span class="w">        </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">values_in_domain</span><span class="p">.</span><span class="n">is_empty</span><span class="p">()</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-79" name="crates/conjure-cp-core/src/ast/partial_eval.rs-79"></a><span class="w">    </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-80" name="crates/conjure-cp-core/src/ast/partial_eval.rs-80"></a><span class="hll"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="kc">false</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-81" name="crates/conjure-cp-core/src/ast/partial_eval.rs-81"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-82" name="crates/conjure-cp-core/src/ast/partial_eval.rs-82"></a>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-83" name="crates/conjure-cp-core/src/ast/partial_eval.rs-83"></a><span class="w">    </span><span class="nb">None</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-84" name="crates/conjure-cp-core/src/ast/partial_eval.rs-84"></a><span class="p">}</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-90" name="crates/conjure-cp-core/src/ast/partial_eval.rs-90"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-91" name="crates/conjure-cp-core/src/ast/partial_eval.rs-91"></a>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-92" name="crates/conjure-cp-core/src/ast/partial_eval.rs-92"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">domain</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">resolved_ground_domain_of_for_partial_eval</span><span class="p">(</span><span class="n">expr</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-93" name="crates/conjure-cp-core/src/ast/partial_eval.rs-93"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">GroundDomain</span><span class="p">::</span><span class="n">Int</span><span class="p">(</span><span class="n">ranges</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">domain</span><span class="p">.</span><span class="n">as_ref</span><span class="p">()</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-94" name="crates/conjure-cp-core/src/ast/partial_eval.rs-94"></a><span class="hll"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">None</span><span class="p">;</span>
+</span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-95" name="crates/conjure-cp-core/src/ast/partial_eval.rs-95"></a><span class="w">    </span><span class="p">};</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-96" name="crates/conjure-cp-core/src/ast/partial_eval.rs-96"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="p">[</span><span class="n">range</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ranges</span><span class="p">.</span><span class="n">as_slice</span><span class="p">()</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-97" name="crates/conjure-cp-core/src/ast/partial_eval.rs-97"></a><span class="hll"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">None</span><span class="p">;</span>
+</span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-98" name="crates/conjure-cp-core/src/ast/partial_eval.rs-98"></a><span class="w">    </span><span class="p">};</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-99" name="crates/conjure-cp-core/src/ast/partial_eval.rs-99"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="p">(</span><span class="nb">Some</span><span class="p">(</span><span class="n">low</span><span class="p">),</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">high</span><span class="p">))</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">range</span><span class="p">.</span><span class="n">low</span><span class="p">(),</span><span class="w"> </span><span class="n">range</span><span class="p">.</span><span class="n">high</span><span class="p">())</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-100" name="crates/conjure-cp-core/src/ast/partial_eval.rs-100"></a><span class="hll"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">None</span><span class="p">;</span>
+</span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-101" name="crates/conjure-cp-core/src/ast/partial_eval.rs-101"></a><span class="w">    </span><span class="p">};</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-102" name="crates/conjure-cp-core/src/ast/partial_eval.rs-102"></a>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-103" name="crates/conjure-cp-core/src/ast/partial_eval.rs-103"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">low</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">high</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="o">*</span><span class="n">low</span><span class="p">)</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="nb">None</span><span class="w"> </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-104" name="crates/conjure-cp-core/src/ast/partial_eval.rs-104"></a><span class="p">}</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-106" name="crates/conjure-cp-core/src/ast/partial_eval.rs-106"></a><span class="sd">/// Resolves a matrix literal subject, including constant references to matrix literals.</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-107" name="crates/conjure-cp-core/src/ast/partial_eval.rs-107"></a><span class="k">fn</span><span class="w"> </span><span class="nf">resolve_matrix_subject</span><span class="p">(</span><span class="n">subject</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">Expr</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nb">Option</span><span class="o">&lt;</span><span class="p">(</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="n">Expr</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">DomainPtr</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-108" name="crates/conjure-cp-core/src/ast/partial_eval.rs-108"></a><span class="w">    </span><span class="n">subject</span><span class="p">.</span><span class="n">clone</span><span class="p">().</span><span class="n">unwrap_matrix_unchecked</span><span class="p">().</span><span class="n">or_else</span><span class="p">(</span><span class="o">||</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-109" name="crates/conjure-cp-core/src/ast/partial_eval.rs-109"></a><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">Expr</span><span class="p">::</span><span class="n">Atomic</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">Atom</span><span class="p">::</span><span class="n">Reference</span><span class="p">(</span><span class="n">reference</span><span class="p">))</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">subject</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-110" name="crates/conjure-cp-core/src/ast/partial_eval.rs-110"></a><span class="hll"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="nb">None</span><span class="p">;</span>
+</span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-111" name="crates/conjure-cp-core/src/ast/partial_eval.rs-111"></a><span class="w">        </span><span class="p">};</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-112" name="crates/conjure-cp-core/src/ast/partial_eval.rs-112"></a>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-113" name="crates/conjure-cp-core/src/ast/partial_eval.rs-113"></a><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">Lit</span><span class="p">::</span><span class="n">AbstractLiteral</span><span class="p">(</span><span class="n">AbstractLiteral</span><span class="p">::</span><span class="n">Matrix</span><span class="p">(</span><span class="n">elems</span><span class="p">,</span><span class="w"> </span><span class="n">index_domain</span><span class="p">))</span><span class="w"> </span><span class="o">=</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-114" name="crates/conjure-cp-core/src/ast/partial_eval.rs-114"></a><span class="w">            </span><span class="n">reference</span><span class="p">.</span><span class="n">resolve_constant</span><span class="p">()</span><span class="o">?</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-112" name="crates/conjure-cp-core/src/ast/partial_eval.rs-112"></a>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-113" name="crates/conjure-cp-core/src/ast/partial_eval.rs-113"></a><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">Lit</span><span class="p">::</span><span class="n">AbstractLiteral</span><span class="p">(</span><span class="n">AbstractLiteral</span><span class="p">::</span><span class="n">Matrix</span><span class="p">(</span><span class="n">elems</span><span class="p">,</span><span class="w"> </span><span class="n">index_domain</span><span class="p">))</span><span class="w"> </span><span class="o">=</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-114" name="crates/conjure-cp-core/src/ast/partial_eval.rs-114"></a><span class="w">            </span><span class="n">reference</span><span class="p">.</span><span class="n">resolve_constant</span><span class="p">()</span><span class="o">?</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-115" name="crates/conjure-cp-core/src/ast/partial_eval.rs-115"></a><span class="w">        </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-116" name="crates/conjure-cp-core/src/ast/partial_eval.rs-116"></a><span class="hll"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="nb">None</span><span class="p">;</span>
+</span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-117" name="crates/conjure-cp-core/src/ast/partial_eval.rs-117"></a><span class="w">        </span><span class="p">};</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-118" name="crates/conjure-cp-core/src/ast/partial_eval.rs-118"></a>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-119" name="crates/conjure-cp-core/src/ast/partial_eval.rs-119"></a><span class="w">        </span><span class="nb">Some</span><span class="p">((</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-120" name="crates/conjure-cp-core/src/ast/partial_eval.rs-120"></a><span class="w">            </span><span class="n">elems</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-136" name="crates/conjure-cp-core/src/ast/partial_eval.rs-136"></a><span class="w">            </span><span class="p">};</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-137" name="crates/conjure-cp-core/src/ast/partial_eval.rs-137"></a>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-138" name="crates/conjure-cp-core/src/ast/partial_eval.rs-138"></a><span class="w">            </span><span class="nb">Some</span><span class="p">(</span><span class="n">elem_domain</span><span class="p">.</span><span class="n">clone</span><span class="p">())</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-139" name="crates/conjure-cp-core/src/ast/partial_eval.rs-139"></a><span class="w">        </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-140" name="crates/conjure-cp-core/src/ast/partial_eval.rs-140"></a><span class="hll"><span class="w">        </span><span class="n">Expr</span><span class="p">::</span><span class="n">SafeSlice</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">subject</span><span class="p">,</span><span class="w"> </span><span class="n">indices</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-141" name="crates/conjure-cp-core/src/ast/partial_eval.rs-141"></a><span class="hll"><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="n">subject_domain</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">resolved_ground_domain_of_for_partial_eval</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
+</span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-142" name="crates/conjure-cp-core/src/ast/partial_eval.rs-142"></a><span class="hll"><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="n">GroundDomain</span><span class="p">::</span><span class="n">Matrix</span><span class="p">(</span><span class="n">elem_domain</span><span class="p">,</span><span class="w"> </span><span class="n">index_domains</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">subject_domain</span><span class="p">.</span><span class="n">as_ref</span><span class="p">()</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-143" name="crates/conjure-cp-core/src/ast/partial_eval.rs-143"></a><span class="hll"><span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="nb">None</span><span class="p">;</span>
+</span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-144" name="crates/conjure-cp-core/src/ast/partial_eval.rs-144"></a><span class="w">            </span><span class="p">};</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-145" name="crates/conjure-cp-core/src/ast/partial_eval.rs-145"></a><span class="hll"><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="n">sliced_dimension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">indices</span><span class="p">.</span><span class="n">iter</span><span class="p">().</span><span class="n">position</span><span class="p">(</span><span class="nb">Option</span><span class="p">::</span><span class="n">is_none</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-146" name="crates/conjure-cp-core/src/ast/partial_eval.rs-146"></a>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-147" name="crates/conjure-cp-core/src/ast/partial_eval.rs-147"></a><span class="hll"><span class="w">            </span><span class="k">match</span><span class="w"> </span><span class="n">sliced_dimension</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-148" name="crates/conjure-cp-core/src/ast/partial_eval.rs-148"></a><span class="hll"><span class="w">                </span><span class="nb">Some</span><span class="p">(</span><span class="n">dimension</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">Moo</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="n">GroundDomain</span><span class="p">::</span><span class="n">Matrix</span><span class="p">(</span>
+</span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-149" name="crates/conjure-cp-core/src/ast/partial_eval.rs-149"></a><span class="hll"><span class="w">                    </span><span class="n">elem_domain</span><span class="p">.</span><span class="n">clone</span><span class="p">(),</span>
+</span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-150" name="crates/conjure-cp-core/src/ast/partial_eval.rs-150"></a><span class="hll"><span class="w">                    </span><span class="fm">vec!</span><span class="p">[</span><span class="n">index_domains</span><span class="p">[</span><span class="n">dimension</span><span class="p">].</span><span class="n">clone</span><span class="p">()],</span>
+</span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-151" name="crates/conjure-cp-core/src/ast/partial_eval.rs-151"></a><span class="hll"><span class="w">                </span><span class="p">))),</span>
+</span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-152" name="crates/conjure-cp-core/src/ast/partial_eval.rs-152"></a><span class="hll"><span class="w">                </span><span class="nb">None</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">elem_domain</span><span class="p">.</span><span class="n">clone</span><span class="p">()),</span>
+</span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-153" name="crates/conjure-cp-core/src/ast/partial_eval.rs-153"></a><span class="w">            </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-154" name="crates/conjure-cp-core/src/ast/partial_eval.rs-154"></a><span class="w">        </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-155" name="crates/conjure-cp-core/src/ast/partial_eval.rs-155"></a><span class="hll"><span class="w">        </span><span class="n">Expr</span><span class="p">::</span><span class="n">UnsafeIndex</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Expr</span><span class="p">::</span><span class="n">UnsafeSlice</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">None</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-156" name="crates/conjure-cp-core/src/ast/partial_eval.rs-156"></a><span class="w">        </span><span class="n">_</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">expr</span><span class="p">.</span><span class="n">domain_of</span><span class="p">()</span><span class="o">?</span><span class="p">.</span><span class="n">resolve</span><span class="p">(),</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-157" name="crates/conjure-cp-core/src/ast/partial_eval.rs-157"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-158" name="crates/conjure-cp-core/src/ast/partial_eval.rs-158"></a><span class="p">}</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-174" name="crates/conjure-cp-core/src/ast/partial_eval.rs-174"></a><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="p">[</span><span class="n">range</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ranges</span><span class="p">.</span><span class="n">as_slice</span><span class="p">()</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-175" name="crates/conjure-cp-core/src/ast/partial_eval.rs-175"></a><span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="nb">None</span><span class="p">;</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-176" name="crates/conjure-cp-core/src/ast/partial_eval.rs-176"></a><span class="w">            </span><span class="p">};</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-177" name="crates/conjure-cp-core/src/ast/partial_eval.rs-177"></a><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="p">(</span><span class="nb">Some</span><span class="p">(</span><span class="n">low</span><span class="p">),</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">high</span><span class="p">))</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">range</span><span class="p">.</span><span class="n">low</span><span class="p">(),</span><span class="w"> </span><span class="n">range</span><span class="p">.</span><span class="n">high</span><span class="p">())</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-178" name="crates/conjure-cp-core/src/ast/partial_eval.rs-178"></a><span class="hll"><span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="nb">None</span><span class="p">;</span>
+</span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-179" name="crates/conjure-cp-core/src/ast/partial_eval.rs-179"></a><span class="w">            </span><span class="p">};</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-180" name="crates/conjure-cp-core/src/ast/partial_eval.rs-180"></a>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-181" name="crates/conjure-cp-core/src/ast/partial_eval.rs-181"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="n">low</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">high</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">low</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-182" name="crates/conjure-cp-core/src/ast/partial_eval.rs-182"></a><span class="w">                </span><span class="nb">Some</span><span class="p">((</span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="kc">false</span><span class="p">))</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">396</span>
+<span class="normal">397</span>
+<span class="normal">398</span>
+<span class="normal">399</span>
+<span class="normal">400</span>
+<span class="normal">401</span>
+<span class="normal">402</span>
+<span class="normal">403</span>
+<span class="normal">404</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-396" name="crates/conjure-cp-core/src/ast/partial_eval.rs-396"></a>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-397" name="crates/conjure-cp-core/src/ast/partial_eval.rs-397"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="n">acc</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-398" name="crates/conjure-cp-core/src/ast/partial_eval.rs-398"></a><span class="w">                </span><span class="c1">// if safe, 0 * exprs ~&gt; 0</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-399" name="crates/conjure-cp-core/src/ast/partial_eval.rs-399"></a><span class="w">                </span><span class="c1">// otherwise, just return 0* exprs</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-400" name="crates/conjure-cp-core/src/ast/partial_eval.rs-400"></a><span class="hll"><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="n">is_semantically_safe</span><span class="p">(</span><span class="o">&amp;</span><span class="n">new_product</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-401" name="crates/conjure-cp-core/src/ast/partial_eval.rs-401"></a><span class="w">                    </span><span class="nb">Ok</span><span class="p">(</span><span class="n">Reduction</span><span class="p">::</span><span class="n">pure</span><span class="p">(</span><span class="n">Expr</span><span class="p">::</span><span class="n">Atomic</span><span class="p">(</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-402" name="crates/conjure-cp-core/src/ast/partial_eval.rs-402"></a><span class="w">                        </span><span class="nb">Default</span><span class="p">::</span><span class="n">default</span><span class="p">(),</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-403" name="crates/conjure-cp-core/src/ast/partial_eval.rs-403"></a><span class="w">                        </span><span class="n">Atom</span><span class="p">::</span><span class="n">Literal</span><span class="p">(</span><span class="n">Lit</span><span class="p">::</span><span class="n">Int</span><span class="p">(</span><span class="mi">0</span><span class="p">)),</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-404" name="crates/conjure-cp-core/src/ast/partial_eval.rs-404"></a><span class="w">                    </span><span class="p">)))</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">497</span>
+<span class="normal">498</span>
+<span class="normal">499</span>
+<span class="normal">500</span>
+<span class="normal">501</span>
+<span class="normal">502</span>
+<span class="normal">503</span>
+<span class="normal">504</span>
+<span class="normal">505</span>
+<span class="normal">506</span>
+<span class="normal">507</span>
+<span class="normal">508</span>
+<span class="normal">509</span>
+<span class="normal">510</span>
+<span class="normal">511</span>
+<span class="normal">512</span>
+<span class="normal">513</span>
+<span class="normal">514</span>
+<span class="normal">515</span>
+<span class="normal">516</span>
+<span class="normal">517</span>
+<span class="normal">518</span>
+<span class="normal">519</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-497" name="crates/conjure-cp-core/src/ast/partial_eval.rs-497"></a><span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">RuleNotApplicable</span><span class="p">);</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-498" name="crates/conjure-cp-core/src/ast/partial_eval.rs-498"></a><span class="w">            </span><span class="p">};</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-499" name="crates/conjure-cp-core/src/ast/partial_eval.rs-499"></a>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-500" name="crates/conjure-cp-core/src/ast/partial_eval.rs-500"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="o">!</span><span class="n">is_semantically_safe</span><span class="p">(</span><span class="n">e1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-501" name="crates/conjure-cp-core/src/ast/partial_eval.rs-501"></a><span class="hll"><span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">RuleNotApplicable</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-502" name="crates/conjure-cp-core/src/ast/partial_eval.rs-502"></a><span class="w">            </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-503" name="crates/conjure-cp-core/src/ast/partial_eval.rs-503"></a>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-504" name="crates/conjure-cp-core/src/ast/partial_eval.rs-504"></a><span class="w">            </span><span class="k">match</span><span class="w"> </span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">as_ref</span><span class="p">(),</span><span class="w"> </span><span class="n">q</span><span class="p">.</span><span class="n">as_ref</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-505" name="crates/conjure-cp-core/src/ast/partial_eval.rs-505"></a><span class="w">                </span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">Expr</span><span class="p">::</span><span class="n">Atomic</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">Atom</span><span class="p">::</span><span class="n">Literal</span><span class="p">(</span><span class="n">Lit</span><span class="p">::</span><span class="n">Bool</span><span class="p">(</span><span class="kc">true</span><span class="p">))))</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-506" name="crates/conjure-cp-core/src/ast/partial_eval.rs-506"></a><span class="hll"><span class="w">                    </span><span class="nb">Ok</span><span class="p">(</span><span class="n">Reduction</span><span class="p">::</span><span class="n">pure</span><span class="p">(</span><span class="n">Expr</span><span class="p">::</span><span class="n">from</span><span class="p">(</span><span class="kc">false</span><span class="p">)))</span>
+</span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-507" name="crates/conjure-cp-core/src/ast/partial_eval.rs-507"></a><span class="w">                </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-508" name="crates/conjure-cp-core/src/ast/partial_eval.rs-508"></a><span class="w">                </span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">Expr</span><span class="p">::</span><span class="n">Atomic</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">Atom</span><span class="p">::</span><span class="n">Literal</span><span class="p">(</span><span class="n">Lit</span><span class="p">::</span><span class="n">Bool</span><span class="p">(</span><span class="kc">false</span><span class="p">))))</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-509" name="crates/conjure-cp-core/src/ast/partial_eval.rs-509"></a><span class="hll"><span class="w">                    </span><span class="nb">Ok</span><span class="p">(</span><span class="n">Reduction</span><span class="p">::</span><span class="n">pure</span><span class="p">(</span><span class="n">Moo</span><span class="p">::</span><span class="n">unwrap_or_clone</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">clone</span><span class="p">())))</span>
+</span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-510" name="crates/conjure-cp-core/src/ast/partial_eval.rs-510"></a><span class="w">                </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-511" name="crates/conjure-cp-core/src/ast/partial_eval.rs-511"></a><span class="w">                </span><span class="p">(</span><span class="n">Expr</span><span class="p">::</span><span class="n">Atomic</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">Atom</span><span class="p">::</span><span class="n">Literal</span><span class="p">(</span><span class="n">Lit</span><span class="p">::</span><span class="n">Bool</span><span class="p">(</span><span class="kc">true</span><span class="p">))),</span><span class="w"> </span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-512" name="crates/conjure-cp-core/src/ast/partial_eval.rs-512"></a><span class="hll"><span class="w">                    </span><span class="nb">Ok</span><span class="p">(</span><span class="n">Reduction</span><span class="p">::</span><span class="n">pure</span><span class="p">(</span><span class="n">Expr</span><span class="p">::</span><span class="n">Not</span><span class="p">(</span><span class="n">Metadata</span><span class="p">::</span><span class="n">new</span><span class="p">(),</span><span class="w"> </span><span class="n">q</span><span class="p">.</span><span class="n">clone</span><span class="p">())))</span>
+</span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-513" name="crates/conjure-cp-core/src/ast/partial_eval.rs-513"></a><span class="w">                </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-514" name="crates/conjure-cp-core/src/ast/partial_eval.rs-514"></a><span class="w">                </span><span class="p">(</span><span class="n">Expr</span><span class="p">::</span><span class="n">Atomic</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">Atom</span><span class="p">::</span><span class="n">Literal</span><span class="p">(</span><span class="n">Lit</span><span class="p">::</span><span class="n">Bool</span><span class="p">(</span><span class="kc">false</span><span class="p">))),</span><span class="w"> </span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-515" name="crates/conjure-cp-core/src/ast/partial_eval.rs-515"></a><span class="hll"><span class="w">                    </span><span class="nb">Ok</span><span class="p">(</span><span class="n">Reduction</span><span class="p">::</span><span class="n">pure</span><span class="p">(</span><span class="n">Expr</span><span class="p">::</span><span class="n">from</span><span class="p">(</span><span class="kc">false</span><span class="p">)))</span>
+</span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-516" name="crates/conjure-cp-core/src/ast/partial_eval.rs-516"></a><span class="w">                </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-517" name="crates/conjure-cp-core/src/ast/partial_eval.rs-517"></a><span class="w">                </span><span class="n">_</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">RuleNotApplicable</span><span class="p">),</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-518" name="crates/conjure-cp-core/src/ast/partial_eval.rs-518"></a><span class="w">            </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-519" name="crates/conjure-cp-core/src/ast/partial_eval.rs-519"></a><span class="w">        </span><span class="p">}</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">732</span>
+<span class="normal">733</span>
+<span class="normal">734</span>
+<span class="normal">735</span>
+<span class="normal">736</span>
+<span class="normal">737</span>
+<span class="normal">738</span>
+<span class="normal">739</span>
+<span class="normal">740</span>
+<span class="normal">741</span>
+<span class="normal">742</span>
+<span class="normal">743</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-732" name="crates/conjure-cp-core/src/ast/partial_eval.rs-732"></a><span class="w">            </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-733" name="crates/conjure-cp-core/src/ast/partial_eval.rs-733"></a><span class="w">        </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-734" name="crates/conjure-cp-core/src/ast/partial_eval.rs-734"></a><span class="w">        </span><span class="n">Expr</span><span class="p">::</span><span class="n">Neq</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-735" name="crates/conjure-cp-core/src/ast/partial_eval.rs-735"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nb">Some</span><span class="p">((</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">neq_result</span><span class="p">))</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">simplify_reflexive_comparison</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-736" name="crates/conjure-cp-core/src/ast/partial_eval.rs-736"></a><span class="hll"><span class="w">                </span><span class="nb">Ok</span><span class="p">(</span><span class="n">Reduction</span><span class="p">::</span><span class="n">pure</span><span class="p">(</span><span class="n">Expr</span><span class="p">::</span><span class="n">Atomic</span><span class="p">(</span>
+</span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-737" name="crates/conjure-cp-core/src/ast/partial_eval.rs-737"></a><span class="hll"><span class="w">                    </span><span class="n">Metadata</span><span class="p">::</span><span class="n">new</span><span class="p">(),</span>
+</span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-738" name="crates/conjure-cp-core/src/ast/partial_eval.rs-738"></a><span class="hll"><span class="w">                    </span><span class="n">Atom</span><span class="p">::</span><span class="n">Literal</span><span class="p">(</span><span class="n">Lit</span><span class="p">::</span><span class="n">Bool</span><span class="p">(</span><span class="n">neq_result</span><span class="p">)),</span>
+</span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-739" name="crates/conjure-cp-core/src/ast/partial_eval.rs-739"></a><span class="hll"><span class="w">                </span><span class="p">)))</span>
+</span><a id="crates/conjure-cp-core/src/ast/partial_eval.rs-740" name="crates/conjure-cp-core/src/ast/partial_eval.rs-740"></a><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="n">Expr</span><span class="p">::</span><span class="n">Atomic</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">Atom</span><span class="p">::</span><span class="n">Literal</span><span class="p">(</span><span class="n">lit</span><span class="p">))</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x</span><span class="p">.</span><span class="n">as_ref</span><span class="p">()</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-741" name="crates/conjure-cp-core/src/ast/partial_eval.rs-741"></a><span class="w">                </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nb">Some</span><span class="p">((</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">neq_result</span><span class="p">))</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">simplify_comparison_with_literal</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">lit</span><span class="p">)</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-742" name="crates/conjure-cp-core/src/ast/partial_eval.rs-742"></a><span class="w">            </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/ast/partial_eval.rs-743" name="crates/conjure-cp-core/src/ast/partial_eval.rs-743"></a><span class="w">                </span><span class="nb">Ok</span><span class="p">(</span><span class="n">Reduction</span><span class="p">::</span><span class="n">pure</span><span class="p">(</span><span class="n">Expr</span><span class="p">::</span><span class="n">Atomic</span><span class="p">(</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/conjure-cp-rules/src/matrix/bubble.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-rules/src/matrix/bubble.rs-34" name="crates/conjure-cp-rules/src/matrix/bubble.rs-34"></a>
+<a id="crates/conjure-cp-rules/src/matrix/bubble.rs-35" name="crates/conjure-cp-rules/src/matrix/bubble.rs-35"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nb">Ok</span><span class="p">(</span><span class="n">values</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">intersection</span><span class="p">.</span><span class="n">values_i32</span><span class="p">()</span>
+<a id="crates/conjure-cp-rules/src/matrix/bubble.rs-36" name="crates/conjure-cp-rules/src/matrix/bubble.rs-36"></a><span class="w">        </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">values</span><span class="p">.</span><span class="n">is_empty</span><span class="p">()</span>
+<a id="crates/conjure-cp-rules/src/matrix/bubble.rs-37" name="crates/conjure-cp-rules/src/matrix/bubble.rs-37"></a><span class="w">    </span><span class="p">{</span>
+<a id="crates/conjure-cp-rules/src/matrix/bubble.rs-38" name="crates/conjure-cp-rules/src/matrix/bubble.rs-38"></a><span class="hll"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">Ok</span><span class="p">(</span><span class="n">MembershipProof</span><span class="p">::</span><span class="n">AlwaysOut</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-rules/src/matrix/bubble.rs-39" name="crates/conjure-cp-rules/src/matrix/bubble.rs-39"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/conjure-cp-rules/src/matrix/bubble.rs-40" name="crates/conjure-cp-rules/src/matrix/bubble.rs-40"></a>
+<a id="crates/conjure-cp-rules/src/matrix/bubble.rs-41" name="crates/conjure-cp-rules/src/matrix/bubble.rs-41"></a><span class="w">    </span><span class="nb">Ok</span><span class="p">(</span><span class="n">MembershipProof</span><span class="p">::</span><span class="n">Unknown</span><span class="p">)</span>
+<a id="crates/conjure-cp-rules/src/matrix/bubble.rs-42" name="crates/conjure-cp-rules/src/matrix/bubble.rs-42"></a><span class="p">}</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-rules/src/matrix/bubble.rs-49" name="crates/conjure-cp-rules/src/matrix/bubble.rs-49"></a><span class="w">                </span><span class="p">.</span><span class="n">iter</span><span class="p">()</span>
+<a id="crates/conjure-cp-rules/src/matrix/bubble.rs-50" name="crates/conjure-cp-rules/src/matrix/bubble.rs-50"></a><span class="w">                </span><span class="p">.</span><span class="n">map</span><span class="p">(</span><span class="o">|</span><span class="n">range</span><span class="o">|</span><span class="w"> </span><span class="n">Range</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="n">range</span><span class="p">.</span><span class="n">low</span><span class="p">().</span><span class="n">copied</span><span class="p">(),</span><span class="w"> </span><span class="n">range</span><span class="p">.</span><span class="n">high</span><span class="p">().</span><span class="n">copied</span><span class="p">()))</span>
+<a id="crates/conjure-cp-rules/src/matrix/bubble.rs-51" name="crates/conjure-cp-rules/src/matrix/bubble.rs-51"></a><span class="w">                </span><span class="p">.</span><span class="n">collect_vec</span><span class="p">(),</span>
+<a id="crates/conjure-cp-rules/src/matrix/bubble.rs-52" name="crates/conjure-cp-rules/src/matrix/bubble.rs-52"></a><span class="w">        </span><span class="p">)),</span>
+<a id="crates/conjure-cp-rules/src/matrix/bubble.rs-53" name="crates/conjure-cp-rules/src/matrix/bubble.rs-53"></a><span class="hll"><span class="w">        </span><span class="n">_</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">domain</span><span class="p">.</span><span class="n">clone</span><span class="p">(),</span>
+</span><a id="crates/conjure-cp-rules/src/matrix/bubble.rs-54" name="crates/conjure-cp-rules/src/matrix/bubble.rs-54"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/conjure-cp-rules/src/matrix/bubble.rs-55" name="crates/conjure-cp-rules/src/matrix/bubble.rs-55"></a><span class="p">}</span>
+<a id="crates/conjure-cp-rules/src/matrix/bubble.rs-56" name="crates/conjure-cp-rules/src/matrix/bubble.rs-56"></a>
+<a id="crates/conjure-cp-rules/src/matrix/bubble.rs-57" name="crates/conjure-cp-rules/src/matrix/bubble.rs-57"></a><span class="sd">/// Builds the bubble condition needed to make an unsafe index operation safe.</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-rules/src/matrix/bubble.rs-74" name="crates/conjure-cp-rules/src/matrix/bubble.rs-74"></a><span class="w">            </span><span class="p">},</span>
+<a id="crates/conjure-cp-rules/src/matrix/bubble.rs-75" name="crates/conjure-cp-rules/src/matrix/bubble.rs-75"></a><span class="w">            </span><span class="nb">None</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">match</span><span class="w"> </span><span class="n">expression_membership_proof</span><span class="p">(</span><span class="n">domain</span><span class="p">.</span><span class="n">as_ref</span><span class="p">(),</span><span class="w"> </span><span class="n">index</span><span class="p">)</span><span class="o">?</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-rules/src/matrix/bubble.rs-76" name="crates/conjure-cp-rules/src/matrix/bubble.rs-76"></a><span class="w">                </span><span class="n">MembershipProof</span><span class="p">::</span><span class="n">AlwaysIn</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{}</span>
+<a id="crates/conjure-cp-rules/src/matrix/bubble.rs-77" name="crates/conjure-cp-rules/src/matrix/bubble.rs-77"></a><span class="w">                </span><span class="n">MembershipProof</span><span class="p">::</span><span class="n">AlwaysOut</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-rules/src/matrix/bubble.rs-78" name="crates/conjure-cp-rules/src/matrix/bubble.rs-78"></a><span class="hll"><span class="w">                    </span><span class="k">return</span><span class="w"> </span><span class="nb">Ok</span><span class="p">(</span><span class="nb">Some</span><span class="p">(</span><span class="n">Expression</span><span class="p">::</span><span class="n">Atomic</span><span class="p">(</span><span class="n">Metadata</span><span class="p">::</span><span class="n">new</span><span class="p">(),</span><span class="w"> </span><span class="n">Atom</span><span class="p">::</span><span class="n">from</span><span class="p">(</span><span class="kc">false</span><span class="p">))));</span>
+</span><a id="crates/conjure-cp-rules/src/matrix/bubble.rs-79" name="crates/conjure-cp-rules/src/matrix/bubble.rs-79"></a><span class="w">                </span><span class="p">}</span>
+<a id="crates/conjure-cp-rules/src/matrix/bubble.rs-80" name="crates/conjure-cp-rules/src/matrix/bubble.rs-80"></a><span class="w">                </span><span class="n">MembershipProof</span><span class="p">::</span><span class="n">Unknown</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">bubble_constraints</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">Expression</span><span class="p">::</span><span class="n">InDomain</span><span class="p">(</span>
+<a id="crates/conjure-cp-rules/src/matrix/bubble.rs-81" name="crates/conjure-cp-rules/src/matrix/bubble.rs-81"></a><span class="w">                    </span><span class="n">Metadata</span><span class="p">::</span><span class="n">new</span><span class="p">(),</span>
+<a id="crates/conjure-cp-rules/src/matrix/bubble.rs-82" name="crates/conjure-cp-rules/src/matrix/bubble.rs-82"></a><span class="w">                    </span><span class="n">Moo</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="n">index</span><span class="p">.</span><span class="n">clone</span><span class="p">()),</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/conjure-cp-rules/src/minion.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-rules/src/minion.rs-46" name="crates/conjure-cp-rules/src/minion.rs-46"></a><span class="w">    </span><span class="p">};</span>
+<a id="crates/conjure-cp-rules/src/minion.rs-47" name="crates/conjure-cp-rules/src/minion.rs-47"></a>
+<a id="crates/conjure-cp-rules/src/minion.rs-48" name="crates/conjure-cp-rules/src/minion.rs-48"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">constant</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">reference</span><span class="p">.</span><span class="n">resolve_constant</span><span class="p">().</span><span class="n">ok_or</span><span class="p">(</span><span class="n">RuleNotApplicable</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
+<a id="crates/conjure-cp-rules/src/minion.rs-49" name="crates/conjure-cp-rules/src/minion.rs-49"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">Lit</span><span class="p">::</span><span class="n">AbstractLiteral</span><span class="p">(</span><span class="n">AbstractLiteral</span><span class="p">::</span><span class="n">Matrix</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">))</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">constant</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-rules/src/minion.rs-50" name="crates/conjure-cp-rules/src/minion.rs-50"></a><span class="hll"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">RuleNotApplicable</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-rules/src/minion.rs-51" name="crates/conjure-cp-rules/src/minion.rs-51"></a><span class="w">    </span><span class="p">};</span>
+<a id="crates/conjure-cp-rules/src/minion.rs-52" name="crates/conjure-cp-rules/src/minion.rs-52"></a>
+<a id="crates/conjure-cp-rules/src/minion.rs-53" name="crates/conjure-cp-rules/src/minion.rs-53"></a><span class="w">    </span><span class="nb">Ok</span><span class="p">(</span><span class="n">Reduction</span><span class="p">::</span><span class="n">pure</span><span class="p">(</span><span class="n">Expr</span><span class="p">::</span><span class="n">SafeIndex</span><span class="p">(</span>
+<a id="crates/conjure-cp-rules/src/minion.rs-54" name="crates/conjure-cp-rules/src/minion.rs-54"></a><span class="w">        </span><span class="n">Metadata</span><span class="p">::</span><span class="n">new</span><span class="p">(),</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+    </body>
+</html>
