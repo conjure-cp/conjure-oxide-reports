@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["TypecheckingContext"],"fn":["get_metavars","get_tree","named_children","node_is_expression","query_toplevel"],"struct":["ParseContext"]};
+window.SIDEBAR_ITEMS = {"enum":["TypecheckingContext"],"fn":["get_expr_tree","get_metavars","get_tree","named_children","node_is_expression","query_toplevel"],"struct":["ParseContext"]};
