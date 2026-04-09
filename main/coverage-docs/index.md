@@ -5,7 +5,7 @@
 **conjure-cp-core:** 4% with examples, 50% documented -- 23/312/628
 **conjure-cp-enum-compatibility-macro:** 33% with examples, 100% documented -- 1/3/3
 **conjure-cp-essence-macros:** 67% with examples, 67% documented -- 2/2/3
-**conjure-cp-essence-parser:** 0% with examples, 16% documented -- 0/24/152
+**conjure-cp-essence-parser:** 0% with examples, 16% documented -- 0/24/153
 **conjure-cp-lsp:** 0% with examples, 0% documented -- 0/0/28
 **conjure-cp-rule-macros:** 33% with examples, 67% documented -- 1/2/3
 **conjure-cp-rules:** 0% with examples, 100% documented -- 0/1/1
@@ -14,7 +14,7 @@
 **tree-morph-macros:** 50% with examples, 50% documented -- 1/1/2
 **tree-sitter-essence:** 33% with examples, 100% documented -- 1/3/3
 
-Commit: [3fe72a102e8bf7a7b81b13d0a8777deed5a7bfb2](https://github.com/conjure-cp/conjure-oxide/commit/3fe72a102e8bf7a7b81b13d0a8777deed5a7bfb2)
+Commit: [a09f451ba043519cf846f0097c8968a0bc94dd44](https://github.com/conjure-cp/conjure-oxide/commit/a09f451ba043519cf846f0097c8968a0bc94dd44)
 
 ## RustDoc coverage for `conjure-cp`
 
@@ -131,7 +131,7 @@ Commit: [3fe72a102e8bf7a7b81b13d0a8777deed5a7bfb2](https://github.com/conjure-cp
 | crates/conjure-cp-essence-parser/src/diagnostics/mod.rs | ❌ 0% *(0/1)* | ❌ 0% *(0/1)* |
 | crates/conjure-cp-essence-parser/src/diagnostics/source_map.rs | ❌ 0% *(0/20)* | ❌ 0% *(0/20)* |
 | crates/conjure-cp-essence-parser/src/lib.rs | ❌ 0% *(0/1)* | ❌ 0% *(0/1)* |
-| crates/conjure-cp-essence-parser/src/parser/expression.rs | ❌ 0% *(0/3)* | ❌ 0% *(0/3)* |
+| crates/conjure-cp-essence-parser/src/parser/expression.rs | ❌ 0% *(0/4)* | ❌ 0% *(0/4)* |
 | crates/conjure-cp-essence-parser/src/parser/find.rs | ❌ 0% *(0/4)* | ❌ 0% *(0/4)* |
 | crates/conjure-cp-essence-parser/src/parser/keyword_checks.rs | ❌ 0% *(0/2)* | ❌ 0% *(0/2)* |
 | crates/conjure-cp-essence-parser/src/parser/mod.rs | ❌ 0% *(0/1)* | ❌ 0% *(0/1)* |
