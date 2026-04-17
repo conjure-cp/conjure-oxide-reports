@@ -38,7 +38,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-76c85d22.js";
+            window.path_to_searchindex_js = "searchindex-adb09803.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-e3e03d0c.js"></script>
@@ -3828,11 +3828,126 @@ Picking the first option: Question 1: [or([A_Occurrence[q5] /\ B_Occurrence[q5] 
 <h1 id="overview-5"><a class="header" href="#overview-5">Overview</a></h1>
 <p>The Language Server Protocol (LSP) for Essence is designed to provide error detection and syntax highlighting for the Essence language. It consists of a server component and a diagnostics API. When fully implemented, the server will receive document change events from clients (e.g., VS Code), call the diagnostics API to detect syntactic and semantic errors, and publish these diagnostics back to the client for. The diagnostics API provides error detection and document symbol information for syntax highlighting. Its main purpose is to improve the user experience when formulating the problems in Essence.</p>
 <h1 id="structure"><a class="header" href="#structure">Structure</a></h1>
-<p>The LSP architecture follows a client-server model where the client (editor extension) and server (language server) communicate asynchronously via JSON-RPC 2.0 protocol. The server runs as a separate process, and exchanges messages over standard I/O streams. More on that in <a href="#lsp-server-client">LSP structure docs</a>.</p>
+<p>The LSP architecture follows a client-server model where the client (editor extension) and server (language server) communicate asynchronously via JSON-RPC 2.0 protocol. The server runs as a separate process, and exchanges messages over standard I/O streams. More on that in <a href="#lsp-documentation">LSP structure docs</a>.</p>
 <p>When the client requests diagnostics (on open, one edit, on hover… etc.), the LSP forwards this request to the Diagnostics API (for more details see <a href="#diagnostics-api">Diagnostics API</a>), which responds with a list of diagnostics which the server converts to <code>tower-lsp</code>-compatible types and publishes to the client.</p>
 <p><img src="documentation/assets/lsp_structure.svg" alt="LSP Structure Diagram"></p>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="lsp-server-client"><a class="header" href="#lsp-server-client">LSP Server-Client</a></h1>
+<h1 id="lsp-documentation"><a class="header" href="#lsp-documentation">LSP Documentation</a></h1>
+<h2 id="overview-6"><a class="header" href="#overview-6">Overview</a></h2>
+<p>This is the overview documentation for the Language Server which is developed for use by Conjure Oxide. This is developed following the <a href="https://microsoft.github.io/language-server-protocol/">Language Server Protocol</a> developed by Microsoft Visual Studio Code, and implemented following VSCode guidelines. This means that functionality cannot be guaranteed on other IDE, though this does not mean it will/cannot work. The Language Server and Client provide the basis through which a fully functional Essence extension will be produced. The server and client run as separate processes primarily because this minimises performance cost.</p>
+<p>At present this addresses the client and server, with abstraction over lower level functions called by the server.</p>
+<h2 id="current-functionality-goals"><a class="header" href="#current-functionality-goals">Current Functionality Goals</a></h2>
+<p>Where implemented or actively in progress, the details of each goal shall be expanded upon. Achieving these goals would be considered a completed implementation.</p>
+<ul>
+<li>Syntax Highlighting
+<ul>
+<li>This is highlighting based on grammar structure.</li>
+</ul>
+</li>
+<li>Semantic Highlighting
+<ul>
+<li>This is highlighting based on meaning rather than grammar.</li>
+</ul>
+</li>
+<li>Error Underlining
+<ul>
+<li>Underlining errors of varying severity, providing informative messaging.</li>
+</ul>
+</li>
+<li>Hover Tooltips
+<ul>
+<li>When hovering over a word, produces information relating to the hovered word.</li>
+</ul>
+</li>
+<li>Code Autocomplete
+<ul>
+<li>Produce completion options while user types.</li>
+</ul>
+</li>
+</ul>
+<h2 id="files"><a class="header" href="#files">Files</a></h2>
+<pre><code class="language-bash"># the server (excluding diagnostics)
+crates/conjure-cp-lsp
+├─ src/
+├── lib.rs
+├── server.rs
+├── handlers/
+├─── cache.rs
+├─── hovering.rs
+├─── mod.rs
+├─── sync_event.rs
+├─ Cargo.toml
+
+# the client
+tools/vscode-ext 
+├─ node_modules/ #contains installed node_modules
+├─ out/ #contains files produced by npm compile
+├─ src/
+├── extension.ts
+├─ syntaxes/
+├── essence.tmLanguage.json
+├─ language-configuration.json
+├─ package-lock.json
+package.json
+package-lock.json
+tsconfig.json
+</code></pre>
+<h2 id="client-server-communication"><a class="header" href="#client-server-communication">Client-Server Communication</a></h2>
+<p>The client and server communicate asynchronously through I/O streams. Communication occurs through requests and responses, which use well-defined JSON objects to communicate. This communication is triggered on events (such as on-open, on-save, on-change), where the client will prompt the server.</p>
+<p>A client and server declare their capabilities during the initialisation handshake. These capabilities reflect what the server and client actually support, and so when new features are added these capabilities must be updated. Capabilities essentially allow for server and client to inform the other whether or not they support specific types of requests, ensuring that requests are not made needlessly. For example, <code>text_document_sync</code> indicates that the server supports syncing, meaning that the client will communicate on sync events (such as on-change and on-save); and <code>hover_provider</code> indicates that the server supports some hovering, meaning that the client will communicate when hovering is occurring.</p>
+<h2 id="client"><a class="header" href="#client">Client</a></h2>
+<p>The Client is a VSCode extension, in TypeScript. As such, the client represents the installed extension which is actively being used by a user. Broadly, we consider the client to be the VSCode IDE in any instance where a <code>.essence</code> file is open.</p>
+<h3 id="key-structure"><a class="header" href="#key-structure">Key Structure</a></h3>
+<p>The Client itself is programmed within a TypeScript file, called <code>extension.ts</code>. This simply launches the client, which then launches the server using <code>ServerOptions</code> to call <code>conjure-oxide server-lsp</code>.</p>
+<p>Additionally, there is a <code>syntaxes/essence.tmLanguage.json</code> file, which lays out the syntactic grammar of Essence in a TextMate file. This file is what allows for Syntax Highlighting. The reason that this file exists, alongside the highlighting which will be performed by the server, is that this is extremely lightweight to implement. There are often performance costs associated with an LSP, as they can be large and require a lot of computation. As such, TextMate grammars allow for simple highlighting to occur before the LSP loads/while it is performing computation. <code>language-configuration.json</code> provides autoclosing of brackets, speech marks, etc.</p>
+<p>The client also requires a number of <code>package[-lock].json</code> files. The functionality of these files is to declare to the VSCode IDE what the extension is called, where it is sourced within the codebase, and what it’s functionality is. These files also establish the dependencies which are required for the client to function.</p>
+<h3 id="syntax-highlighting"><a class="header" href="#syntax-highlighting">Syntax Highlighting</a></h3>
+<p>As addressed above, syntax highlighting is implemented through a TextMate grammar. The basis of this grammar is that outlined by Conjure’s VSCode extension<sup class="footnote-reference" id="fr-bignote-1"><a href="#footnote-bignote">1</a></sup>
+‌</p>
+<h2 id="server"><a class="header" href="#server">Server</a></h2>
+<p>The server is a Rust server, created using tower-lsp. This library was used as it abstracts over the low-level implementation details. The implementation also abstracts over the implementation of the Diagnostic API and the parser, both of which are implemented and manipulated further downstream (if we consider the client and server to be the frontmost end of the project). This allows for the server to implement new functionality freely, so long as the information is capable of being provided by the Diagnostic API. Essentially, the implementation of the Language Server here is a higher level construct which makes requests to other levels (e.g. Diagnostics) when required. This allows for the code of the server to be fairly simple and easy to follow.</p>
+<h3 id="key-structure-1"><a class="header" href="#key-structure-1">Key Structure</a></h3>
+<h4 id="backend"><a class="header" href="#backend">Backend</a></h4>
+<p>Backend is the custom struct which represents the state and functionality of the Language Server. In this, it <strong>must</strong> implement tower-lsp’s LanguageServer trait. This struct is named Backend simply because it represents the basis of the Language Server, and because this is common naming convention.</p>
+<p>The LanguageServer trait defined by tower-lsp is the interface through which our language server is capable of adhering to the Language Server Protocol. In this, the capabilities of our server, and the implementation of these capabilities on given events, are specified. The current capabilities of the server are limited to syncing (as is required for error underlining).</p>
+<p>As established above, during the initialise handshake, the capabilities of the server are laid out. At present, the server only has it’s default capabilities and syncing capabilities (as required for error underlining), as it currently is in an in-development state. As more functionality is added to the server, more capabilities will be communicated across this handshake. It is worth noting that in the capabilities, the <code>text_document_sync</code> is set to <code>INCREMENTAL</code> to ensure that each trigger event causes the client to pass only the modified content of the file, and the range (except for the first call, where the file is passed in its entirety). This is not the default case.</p>
+<p>There are currently six events handled, of which one is after the initialize handshake (simply communicates for log purposes) and one is shutdown. The four additional events implemented at current are <code>did_open</code>, <code>did_save</code>, <code>did_change</code>, the functionality of which is handled by <code>handlers/sync_events</code>; and <code>hover</code>, which is managed by <code>handlers/hover.rs</code>.</p>
+<h4 id="cache"><a class="header" href="#cache">Cache</a></h4>
+<p>This LSP uses a library called <a href="https://github.com/moka-rs/moka">Moka</a> in order to implement caching. The reason that caching has been added is to reduce the time required to load longer files, especially if they are being reused, as this means that they can simply be recovered from the cache. The cache is also used alongside the incremental updates. Modifying the cache occurs within <code>sync_events</code>, but the cache is defined and instantiated using a method from within caching. The cache itself is made up of a series of <code>CacheCont</code>s, which store a given files sourcemap, AST, CST, errors, contents, and versioned index. The cache automatically evicts after reaching a size of 10,000B, and has a time to live of 30 minutes (time something exists in the cache while actively in use before being evicted) and a time to idle of 5 minutes (time something exists and is not being used before eviction). The cache uses the uri (uniform resource identifier) of a file as its key, as this is unique to a file. This means that if a file changes location in the file tree (and therefore its URI changes), it will have to be re-entered into the cache, and the previous copy will time out of TTL/TTI and will be evicted.</p>
+<h4 id="sync_events"><a class="header" href="#sync_events">sync_events</a></h4>
+<p>These are split from the main <code>server.rs</code> primarily for readability, and to prevent the main body of the server from becoming bloated. Rust allows a struct to have it’s <code>impl</code> split over multiple files, so this file also simply implements functionality to the Backend struct.</p>
+<p><strong>handle_did_open</strong>
+This is the handler for the did_open event. On open, the cache is queried by the uri of the opened file to see whether it currently exists in the cache. If not, the file is used to generate the CST, AST, sourcemap, etc., which populate the CacheConts. Diagnostics (<code>handle_diagnostics</code>) are then ran to produce the error underlining.</p>
+<p><strong>handle_did_save</strong>
+If saving a file, it is not currently being changed (this is triggered by a different event). As such, when saving a file, simply fetch the correct entry from the cache and get its diagnostics using <code>handle_diagnostics</code>.</p>
+<p><strong>handle_did_change</strong>
+When changing a file, due to the <code>INCREMENTAL</code> change setting, passes only the change and the range. As such, the handler must use <code>replace_range</code> to update the cache store of the text document, and then update the CST.  has a function called <code>treesitter::edit</code> which allows only modified subtrees to be regenerated, therefore not requiring the whole tree to be regenerated. This is another speed advantage of the method of caching. Once the CST is generated, it can be parsed, and the cache contents can be updated. The diagnostics can then be generated.</p>
+<p>Backend has a custom function, <code>handle_diagnostics</code> which takes in a uri (uniform resource identifier: uniquely identifies a file) and the text of a file. This file is then passed to the background Diagnostic API, transformed from a vector of <code>parserDianostic</code> to a vector of <code>lspDiagnostic</code> (our name for tower-lsp’s <code>Diagnostic</code> type), and published to the client. When a diagnostic is published to a client, it replaces any previous published diagnostics.</p>
+<h4 id="convert_diagnostics-parser_to_lsp_range-parser_to_lsp_position"><a class="header" href="#convert_diagnostics-parser_to_lsp_range-parser_to_lsp_position">convert_diagnostics, parser_to_lsp_range, parser_to_lsp_position</a></h4>
+<p>These are helper functions which allow for the transformation of a vector of <code>parseDiagnostics</code> to <code>lspDiagnostics</code>. This is done through iterating through the vector, and setting values according to <code>parseDiagnostics</code>. This is because the JSON communication between the Server and it’s Diagnostic API is not defined the same as the communication between the Server and the Client, though all of the correct information is communicated.</p>
+<h4 id="position_to_byte-position_to_treesitter_point-calculate_new_end_position"><a class="header" href="#position_to_byte-position_to_treesitter_point-calculate_new_end_position">position_to_byte, position_to_treesitter_point, calculate_new_end_position</a></h4>
+<p>These are helper functions to allow for the functionality of INCREMENTAL synchronising. <code>position_to_byte</code> converts from an LSP Position into a byte index, to allow for <code>replace_range</code> to function, and <code>calculate_new_end_position</code> is used to calculate the new end of the range. <code>position_to_treesitter_point</code> operates to allow for the incremental editing to function.</p>
+<h4 id="main"><a class="header" href="#main">Main</a></h4>
+<p>Main is responsible for launching the server using the tokio library, as this is the async library tower-lsp is designed to be used with. This is the function which is called from outwith the <code>conjure-cp-lsp</code> crate. For example, main is called to run the server, from conjure-oxide’s subcommand <code>server-lsp</code>. This also instantiates the cache, using <code>create_cache</code>.</p>
+<h3 id="error-underlining"><a class="header" href="#error-underlining">Error Underlining</a></h3>
+<p>The core functionality of this is expanded upon within the <a href="https://github.com/conjure-cp/conjure-oxide/tree/main/docs/src/documentation/LSP/diagnostics_api.md">Diagnostic API Documentation</a>. Most implementation details of Error Underlining are covered above. Error underlining is done through publishing diagnostics, which contain a range, warning level, and associated error text. The client receives these diagnostics, and then displays the underlining as directed. The IDE will contain the error message on hover. Error underlining is demonstrated and documented in <a href="https://github.com/conjure-cp/conjure-oxide/tree/main/docs/src/documentation/ErrorUnderlineExample.mp4">Error Underlining Video</a>.</p>
+<h4 id="hovering"><a class="header" href="#hovering">Hovering</a></h4>
+<p>Hovering is implemented by <code>handle_hovering</code>. The contents of the file are gathered from the cache using the uri, and then the sourcemap (from cache) is gathered. The LSP Position is converted into a byte, and then the helper method <code>hover_info_at_byte</code> is used to gather the information from the sourcemap for this byte. This is then posted to the client, allowing for the information to be seen on hover.</p>
+<p>It is of note that the hovering does not currently work if there is an error anywhere in the tree. If there is an underlined error, then there is no access to hovering, as the AST and sourcemap cannot be generated when there is an error in the CST. This is currently one of the priorities for modification.</p>
+<h2 id="development"><a class="header" href="#development">Development</a></h2>
+<h3 id="how-to-use-for-development"><a class="header" href="#how-to-use-for-development">How to use (for development)</a></h3>
+<p>At the current stage of development, the extension is not released into the VSCode Marketplace. This means that functionality must be tested using VSCode’s Extension Development Environment. In order to ensure that this works as intended, compile <code>extension.ts</code> using <code>npm run compile</code> (or ctrl-shift-b and select this). Then launch the Extension Development Environment. This can be launched <strong>either</strong> by pressing F5 from within <code>extension.ts</code>, or by pressing on ‘Run’ within the ‘Run and Debug’ VSCode tab. Running the Extension Development Environment will cause the client to run. Due to the structure of the client-server, the server will then run and link to the client, and the LSP can then be tested. Please ensure that <code>npm install</code> has been run in advance/all required node modules are installed, otherwise the client will not be able to launch. The client can be seen running when opening a .essence file. In the VSCode panel (bar at bottom)’s output, it is possible to select Conjure-Oxide Language Server as the channel to listen to. This will display the logs communicated to the client.</p>
+<p>It is worth noting that a copy of conjure-oxide <strong>MUST</strong> be installed in order for the client to work. Testing the server requires for an updated install.</p>
+<p>If wishing to just run the server (though without a client it will be incapable of connecting to anything, and will time out), the user can run <code>conjure-oxide server-lsp</code>, which is a custom subcommand specifically to call the server. This does not run any other aspects of conjure-oxide.</p>
+<h3 id="development-directions"><a class="header" href="#development-directions">Development Directions</a></h3>
+<p>When developing, ensure that whatever functionality is being added has it’s respective capability communicated to the client during the initialisation handshake, otherwise the triggering events will not be communicated by the client.</p>
+<p>Furthermore, it is of note that the server and client communicate over standard input and output. As such, nothing which will be called by the server, including the server itself, should ever write onto or read from the stdin and stdout streams. This should always be handled by the tower-lsp library, to ensure that the communication occurring is JSONrpc as expected by the client. Any incorrectly formed writing to the stream will cause the client to close the server and disconnect.</p>
+<h2 id="references"><a class="header" href="#references">References</a></h2>
+<p>conjure-cp (2025). conjure-vs-code/syntaxes/essence.tmLanguage.json at main · conjure-cp/conjure-vs-code. [online] GitHub. Available at: https://github.com/conjure-cp/conjure-vs-code/blob/main/syntaxes/essence.tmLanguage.json</p>
+<hr>
+<ol class="footnote-definition">
+<li id="footnote-bignote"> <a href="#fr-bignote-1">↩</a></li>
+</ol>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="diagnostics-api"><a class="header" href="#diagnostics-api">Diagnostics API</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><!--
@@ -4067,7 +4182,7 @@ In the future, it may also be worth examining the possibility and likelihood of 
 </li>
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="overview-6"><a class="header" href="#overview-6">Overview</a></h1>
+<h1 id="overview-7"><a class="header" href="#overview-7">Overview</a></h1>
 <p>Custom tests were created as a solution to the problem that integration tests do not allow for testing of error messages, which automatically return from the integration test method and therefore cannot be analyzed. The custom tests, however, work for both erroneous and non-erroneous code. Each test contains an input, a <code>run.sh</code> file to execute the test, and an expected standard output/error (or both) to compare against. Conjure Oxide is set up to automatically create and execute a test for each test folder in the <code>tests/custom </code>directory when <code>cargo test</code> is run, so to add a test case all one must do is add a folder in the directory which contains the necessary components.</p>
 <h1 id="how-to-add-a-test-case"><a class="header" href="#how-to-add-a-test-case">How to add a test case</a></h1>
 <p>Adding a test case is simple. First add a folder with the test case name to the <code>tests/custom</code> directory. Tests can be organized within folders in the directory–only folders with a <code>run.sh</code> file will be treated as a test case. Within the test folder, add these components:</p>
@@ -4363,7 +4478,7 @@ created: 21-12-25
 <p>Conjure-Oxide currently has four forms of tests:</p>
 <ul>
 <li>Integration tests</li>
-<li><a href="#overview-6">Custom tests</a></li>
+<li><a href="#overview-7">Custom tests</a></li>
 <li><a href="#roundtrip-testing">Roundtrip tests</a></li>
 <li>A small number of unit tests</li>
 </ul>
@@ -4386,7 +4501,7 @@ created: 21-12-25
 <p>This format improves scalability and allows new tests to be created by just creating the input file.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="roundtrip-testing"><a class="header" href="#roundtrip-testing">Roundtrip Testing</a></h1>
-<h2 id="overview-7"><a class="header" href="#overview-7">Overview</a></h2>
+<h2 id="overview-8"><a class="header" href="#overview-8">Overview</a></h2>
 <p>Roundtrip tests check that parsing is valid and that there is no unexpected behaviour during a full roundtrip of an Essence file.
 Roundtrip tests do not consider rewriting or solving.</p>
 <h2 id="full-test-structure"><a class="header" href="#full-test-structure">Full Test Structure</a></h2>
