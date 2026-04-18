@@ -9,12 +9,12 @@
 **conjure-cp-lsp:** 0% with examples, 0% documented -- 0/0/28
 **conjure-cp-rule-macros:** 33% with examples, 67% documented -- 1/2/3
 **conjure-cp-rules:** 0% with examples, 100% documented -- 0/1/1
-**minion-sys:** 2% with examples, 27% documented -- 2/33/121
+**minion-sys:** 2% with examples, 29% documented -- 2/36/124
 **tree-morph:** 7% with examples, 100% documented -- 7/95/95
 **tree-morph-macros:** 50% with examples, 50% documented -- 1/1/2
 **tree-sitter-essence:** 33% with examples, 100% documented -- 1/3/3
 
-Commit: [ca934134627214e9af125147216eb77e71ac9774](https://github.com/conjure-cp/conjure-oxide/commit/ca934134627214e9af125147216eb77e71ac9774)
+Commit: [842e1f54ee565c46fbc7814e38210213c41463c3](https://github.com/conjure-cp/conjure-oxide/commit/842e1f54ee565c46fbc7814e38210213c41463c3)
 
 ## RustDoc coverage for `conjure-cp`
 
@@ -176,7 +176,7 @@ Commit: [ca934134627214e9af125147216eb77e71ac9774](https://github.com/conjure-cp
 | File | Percentage Documented | Percentage with examples |
 |----|----|----|
 | crates/minion-sys/src/ast.rs | ❌ 13% *(13/101)* | ❌ 0% *(0/101)* |
-| crates/minion-sys/src/error.rs | ✅ 100% *(10/10)* | ❌ 0% *(0/10)* |
+| crates/minion-sys/src/error.rs | ✅ 100% *(13/13)* | ❌ 0% *(0/13)* |
 | crates/minion-sys/src/lib.rs | ✅ 100% *(1/1)* | ✅ 100% *(1/1)* |
 | crates/minion-sys/src/print.rs | ✅ 100% *(6/6)* | ❌ 0% *(0/6)* |
 | crates/minion-sys/src/run.rs | ✅ 100% *(3/3)* | ❌ 33% *(1/3)* |
