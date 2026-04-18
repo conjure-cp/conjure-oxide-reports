@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["MinionError","RuntimeError"]};
+window.SIDEBAR_ITEMS = {"enum":["MinionError","RuntimeError"],"fn":["check_minion_result"]};
