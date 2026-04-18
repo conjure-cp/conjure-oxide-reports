@@ -90,9 +90,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
         <h1>Diff Coverage</h1>
         <p>Diff: upstream/main...HEAD, staged and unstaged changes</p>
         <ul>
-            <li><b>Total</b>: 18 lines</li>
-            <li><b>Missing</b>: 18 lines</li>
-            <li><b>Coverage</b>: 0%</li>
+            <li><b>Total</b>: 24 lines</li>
+            <li><b>Missing</b>: 0 lines</li>
+            <li><b>Coverage</b>: 100%</li>
         </ul>
         <table border="1">
             <tr>
@@ -102,75 +102,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
             </tr>
             <tr>
                 <td>crates/conjure-cp-core/src/ast/expressions.rs</td>
-                <td>0.0%</td>
-                <td>666,668-672,675-680,682-687</td>
+                <td>100%</td>
+                <td>&nbsp;</td>
             </tr>
         </table>
-        <div class="src-snippet">
-            <div class="src-name">crates/conjure-cp-core/src/ast/expressions.rs</div>
-            <div class="snippets">
-            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">662</span>
-<span class="normal">663</span>
-<span class="normal">664</span>
-<span class="normal">665</span>
-<span class="normal">666</span>
-<span class="normal">667</span>
-<span class="normal">668</span>
-<span class="normal">669</span>
-<span class="normal">670</span>
-<span class="normal">671</span>
-<span class="normal">672</span>
-<span class="normal">673</span>
-<span class="normal">674</span>
-<span class="normal">675</span>
-<span class="normal">676</span>
-<span class="normal">677</span>
-<span class="normal">678</span>
-<span class="normal">679</span>
-<span class="normal">680</span>
-<span class="normal">681</span>
-<span class="normal">682</span>
-<span class="normal">683</span>
-<span class="normal">684</span>
-<span class="normal">685</span>
-<span class="normal">686</span>
-<span class="normal">687</span>
-<span class="normal">688</span>
-<span class="normal">689</span>
-<span class="normal">690</span>
-<span class="normal">691</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/ast/expressions.rs-662" name="crates/conjure-cp-core/src/ast/expressions.rs-662"></a><span class="k">impl</span><span class="w"> </span><span class="n">Expression</span><span class="w"> </span><span class="p">{</span>
-<a id="crates/conjure-cp-core/src/ast/expressions.rs-663" name="crates/conjure-cp-core/src/ast/expressions.rs-663"></a><span class="w">    </span><span class="sd">/// Returns the possible values of the expression, recursing to leaf expressions</span>
-<a id="crates/conjure-cp-core/src/ast/expressions.rs-664" name="crates/conjure-cp-core/src/ast/expressions.rs-664"></a><span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">domain_of</span><span class="p">(</span><span class="o">&amp;</span><span class="bp">self</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nb">Option</span><span class="o">&lt;</span><span class="n">DomainPtr</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
-<a id="crates/conjure-cp-core/src/ast/expressions.rs-665" name="crates/conjure-cp-core/src/ast/expressions.rs-665"></a><span class="w">        </span><span class="k">match</span><span class="w"> </span><span class="bp">self</span><span class="w"> </span><span class="p">{</span>
-<a id="crates/conjure-cp-core/src/ast/expressions.rs-666" name="crates/conjure-cp-core/src/ast/expressions.rs-666"></a><span class="hll"><span class="w">            </span><span class="n">Expression</span><span class="p">::</span><span class="n">Union</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
-</span><a id="crates/conjure-cp-core/src/ast/expressions.rs-667" name="crates/conjure-cp-core/src/ast/expressions.rs-667"></a><span class="w">                </span><span class="c1">// Ascertain range</span>
-<a id="crates/conjure-cp-core/src/ast/expressions.rs-668" name="crates/conjure-cp-core/src/ast/expressions.rs-668"></a><span class="hll"><span class="w">                </span><span class="kd">let</span><span class="w"> </span><span class="p">(</span><span class="n">a_attr</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">domain_of</span><span class="p">()</span><span class="o">?</span><span class="p">.</span><span class="n">as_set</span><span class="p">()</span><span class="o">?</span><span class="p">;</span>
-</span><a id="crates/conjure-cp-core/src/ast/expressions.rs-669" name="crates/conjure-cp-core/src/ast/expressions.rs-669"></a><span class="hll"><span class="w">                </span><span class="kd">let</span><span class="w"> </span><span class="p">(</span><span class="n">b_attr</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">domain_of</span><span class="p">()</span><span class="o">?</span><span class="p">.</span><span class="n">as_set</span><span class="p">()</span><span class="o">?</span><span class="p">;</span>
-</span><a id="crates/conjure-cp-core/src/ast/expressions.rs-670" name="crates/conjure-cp-core/src/ast/expressions.rs-670"></a><span class="hll"><span class="w">                </span><span class="kd">let</span><span class="w"> </span><span class="n">a_range</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a_attr</span><span class="p">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">?</span><span class="p">.</span><span class="n">size</span><span class="p">;</span>
-</span><a id="crates/conjure-cp-core/src/ast/expressions.rs-671" name="crates/conjure-cp-core/src/ast/expressions.rs-671"></a><span class="hll"><span class="w">                </span><span class="kd">let</span><span class="w"> </span><span class="n">b_range</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b_attr</span><span class="p">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">?</span><span class="p">.</span><span class="n">size</span><span class="p">;</span>
-</span><a id="crates/conjure-cp-core/src/ast/expressions.rs-672" name="crates/conjure-cp-core/src/ast/expressions.rs-672"></a><span class="hll"><span class="w">                </span><span class="kd">let</span><span class="w"> </span><span class="n">new_range</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Range</span><span class="p">::</span><span class="n">spanning</span><span class="p">(</span><span class="o">&amp;</span><span class="p">[</span><span class="n">a_range</span><span class="p">,</span><span class="w"> </span><span class="n">b_range</span><span class="p">]);</span>
-</span><a id="crates/conjure-cp-core/src/ast/expressions.rs-673" name="crates/conjure-cp-core/src/ast/expressions.rs-673"></a>
-<a id="crates/conjure-cp-core/src/ast/expressions.rs-674" name="crates/conjure-cp-core/src/ast/expressions.rs-674"></a><span class="w">                </span><span class="c1">// Create</span>
-<a id="crates/conjure-cp-core/src/ast/expressions.rs-675" name="crates/conjure-cp-core/src/ast/expressions.rs-675"></a><span class="hll"><span class="w">                </span><span class="nb">Some</span><span class="p">(</span><span class="n">Domain</span><span class="p">::</span><span class="n">set</span><span class="p">(</span>
-</span><a id="crates/conjure-cp-core/src/ast/expressions.rs-676" name="crates/conjure-cp-core/src/ast/expressions.rs-676"></a><span class="hll"><span class="w">                    </span><span class="n">SetAttr</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="n">new_range</span><span class="p">),</span>
-</span><a id="crates/conjure-cp-core/src/ast/expressions.rs-677" name="crates/conjure-cp-core/src/ast/expressions.rs-677"></a><span class="hll"><span class="w">                    </span><span class="n">a</span><span class="p">.</span><span class="n">domain_of</span><span class="p">()</span><span class="o">?</span><span class="p">.</span><span class="k">union</span><span class="p">(</span><span class="o">&amp;</span><span class="n">b</span><span class="p">.</span><span class="n">domain_of</span><span class="p">()</span><span class="o">?</span><span class="p">).</span><span class="n">ok</span><span class="p">()</span><span class="o">?</span><span class="p">,</span>
-</span><a id="crates/conjure-cp-core/src/ast/expressions.rs-678" name="crates/conjure-cp-core/src/ast/expressions.rs-678"></a><span class="hll"><span class="w">                </span><span class="p">))</span>
-</span><a id="crates/conjure-cp-core/src/ast/expressions.rs-679" name="crates/conjure-cp-core/src/ast/expressions.rs-679"></a><span class="hll"><span class="w">            </span><span class="p">}</span>
-</span><a id="crates/conjure-cp-core/src/ast/expressions.rs-680" name="crates/conjure-cp-core/src/ast/expressions.rs-680"></a><span class="hll"><span class="w">            </span><span class="n">Expression</span><span class="p">::</span><span class="n">Intersect</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
-</span><a id="crates/conjure-cp-core/src/ast/expressions.rs-681" name="crates/conjure-cp-core/src/ast/expressions.rs-681"></a><span class="w">                </span><span class="c1">// thinking about Range::overlaps?</span>
-<a id="crates/conjure-cp-core/src/ast/expressions.rs-682" name="crates/conjure-cp-core/src/ast/expressions.rs-682"></a><span class="hll">
-</span><a id="crates/conjure-cp-core/src/ast/expressions.rs-683" name="crates/conjure-cp-core/src/ast/expressions.rs-683"></a><span class="hll"><span class="w">                </span><span class="nb">Some</span><span class="p">(</span><span class="n">Domain</span><span class="p">::</span><span class="n">set</span><span class="p">(</span>
-</span><a id="crates/conjure-cp-core/src/ast/expressions.rs-684" name="crates/conjure-cp-core/src/ast/expressions.rs-684"></a><span class="hll"><span class="w">                    </span><span class="n">SetAttr</span><span class="p">::</span><span class="o">&lt;</span><span class="n">IntVal</span><span class="o">&gt;</span><span class="p">::</span><span class="n">default</span><span class="p">(),</span>
-</span><a id="crates/conjure-cp-core/src/ast/expressions.rs-685" name="crates/conjure-cp-core/src/ast/expressions.rs-685"></a><span class="hll"><span class="w">                    </span><span class="n">a</span><span class="p">.</span><span class="n">domain_of</span><span class="p">()</span><span class="o">?</span><span class="p">.</span><span class="n">intersect</span><span class="p">(</span><span class="o">&amp;</span><span class="n">b</span><span class="p">.</span><span class="n">domain_of</span><span class="p">()</span><span class="o">?</span><span class="p">).</span><span class="n">ok</span><span class="p">()</span><span class="o">?</span><span class="p">,</span>
-</span><a id="crates/conjure-cp-core/src/ast/expressions.rs-686" name="crates/conjure-cp-core/src/ast/expressions.rs-686"></a><span class="hll"><span class="w">                </span><span class="p">))</span>
-</span><a id="crates/conjure-cp-core/src/ast/expressions.rs-687" name="crates/conjure-cp-core/src/ast/expressions.rs-687"></a><span class="hll"><span class="w">            </span><span class="p">}</span>
-</span><a id="crates/conjure-cp-core/src/ast/expressions.rs-688" name="crates/conjure-cp-core/src/ast/expressions.rs-688"></a><span class="w">            </span><span class="n">Expression</span><span class="p">::</span><span class="n">In</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">Domain</span><span class="p">::</span><span class="kt">bool</span><span class="p">()),</span>
-<a id="crates/conjure-cp-core/src/ast/expressions.rs-689" name="crates/conjure-cp-core/src/ast/expressions.rs-689"></a><span class="w">            </span><span class="n">Expression</span><span class="p">::</span><span class="n">Supset</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">Domain</span><span class="p">::</span><span class="kt">bool</span><span class="p">()),</span>
-<a id="crates/conjure-cp-core/src/ast/expressions.rs-690" name="crates/conjure-cp-core/src/ast/expressions.rs-690"></a><span class="w">            </span><span class="n">Expression</span><span class="p">::</span><span class="n">SupsetEq</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">Domain</span><span class="p">::</span><span class="kt">bool</span><span class="p">()),</span>
-<a id="crates/conjure-cp-core/src/ast/expressions.rs-691" name="crates/conjure-cp-core/src/ast/expressions.rs-691"></a><span class="w">            </span><span class="n">Expression</span><span class="p">::</span><span class="n">Subset</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">Domain</span><span class="p">::</span><span class="kt">bool</span><span class="p">()),</span>
-</pre></div></td></tr></table></div>
-
-            </div>
-        </div>
     </body>
 </html>
