@@ -1,0 +1,726 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+        <title>Diff Coverage</title>
+        <style>
+            .src-snippet { margin-top: 2em; }
+            .src-name { font-weight: bold; }
+            .snippets {
+                border-top: 1px solid #bdbdbd;
+                border-bottom: 1px solid #bdbdbd;
+            }
+            pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.hll { background-color: #ffcccc }
+.c { color: #3D7B7B; font-style: italic } /* Comment */
+.err { border: 1px solid #F00 } /* Error */
+.k { color: #008000; font-weight: bold } /* Keyword */
+.o { color: #666 } /* Operator */
+.ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.cp { color: #9C6500 } /* Comment.Preproc */
+.cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.gd { color: #A00000 } /* Generic.Deleted */
+.ge { font-style: italic } /* Generic.Emph */
+.ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.gr { color: #E40000 } /* Generic.Error */
+.gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.gi { color: #008400 } /* Generic.Inserted */
+.go { color: #717171 } /* Generic.Output */
+.gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.gs { font-weight: bold } /* Generic.Strong */
+.gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.gt { color: #04D } /* Generic.Traceback */
+.kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.kp { color: #008000 } /* Keyword.Pseudo */
+.kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.kt { color: #B00040 } /* Keyword.Type */
+.m { color: #666 } /* Literal.Number */
+.s { color: #BA2121 } /* Literal.String */
+.na { color: #687822 } /* Name.Attribute */
+.nb { color: #008000 } /* Name.Builtin */
+.nc { color: #00F; font-weight: bold } /* Name.Class */
+.no { color: #800 } /* Name.Constant */
+.nd { color: #A2F } /* Name.Decorator */
+.ni { color: #717171; font-weight: bold } /* Name.Entity */
+.ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.nf { color: #00F } /* Name.Function */
+.nl { color: #767600 } /* Name.Label */
+.nn { color: #00F; font-weight: bold } /* Name.Namespace */
+.nt { color: #008000; font-weight: bold } /* Name.Tag */
+.nv { color: #19177C } /* Name.Variable */
+.ow { color: #A2F; font-weight: bold } /* Operator.Word */
+.w { color: #BBB } /* Text.Whitespace */
+.mb { color: #666 } /* Literal.Number.Bin */
+.mf { color: #666 } /* Literal.Number.Float */
+.mh { color: #666 } /* Literal.Number.Hex */
+.mi { color: #666 } /* Literal.Number.Integer */
+.mo { color: #666 } /* Literal.Number.Oct */
+.sa { color: #BA2121 } /* Literal.String.Affix */
+.sb { color: #BA2121 } /* Literal.String.Backtick */
+.sc { color: #BA2121 } /* Literal.String.Char */
+.dl { color: #BA2121 } /* Literal.String.Delimiter */
+.sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.s2 { color: #BA2121 } /* Literal.String.Double */
+.se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.sh { color: #BA2121 } /* Literal.String.Heredoc */
+.si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.sx { color: #008000 } /* Literal.String.Other */
+.sr { color: #A45A77 } /* Literal.String.Regex */
+.s1 { color: #BA2121 } /* Literal.String.Single */
+.ss { color: #19177C } /* Literal.String.Symbol */
+.bp { color: #008000 } /* Name.Builtin.Pseudo */
+.fm { color: #00F } /* Name.Function.Magic */
+.vc { color: #19177C } /* Name.Variable.Class */
+.vg { color: #19177C } /* Name.Variable.Global */
+.vi { color: #19177C } /* Name.Variable.Instance */
+.vm { color: #19177C } /* Name.Variable.Magic */
+.il { color: #666 } /* Literal.Number.Integer.Long */
+        </style>
+    </head>
+    <body>
+        <h1>Diff Coverage</h1>
+        <p>Diff: upstream/main...HEAD, staged and unstaged changes</p>
+        <ul>
+            <li><b>Total</b>: 186 lines</li>
+            <li><b>Missing</b>: 182 lines</li>
+            <li><b>Coverage</b>: 2%</li>
+        </ul>
+        <table border="1">
+            <tr>
+                <th>Source File</th>
+                <th>Diff Coverage (%)</th>
+                <th>Missing Lines</th>
+            </tr>
+            <tr>
+                <td>crates/minion-sys/src/ffi.rs</td>
+                <td>2.2%</td>
+                <td>159-161,163-166,173-176,184-187,189-190,192-196,199-208,210-220,225-227,229-234,236-237,239-241,244-250,253-257,260-264,266-268,271-278,281-288,290-292,294-296,299-301,303-305,353-358,360-366,368-372,377,379-384,386-387,429-433,435-436,438,440-445,447-453,456,458-464,479-481,483-490,683,685,687,691-692,699-700,703-704,714</td>
+            </tr>
+        </table>
+        <div class="src-snippet">
+            <div class="src-name">crates/minion-sys/src/ffi.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/minion-sys/src/ffi.rs-155" name="crates/minion-sys/src/ffi.rs-155"></a><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">search_order</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">searchOrder_new</span><span class="p">(</span><span class="n">search_vars</span><span class="p">,</span><span class="w"> </span><span class="n">VarOrderEnum_ORDER_STATIC</span><span class="p">,</span><span class="w"> </span><span class="kc">false</span><span class="p">);</span>
+<a id="crates/minion-sys/src/ffi.rs-156" name="crates/minion-sys/src/ffi.rs-156"></a><span class="w">        </span><span class="n">instance_addSearchOrder</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span><span class="w"> </span><span class="n">search_order</span><span class="p">);</span>
+<a id="crates/minion-sys/src/ffi.rs-157" name="crates/minion-sys/src/ffi.rs-157"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/minion-sys/src/ffi.rs-158" name="crates/minion-sys/src/ffi.rs-158"></a>
+<a id="crates/minion-sys/src/ffi.rs-159" name="crates/minion-sys/src/ffi.rs-159"></a><span class="hll"><span class="w">    </span><span class="k">unsafe</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">build_issue_instance</span><span class="p">(</span><span class="n">instance</span><span class="p">:</span><span class="w"> </span><span class="o">*</span><span class="k">mut</span><span class="w"> </span><span class="n">ProbSpec_CSPInstance</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/minion-sys/src/ffi.rs-160" name="crates/minion-sys/src/ffi.rs-160"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">x_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">b&quot;x</span><span class="se">\0</span><span class="s">&quot;</span><span class="p">;</span>
+</span><a id="crates/minion-sys/src/ffi.rs-161" name="crates/minion-sys/src/ffi.rs-161"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">y_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">b&quot;y</span><span class="se">\0</span><span class="s">&quot;</span><span class="p">;</span>
+</span><a id="crates/minion-sys/src/ffi.rs-162" name="crates/minion-sys/src/ffi.rs-162"></a>
+<a id="crates/minion-sys/src/ffi.rs-163" name="crates/minion-sys/src/ffi.rs-163"></a><span class="hll"><span class="w">        </span><span class="fm">assert_eq!</span><span class="p">(</span>
+</span><a id="crates/minion-sys/src/ffi.rs-164" name="crates/minion-sys/src/ffi.rs-164"></a><span class="hll"><span class="w">            </span><span class="n">minion_newVar</span><span class="p">(</span>
+</span><a id="crates/minion-sys/src/ffi.rs-165" name="crates/minion-sys/src/ffi.rs-165"></a><span class="hll"><span class="w">                </span><span class="n">instance</span><span class="p">,</span>
+</span><a id="crates/minion-sys/src/ffi.rs-166" name="crates/minion-sys/src/ffi.rs-166"></a><span class="hll"><span class="w">                </span><span class="n">x_name</span><span class="p">.</span><span class="n">as_ptr</span><span class="p">()</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="o">*</span><span class="k">mut</span><span class="w"> </span><span class="n">c_char</span><span class="p">,</span>
+</span><a id="crates/minion-sys/src/ffi.rs-167" name="crates/minion-sys/src/ffi.rs-167"></a><span class="w">                </span><span class="n">VariableType_VAR_BOUND</span><span class="p">,</span>
+<a id="crates/minion-sys/src/ffi.rs-168" name="crates/minion-sys/src/ffi.rs-168"></a><span class="w">                </span><span class="mi">0</span><span class="p">,</span>
+<a id="crates/minion-sys/src/ffi.rs-169" name="crates/minion-sys/src/ffi.rs-169"></a><span class="w">                </span><span class="mi">3</span>
+<a id="crates/minion-sys/src/ffi.rs-170" name="crates/minion-sys/src/ffi.rs-170"></a><span class="w">            </span><span class="p">),</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/minion-sys/src/ffi.rs-169" name="crates/minion-sys/src/ffi.rs-169"></a><span class="w">                </span><span class="mi">3</span>
+<a id="crates/minion-sys/src/ffi.rs-170" name="crates/minion-sys/src/ffi.rs-170"></a><span class="w">            </span><span class="p">),</span>
+<a id="crates/minion-sys/src/ffi.rs-171" name="crates/minion-sys/src/ffi.rs-171"></a><span class="w">            </span><span class="n">MinionResult_MINION_OK</span>
+<a id="crates/minion-sys/src/ffi.rs-172" name="crates/minion-sys/src/ffi.rs-172"></a><span class="w">        </span><span class="p">);</span>
+<a id="crates/minion-sys/src/ffi.rs-173" name="crates/minion-sys/src/ffi.rs-173"></a><span class="hll"><span class="w">        </span><span class="fm">assert_eq!</span><span class="p">(</span>
+</span><a id="crates/minion-sys/src/ffi.rs-174" name="crates/minion-sys/src/ffi.rs-174"></a><span class="hll"><span class="w">            </span><span class="n">minion_newVar</span><span class="p">(</span>
+</span><a id="crates/minion-sys/src/ffi.rs-175" name="crates/minion-sys/src/ffi.rs-175"></a><span class="hll"><span class="w">                </span><span class="n">instance</span><span class="p">,</span>
+</span><a id="crates/minion-sys/src/ffi.rs-176" name="crates/minion-sys/src/ffi.rs-176"></a><span class="hll"><span class="w">                </span><span class="n">y_name</span><span class="p">.</span><span class="n">as_ptr</span><span class="p">()</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="o">*</span><span class="k">mut</span><span class="w"> </span><span class="n">c_char</span><span class="p">,</span>
+</span><a id="crates/minion-sys/src/ffi.rs-177" name="crates/minion-sys/src/ffi.rs-177"></a><span class="w">                </span><span class="n">VariableType_VAR_BOUND</span><span class="p">,</span>
+<a id="crates/minion-sys/src/ffi.rs-178" name="crates/minion-sys/src/ffi.rs-178"></a><span class="w">                </span><span class="mi">0</span><span class="p">,</span>
+<a id="crates/minion-sys/src/ffi.rs-179" name="crates/minion-sys/src/ffi.rs-179"></a><span class="w">                </span><span class="mi">3</span>
+<a id="crates/minion-sys/src/ffi.rs-180" name="crates/minion-sys/src/ffi.rs-180"></a><span class="w">            </span><span class="p">),</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span>
+<span class="normal">299</span>
+<span class="normal">300</span>
+<span class="normal">301</span>
+<span class="normal">302</span>
+<span class="normal">303</span>
+<span class="normal">304</span>
+<span class="normal">305</span>
+<span class="normal">306</span>
+<span class="normal">307</span>
+<span class="normal">308</span>
+<span class="normal">309</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/minion-sys/src/ffi.rs-180" name="crates/minion-sys/src/ffi.rs-180"></a><span class="w">            </span><span class="p">),</span>
+<a id="crates/minion-sys/src/ffi.rs-181" name="crates/minion-sys/src/ffi.rs-181"></a><span class="w">            </span><span class="n">MinionResult_MINION_OK</span>
+<a id="crates/minion-sys/src/ffi.rs-182" name="crates/minion-sys/src/ffi.rs-182"></a><span class="w">        </span><span class="p">);</span>
+<a id="crates/minion-sys/src/ffi.rs-183" name="crates/minion-sys/src/ffi.rs-183"></a>
+<a id="crates/minion-sys/src/ffi.rs-184" name="crates/minion-sys/src/ffi.rs-184"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">minion_getVarByName</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span><span class="w"> </span><span class="n">x_name</span><span class="p">.</span><span class="n">as_ptr</span><span class="p">()</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="o">*</span><span class="k">mut</span><span class="w"> </span><span class="n">c_char</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-185" name="crates/minion-sys/src/ffi.rs-185"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">minion_getVarByName</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span><span class="w"> </span><span class="n">y_name</span><span class="p">.</span><span class="n">as_ptr</span><span class="p">()</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="o">*</span><span class="k">mut</span><span class="w"> </span><span class="n">c_char</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-186" name="crates/minion-sys/src/ffi.rs-186"></a><span class="hll"><span class="w">        </span><span class="fm">assert_eq!</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="n">MinionResult_MINION_OK</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-187" name="crates/minion-sys/src/ffi.rs-187"></a><span class="hll"><span class="w">        </span><span class="fm">assert_eq!</span><span class="p">(</span><span class="n">y</span><span class="p">.</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="n">MinionResult_MINION_OK</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-188" name="crates/minion-sys/src/ffi.rs-188"></a>
+<a id="crates/minion-sys/src/ffi.rs-189" name="crates/minion-sys/src/ffi.rs-189"></a><span class="hll"><span class="w">        </span><span class="n">printMatrix_addVar</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="p">.</span><span class="n">var</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-190" name="crates/minion-sys/src/ffi.rs-190"></a><span class="hll"><span class="w">        </span><span class="n">printMatrix_addVar</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">.</span><span class="n">var</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-191" name="crates/minion-sys/src/ffi.rs-191"></a>
+<a id="crates/minion-sys/src/ffi.rs-192" name="crates/minion-sys/src/ffi.rs-192"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">search_vars</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vec_var_new</span><span class="p">();</span>
+</span><a id="crates/minion-sys/src/ffi.rs-193" name="crates/minion-sys/src/ffi.rs-193"></a><span class="hll"><span class="w">        </span><span class="n">vec_var_push_back</span><span class="p">(</span><span class="n">search_vars</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="p">.</span><span class="n">var</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-194" name="crates/minion-sys/src/ffi.rs-194"></a><span class="hll"><span class="w">        </span><span class="n">vec_var_push_back</span><span class="p">(</span><span class="n">search_vars</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">.</span><span class="n">var</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-195" name="crates/minion-sys/src/ffi.rs-195"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">search_order</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">searchOrder_new</span><span class="p">(</span><span class="n">search_vars</span><span class="p">,</span><span class="w"> </span><span class="n">VarOrderEnum_ORDER_STATIC</span><span class="p">,</span><span class="w"> </span><span class="kc">false</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-196" name="crates/minion-sys/src/ffi.rs-196"></a><span class="hll"><span class="w">        </span><span class="n">instance_addSearchOrder</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span><span class="w"> </span><span class="n">search_order</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-197" name="crates/minion-sys/src/ffi.rs-197"></a>
+<a id="crates/minion-sys/src/ffi.rs-198" name="crates/minion-sys/src/ffi.rs-198"></a><span class="w">        </span><span class="c1">// sumgeq([x, y], 2)</span>
+<a id="crates/minion-sys/src/ffi.rs-199" name="crates/minion-sys/src/ffi.rs-199"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">geq</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">constraint_new</span><span class="p">(</span><span class="n">ConstraintType_CT_GEQSUM</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-200" name="crates/minion-sys/src/ffi.rs-200"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">lhs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vec_var_new</span><span class="p">();</span>
+</span><a id="crates/minion-sys/src/ffi.rs-201" name="crates/minion-sys/src/ffi.rs-201"></a><span class="hll"><span class="w">        </span><span class="n">vec_var_push_back</span><span class="p">(</span><span class="n">lhs</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="p">.</span><span class="n">var</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-202" name="crates/minion-sys/src/ffi.rs-202"></a><span class="hll"><span class="w">        </span><span class="n">vec_var_push_back</span><span class="p">(</span><span class="n">lhs</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">.</span><span class="n">var</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-203" name="crates/minion-sys/src/ffi.rs-203"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">rhs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vec_var_new</span><span class="p">();</span>
+</span><a id="crates/minion-sys/src/ffi.rs-204" name="crates/minion-sys/src/ffi.rs-204"></a><span class="hll"><span class="w">        </span><span class="n">vec_var_push_back</span><span class="p">(</span><span class="n">rhs</span><span class="p">,</span><span class="w"> </span><span class="n">constantAsVar</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
+</span><a id="crates/minion-sys/src/ffi.rs-205" name="crates/minion-sys/src/ffi.rs-205"></a><span class="hll"><span class="w">        </span><span class="n">constraint_addList</span><span class="p">(</span><span class="n">geq</span><span class="p">,</span><span class="w"> </span><span class="n">lhs</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-206" name="crates/minion-sys/src/ffi.rs-206"></a><span class="hll"><span class="w">        </span><span class="n">constraint_addList</span><span class="p">(</span><span class="n">geq</span><span class="p">,</span><span class="w"> </span><span class="n">rhs</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-207" name="crates/minion-sys/src/ffi.rs-207"></a><span class="hll"><span class="w">        </span><span class="n">instance_addConstraint</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span><span class="w"> </span><span class="n">geq</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-208" name="crates/minion-sys/src/ffi.rs-208"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="crates/minion-sys/src/ffi.rs-209" name="crates/minion-sys/src/ffi.rs-209"></a>
+<a id="crates/minion-sys/src/ffi.rs-210" name="crates/minion-sys/src/ffi.rs-210"></a><span class="hll"><span class="w">    </span><span class="k">unsafe</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">add_issue_dominance_like_reify</span><span class="p">(</span>
+</span><a id="crates/minion-sys/src/ffi.rs-211" name="crates/minion-sys/src/ffi.rs-211"></a><span class="hll"><span class="w">        </span><span class="n">ctx</span><span class="p">:</span><span class="w"> </span><span class="o">*</span><span class="k">mut</span><span class="w"> </span><span class="n">MinionContext</span><span class="p">,</span>
+</span><a id="crates/minion-sys/src/ffi.rs-212" name="crates/minion-sys/src/ffi.rs-212"></a><span class="hll"><span class="w">        </span><span class="n">instance</span><span class="p">:</span><span class="w"> </span><span class="o">*</span><span class="k">mut</span><span class="w"> </span><span class="n">ProbSpec_CSPInstance</span><span class="p">,</span>
+</span><a id="crates/minion-sys/src/ffi.rs-213" name="crates/minion-sys/src/ffi.rs-213"></a><span class="hll"><span class="w">        </span><span class="n">y_value</span><span class="p">:</span><span class="w"> </span><span class="kt">i32</span><span class="p">,</span>
+</span><a id="crates/minion-sys/src/ffi.rs-214" name="crates/minion-sys/src/ffi.rs-214"></a><span class="hll"><span class="w">        </span><span class="n">aux_name</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="kt">str</span><span class="p">,</span>
+</span><a id="crates/minion-sys/src/ffi.rs-215" name="crates/minion-sys/src/ffi.rs-215"></a><span class="hll"><span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="p">(</span><span class="n">MinionResult</span><span class="p">,</span><span class="w"> </span><span class="n">MinionResult</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/minion-sys/src/ffi.rs-216" name="crates/minion-sys/src/ffi.rs-216"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">aux_name_c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CString</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="n">aux_name</span><span class="p">).</span><span class="n">expect</span><span class="p">(</span><span class="s">&quot;bad aux name&quot;</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-217" name="crates/minion-sys/src/ffi.rs-217"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">add_var</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">minion_newVarMidsearch</span><span class="p">(</span>
+</span><a id="crates/minion-sys/src/ffi.rs-218" name="crates/minion-sys/src/ffi.rs-218"></a><span class="hll"><span class="w">            </span><span class="n">ctx</span><span class="p">,</span>
+</span><a id="crates/minion-sys/src/ffi.rs-219" name="crates/minion-sys/src/ffi.rs-219"></a><span class="hll"><span class="w">            </span><span class="n">instance</span><span class="p">,</span>
+</span><a id="crates/minion-sys/src/ffi.rs-220" name="crates/minion-sys/src/ffi.rs-220"></a><span class="hll"><span class="w">            </span><span class="n">aux_name_c</span><span class="p">.</span><span class="n">as_ptr</span><span class="p">()</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="o">*</span><span class="k">mut</span><span class="w"> </span><span class="n">c_char</span><span class="p">,</span>
+</span><a id="crates/minion-sys/src/ffi.rs-221" name="crates/minion-sys/src/ffi.rs-221"></a><span class="w">            </span><span class="n">VariableType_VAR_BOOL</span><span class="p">,</span>
+<a id="crates/minion-sys/src/ffi.rs-222" name="crates/minion-sys/src/ffi.rs-222"></a><span class="w">            </span><span class="mi">0</span><span class="p">,</span>
+<a id="crates/minion-sys/src/ffi.rs-223" name="crates/minion-sys/src/ffi.rs-223"></a><span class="w">            </span><span class="mi">1</span><span class="p">,</span>
+<a id="crates/minion-sys/src/ffi.rs-224" name="crates/minion-sys/src/ffi.rs-224"></a><span class="w">        </span><span class="p">);</span>
+<a id="crates/minion-sys/src/ffi.rs-225" name="crates/minion-sys/src/ffi.rs-225"></a><span class="hll"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="n">add_var</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">MinionResult_MINION_OK</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/minion-sys/src/ffi.rs-226" name="crates/minion-sys/src/ffi.rs-226"></a><span class="hll"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">add_var</span><span class="p">,</span><span class="w"> </span><span class="n">add_var</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-227" name="crates/minion-sys/src/ffi.rs-227"></a><span class="hll"><span class="w">        </span><span class="p">}</span>
+</span><a id="crates/minion-sys/src/ffi.rs-228" name="crates/minion-sys/src/ffi.rs-228"></a>
+<a id="crates/minion-sys/src/ffi.rs-229" name="crates/minion-sys/src/ffi.rs-229"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">x_res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">minion_getVarByName</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span><span class="w"> </span><span class="s">b&quot;x</span><span class="se">\0</span><span class="s">&quot;</span><span class="p">.</span><span class="n">as_ptr</span><span class="p">()</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="o">*</span><span class="k">mut</span><span class="w"> </span><span class="n">c_char</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-230" name="crates/minion-sys/src/ffi.rs-230"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">y_res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">minion_getVarByName</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span><span class="w"> </span><span class="s">b&quot;y</span><span class="se">\0</span><span class="s">&quot;</span><span class="p">.</span><span class="n">as_ptr</span><span class="p">()</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="o">*</span><span class="k">mut</span><span class="w"> </span><span class="n">c_char</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-231" name="crates/minion-sys/src/ffi.rs-231"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">aux_res</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">minion_getVarByName</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span><span class="w"> </span><span class="n">aux_name_c</span><span class="p">.</span><span class="n">as_ptr</span><span class="p">()</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="o">*</span><span class="k">mut</span><span class="w"> </span><span class="n">c_char</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-232" name="crates/minion-sys/src/ffi.rs-232"></a><span class="hll"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="n">x_res</span><span class="p">.</span><span class="n">result</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">MinionResult_MINION_OK</span>
+</span><a id="crates/minion-sys/src/ffi.rs-233" name="crates/minion-sys/src/ffi.rs-233"></a><span class="hll"><span class="w">            </span><span class="o">||</span><span class="w"> </span><span class="n">y_res</span><span class="p">.</span><span class="n">result</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">MinionResult_MINION_OK</span>
+</span><a id="crates/minion-sys/src/ffi.rs-234" name="crates/minion-sys/src/ffi.rs-234"></a><span class="hll"><span class="w">            </span><span class="o">||</span><span class="w"> </span><span class="n">aux_res</span><span class="p">.</span><span class="n">result</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">MinionResult_MINION_OK</span>
+</span><a id="crates/minion-sys/src/ffi.rs-235" name="crates/minion-sys/src/ffi.rs-235"></a><span class="w">        </span><span class="p">{</span>
+<a id="crates/minion-sys/src/ffi.rs-236" name="crates/minion-sys/src/ffi.rs-236"></a><span class="hll"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">add_var</span><span class="p">,</span><span class="w"> </span><span class="n">MinionResult_MINION_INVALID_INSTANCE</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-237" name="crates/minion-sys/src/ffi.rs-237"></a><span class="hll"><span class="w">        </span><span class="p">}</span>
+</span><a id="crates/minion-sys/src/ffi.rs-238" name="crates/minion-sys/src/ffi.rs-238"></a>
+<a id="crates/minion-sys/src/ffi.rs-239" name="crates/minion-sys/src/ffi.rs-239"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">x_res</span><span class="p">.</span><span class="n">var</span><span class="p">;</span>
+</span><a id="crates/minion-sys/src/ffi.rs-240" name="crates/minion-sys/src/ffi.rs-240"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">y_res</span><span class="p">.</span><span class="n">var</span><span class="p">;</span>
+</span><a id="crates/minion-sys/src/ffi.rs-241" name="crates/minion-sys/src/ffi.rs-241"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">aux</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">aux_res</span><span class="p">.</span><span class="n">var</span><span class="p">;</span>
+</span><a id="crates/minion-sys/src/ffi.rs-242" name="crates/minion-sys/src/ffi.rs-242"></a>
+<a id="crates/minion-sys/src/ffi.rs-243" name="crates/minion-sys/src/ffi.rs-243"></a><span class="w">        </span><span class="c1">// w-literal(aux, 0)</span>
+<a id="crates/minion-sys/src/ffi.rs-244" name="crates/minion-sys/src/ffi.rs-244"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">wlit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">constraint_new</span><span class="p">(</span><span class="n">ConstraintType_CT_WATCHED_LIT</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-245" name="crates/minion-sys/src/ffi.rs-245"></a><span class="hll"><span class="w">        </span><span class="n">constraint_addVar</span><span class="p">(</span><span class="n">wlit</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">aux</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-246" name="crates/minion-sys/src/ffi.rs-246"></a><span class="hll"><span class="w">        </span><span class="n">constraint_addConstant</span><span class="p">(</span><span class="n">wlit</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-247" name="crates/minion-sys/src/ffi.rs-247"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">add_wlit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">minion_addConstraintMidsearch</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span><span class="w"> </span><span class="n">instance</span><span class="p">,</span><span class="w"> </span><span class="n">wlit</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-248" name="crates/minion-sys/src/ffi.rs-248"></a><span class="hll"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="n">add_wlit</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">MinionResult_MINION_OK</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/minion-sys/src/ffi.rs-249" name="crates/minion-sys/src/ffi.rs-249"></a><span class="hll"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">add_var</span><span class="p">,</span><span class="w"> </span><span class="n">add_wlit</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-250" name="crates/minion-sys/src/ffi.rs-250"></a><span class="hll"><span class="w">        </span><span class="p">}</span>
+</span><a id="crates/minion-sys/src/ffi.rs-251" name="crates/minion-sys/src/ffi.rs-251"></a>
+<a id="crates/minion-sys/src/ffi.rs-252" name="crates/minion-sys/src/ffi.rs-252"></a><span class="w">        </span><span class="c1">// ineq(0, x, 0)</span>
+<a id="crates/minion-sys/src/ffi.rs-253" name="crates/minion-sys/src/ffi.rs-253"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">ineq_x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">constraint_new</span><span class="p">(</span><span class="n">ConstraintType_CT_INEQ</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-254" name="crates/minion-sys/src/ffi.rs-254"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">c0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">constantAsVar</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-255" name="crates/minion-sys/src/ffi.rs-255"></a><span class="hll"><span class="w">        </span><span class="n">constraint_addVar</span><span class="p">(</span><span class="n">ineq_x</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">c0</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-256" name="crates/minion-sys/src/ffi.rs-256"></a><span class="hll"><span class="w">        </span><span class="n">constraint_addVar</span><span class="p">(</span><span class="n">ineq_x</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">x</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-257" name="crates/minion-sys/src/ffi.rs-257"></a><span class="hll"><span class="w">        </span><span class="n">constraint_addConstant</span><span class="p">(</span><span class="n">ineq_x</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-258" name="crates/minion-sys/src/ffi.rs-258"></a>
+<a id="crates/minion-sys/src/ffi.rs-259" name="crates/minion-sys/src/ffi.rs-259"></a><span class="w">        </span><span class="c1">// ineq(y_value, y, 0)</span>
+<a id="crates/minion-sys/src/ffi.rs-260" name="crates/minion-sys/src/ffi.rs-260"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">ineq_y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">constraint_new</span><span class="p">(</span><span class="n">ConstraintType_CT_INEQ</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-261" name="crates/minion-sys/src/ffi.rs-261"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">cy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">constantAsVar</span><span class="p">(</span><span class="n">y_value</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-262" name="crates/minion-sys/src/ffi.rs-262"></a><span class="hll"><span class="w">        </span><span class="n">constraint_addVar</span><span class="p">(</span><span class="n">ineq_y</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">cy</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-263" name="crates/minion-sys/src/ffi.rs-263"></a><span class="hll"><span class="w">        </span><span class="n">constraint_addVar</span><span class="p">(</span><span class="n">ineq_y</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">y</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-264" name="crates/minion-sys/src/ffi.rs-264"></a><span class="hll"><span class="w">        </span><span class="n">constraint_addConstant</span><span class="p">(</span><span class="n">ineq_y</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-265" name="crates/minion-sys/src/ffi.rs-265"></a>
+<a id="crates/minion-sys/src/ffi.rs-266" name="crates/minion-sys/src/ffi.rs-266"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">and_inner</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">constraint_new</span><span class="p">(</span><span class="n">ConstraintType_CT_WATCHED_NEW_AND</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-267" name="crates/minion-sys/src/ffi.rs-267"></a><span class="hll"><span class="w">        </span><span class="n">constraint_addConstraint</span><span class="p">(</span><span class="n">and_inner</span><span class="p">,</span><span class="w"> </span><span class="n">ineq_x</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-268" name="crates/minion-sys/src/ffi.rs-268"></a><span class="hll"><span class="w">        </span><span class="n">constraint_addConstraint</span><span class="p">(</span><span class="n">and_inner</span><span class="p">,</span><span class="w"> </span><span class="n">ineq_y</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-269" name="crates/minion-sys/src/ffi.rs-269"></a>
+<a id="crates/minion-sys/src/ffi.rs-270" name="crates/minion-sys/src/ffi.rs-270"></a><span class="w">        </span><span class="c1">// sumgeq([-1, x], 0)</span>
+<a id="crates/minion-sys/src/ffi.rs-271" name="crates/minion-sys/src/ffi.rs-271"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">sum_x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">constraint_new</span><span class="p">(</span><span class="n">ConstraintType_CT_GEQSUM</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-272" name="crates/minion-sys/src/ffi.rs-272"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">sx_lhs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vec_var_new</span><span class="p">();</span>
+</span><a id="crates/minion-sys/src/ffi.rs-273" name="crates/minion-sys/src/ffi.rs-273"></a><span class="hll"><span class="w">        </span><span class="n">vec_var_push_back</span><span class="p">(</span><span class="n">sx_lhs</span><span class="p">,</span><span class="w"> </span><span class="n">constantAsVar</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">));</span>
+</span><a id="crates/minion-sys/src/ffi.rs-274" name="crates/minion-sys/src/ffi.rs-274"></a><span class="hll"><span class="w">        </span><span class="n">vec_var_push_back</span><span class="p">(</span><span class="n">sx_lhs</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-275" name="crates/minion-sys/src/ffi.rs-275"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">sx_rhs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vec_var_new</span><span class="p">();</span>
+</span><a id="crates/minion-sys/src/ffi.rs-276" name="crates/minion-sys/src/ffi.rs-276"></a><span class="hll"><span class="w">        </span><span class="n">vec_var_push_back</span><span class="p">(</span><span class="n">sx_rhs</span><span class="p">,</span><span class="w"> </span><span class="n">constantAsVar</span><span class="p">(</span><span class="mi">0</span><span class="p">));</span>
+</span><a id="crates/minion-sys/src/ffi.rs-277" name="crates/minion-sys/src/ffi.rs-277"></a><span class="hll"><span class="w">        </span><span class="n">constraint_addList</span><span class="p">(</span><span class="n">sum_x</span><span class="p">,</span><span class="w"> </span><span class="n">sx_lhs</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-278" name="crates/minion-sys/src/ffi.rs-278"></a><span class="hll"><span class="w">        </span><span class="n">constraint_addList</span><span class="p">(</span><span class="n">sum_x</span><span class="p">,</span><span class="w"> </span><span class="n">sx_rhs</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-279" name="crates/minion-sys/src/ffi.rs-279"></a>
+<a id="crates/minion-sys/src/ffi.rs-280" name="crates/minion-sys/src/ffi.rs-280"></a><span class="w">        </span><span class="c1">// sumgeq([-1, y], y_value)</span>
+<a id="crates/minion-sys/src/ffi.rs-281" name="crates/minion-sys/src/ffi.rs-281"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">sum_y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">constraint_new</span><span class="p">(</span><span class="n">ConstraintType_CT_GEQSUM</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-282" name="crates/minion-sys/src/ffi.rs-282"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">sy_lhs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vec_var_new</span><span class="p">();</span>
+</span><a id="crates/minion-sys/src/ffi.rs-283" name="crates/minion-sys/src/ffi.rs-283"></a><span class="hll"><span class="w">        </span><span class="n">vec_var_push_back</span><span class="p">(</span><span class="n">sy_lhs</span><span class="p">,</span><span class="w"> </span><span class="n">constantAsVar</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">));</span>
+</span><a id="crates/minion-sys/src/ffi.rs-284" name="crates/minion-sys/src/ffi.rs-284"></a><span class="hll"><span class="w">        </span><span class="n">vec_var_push_back</span><span class="p">(</span><span class="n">sy_lhs</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-285" name="crates/minion-sys/src/ffi.rs-285"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">sy_rhs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vec_var_new</span><span class="p">();</span>
+</span><a id="crates/minion-sys/src/ffi.rs-286" name="crates/minion-sys/src/ffi.rs-286"></a><span class="hll"><span class="w">        </span><span class="n">vec_var_push_back</span><span class="p">(</span><span class="n">sy_rhs</span><span class="p">,</span><span class="w"> </span><span class="n">constantAsVar</span><span class="p">(</span><span class="n">y_value</span><span class="p">));</span>
+</span><a id="crates/minion-sys/src/ffi.rs-287" name="crates/minion-sys/src/ffi.rs-287"></a><span class="hll"><span class="w">        </span><span class="n">constraint_addList</span><span class="p">(</span><span class="n">sum_y</span><span class="p">,</span><span class="w"> </span><span class="n">sy_lhs</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-288" name="crates/minion-sys/src/ffi.rs-288"></a><span class="hll"><span class="w">        </span><span class="n">constraint_addList</span><span class="p">(</span><span class="n">sum_y</span><span class="p">,</span><span class="w"> </span><span class="n">sy_rhs</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-289" name="crates/minion-sys/src/ffi.rs-289"></a>
+<a id="crates/minion-sys/src/ffi.rs-290" name="crates/minion-sys/src/ffi.rs-290"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">or_inner</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">constraint_new</span><span class="p">(</span><span class="n">ConstraintType_CT_WATCHED_NEW_OR</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-291" name="crates/minion-sys/src/ffi.rs-291"></a><span class="hll"><span class="w">        </span><span class="n">constraint_addConstraint</span><span class="p">(</span><span class="n">or_inner</span><span class="p">,</span><span class="w"> </span><span class="n">sum_x</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-292" name="crates/minion-sys/src/ffi.rs-292"></a><span class="hll"><span class="w">        </span><span class="n">constraint_addConstraint</span><span class="p">(</span><span class="n">or_inner</span><span class="p">,</span><span class="w"> </span><span class="n">sum_y</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-293" name="crates/minion-sys/src/ffi.rs-293"></a>
+<a id="crates/minion-sys/src/ffi.rs-294" name="crates/minion-sys/src/ffi.rs-294"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">and_outer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">constraint_new</span><span class="p">(</span><span class="n">ConstraintType_CT_WATCHED_NEW_AND</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-295" name="crates/minion-sys/src/ffi.rs-295"></a><span class="hll"><span class="w">        </span><span class="n">constraint_addConstraint</span><span class="p">(</span><span class="n">and_outer</span><span class="p">,</span><span class="w"> </span><span class="n">and_inner</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-296" name="crates/minion-sys/src/ffi.rs-296"></a><span class="hll"><span class="w">        </span><span class="n">constraint_addConstraint</span><span class="p">(</span><span class="n">and_outer</span><span class="p">,</span><span class="w"> </span><span class="n">or_inner</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-297" name="crates/minion-sys/src/ffi.rs-297"></a>
+<a id="crates/minion-sys/src/ffi.rs-298" name="crates/minion-sys/src/ffi.rs-298"></a><span class="w">        </span><span class="c1">// reify(and_outer, aux)</span>
+<a id="crates/minion-sys/src/ffi.rs-299" name="crates/minion-sys/src/ffi.rs-299"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">reify</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">constraint_new</span><span class="p">(</span><span class="n">ConstraintType_CT_REIFY</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-300" name="crates/minion-sys/src/ffi.rs-300"></a><span class="hll"><span class="w">        </span><span class="n">constraint_addConstraint</span><span class="p">(</span><span class="n">reify</span><span class="p">,</span><span class="w"> </span><span class="n">and_outer</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-301" name="crates/minion-sys/src/ffi.rs-301"></a><span class="hll"><span class="w">        </span><span class="n">constraint_addVar</span><span class="p">(</span><span class="n">reify</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">aux</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-302" name="crates/minion-sys/src/ffi.rs-302"></a>
+<a id="crates/minion-sys/src/ffi.rs-303" name="crates/minion-sys/src/ffi.rs-303"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">add_reify</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">minion_addConstraintMidsearch</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span><span class="w"> </span><span class="n">instance</span><span class="p">,</span><span class="w"> </span><span class="n">reify</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-304" name="crates/minion-sys/src/ffi.rs-304"></a><span class="hll"><span class="w">        </span><span class="p">(</span><span class="n">add_var</span><span class="p">,</span><span class="w"> </span><span class="n">add_reify</span><span class="p">)</span>
+</span><a id="crates/minion-sys/src/ffi.rs-305" name="crates/minion-sys/src/ffi.rs-305"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="crates/minion-sys/src/ffi.rs-306" name="crates/minion-sys/src/ffi.rs-306"></a>
+<a id="crates/minion-sys/src/ffi.rs-307" name="crates/minion-sys/src/ffi.rs-307"></a><span class="w">    </span><span class="k">unsafe</span><span class="w"> </span><span class="k">extern</span><span class="w"> </span><span class="s">&quot;C&quot;</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">midsearch_mutation_callback</span><span class="p">(</span>
+<a id="crates/minion-sys/src/ffi.rs-308" name="crates/minion-sys/src/ffi.rs-308"></a><span class="w">        </span><span class="n">ctx</span><span class="p">:</span><span class="w"> </span><span class="o">*</span><span class="k">mut</span><span class="w"> </span><span class="n">MinionContext</span><span class="p">,</span>
+<a id="crates/minion-sys/src/ffi.rs-309" name="crates/minion-sys/src/ffi.rs-309"></a><span class="w">        </span><span class="n">userdata</span><span class="p">:</span><span class="w"> </span><span class="o">*</span><span class="k">mut</span><span class="w"> </span><span class="n">c_void</span><span class="p">,</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">349</span>
+<span class="normal">350</span>
+<span class="normal">351</span>
+<span class="normal">352</span>
+<span class="normal">353</span>
+<span class="normal">354</span>
+<span class="normal">355</span>
+<span class="normal">356</span>
+<span class="normal">357</span>
+<span class="normal">358</span>
+<span class="normal">359</span>
+<span class="normal">360</span>
+<span class="normal">361</span>
+<span class="normal">362</span>
+<span class="normal">363</span>
+<span class="normal">364</span>
+<span class="normal">365</span>
+<span class="normal">366</span>
+<span class="normal">367</span>
+<span class="normal">368</span>
+<span class="normal">369</span>
+<span class="normal">370</span>
+<span class="normal">371</span>
+<span class="normal">372</span>
+<span class="normal">373</span>
+<span class="normal">374</span>
+<span class="normal">375</span>
+<span class="normal">376</span>
+<span class="normal">377</span>
+<span class="normal">378</span>
+<span class="normal">379</span>
+<span class="normal">380</span>
+<span class="normal">381</span>
+<span class="normal">382</span>
+<span class="normal">383</span>
+<span class="normal">384</span>
+<span class="normal">385</span>
+<span class="normal">386</span>
+<span class="normal">387</span>
+<span class="normal">388</span>
+<span class="normal">389</span>
+<span class="normal">390</span>
+<span class="normal">391</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/minion-sys/src/ffi.rs-349" name="crates/minion-sys/src/ffi.rs-349"></a>
+<a id="crates/minion-sys/src/ffi.rs-350" name="crates/minion-sys/src/ffi.rs-350"></a><span class="w">        </span><span class="kc">false</span>
+<a id="crates/minion-sys/src/ffi.rs-351" name="crates/minion-sys/src/ffi.rs-351"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/minion-sys/src/ffi.rs-352" name="crates/minion-sys/src/ffi.rs-352"></a>
+<a id="crates/minion-sys/src/ffi.rs-353" name="crates/minion-sys/src/ffi.rs-353"></a><span class="hll"><span class="w">    </span><span class="k">unsafe</span><span class="w"> </span><span class="k">extern</span><span class="w"> </span><span class="s">&quot;C&quot;</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">issue_midsearch_callback</span><span class="p">(</span>
+</span><a id="crates/minion-sys/src/ffi.rs-354" name="crates/minion-sys/src/ffi.rs-354"></a><span class="hll"><span class="w">        </span><span class="n">ctx</span><span class="p">:</span><span class="w"> </span><span class="o">*</span><span class="k">mut</span><span class="w"> </span><span class="n">MinionContext</span><span class="p">,</span>
+</span><a id="crates/minion-sys/src/ffi.rs-355" name="crates/minion-sys/src/ffi.rs-355"></a><span class="hll"><span class="w">        </span><span class="n">userdata</span><span class="p">:</span><span class="w"> </span><span class="o">*</span><span class="k">mut</span><span class="w"> </span><span class="n">c_void</span><span class="p">,</span>
+</span><a id="crates/minion-sys/src/ffi.rs-356" name="crates/minion-sys/src/ffi.rs-356"></a><span class="hll"><span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/minion-sys/src/ffi.rs-357" name="crates/minion-sys/src/ffi.rs-357"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="o">*</span><span class="p">(</span><span class="n">userdata</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="o">*</span><span class="k">mut</span><span class="w"> </span><span class="n">IssueState</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-358" name="crates/minion-sys/src/ffi.rs-358"></a><span class="hll"><span class="w">        </span><span class="n">state</span><span class="p">.</span><span class="n">callback_count</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+</span><a id="crates/minion-sys/src/ffi.rs-359" name="crates/minion-sys/src/ffi.rs-359"></a>
+<a id="crates/minion-sys/src/ffi.rs-360" name="crates/minion-sys/src/ffi.rs-360"></a><span class="hll"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="n">state</span><span class="p">.</span><span class="n">callback_count</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/minion-sys/src/ffi.rs-361" name="crates/minion-sys/src/ffi.rs-361"></a><span class="hll"><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="p">(</span><span class="n">add_var</span><span class="p">,</span><span class="w"> </span><span class="n">add_reify</span><span class="p">)</span><span class="w"> </span><span class="o">=</span>
+</span><a id="crates/minion-sys/src/ffi.rs-362" name="crates/minion-sys/src/ffi.rs-362"></a><span class="hll"><span class="w">                </span><span class="n">add_issue_dominance_like_reify</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">.</span><span class="n">instance</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;dyn_aux_0&quot;</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-363" name="crates/minion-sys/src/ffi.rs-363"></a><span class="hll"><span class="w">            </span><span class="n">state</span><span class="p">.</span><span class="n">add_var_results</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">add_var</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-364" name="crates/minion-sys/src/ffi.rs-364"></a><span class="hll"><span class="w">            </span><span class="n">state</span><span class="p">.</span><span class="n">add_constraint_results</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">add_reify</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-365" name="crates/minion-sys/src/ffi.rs-365"></a><span class="hll"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+</span><a id="crates/minion-sys/src/ffi.rs-366" name="crates/minion-sys/src/ffi.rs-366"></a><span class="hll"><span class="w">        </span><span class="p">}</span>
+</span><a id="crates/minion-sys/src/ffi.rs-367" name="crates/minion-sys/src/ffi.rs-367"></a>
+<a id="crates/minion-sys/src/ffi.rs-368" name="crates/minion-sys/src/ffi.rs-368"></a><span class="hll"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="n">state</span><span class="p">.</span><span class="n">callback_count</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/minion-sys/src/ffi.rs-369" name="crates/minion-sys/src/ffi.rs-369"></a><span class="hll"><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="n">add_unused</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">minion_newVarMidsearch</span><span class="p">(</span>
+</span><a id="crates/minion-sys/src/ffi.rs-370" name="crates/minion-sys/src/ffi.rs-370"></a><span class="hll"><span class="w">                </span><span class="n">ctx</span><span class="p">,</span>
+</span><a id="crates/minion-sys/src/ffi.rs-371" name="crates/minion-sys/src/ffi.rs-371"></a><span class="hll"><span class="w">                </span><span class="n">state</span><span class="p">.</span><span class="n">instance</span><span class="p">,</span>
+</span><a id="crates/minion-sys/src/ffi.rs-372" name="crates/minion-sys/src/ffi.rs-372"></a><span class="hll"><span class="w">                </span><span class="s">b&quot;dyn_aux_1_unused</span><span class="se">\0</span><span class="s">&quot;</span><span class="p">.</span><span class="n">as_ptr</span><span class="p">()</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="o">*</span><span class="k">mut</span><span class="w"> </span><span class="n">c_char</span><span class="p">,</span>
+</span><a id="crates/minion-sys/src/ffi.rs-373" name="crates/minion-sys/src/ffi.rs-373"></a><span class="w">                </span><span class="n">VariableType_VAR_BOOL</span><span class="p">,</span>
+<a id="crates/minion-sys/src/ffi.rs-374" name="crates/minion-sys/src/ffi.rs-374"></a><span class="w">                </span><span class="mi">0</span><span class="p">,</span>
+<a id="crates/minion-sys/src/ffi.rs-375" name="crates/minion-sys/src/ffi.rs-375"></a><span class="w">                </span><span class="mi">1</span><span class="p">,</span>
+<a id="crates/minion-sys/src/ffi.rs-376" name="crates/minion-sys/src/ffi.rs-376"></a><span class="w">            </span><span class="p">);</span>
+<a id="crates/minion-sys/src/ffi.rs-377" name="crates/minion-sys/src/ffi.rs-377"></a><span class="hll"><span class="w">            </span><span class="n">state</span><span class="p">.</span><span class="n">add_var_results</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">add_unused</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-378" name="crates/minion-sys/src/ffi.rs-378"></a>
+<a id="crates/minion-sys/src/ffi.rs-379" name="crates/minion-sys/src/ffi.rs-379"></a><span class="hll"><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="p">(</span><span class="n">add_var</span><span class="p">,</span><span class="w"> </span><span class="n">add_reify</span><span class="p">)</span><span class="w"> </span><span class="o">=</span>
+</span><a id="crates/minion-sys/src/ffi.rs-380" name="crates/minion-sys/src/ffi.rs-380"></a><span class="hll"><span class="w">                </span><span class="n">add_issue_dominance_like_reify</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span><span class="w"> </span><span class="n">state</span><span class="p">.</span><span class="n">instance</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;dyn_aux_2&quot;</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-381" name="crates/minion-sys/src/ffi.rs-381"></a><span class="hll"><span class="w">            </span><span class="n">state</span><span class="p">.</span><span class="n">add_var_results</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">add_var</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-382" name="crates/minion-sys/src/ffi.rs-382"></a><span class="hll"><span class="w">            </span><span class="n">state</span><span class="p">.</span><span class="n">add_constraint_results</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">add_reify</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-383" name="crates/minion-sys/src/ffi.rs-383"></a><span class="hll"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+</span><a id="crates/minion-sys/src/ffi.rs-384" name="crates/minion-sys/src/ffi.rs-384"></a><span class="hll"><span class="w">        </span><span class="p">}</span>
+</span><a id="crates/minion-sys/src/ffi.rs-385" name="crates/minion-sys/src/ffi.rs-385"></a>
+<a id="crates/minion-sys/src/ffi.rs-386" name="crates/minion-sys/src/ffi.rs-386"></a><span class="hll"><span class="w">        </span><span class="kc">false</span>
+</span><a id="crates/minion-sys/src/ffi.rs-387" name="crates/minion-sys/src/ffi.rs-387"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="crates/minion-sys/src/ffi.rs-388" name="crates/minion-sys/src/ffi.rs-388"></a>
+<a id="crates/minion-sys/src/ffi.rs-389" name="crates/minion-sys/src/ffi.rs-389"></a><span class="w">    </span><span class="k">unsafe</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">run_midsearch_scenario_once</span><span class="p">(</span><span class="n">scenario</span><span class="p">:</span><span class="w"> </span><span class="nc">MidsearchScenario</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">MidsearchOutcome</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/minion-sys/src/ffi.rs-390" name="crates/minion-sys/src/ffi.rs-390"></a><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">ctx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">minion_newContext</span><span class="p">();</span>
+<a id="crates/minion-sys/src/ffi.rs-391" name="crates/minion-sys/src/ffi.rs-391"></a><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">options</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">searchOptions_new</span><span class="p">();</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">425</span>
+<span class="normal">426</span>
+<span class="normal">427</span>
+<span class="normal">428</span>
+<span class="normal">429</span>
+<span class="normal">430</span>
+<span class="normal">431</span>
+<span class="normal">432</span>
+<span class="normal">433</span>
+<span class="normal">434</span>
+<span class="normal">435</span>
+<span class="normal">436</span>
+<span class="normal">437</span>
+<span class="normal">438</span>
+<span class="normal">439</span>
+<span class="normal">440</span>
+<span class="normal">441</span>
+<span class="normal">442</span>
+<span class="normal">443</span>
+<span class="normal">444</span>
+<span class="normal">445</span>
+<span class="normal">446</span>
+<span class="normal">447</span>
+<span class="normal">448</span>
+<span class="normal">449</span>
+<span class="normal">450</span>
+<span class="normal">451</span>
+<span class="normal">452</span>
+<span class="normal">453</span>
+<span class="normal">454</span>
+<span class="normal">455</span>
+<span class="normal">456</span>
+<span class="normal">457</span>
+<span class="normal">458</span>
+<span class="normal">459</span>
+<span class="normal">460</span>
+<span class="normal">461</span>
+<span class="normal">462</span>
+<span class="normal">463</span>
+<span class="normal">464</span>
+<span class="normal">465</span>
+<span class="normal">466</span>
+<span class="normal">467</span>
+<span class="normal">468</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/minion-sys/src/ffi.rs-425" name="crates/minion-sys/src/ffi.rs-425"></a><span class="w">            </span><span class="n">add_constraint_result</span><span class="p">:</span><span class="w"> </span><span class="nc">state</span><span class="p">.</span><span class="n">add_constraint_result</span><span class="p">,</span>
+<a id="crates/minion-sys/src/ffi.rs-426" name="crates/minion-sys/src/ffi.rs-426"></a><span class="w">        </span><span class="p">}</span>
+<a id="crates/minion-sys/src/ffi.rs-427" name="crates/minion-sys/src/ffi.rs-427"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/minion-sys/src/ffi.rs-428" name="crates/minion-sys/src/ffi.rs-428"></a>
+<a id="crates/minion-sys/src/ffi.rs-429" name="crates/minion-sys/src/ffi.rs-429"></a><span class="hll"><span class="w">    </span><span class="k">unsafe</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">run_issue_scenario_once</span><span class="p">()</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">IssueOutcome</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/minion-sys/src/ffi.rs-430" name="crates/minion-sys/src/ffi.rs-430"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">ctx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">minion_newContext</span><span class="p">();</span>
+</span><a id="crates/minion-sys/src/ffi.rs-431" name="crates/minion-sys/src/ffi.rs-431"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">options</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">searchOptions_new</span><span class="p">();</span>
+</span><a id="crates/minion-sys/src/ffi.rs-432" name="crates/minion-sys/src/ffi.rs-432"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">args</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">searchMethod_new</span><span class="p">();</span>
+</span><a id="crates/minion-sys/src/ffi.rs-433" name="crates/minion-sys/src/ffi.rs-433"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">instance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">instance_new</span><span class="p">();</span>
+</span><a id="crates/minion-sys/src/ffi.rs-434" name="crates/minion-sys/src/ffi.rs-434"></a>
+<a id="crates/minion-sys/src/ffi.rs-435" name="crates/minion-sys/src/ffi.rs-435"></a><span class="hll"><span class="w">        </span><span class="p">(</span><span class="o">*</span><span class="n">options</span><span class="p">).</span><span class="n">silent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+</span><a id="crates/minion-sys/src/ffi.rs-436" name="crates/minion-sys/src/ffi.rs-436"></a><span class="hll"><span class="w">        </span><span class="p">(</span><span class="o">*</span><span class="n">options</span><span class="p">).</span><span class="n">print_solution</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+</span><a id="crates/minion-sys/src/ffi.rs-437" name="crates/minion-sys/src/ffi.rs-437"></a>
+<a id="crates/minion-sys/src/ffi.rs-438" name="crates/minion-sys/src/ffi.rs-438"></a><span class="hll"><span class="w">        </span><span class="n">build_issue_instance</span><span class="p">(</span><span class="n">instance</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-439" name="crates/minion-sys/src/ffi.rs-439"></a>
+<a id="crates/minion-sys/src/ffi.rs-440" name="crates/minion-sys/src/ffi.rs-440"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">IssueState</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/minion-sys/src/ffi.rs-441" name="crates/minion-sys/src/ffi.rs-441"></a><span class="hll"><span class="w">            </span><span class="n">instance</span><span class="p">,</span>
+</span><a id="crates/minion-sys/src/ffi.rs-442" name="crates/minion-sys/src/ffi.rs-442"></a><span class="hll"><span class="w">            </span><span class="n">callback_count</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+</span><a id="crates/minion-sys/src/ffi.rs-443" name="crates/minion-sys/src/ffi.rs-443"></a><span class="hll"><span class="w">            </span><span class="n">add_var_results</span><span class="p">:</span><span class="w"> </span><span class="nc">vec</span><span class="o">!</span><span class="p">[],</span>
+</span><a id="crates/minion-sys/src/ffi.rs-444" name="crates/minion-sys/src/ffi.rs-444"></a><span class="hll"><span class="w">            </span><span class="n">add_constraint_results</span><span class="p">:</span><span class="w"> </span><span class="nc">vec</span><span class="o">!</span><span class="p">[],</span>
+</span><a id="crates/minion-sys/src/ffi.rs-445" name="crates/minion-sys/src/ffi.rs-445"></a><span class="hll"><span class="w">        </span><span class="p">};</span>
+</span><a id="crates/minion-sys/src/ffi.rs-446" name="crates/minion-sys/src/ffi.rs-446"></a>
+<a id="crates/minion-sys/src/ffi.rs-447" name="crates/minion-sys/src/ffi.rs-447"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">run_code</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">runMinion</span><span class="p">(</span>
+</span><a id="crates/minion-sys/src/ffi.rs-448" name="crates/minion-sys/src/ffi.rs-448"></a><span class="hll"><span class="w">            </span><span class="n">ctx</span><span class="p">,</span>
+</span><a id="crates/minion-sys/src/ffi.rs-449" name="crates/minion-sys/src/ffi.rs-449"></a><span class="hll"><span class="w">            </span><span class="n">options</span><span class="p">,</span>
+</span><a id="crates/minion-sys/src/ffi.rs-450" name="crates/minion-sys/src/ffi.rs-450"></a><span class="hll"><span class="w">            </span><span class="n">args</span><span class="p">,</span>
+</span><a id="crates/minion-sys/src/ffi.rs-451" name="crates/minion-sys/src/ffi.rs-451"></a><span class="hll"><span class="w">            </span><span class="n">instance</span><span class="p">,</span>
+</span><a id="crates/minion-sys/src/ffi.rs-452" name="crates/minion-sys/src/ffi.rs-452"></a><span class="hll"><span class="w">            </span><span class="nb">Some</span><span class="p">(</span><span class="n">issue_midsearch_callback</span><span class="p">),</span>
+</span><a id="crates/minion-sys/src/ffi.rs-453" name="crates/minion-sys/src/ffi.rs-453"></a><span class="hll"><span class="w">            </span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">state</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="o">*</span><span class="k">mut</span><span class="w"> </span><span class="n">IssueState</span><span class="p">).</span><span class="n">cast</span><span class="p">::</span><span class="o">&lt;</span><span class="n">c_void</span><span class="o">&gt;</span><span class="p">(),</span>
+</span><a id="crates/minion-sys/src/ffi.rs-454" name="crates/minion-sys/src/ffi.rs-454"></a><span class="w">        </span><span class="p">);</span>
+<a id="crates/minion-sys/src/ffi.rs-455" name="crates/minion-sys/src/ffi.rs-455"></a>
+<a id="crates/minion-sys/src/ffi.rs-456" name="crates/minion-sys/src/ffi.rs-456"></a><span class="hll"><span class="w">        </span><span class="n">minion_freeContext</span><span class="p">(</span><span class="n">ctx</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-457" name="crates/minion-sys/src/ffi.rs-457"></a>
+<a id="crates/minion-sys/src/ffi.rs-458" name="crates/minion-sys/src/ffi.rs-458"></a><span class="hll"><span class="w">        </span><span class="n">IssueOutcome</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/minion-sys/src/ffi.rs-459" name="crates/minion-sys/src/ffi.rs-459"></a><span class="hll"><span class="w">            </span><span class="n">run_code</span><span class="p">,</span>
+</span><a id="crates/minion-sys/src/ffi.rs-460" name="crates/minion-sys/src/ffi.rs-460"></a><span class="hll"><span class="w">            </span><span class="n">callback_count</span><span class="p">:</span><span class="w"> </span><span class="nc">state</span><span class="p">.</span><span class="n">callback_count</span><span class="p">,</span>
+</span><a id="crates/minion-sys/src/ffi.rs-461" name="crates/minion-sys/src/ffi.rs-461"></a><span class="hll"><span class="w">            </span><span class="n">add_var_results</span><span class="p">:</span><span class="w"> </span><span class="nc">state</span><span class="p">.</span><span class="n">add_var_results</span><span class="p">,</span>
+</span><a id="crates/minion-sys/src/ffi.rs-462" name="crates/minion-sys/src/ffi.rs-462"></a><span class="hll"><span class="w">            </span><span class="n">add_constraint_results</span><span class="p">:</span><span class="w"> </span><span class="nc">state</span><span class="p">.</span><span class="n">add_constraint_results</span><span class="p">,</span>
+</span><a id="crates/minion-sys/src/ffi.rs-463" name="crates/minion-sys/src/ffi.rs-463"></a><span class="hll"><span class="w">        </span><span class="p">}</span>
+</span><a id="crates/minion-sys/src/ffi.rs-464" name="crates/minion-sys/src/ffi.rs-464"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="crates/minion-sys/src/ffi.rs-465" name="crates/minion-sys/src/ffi.rs-465"></a>
+<a id="crates/minion-sys/src/ffi.rs-466" name="crates/minion-sys/src/ffi.rs-466"></a><span class="w">    </span><span class="k">fn</span><span class="w"> </span><span class="nf">run_midsearch_child</span><span class="p">(</span><span class="n">scenario</span><span class="p">:</span><span class="w"> </span><span class="nc">MidsearchScenario</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">ExitStatus</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/minion-sys/src/ffi.rs-467" name="crates/minion-sys/src/ffi.rs-467"></a><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">current_test_binary</span><span class="w"> </span><span class="o">=</span>
+<a id="crates/minion-sys/src/ffi.rs-468" name="crates/minion-sys/src/ffi.rs-468"></a><span class="w">            </span><span class="n">std</span><span class="p">::</span><span class="n">env</span><span class="p">::</span><span class="n">current_exe</span><span class="p">().</span><span class="n">expect</span><span class="p">(</span><span class="s">&quot;could not find current test binary&quot;</span><span class="p">);</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">475</span>
+<span class="normal">476</span>
+<span class="normal">477</span>
+<span class="normal">478</span>
+<span class="normal">479</span>
+<span class="normal">480</span>
+<span class="normal">481</span>
+<span class="normal">482</span>
+<span class="normal">483</span>
+<span class="normal">484</span>
+<span class="normal">485</span>
+<span class="normal">486</span>
+<span class="normal">487</span>
+<span class="normal">488</span>
+<span class="normal">489</span>
+<span class="normal">490</span>
+<span class="normal">491</span>
+<span class="normal">492</span>
+<span class="normal">493</span>
+<span class="normal">494</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/minion-sys/src/ffi.rs-475" name="crates/minion-sys/src/ffi.rs-475"></a><span class="w">            </span><span class="p">.</span><span class="n">status</span><span class="p">()</span>
+<a id="crates/minion-sys/src/ffi.rs-476" name="crates/minion-sys/src/ffi.rs-476"></a><span class="w">            </span><span class="p">.</span><span class="n">expect</span><span class="p">(</span><span class="s">&quot;could not execute child test&quot;</span><span class="p">)</span>
+<a id="crates/minion-sys/src/ffi.rs-477" name="crates/minion-sys/src/ffi.rs-477"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/minion-sys/src/ffi.rs-478" name="crates/minion-sys/src/ffi.rs-478"></a>
+<a id="crates/minion-sys/src/ffi.rs-479" name="crates/minion-sys/src/ffi.rs-479"></a><span class="hll"><span class="w">    </span><span class="k">fn</span><span class="w"> </span><span class="nf">run_issue_child</span><span class="p">()</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">ExitStatus</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/minion-sys/src/ffi.rs-480" name="crates/minion-sys/src/ffi.rs-480"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">current_test_binary</span><span class="w"> </span><span class="o">=</span>
+</span><a id="crates/minion-sys/src/ffi.rs-481" name="crates/minion-sys/src/ffi.rs-481"></a><span class="hll"><span class="w">            </span><span class="n">std</span><span class="p">::</span><span class="n">env</span><span class="p">::</span><span class="n">current_exe</span><span class="p">().</span><span class="n">expect</span><span class="p">(</span><span class="s">&quot;could not find current test binary&quot;</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-482" name="crates/minion-sys/src/ffi.rs-482"></a>
+<a id="crates/minion-sys/src/ffi.rs-483" name="crates/minion-sys/src/ffi.rs-483"></a><span class="hll"><span class="w">        </span><span class="n">Command</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="n">current_test_binary</span><span class="p">)</span>
+</span><a id="crates/minion-sys/src/ffi.rs-484" name="crates/minion-sys/src/ffi.rs-484"></a><span class="hll"><span class="w">            </span><span class="p">.</span><span class="n">arg</span><span class="p">(</span><span class="s">&quot;--exact&quot;</span><span class="p">)</span>
+</span><a id="crates/minion-sys/src/ffi.rs-485" name="crates/minion-sys/src/ffi.rs-485"></a><span class="hll"><span class="w">            </span><span class="p">.</span><span class="n">arg</span><span class="p">(</span><span class="n">ISSUE_CHILD_TEST</span><span class="p">)</span>
+</span><a id="crates/minion-sys/src/ffi.rs-486" name="crates/minion-sys/src/ffi.rs-486"></a><span class="hll"><span class="w">            </span><span class="p">.</span><span class="n">arg</span><span class="p">(</span><span class="s">&quot;--nocapture&quot;</span><span class="p">)</span>
+</span><a id="crates/minion-sys/src/ffi.rs-487" name="crates/minion-sys/src/ffi.rs-487"></a><span class="hll"><span class="w">            </span><span class="p">.</span><span class="n">env</span><span class="p">(</span><span class="n">ISSUE_SCENARIO_ENV</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;1&quot;</span><span class="p">)</span>
+</span><a id="crates/minion-sys/src/ffi.rs-488" name="crates/minion-sys/src/ffi.rs-488"></a><span class="hll"><span class="w">            </span><span class="p">.</span><span class="n">status</span><span class="p">()</span>
+</span><a id="crates/minion-sys/src/ffi.rs-489" name="crates/minion-sys/src/ffi.rs-489"></a><span class="hll"><span class="w">            </span><span class="p">.</span><span class="n">expect</span><span class="p">(</span><span class="s">&quot;could not execute issue child test&quot;</span><span class="p">)</span>
+</span><a id="crates/minion-sys/src/ffi.rs-490" name="crates/minion-sys/src/ffi.rs-490"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="crates/minion-sys/src/ffi.rs-491" name="crates/minion-sys/src/ffi.rs-491"></a>
+<a id="crates/minion-sys/src/ffi.rs-492" name="crates/minion-sys/src/ffi.rs-492"></a><span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="k">extern</span><span class="w"> </span><span class="s">&quot;C&quot;</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">hello_from_rust</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span><span class="w"> </span><span class="o">*</span><span class="k">mut</span><span class="w"> </span><span class="n">MinionContext</span><span class="p">,</span><span class="w"> </span><span class="n">_userdata</span><span class="p">:</span><span class="w"> </span><span class="o">*</span><span class="k">mut</span><span class="w"> </span><span class="n">c_void</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/minion-sys/src/ffi.rs-493" name="crates/minion-sys/src/ffi.rs-493"></a><span class="w">        </span><span class="k">unsafe</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/minion-sys/src/ffi.rs-494" name="crates/minion-sys/src/ffi.rs-494"></a><span class="w">            </span><span class="n">X_VAL</span><span class="p">.</span><span class="n">store</span><span class="p">(</span><span class="n">printMatrix_getValue</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">Ordering</span><span class="p">::</span><span class="n">Relaxed</span><span class="p">);</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">679</span>
+<span class="normal">680</span>
+<span class="normal">681</span>
+<span class="normal">682</span>
+<span class="normal">683</span>
+<span class="normal">684</span>
+<span class="normal">685</span>
+<span class="normal">686</span>
+<span class="normal">687</span>
+<span class="normal">688</span>
+<span class="normal">689</span>
+<span class="normal">690</span>
+<span class="normal">691</span>
+<span class="normal">692</span>
+<span class="normal">693</span>
+<span class="normal">694</span>
+<span class="normal">695</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/minion-sys/src/ffi.rs-679" name="crates/minion-sys/src/ffi.rs-679"></a><span class="w">    </span><span class="k">fn</span><span class="w"> </span><span class="nf">midsearch_reify_newvar_issue_child_runner</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/minion-sys/src/ffi.rs-680" name="crates/minion-sys/src/ffi.rs-680"></a><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="nb">Ok</span><span class="p">(</span><span class="n">flag</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="p">::</span><span class="n">env</span><span class="p">::</span><span class="n">var</span><span class="p">(</span><span class="n">ISSUE_SCENARIO_ENV</span><span class="p">)</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/minion-sys/src/ffi.rs-681" name="crates/minion-sys/src/ffi.rs-681"></a><span class="w">            </span><span class="k">return</span><span class="p">;</span>
+<a id="crates/minion-sys/src/ffi.rs-682" name="crates/minion-sys/src/ffi.rs-682"></a><span class="w">        </span><span class="p">};</span>
+<a id="crates/minion-sys/src/ffi.rs-683" name="crates/minion-sys/src/ffi.rs-683"></a><span class="hll"><span class="w">        </span><span class="fm">assert_eq!</span><span class="p">(</span><span class="n">flag</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;invalid issue child env value&quot;</span><span class="p">);</span>
+</span><a id="crates/minion-sys/src/ffi.rs-684" name="crates/minion-sys/src/ffi.rs-684"></a>
+<a id="crates/minion-sys/src/ffi.rs-685" name="crates/minion-sys/src/ffi.rs-685"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">outcome</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">unsafe</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">run_issue_scenario_once</span><span class="p">()</span><span class="w"> </span><span class="p">};</span>
+</span><a id="crates/minion-sys/src/ffi.rs-686" name="crates/minion-sys/src/ffi.rs-686"></a>
+<a id="crates/minion-sys/src/ffi.rs-687" name="crates/minion-sys/src/ffi.rs-687"></a><span class="hll"><span class="w">        </span><span class="fm">assert_eq!</span><span class="p">(</span>
+</span><a id="crates/minion-sys/src/ffi.rs-688" name="crates/minion-sys/src/ffi.rs-688"></a><span class="w">            </span><span class="n">outcome</span><span class="p">.</span><span class="n">run_code</span><span class="p">,</span><span class="w"> </span><span class="n">MinionResult_MINION_OK</span><span class="p">,</span>
+<a id="crates/minion-sys/src/ffi.rs-689" name="crates/minion-sys/src/ffi.rs-689"></a><span class="w">            </span><span class="s">&quot;runMinion failed unexpectedly in issue child with outcome={outcome:#?}&quot;</span>
+<a id="crates/minion-sys/src/ffi.rs-690" name="crates/minion-sys/src/ffi.rs-690"></a><span class="w">        </span><span class="p">);</span>
+<a id="crates/minion-sys/src/ffi.rs-691" name="crates/minion-sys/src/ffi.rs-691"></a><span class="hll"><span class="w">        </span><span class="fm">assert!</span><span class="p">(</span>
+</span><a id="crates/minion-sys/src/ffi.rs-692" name="crates/minion-sys/src/ffi.rs-692"></a><span class="hll"><span class="w">            </span><span class="n">outcome</span><span class="p">.</span><span class="n">callback_count</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+</span><a id="crates/minion-sys/src/ffi.rs-693" name="crates/minion-sys/src/ffi.rs-693"></a><span class="w">            </span><span class="s">&quot;issue callback was never called; outcome={outcome:#?}&quot;</span>
+<a id="crates/minion-sys/src/ffi.rs-694" name="crates/minion-sys/src/ffi.rs-694"></a><span class="w">        </span><span class="p">);</span>
+<a id="crates/minion-sys/src/ffi.rs-695" name="crates/minion-sys/src/ffi.rs-695"></a><span class="w">    </span><span class="p">}</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">695</span>
+<span class="normal">696</span>
+<span class="normal">697</span>
+<span class="normal">698</span>
+<span class="normal">699</span>
+<span class="normal">700</span>
+<span class="normal">701</span>
+<span class="normal">702</span>
+<span class="normal">703</span>
+<span class="normal">704</span>
+<span class="normal">705</span>
+<span class="normal">706</span>
+<span class="normal">707</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/minion-sys/src/ffi.rs-695" name="crates/minion-sys/src/ffi.rs-695"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/minion-sys/src/ffi.rs-696" name="crates/minion-sys/src/ffi.rs-696"></a>
+<a id="crates/minion-sys/src/ffi.rs-697" name="crates/minion-sys/src/ffi.rs-697"></a><span class="w">    </span><span class="cp">#[test]</span>
+<a id="crates/minion-sys/src/ffi.rs-698" name="crates/minion-sys/src/ffi.rs-698"></a><span class="w">    </span><span class="cp">#[ignore = </span><span class="s">&quot;diagnostic reproducer for Minion segfault with mid-search reify on freshly-added bool vars&quot;</span><span class="cp">]</span>
+<a id="crates/minion-sys/src/ffi.rs-699" name="crates/minion-sys/src/ffi.rs-699"></a><span class="hll"><span class="w">    </span><span class="k">fn</span><span class="w"> </span><span class="nf">midsearch_reify_newvar_issue_reproducer</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/minion-sys/src/ffi.rs-700" name="crates/minion-sys/src/ffi.rs-700"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">status</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">run_issue_child</span><span class="p">();</span>
+</span><a id="crates/minion-sys/src/ffi.rs-701" name="crates/minion-sys/src/ffi.rs-701"></a>
+<a id="crates/minion-sys/src/ffi.rs-702" name="crates/minion-sys/src/ffi.rs-702"></a><span class="w">        </span><span class="cp">#[cfg(unix)]</span>
+<a id="crates/minion-sys/src/ffi.rs-703" name="crates/minion-sys/src/ffi.rs-703"></a><span class="hll"><span class="w">        </span><span class="fm">assert_eq!</span><span class="p">(</span>
+</span><a id="crates/minion-sys/src/ffi.rs-704" name="crates/minion-sys/src/ffi.rs-704"></a><span class="hll"><span class="w">            </span><span class="n">status_signal</span><span class="p">(</span><span class="o">&amp;</span><span class="n">status</span><span class="p">),</span>
+</span><a id="crates/minion-sys/src/ffi.rs-705" name="crates/minion-sys/src/ffi.rs-705"></a><span class="w">            </span><span class="nb">Some</span><span class="p">(</span><span class="mi">11</span><span class="p">),</span>
+<a id="crates/minion-sys/src/ffi.rs-706" name="crates/minion-sys/src/ffi.rs-706"></a><span class="w">            </span><span class="s">&quot;expected SIGSEGV from issue reproducer child, got status={status:?}&quot;</span>
+<a id="crates/minion-sys/src/ffi.rs-707" name="crates/minion-sys/src/ffi.rs-707"></a><span class="w">        </span><span class="p">);</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">710</span>
+<span class="normal">711</span>
+<span class="normal">712</span>
+<span class="normal">713</span>
+<span class="normal">714</span>
+<span class="normal">715</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/minion-sys/src/ffi.rs-710" name="crates/minion-sys/src/ffi.rs-710"></a><span class="w">        </span><span class="fm">assert!</span><span class="p">(</span>
+<a id="crates/minion-sys/src/ffi.rs-711" name="crates/minion-sys/src/ffi.rs-711"></a><span class="w">            </span><span class="o">!</span><span class="n">status</span><span class="p">.</span><span class="n">success</span><span class="p">(),</span>
+<a id="crates/minion-sys/src/ffi.rs-712" name="crates/minion-sys/src/ffi.rs-712"></a><span class="w">            </span><span class="s">&quot;expected child failure on issue reproducer, got status={status:?}&quot;</span>
+<a id="crates/minion-sys/src/ffi.rs-713" name="crates/minion-sys/src/ffi.rs-713"></a><span class="w">        </span><span class="p">);</span>
+<a id="crates/minion-sys/src/ffi.rs-714" name="crates/minion-sys/src/ffi.rs-714"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="crates/minion-sys/src/ffi.rs-715" name="crates/minion-sys/src/ffi.rs-715"></a><span class="p">}</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+    </body>
+</html>
