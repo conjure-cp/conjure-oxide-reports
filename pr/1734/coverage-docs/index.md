@@ -5,7 +5,7 @@
 **conjure-cp-core:** 4% with examples, 50% documented -- 23/312/629
 **conjure-cp-enum-compatibility-macro:** 33% with examples, 100% documented -- 1/3/3
 **conjure-cp-essence-macros:** 67% with examples, 67% documented -- 2/2/3
-**conjure-cp-essence-parser:** 0% with examples, 15% documented -- 0/26/177
+**conjure-cp-essence-parser:** 0% with examples, 15% documented -- 0/27/178
 **conjure-cp-lsp:** 0% with examples, 0% documented -- 0/0/30
 **conjure-cp-rule-macros:** 33% with examples, 67% documented -- 1/2/3
 **conjure-cp-rules:** 0% with examples, 100% documented -- 0/1/1
@@ -15,7 +15,7 @@
 **tree-sitter-essence:** 33% with examples, 100% documented -- 1/3/3
 
 PR: [#1734](https://github.com/conjure-cp/conjure-oxide/pull/1734)
-Commit: [1fce54118f5708b127cf824c9d0524160d702f63](https://github.com/conjure-cp/conjure-oxide/commit/1fce54118f5708b127cf824c9d0524160d702f63)
+Commit: [a298014861ec4bc309d1fd1faaba83f4952c4c55](https://github.com/conjure-cp/conjure-oxide/commit/a298014861ec4bc309d1fd1faaba83f4952c4c55)
 
 ## RustDoc coverage for `conjure-cp`
 
@@ -144,10 +144,10 @@ Commit: [1fce54118f5708b127cf824c9d0524160d702f63](https://github.com/conjure-cp
 | crates/conjure-cp-essence-parser/src/errors.rs | ❌ 22% *(6/27)* | ❌ 0% *(0/27)* |
 | crates/conjure-cp-essence-parser/src/diagnostics/error_detection/collect_errors.rs | ❌ 25% *(1/4)* | ❌ 0% *(0/4)* |
 | crates/conjure-cp-essence-parser/src/parser/domain.rs | ❌ 33% *(1/3)* | ❌ 0% *(0/3)* |
-| crates/conjure-cp-essence-parser/src/parser/syntax_errors.rs | ❌ 33% *(1/3)* | ❌ 0% *(0/3)* |
 | crates/conjure-cp-essence-parser/src/parser/traversal.rs | ❌ 33% *(2/6)* | ❌ 0% *(0/6)* |
 | crates/conjure-cp-essence-parser/src/parser/util.rs | ❌ 36% *(10/28)* | ❌ 0% *(0/28)* |
 | crates/conjure-cp-essence-parser/src/parser/letting.rs | ❌ 50% *(1/2)* | ❌ 0% *(0/2)* |
+| crates/conjure-cp-essence-parser/src/parser/syntax_errors.rs | ❌ 50% *(2/4)* | ❌ 0% *(0/4)* |
 | crates/conjure-cp-essence-parser/src/parser/macros.rs | ✅ 100% *(3/3)* | ❌ 0% *(0/3)* |
 
 ## RustDoc coverage for `conjure-cp-lsp`
