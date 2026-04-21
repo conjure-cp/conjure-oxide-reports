@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-adb09803.js";
+            window.path_to_searchindex_js = "searchindex-69c3ef39.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-e3e03d0c.js"></script>
+        <script src="toc-6f625bf4.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -1094,144 +1094,6 @@ public void fnReturnsError(a,b) {
 <p>This is what caused the infamous cloudflare outage. <a href="#fr-6-1">↩</a></p>
 </li>
 </ol>
-<div style="break-before: page; page-break-before: always;"></div><!-- TODO: Edit this -->
-<blockquote>
-<p><em>“Omit needless words”</em></p>
-<p>(c) William Strunk</p>
-</blockquote>
-<h1 id="key-points-1"><a class="header" href="#key-points-1">Key Points</a></h1>
-<h2 id="resources-1"><a class="header" href="#resources-1">Resources</a></h2>
-<p>See:</p>
-<ul>
-<li>the <a href="https://github.com/rust-lang/rfcs/blob/master/text/1574-more-api-documentation-conventions.md">Rust doc style conventions</a></li>
-</ul>
-<h2 id="dos-1"><a class="header" href="#dos-1">Do’s</a></h2>
-<p>Our documentation is inline with the code. The reader is likely to skim it while scrolling through the file and trying to understand what it does. So, our doc strings should:</p>
-<ul>
-<li>Be as brief and clear as possible</li>
-<li>Ideally, fit comfortably on a standard monitor without obscuring the code</li>
-<li>Contain key information about the method / structure, such as:
-<ul>
-<li>A single sentence explaining its purpose</li>
-<li>A brief overview of arguments / return types</li>
-<li>Example snippets for non-trivial methods</li>
-</ul>
-</li>
-<li>Explain any details that are <strong>not</strong> obvious from the method signature, such as:
-<ul>
-<li>Details of the method’s “contract” that can’t be easily encoded in the type system
-<blockquote>
-<p>(E.g: <em>“The input must be a sorted slice of positive integers”</em>; <em>“The given expression will be modified in-place”</em>)</p>
-</blockquote>
-</li>
-<li>Non-trivial situations where the method may <code>panic!</code> or cause unintended behaviour
-<blockquote>
-<p>(E.g: <em>“Panics if the connection terminates while the stream is being read”</em>)</p>
-</blockquote>
-</li>
-<li>Any <code>unsafe</code> things a method does
-<blockquote>
-<p>(E.g: <em>“We type-cast the given pointer with <code>mem::transmute</code>. This is safe because…”</em>)</p>
-</blockquote>
-</li>
-<li>Special cases</li>
-</ul>
-</li>
-</ul>
-<h2 id="things-to-avoid-1"><a class="header" href="#things-to-avoid-1">Things to Avoid</a></h2>
-<p>Documentation generally should <strong>not</strong>:</p>
-<ul>
-<li>Repeat itself</li>
-<li>Use long, vague, or overly complex sentences</li>
-<li>Re-state things that are obvious from the types / signature of the method</li>
-<li>Explain implementation details</li>
-<li>Explain high-level architectural decisions
-(Consider making a wiki page or opening an RFC issue instead!)</li>
-</ul>
-<p>And finally…
-Please, don’t ask ChatGPT to document your code for you!
-I know that writing documentation can be tedious, but you can always:</p>
-<ul>
-<li>Write a one-sentence doc string for now and come back to it later</li>
-<li>Ask others if you don’t quite understand what a method does</li>
-</ul>
-<h1 id="types-and-tests-are-documentation-1"><a class="header" href="#types-and-tests-are-documentation-1">Types and Tests are Documentation</a></h1>
-<p>Documentation is great, but we should also use the type system and other rust features to our advantage!</p>
-<ul>
-<li>
-<p>A lot of things (e.g: error conditions, thread safety, state) can be encoded in the types of arguments / return values.
-This is usually better than just <code>panic!</code>-ing and adding a doc string to explain why.</p>
-</li>
-<li>
-<p>Tests are also a great way to illustrate the behaviour of your code and any special cases - and they also help with catching bugs!</p>
-</li>
-</ul>
-<h1 id="example-snippets-1"><a class="header" href="#example-snippets-1">Example Snippets</a></h1>
-<p>For non-trivial methods and user-facing API’s, it may be useful to include an example.
-Examples should be minimal but complete snippets of code that illustrate a method’s behaviour.</p>
-<p>If you wrap your example in a code block:</p>
-<pre><code class="language-markdown">```rust ... ```
-</code></pre>
-<p>Our CI will even run it and complain if the example does not compile / contains an error!</p>
-<p>However, don’t feel obliged to include an example for every method!
-For simple methods they may not be necessary.</p>
-<h1 id="examples-1"><a class="header" href="#examples-1">Examples</a></h1>
-<p>⚠️ Good but a bit wordy:</p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>/// Checks if the OPTIMIZATIONS environment variable is set to "1".
-///
-/// # Returns
-/// - true if the environment variable is set to "1".
-/// - false if the environment variable is not set or set to any other value.
-fn optimizations_enabled() -&gt; bool {
-    match env::var("OPTIMIZATIONS") {
-        Ok(val) =&gt; val == "1",
-        Err(_) =&gt; false, // Assume optimizations are disabled if the environment variable is not set
-    }
-}
-<span class="boring">}</span></code></pre>
-<p>✅ Since everything else is obvious from the signature, we can just say:</p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>/// Checks if the OPTIMIZATIONS environment variable is set to "1"
-fn optimizations_enabled() -&gt; bool { ... }
-<span class="boring">}</span></code></pre>
-<p>⚠️ Not bad, but sounds a bit robotic</p>
-<pre><code class="language-markdown"># Side-Effects
-- When the model is rewritten, related data structures such as the symbol table (which tracks variable names and types)
-  or other top-level constraints may also be updated to reflect these changes. These updates are applied to the returned model,
-  ensuring that all related components stay consistent and aligned with the changes made during the rewrite.
-- The function collects statistics about the rewriting process, including the number of rule applications
-  and the total runtime of the rewriter. These statistics are then stored in the model's context for
-  performance monitoring and analysis.
-</code></pre>
-<p>✅ Same idea but shorter</p>
-<pre><code class="language-markdown"># Side-Effects
-- Rules can apply side-effects to the model (e.g. adding new constraints or variables).
-  The original model is cloned and a modified copy is returned.
-- Rule engine statistics (e.g. number of rule applications, run time) are collected and stored in the new model's context.
-</code></pre>
-<p>⚠️ A bit too detailed</p>
-<pre><code class="language-markdown"># Parameters
-- `expression`: A reference to the [`Expression`] that will be evaluated against the given rules. This is the main
-   target for rule transformations and is expected to remain unchanged during the function execution.
-- `model`: A reference to the [`Model`] that provides context for rule evaluation, such as constraints and symbols.
-  Rules may depend on information in the model to determine if they can be applied.
-- `rules`: A vector of references to [`Rule`]s that define the transformations to be applied to the expression.
-  Each rule is applied independently, and all applicable rules are collected.
-- `stats`: A mutable reference to [`RewriterStats`] used to track statistics about rule application, such as
-  the number of attempts and successful applications.
-</code></pre>
-<p>✅ Just describing the meaning of arguments will do</p>
-<p>(Details of the rewriting process belong on the wiki, and details of underlying types such as <code>Model</code> or <code>Expression</code> are already documented next to their implementations)</p>
-<pre><code class="language-markdown">- `expression`: A reference to the [`Expression`] to evaluate.
-- `model`: A reference to the [`Model`] for access to the symbol table and context.
-- `rules`: A vector of references to [`Rule`]s to try.
-- `stats`: A mutable reference to [`RewriterStats`] used to track the number of rule applications and other statistics.
-</code></pre>
-<hr>
-<p><em>This section had been taken from the ‘Documentation Style’ page of the conjure-oxide wiki</em></p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="crate-structure"><a class="header" href="#crate-structure">Crate Structure</a></h1>
 <h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
@@ -1560,10 +1422,9 @@ and should not affect how the solver crates are written. See <a href="#solver-ad
 <hr>
 <p><em>This section had been taken from the ‘2023‐11: High Level Plan’ page of the conjure-oxide wiki</em></p>
 <div style="break-before: page; page-break-before: always;"></div><!-- maturity: draft
-authors: Niklas Dewally, Hanaa Khan
+authors: Niklas Dewally
 created: 21-03-24
 ---- -->
-<!-- TODOs -->
 <h1 id="202403-implementing-uniplates-and-biplates-with-structure-preserving-trees"><a class="header" href="#202403-implementing-uniplates-and-biplates-with-structure-preserving-trees">2024‐03: Implementing Uniplates and Biplates with Structure Preserving Trees</a></h1>
 <h2 id="contents"><a class="header" href="#contents">Contents:</a></h2>
 <ul>
@@ -1577,7 +1438,6 @@ created: 21-03-24
 <p>In <a href="https://github.com/conjure-cp/conjure-oxide/pull/180">#180</a> and <a href="https://github.com/conjure-cp/conjure-oxide/pull/259">#259</a> we implemented the basic Uniplate interface and a derive macro to automatically implement it for <code>enum</code> types. However, our current implementation is incorrect and problematic: we have defined children wrong; and our children list does not preserve structure, making more complex nested structures hard to recreate in the context function.</p>
 <h2 id="recap-uniplates-and-biplates"><a class="header" href="#recap-uniplates-and-biplates">Recap: Uniplates and Biplates</a></h2>
 <p><em>A quick recap of what we are trying to do - for details, see the <a href="https://hackage.haskell.org/package/uniplate">Uniplate Haskell docs</a>, our Github Issues, and the paper.</em></p>
-<!-- TODO: which paper?? n are there other issues besides the stated one -->
 <p>Uniplates are an easy way to perform recursion over complex recursive data types.</p>
 <p>It is typically used with enums containing multiple variants, many of which may be different types.</p>
 <pre><code class="language-hs">data T = A T [Integer]
@@ -1723,8 +1583,6 @@ data U = E T T
 </ul>
 <!-- vim: cc=100 spell
 -->
-<hr>
-<p><em>This section had been taken from the ‘2024‐03: Implementing Uniplates and Biplates with Structure Preserving Trees’ page of the conjure-oxide wiki</em></p>
 <div style="break-before: page; page-break-before: always;"></div><!-- maturity: draft
 authors: Felix Leitner, Niklas Dewally, Hanaa Khan
 created: 19-09-24
@@ -4208,162 +4066,6 @@ fn {test_name}() -&gt; Result&lt;(), Box&lt;dyn Error&gt;&gt; {{
 }}
 </code></pre>
 <p>The <code>custom_test</code> function takes the test directory as a parameter. It inherits the current <code>PATH</code> and runs the commands from the <code>run.sh</code> file, saving the produced output. It then overwrites the expected output and error if accept was set to true and compares the actual and expected outputs/errors if not. If either does not match, the expected and actual output are printed and the test fails. Otherwise, the test passes.</p>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="introduction-2"><a class="header" href="#introduction-2">Introduction</a></h1>
-<!-- ## Contents
-- [Recap: Uniplates and Biplates](#recap-uniplates-and-biplates)
-- [Definition of Children](#definition-of-children)
-- [Storing The Structure of Children](#storing-the-structure-of-children)
-- [Uniplates and Biplates Using Structure Preserving Trees](#uniplates-and-biplates-using-structure-preserving-trees) -->
-<p>Comments and discussion about this document can be found in issue <a href="https://github.com/conjure-cp/conjure-oxide/issues/261">#261</a>.</p>
-<p>In <a href="https://github.com/conjure-cp/conjure-oxide/pull/180">#180</a> and <a href="https://github.com/conjure-cp/conjure-oxide/pull/259">#259</a> we implemented the basic Uniplate interface and a derive macro to automatically implement it for <code>enum</code> types. However, our current implementation is incorrect and problematic: we have defined children wrong; and our children list does not preserve structure, making more complex nested structures hard to recreate in the context function.</p>
-<h2 id="recap-uniplates-and-biplates-1"><a class="header" href="#recap-uniplates-and-biplates-1">Recap: Uniplates and Biplates</a></h2>
-<p><em>A quick recap of what we are trying to do - for details, see the <a href="https://hackage.haskell.org/package/uniplate">Uniplate Haskell docs</a>, our Github Issues, and the paper.</em></p>
-<p>Uniplates are an easy way to perform recursion over complex recursive data types.</p>
-<p>It is typically used with enums containing multiple variants, many of which may be different types.</p>
-<pre><code class="language-hs">data T = A T [Integer]
-       | B T T
-       | C T U
-       | D [T]
-</code></pre>
-<p>With Uniplate, one can perform a map over this with very little or no boilerplate.</p>
-<p>This is implemented with a single function <code>uniplate</code> that returns a <em>list of children</em> of the current object and a <em>context</em> function to rebuild the object from a list of children.</p>
-<p>Biplates provide recursion over instances of type <code>T</code> within some other type <code>U</code>. They are implemented with a single function <code>biplate</code> of similar type to <code>uniplate</code> (returning <em>children</em> and a <em>context</em> function).</p>
-<p>These functions are able to be implemented on any data type through macros making Uniplate operations boilerplate free.</p>
-<h2 id="definition-of-children-1"><a class="header" href="#definition-of-children-1">Definition of Children</a></h2>
-<p>We currently take <em>children of T</em> to mean <em>direct descendants of T inside T</em>. However, the correct definition of children is <em>maximal substructures of type T</em>.</p>
-<p>For example, consider these Haskell types:</p>
-<pre><code class="language-hs">data T = A T [Integer]
-       | B T T
-       | C T U
-       | D [T]
-
-data U = E T T
-       | F Integer
-       | G [T] T
-</code></pre>
-<p>Our current implementation would define children as the following:</p>
-<pre><code class="language-hs">children (A t1 _) = [t1]
-children (B t1 t2) = [t1, t2]
-children (C t1 u) = [t1]
-children (D ts) = ts
-</code></pre>
-<p>However, the proper definition should support transitive children - i.e. T contains a U which contains a T:</p>
-<pre><code class="language-hs">children (A t1 _) = [t1]
-children (B t1 t2) = [t1, t2]
-children (C t1 (E t2 t3)) = [t1,t2,t3]
-children (C t1 (F _)) = [t1]
-children (C t1 (G ts t3)) = [t1] ++ ts ++ [t3]
-children (D ts) = ts
-</code></pre>
-<p>While a seemingly small difference, this complicates how we reconstruct a node from its children: we now need to create a context that takes a list of children and creates an arbitrarily deeply nested data structure containing multiple different types. In particular, the challenge is keeping track of which elements of the children list go into which fields of the enum we are creating.</p>
-<p>We already had this problem dealing with children from lists, but a more general approach is needed.</p>
-<h2 id="storing-the-structure-of-children-1"><a class="header" href="#storing-the-structure-of-children-1">Storing The Structure of Children</a></h2>
-<p>How do we know which children go into which fields of the enum variant?</p>
-<p>For example, consider this complicated instance of <code>T</code>:</p>
-<pre><code class="language-hs">data T = A T [Integer]
-       | B T T
-       | C T U 
-       | D [T]
-
-data U = E T T
-       | F Integer
-       | G [T] T
-
-myT = C(D([t0,...,t5]),G([t6,...,t12],t13))
-</code></pre>
-<p>Its list of children is: <code>[t0,...,t13]</code>.</p>
-<p>Try creating a function to recreate <code>myT</code> based on a new list of children. <em>Hint: it is difficult, and even more so in full generality!</em></p>
-<p>If we instead consider children to be a tree, where each field in the original enum variant is its own branch, we get:</p>
-<pre><code class="language-hs">data Tree A = Zero | One A | Many [(Tree A)]
-
-myTChildren = 
-  Many [(Many [One(t0),...,One(t5)]),      -- C([XXX], _) field 1 of C
-        (Many [                            -- C([_],XXX)  field 2 of C
-          (Many [One(t6),...,One(t12)]),   -- G([XXX],_)  field 2.1 of C
-          (One  t13))]                     -- G([_],XXX)) field 2.2 of C
-</code></pre>
-<p>This captures, in a type-independent way, the following structural information:</p>
-<ol>
-<li><code>myT</code> has two fields.</li>
-<li>The first field is a container of Ts.</li>
-<li>The second field contains two inner fields: one is a container of Ts, one is a single T.</li>
-</ol>
-<p><strong>Representing non-recursive and primitive types</strong></p>
-<p>Often primitive and non-recursive types are found in the middle of enum variants. How do we say <em>“we don’t care about this field, it does not contain a T”</em> with our <code>Tree</code> type? <code>Zero</code> can be used for this.</p>
-<p>For example:</p>
-<pre><code class="language-hs">data V = V1 V Integer W
-       | V2 Integer
-
-data W = W1 V V
-
-myV = (V1 
-        (V2 1) 
-        1 
-        (W1 
-          (V2 2) 
-          (V2 3)))
-
-myVChildren = 
-  (Many [
-    (One v1),  -- V1(XXX,_,_)
-    Zero,      -- V1(_,XXX,_) 
-    (Many [    -- V1(_,_,XXX)
-      (One v2),
-      (One v3)
-   ]))
-</code></pre>
-<p>This additionally encodes the information that the second field of <code>myV</code> has no Ts at all.</p>
-<p>While this information isn’t too useful for finding or traversing over the target type, it means that the tree structure defines the structure of the target type completely: there are always the same number of tree branches as there are fields in the enum variant.</p>
-<h2 id="uniplates-and-biplates-using-structure-preserving-trees-1"><a class="header" href="#uniplates-and-biplates-using-structure-preserving-trees-1">Uniplates and Biplates Using Structure Preserving Trees</a></h2>
-<p>Recall that the <code>uniplate</code> function returns all <em>children</em> of a data structure alongside a <em>context</em> function that rebuilds the data structure using some new children.</p>
-<p>To implement this, for each field in an enum variant, we need to ask the questions: <em>“how do we get the type <code>T</code>s in the type <code>U</code>”</em>, and <em>how can we rebuild this <code>U</code> based on some new children of type <code>T</code>?</em>.</p>
-<p>This is just a <code>Biplate&lt;U,T&gt;</code>, which gives us the <em>type <code>T</code> children within a type <code>U</code></em> as well as a <em>context function to reconstruct the <code>U</code> from the <code>T</code></em>.</p>
-<p>Therefore:</p>
-<ul>
-<li>
-<p>We build the <em>children</em> tree by combining the children trees of all fields of the enum (such that each field’s children is a branch on the tree).</p>
-</li>
-<li>
-<p>We build the <em>context</em> function by calling each fields context function on each branch of the input tree.</p>
-</li>
-</ul>
-<p>This is effectively a recursive invocation of <code>Biplate</code>.</p>
-<p>What happens when we reach a T? Under the normal definition, <code>Biplate&lt;T,T&gt;</code> would return its children. This is wrong - we want to return <code>T</code> here, not its children!</p>
-<p>When <code>T == U</code> we need to change the definition of a Biplate: <strong><code>Biplate&lt;T,T&gt;</code> operates over the input structure, not its children.</strong></p>
-<p>For our example AST:</p>
-<pre><code class="language-hs">data T = A T [Integer]
-       | B T T
-       | C T U 
-       | D [T]
-
-data U = E T T
-       | F Integer
-       | G [T] T
-</code></pre>
-<p>Here are some Biplate and Uniplates and their resultant children trees:</p>
-<ul>
-<li>
-<p><code>Biplate&lt;Integer,T&gt; 1</code> is <code>Zero</code>.</p>
-</li>
-<li>
-<p><code>Uniplate&lt;T&gt; (A t [1,2,3])</code> is <code>(Many [Biplate&lt;T,T&gt; t ,Zero])</code>.</p>
-<p>This evaluates to <code>(Many [(One t),Zero])</code></p>
-</li>
-<li>
-<p><code>Biplate&lt;T,T&gt; t</code> is <code>One t</code>.</p>
-</li>
-<li>
-<p><code>Biplate&lt;T,U&gt; (G ts t1)</code> is <code>(Many [Biplate&lt;T,[T]&gt; ts , Biplate&lt;T,T&gt; t ])</code>.</p>
-<p>This evaluates to <code>(Many [(Many [(One t0),...(One tn)]),(One t)])</code></p>
-</li>
-<li>
-<p><code>Uniplate&lt;T,T&gt; (C t (G ts t1))</code> is <code>(Many [Biplate&lt;T,T&gt; t, Biplate&lt;U,T&gt; (G ts t1))</code></p>
-<p>This evaluates to <code>(Many [(One t), (Many [(Many [(One t0),...,(One tn)]), (One t)]))</code></p>
-</li>
-</ul>
-<!-- vim: cc=100 spell
--->
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="sat-encoding-types"><a href="#sat-encoding-types" class="header">SAT Encoding Types</a></h1>
 <h2 id="types-of-sat-encodings"><a class="header" href="#types-of-sat-encodings">Types of SAT Encodings</a></h2>
