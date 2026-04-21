@@ -90,9 +90,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
         <h1>Diff Coverage</h1>
         <p>Diff: upstream/main...HEAD, staged and unstaged changes</p>
         <ul>
-            <li><b>Total</b>: 721 lines</li>
-            <li><b>Missing</b>: 437 lines</li>
-            <li><b>Coverage</b>: 39%</li>
+            <li><b>Total</b>: 737 lines</li>
+            <li><b>Missing</b>: 453 lines</li>
+            <li><b>Coverage</b>: 38%</li>
         </ul>
         <table border="1">
             <tr>
@@ -102,8 +102,8 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
             </tr>
             <tr>
                 <td>crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs</td>
-                <td>90.2%</td>
-                <td>141-142,151,178</td>
+                <td>82.2%</td>
+                <td>38,126,132,141-142,149,151,178</td>
             </tr>
             <tr>
                 <td>crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs</td>
@@ -112,18 +112,75 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
             </tr>
             <tr>
                 <td>crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs</td>
-                <td>38.9%</td>
-                <td>300-302,304-305,307-308,310,313-315</td>
+                <td>29.2%</td>
+                <td>293,297,300-305,307-308,310-311,313-316,319</td>
             </tr>
             <tr>
                 <td>crates/minion-sys/src/run.rs</td>
-                <td>75.8%</td>
-                <td>256-258,265,268-269,279,293-295,309,664-667</td>
+                <td>69.1%</td>
+                <td>256-258,263,265,268-271,279-280,293-295,309-310,664-668</td>
             </tr>
         </table>
         <div class="src-snippet">
             <div class="src-name">crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs</div>
             <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-34" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-34"></a><span class="sd">/// This adaptor uses the `minion_sys` crate to talk to Minion over FFI.</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-35" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-35"></a><span class="k">pub</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">Minion</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-36" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-36"></a><span class="w">    </span><span class="n">__non_constructable</span><span class="p">:</span><span class="w"> </span><span class="nc">private</span><span class="p">::</span><span class="n">Internal</span><span class="p">,</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-37" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-37"></a><span class="w">    </span><span class="n">model</span><span class="p">:</span><span class="w"> </span><span class="nb">Option</span><span class="o">&lt;</span><span class="n">MinionModel</span><span class="o">&gt;</span><span class="p">,</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-38" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-38"></a><span class="hll"><span class="w">    </span><span class="n">dominance_expression</span><span class="p">:</span><span class="w"> </span><span class="nb">Option</span><span class="o">&lt;</span><span class="n">Expression</span><span class="o">&gt;</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-39" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-39"></a><span class="w">    </span><span class="n">dominance_model_template</span><span class="p">:</span><span class="w"> </span><span class="nb">Option</span><span class="o">&lt;</span><span class="n">ConjureModel</span><span class="o">&gt;</span><span class="p">,</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-40" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-40"></a><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-41" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-41"></a>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-42" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-42"></a><span class="k">fn</span><span class="w"> </span><span class="nf">parse_name</span><span class="p">(</span><span class="n">minion_name</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="kt">str</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">Name</span><span class="w"> </span><span class="p">{</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-122" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-122"></a><span class="w">                </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">conjure_solutions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">translate_solution</span><span class="p">(</span><span class="n">solutions</span><span class="p">);</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-123" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-123"></a><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">model_template</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dominance_model_template</span><span class="p">.</span><span class="n">as_ref</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-124" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-124"></a><span class="w">                    </span><span class="n">add_represented_decision_values</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">conjure_solutions</span><span class="p">,</span><span class="w"> </span><span class="n">model_template</span><span class="p">);</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-125" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-125"></a><span class="w">                </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-126" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-126"></a><span class="hll">
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-127" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-127"></a><span class="w">                </span><span class="kd">let</span><span class="w"> </span><span class="n">continue_search</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">callback</span><span class="p">(</span><span class="n">conjure_solutions</span><span class="p">.</span><span class="n">clone</span><span class="p">());</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-128" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-128"></a><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="o">!</span><span class="n">continue_search</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-129" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-129"></a><span class="w">                    </span><span class="n">user_terminated</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-130" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-130"></a><span class="w">                    </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-128" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-128"></a><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="o">!</span><span class="n">continue_search</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-129" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-129"></a><span class="w">                    </span><span class="n">user_terminated</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-130" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-130"></a><span class="w">                    </span><span class="k">return</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-131" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-131"></a><span class="w">                </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-132" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-132"></a><span class="hll">
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-133" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-133"></a><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">add_dominance_constraints_for_solution</span><span class="p">(</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-134" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-134"></a><span class="w">                    </span><span class="n">dominance_expression</span><span class="p">.</span><span class="n">as_ref</span><span class="p">(),</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-135" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-135"></a><span class="w">                    </span><span class="n">dominance_model_template</span><span class="p">.</span><span class="n">as_ref</span><span class="p">(),</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-136" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-136"></a><span class="w">                    </span><span class="o">&amp;</span><span class="n">conjure_solutions</span><span class="p">,</span>
+</pre></div></td></tr></table></div>
+
             <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">137</span>
 <span class="normal">138</span>
 <span class="normal">139</span>
@@ -145,7 +202,9 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-146" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-146"></a><span class="w">            </span><span class="p">}),</span>
 </pre></div></td></tr></table></div>
 
-            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">147</span>
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
 <span class="normal">148</span>
 <span class="normal">149</span>
 <span class="normal">150</span>
@@ -153,10 +212,12 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <span class="normal">152</span>
 <span class="normal">153</span>
 <span class="normal">154</span>
-<span class="normal">155</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-147" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-147"></a><span class="w">        </span><span class="p">)</span>
+<span class="normal">155</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-145" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-145"></a><span class="w">                </span><span class="kc">true</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-146" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-146"></a><span class="w">            </span><span class="p">}),</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-147" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-147"></a><span class="w">        </span><span class="p">)</span>
 <a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-148" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-148"></a><span class="w">        </span><span class="p">.</span><span class="n">map_err</span><span class="p">(</span><span class="n">minion_error_to_solver_error</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
-<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-149" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-149"></a>
-<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-150" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-150"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">midsearch_error</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-149" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-149"></a><span class="hll">
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-150" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-150"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">midsearch_error</span><span class="w"> </span><span class="p">{</span>
 <a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-151" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-151"></a><span class="hll"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">err</span><span class="p">);</span>
 </span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-152" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-152"></a><span class="w">        </span><span class="p">}</span>
 <a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-153" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-153"></a>
@@ -1404,7 +1465,14 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
         <div class="src-snippet">
             <div class="src-name">crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs</div>
             <div class="snippets">
-            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">296</span>
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
 <span class="normal">297</span>
 <span class="normal">298</span>
 <span class="normal">299</span>
@@ -1427,30 +1495,45 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <span class="normal">316</span>
 <span class="normal">317</span>
 <span class="normal">318</span>
-<span class="normal">319</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-296" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-296"></a><span class="w">                    </span><span class="n">minion_ast</span><span class="p">::</span><span class="n">Constraint</span><span class="p">::</span><span class="n">False</span>
-<a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-297" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-297"></a><span class="w">                </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
-<a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-298" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-298"></a><span class="w">                    </span><span class="n">minion_ast</span><span class="p">::</span><span class="n">Constraint</span><span class="p">::</span><span class="n">True</span>
+<span class="normal">319</span>
+<span class="normal">320</span>
+<span class="normal">321</span>
+<span class="normal">322</span>
+<span class="normal">323</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-289" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-289"></a><span class="w">        </span><span class="n">conjure_ast</span><span class="p">::</span><span class="n">Expression</span><span class="p">::</span><span class="n">Not</span><span class="p">(</span><span class="n">_metadata</span><span class="p">,</span><span class="w"> </span><span class="n">inner</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-290" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-290"></a><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="n">inner_expr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Moo</span><span class="p">::</span><span class="n">unwrap_or_clone</span><span class="p">(</span><span class="n">inner</span><span class="p">);</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-291" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-291"></a><span class="w">            </span><span class="k">match</span><span class="w"> </span><span class="n">inner_expr</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-292" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-292"></a><span class="w">                </span><span class="n">conjure_ast</span><span class="p">::</span><span class="n">Expression</span><span class="p">::</span><span class="n">Atomic</span><span class="p">(</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-293" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-293"></a><span class="hll"><span class="w">                    </span><span class="n">_</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-294" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-294"></a><span class="w">                    </span><span class="n">conjure_ast</span><span class="p">::</span><span class="n">Atom</span><span class="p">::</span><span class="n">Literal</span><span class="p">(</span><span class="n">conjure_ast</span><span class="p">::</span><span class="n">Literal</span><span class="p">::</span><span class="n">Bool</span><span class="p">(</span><span class="n">v</span><span class="p">)),</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-295" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-295"></a><span class="w">                </span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">Ok</span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-296" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-296"></a><span class="w">                    </span><span class="n">minion_ast</span><span class="p">::</span><span class="n">Constraint</span><span class="p">::</span><span class="n">False</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-297" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-297"></a><span class="hll"><span class="w">                </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-298" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-298"></a><span class="w">                    </span><span class="n">minion_ast</span><span class="p">::</span><span class="n">Constraint</span><span class="p">::</span><span class="n">True</span>
 <a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-299" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-299"></a><span class="w">                </span><span class="p">}),</span>
 <a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-300" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-300"></a><span class="hll"><span class="w">                </span><span class="n">conjure_ast</span><span class="p">::</span><span class="n">Expression</span><span class="p">::</span><span class="n">Atomic</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">atom</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">Ok</span><span class="p">(</span><span class="n">minion_ast</span><span class="p">::</span><span class="n">Constraint</span><span class="p">::</span><span class="n">WLiteral</span><span class="p">(</span>
 </span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-301" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-301"></a><span class="hll"><span class="w">                    </span><span class="n">parse_atom</span><span class="p">(</span><span class="n">atom</span><span class="p">)</span><span class="o">?</span><span class="p">,</span>
 </span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-302" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-302"></a><span class="hll"><span class="w">                    </span><span class="n">minion_ast</span><span class="p">::</span><span class="n">Constant</span><span class="p">::</span><span class="n">Integer</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
-</span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-303" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-303"></a><span class="w">                </span><span class="p">)),</span>
-<a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-304" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-304"></a><span class="hll"><span class="w">                </span><span class="n">other</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-303" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-303"></a><span class="hll"><span class="w">                </span><span class="p">)),</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-304" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-304"></a><span class="hll"><span class="w">                </span><span class="n">other</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
 </span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-305" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-305"></a><span class="hll"><span class="w">                    </span><span class="k">if</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">conjure_ast</span><span class="p">::</span><span class="n">Literal</span><span class="p">::</span><span class="n">Bool</span><span class="p">(</span><span class="n">v</span><span class="p">))</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">conjure_ast</span><span class="p">::</span><span class="n">eval_constant</span><span class="p">(</span><span class="o">&amp;</span><span class="n">other</span><span class="p">)</span>
 </span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-306" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-306"></a><span class="w">                    </span><span class="p">{</span>
 <a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-307" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-307"></a><span class="hll"><span class="w">                        </span><span class="nb">Ok</span><span class="p">(</span><span class="k">if</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="p">{</span>
 </span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-308" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-308"></a><span class="hll"><span class="w">                            </span><span class="n">minion_ast</span><span class="p">::</span><span class="n">Constraint</span><span class="p">::</span><span class="n">False</span>
 </span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-309" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-309"></a><span class="w">                        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
 <a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-310" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-310"></a><span class="hll"><span class="w">                            </span><span class="n">minion_ast</span><span class="p">::</span><span class="n">Constraint</span><span class="p">::</span><span class="n">True</span>
-</span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-311" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-311"></a><span class="w">                        </span><span class="p">})</span>
-<a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-312" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-312"></a><span class="w">                    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-311" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-311"></a><span class="hll"><span class="w">                        </span><span class="p">})</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-312" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-312"></a><span class="w">                    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
 <a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-313" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-313"></a><span class="hll"><span class="w">                        </span><span class="nb">Err</span><span class="p">(</span><span class="n">ModelFeatureNotSupported</span><span class="p">(</span><span class="fm">format!</span><span class="p">(</span>
 </span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-314" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-314"></a><span class="hll"><span class="w">                            </span><span class="s">&quot;unsupported negation form for Minion: {other:?}&quot;</span>
 </span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-315" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-315"></a><span class="hll"><span class="w">                        </span><span class="p">)))</span>
-</span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-316" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-316"></a><span class="w">                    </span><span class="p">}</span>
-<a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-317" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-317"></a><span class="w">                </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-316" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-316"></a><span class="hll"><span class="w">                    </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-317" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-317"></a><span class="w">                </span><span class="p">}</span>
 <a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-318" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-318"></a><span class="w">            </span><span class="p">}</span>
-<a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-319" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-319"></a><span class="w">        </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-319" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-319"></a><span class="hll"><span class="w">        </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-320" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-320"></a><span class="w">        </span><span class="n">conjure_ast</span><span class="p">::</span><span class="n">Expression</span><span class="p">::</span><span class="n">Neq</span><span class="p">(</span><span class="n">_metadata</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">Ok</span><span class="p">(</span><span class="n">minion_ast</span><span class="p">::</span><span class="n">Constraint</span><span class="p">::</span><span class="n">DisEq</span><span class="p">(</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-321" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-321"></a><span class="w">            </span><span class="n">parse_atomic_expr</span><span class="p">(</span><span class="n">Moo</span><span class="p">::</span><span class="n">unwrap_or_clone</span><span class="p">(</span><span class="n">a</span><span class="p">))</span><span class="o">?</span><span class="p">,</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-322" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-322"></a><span class="w">            </span><span class="n">parse_atomic_expr</span><span class="p">(</span><span class="n">Moo</span><span class="p">::</span><span class="n">unwrap_or_clone</span><span class="p">(</span><span class="n">b</span><span class="p">))</span><span class="o">?</span><span class="p">,</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-323" name="crates/conjure-cp-core/src/solver/adaptors/minion/parse_model.rs-323"></a><span class="w">        </span><span class="p">)),</span>
 </pre></div></td></tr></table></div>
 
             </div>
@@ -1468,20 +1551,6 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <span class="normal">259</span>
 <span class="normal">260</span>
 <span class="normal">261</span>
-<span class="normal">262</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/minion-sys/src/run.rs-252" name="crates/minion-sys/src/run.rs-252"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">instance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CURRENT_INSTANCE</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="n">Ordering</span><span class="p">::</span><span class="n">SeqCst</span><span class="p">);</span>
-<a id="crates/minion-sys/src/run.rs-253" name="crates/minion-sys/src/run.rs-253"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">ctx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CURRENT_CTX</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="n">Ordering</span><span class="p">::</span><span class="n">SeqCst</span><span class="p">);</span>
-<a id="crates/minion-sys/src/run.rs-254" name="crates/minion-sys/src/run.rs-254"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">inside_callback</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">INSIDE_MINION_CALLBACK</span><span class="p">.</span><span class="n">with</span><span class="p">(</span><span class="o">|</span><span class="n">flag</span><span class="o">|</span><span class="w"> </span><span class="n">flag</span><span class="p">.</span><span class="n">get</span><span class="p">());</span>
-<a id="crates/minion-sys/src/run.rs-255" name="crates/minion-sys/src/run.rs-255"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">instance</span><span class="p">.</span><span class="n">is_null</span><span class="p">()</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">ctx</span><span class="p">.</span><span class="n">is_null</span><span class="p">()</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">!</span><span class="n">inside_callback</span><span class="w"> </span><span class="p">{</span>
-<a id="crates/minion-sys/src/run.rs-256" name="crates/minion-sys/src/run.rs-256"></a><span class="hll"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">MinionError</span><span class="p">::</span><span class="n">Other</span><span class="p">(</span><span class="n">anyhow</span><span class="o">!</span><span class="p">(</span>
-</span><a id="crates/minion-sys/src/run.rs-257" name="crates/minion-sys/src/run.rs-257"></a><span class="hll"><span class="w">            </span><span class="s">&quot;cannot add a Minion variable outside an active callback&quot;</span>
-</span><a id="crates/minion-sys/src/run.rs-258" name="crates/minion-sys/src/run.rs-258"></a><span class="hll"><span class="w">        </span><span class="p">)));</span>
-</span><a id="crates/minion-sys/src/run.rs-259" name="crates/minion-sys/src/run.rs-259"></a><span class="w">    </span><span class="p">}</span>
-<a id="crates/minion-sys/src/run.rs-260" name="crates/minion-sys/src/run.rs-260"></a>
-<a id="crates/minion-sys/src/run.rs-261" name="crates/minion-sys/src/run.rs-261"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">c_str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CString</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="n">name</span><span class="p">.</span><span class="n">clone</span><span class="p">())</span>
-<a id="crates/minion-sys/src/run.rs-262" name="crates/minion-sys/src/run.rs-262"></a><span class="w">        </span><span class="p">.</span><span class="n">map_err</span><span class="p">(</span><span class="o">|</span><span class="n">_</span><span class="o">|</span><span class="w"> </span><span class="n">anyhow</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;variable name {:?} contains a null character&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">))</span><span class="o">?</span><span class="p">;</span>
-</pre></div></td></tr></table></div>
-
-            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">261</span>
 <span class="normal">262</span>
 <span class="normal">263</span>
 <span class="normal">264</span>
@@ -1493,19 +1562,32 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <span class="normal">270</span>
 <span class="normal">271</span>
 <span class="normal">272</span>
-<span class="normal">273</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/minion-sys/src/run.rs-261" name="crates/minion-sys/src/run.rs-261"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">c_str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CString</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="n">name</span><span class="p">.</span><span class="n">clone</span><span class="p">())</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/minion-sys/src/run.rs-252" name="crates/minion-sys/src/run.rs-252"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">instance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CURRENT_INSTANCE</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="n">Ordering</span><span class="p">::</span><span class="n">SeqCst</span><span class="p">);</span>
+<a id="crates/minion-sys/src/run.rs-253" name="crates/minion-sys/src/run.rs-253"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">ctx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CURRENT_CTX</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="n">Ordering</span><span class="p">::</span><span class="n">SeqCst</span><span class="p">);</span>
+<a id="crates/minion-sys/src/run.rs-254" name="crates/minion-sys/src/run.rs-254"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">inside_callback</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">INSIDE_MINION_CALLBACK</span><span class="p">.</span><span class="n">with</span><span class="p">(</span><span class="o">|</span><span class="n">flag</span><span class="o">|</span><span class="w"> </span><span class="n">flag</span><span class="p">.</span><span class="n">get</span><span class="p">());</span>
+<a id="crates/minion-sys/src/run.rs-255" name="crates/minion-sys/src/run.rs-255"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">instance</span><span class="p">.</span><span class="n">is_null</span><span class="p">()</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">ctx</span><span class="p">.</span><span class="n">is_null</span><span class="p">()</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="o">!</span><span class="n">inside_callback</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/minion-sys/src/run.rs-256" name="crates/minion-sys/src/run.rs-256"></a><span class="hll"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">MinionError</span><span class="p">::</span><span class="n">Other</span><span class="p">(</span><span class="n">anyhow</span><span class="o">!</span><span class="p">(</span>
+</span><a id="crates/minion-sys/src/run.rs-257" name="crates/minion-sys/src/run.rs-257"></a><span class="hll"><span class="w">            </span><span class="s">&quot;cannot add a Minion variable outside an active callback&quot;</span>
+</span><a id="crates/minion-sys/src/run.rs-258" name="crates/minion-sys/src/run.rs-258"></a><span class="hll"><span class="w">        </span><span class="p">)));</span>
+</span><a id="crates/minion-sys/src/run.rs-259" name="crates/minion-sys/src/run.rs-259"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/minion-sys/src/run.rs-260" name="crates/minion-sys/src/run.rs-260"></a>
+<a id="crates/minion-sys/src/run.rs-261" name="crates/minion-sys/src/run.rs-261"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">c_str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">CString</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="n">name</span><span class="p">.</span><span class="n">clone</span><span class="p">())</span>
 <a id="crates/minion-sys/src/run.rs-262" name="crates/minion-sys/src/run.rs-262"></a><span class="w">        </span><span class="p">.</span><span class="n">map_err</span><span class="p">(</span><span class="o">|</span><span class="n">_</span><span class="o">|</span><span class="w"> </span><span class="n">anyhow</span><span class="o">!</span><span class="p">(</span><span class="s">&quot;variable name {:?} contains a null character&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">))</span><span class="o">?</span><span class="p">;</span>
-<a id="crates/minion-sys/src/run.rs-263" name="crates/minion-sys/src/run.rs-263"></a>
-<a id="crates/minion-sys/src/run.rs-264" name="crates/minion-sys/src/run.rs-264"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="p">(</span><span class="n">vartype_raw</span><span class="p">,</span><span class="w"> </span><span class="n">domain_low</span><span class="p">,</span><span class="w"> </span><span class="n">domain_high</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">match</span><span class="w"> </span><span class="n">domain</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/minion-sys/src/run.rs-263" name="crates/minion-sys/src/run.rs-263"></a><span class="hll">
+</span><a id="crates/minion-sys/src/run.rs-264" name="crates/minion-sys/src/run.rs-264"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="p">(</span><span class="n">vartype_raw</span><span class="p">,</span><span class="w"> </span><span class="n">domain_low</span><span class="p">,</span><span class="w"> </span><span class="n">domain_high</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">match</span><span class="w"> </span><span class="n">domain</span><span class="w"> </span><span class="p">{</span>
 <a id="crates/minion-sys/src/run.rs-265" name="crates/minion-sys/src/run.rs-265"></a><span class="hll"><span class="w">        </span><span class="n">VarDomain</span><span class="p">::</span><span class="n">Bound</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">Ok</span><span class="p">((</span><span class="n">ffi</span><span class="p">::</span><span class="n">VariableType_VAR_BOUND</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">)),</span>
 </span><a id="crates/minion-sys/src/run.rs-266" name="crates/minion-sys/src/run.rs-266"></a><span class="w">        </span><span class="n">VarDomain</span><span class="p">::</span><span class="n">Discrete</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">Ok</span><span class="p">((</span><span class="n">ffi</span><span class="p">::</span><span class="n">VariableType_VAR_DISCRETE</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">)),</span>
 <a id="crates/minion-sys/src/run.rs-267" name="crates/minion-sys/src/run.rs-267"></a><span class="w">        </span><span class="n">VarDomain</span><span class="p">::</span><span class="n">Bool</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">Ok</span><span class="p">((</span><span class="n">ffi</span><span class="p">::</span><span class="n">VariableType_VAR_BOOL</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)),</span>
 <a id="crates/minion-sys/src/run.rs-268" name="crates/minion-sys/src/run.rs-268"></a><span class="hll"><span class="w">        </span><span class="n">x</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">MinionError</span><span class="p">::</span><span class="n">NotImplemented</span><span class="p">(</span><span class="fm">format!</span><span class="p">(</span><span class="s">&quot;{x:?}&quot;</span><span class="p">))),</span>
 </span><a id="crates/minion-sys/src/run.rs-269" name="crates/minion-sys/src/run.rs-269"></a><span class="hll"><span class="w">    </span><span class="p">}</span><span class="o">?</span><span class="p">;</span>
-</span><a id="crates/minion-sys/src/run.rs-270" name="crates/minion-sys/src/run.rs-270"></a>
-<a id="crates/minion-sys/src/run.rs-271" name="crates/minion-sys/src/run.rs-271"></a><span class="w">    </span><span class="k">unsafe</span><span class="w"> </span><span class="p">{</span>
-<a id="crates/minion-sys/src/run.rs-272" name="crates/minion-sys/src/run.rs-272"></a><span class="w">        </span><span class="n">check_minion_result</span><span class="p">(</span><span class="n">ffi</span><span class="p">::</span><span class="n">minion_newVarMidsearch</span><span class="p">(</span>
+</span><a id="crates/minion-sys/src/run.rs-270" name="crates/minion-sys/src/run.rs-270"></a><span class="hll">
+</span><a id="crates/minion-sys/src/run.rs-271" name="crates/minion-sys/src/run.rs-271"></a><span class="hll"><span class="w">    </span><span class="k">unsafe</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/minion-sys/src/run.rs-272" name="crates/minion-sys/src/run.rs-272"></a><span class="w">        </span><span class="n">check_minion_result</span><span class="p">(</span><span class="n">ffi</span><span class="p">::</span><span class="n">minion_newVarMidsearch</span><span class="p">(</span>
 <a id="crates/minion-sys/src/run.rs-273" name="crates/minion-sys/src/run.rs-273"></a><span class="w">            </span><span class="n">ctx</span><span class="p">,</span>
+<a id="crates/minion-sys/src/run.rs-274" name="crates/minion-sys/src/run.rs-274"></a><span class="w">            </span><span class="n">instance</span><span class="p">,</span>
+<a id="crates/minion-sys/src/run.rs-275" name="crates/minion-sys/src/run.rs-275"></a><span class="w">            </span><span class="n">c_str</span><span class="p">.</span><span class="n">as_ptr</span><span class="p">()</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="o">*</span><span class="k">mut</span><span class="w"> </span><span class="n">c_char</span><span class="p">,</span>
 </pre></div></td></tr></table></div>
 
             <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">275</span>
@@ -1521,8 +1603,8 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <a id="crates/minion-sys/src/run.rs-277" name="crates/minion-sys/src/run.rs-277"></a><span class="w">            </span><span class="n">domain_low</span><span class="p">,</span>
 <a id="crates/minion-sys/src/run.rs-278" name="crates/minion-sys/src/run.rs-278"></a><span class="w">            </span><span class="n">domain_high</span><span class="p">,</span>
 <a id="crates/minion-sys/src/run.rs-279" name="crates/minion-sys/src/run.rs-279"></a><span class="hll"><span class="w">        </span><span class="p">))</span><span class="o">?</span><span class="p">;</span>
-</span><a id="crates/minion-sys/src/run.rs-280" name="crates/minion-sys/src/run.rs-280"></a><span class="w">    </span><span class="p">}</span>
-<a id="crates/minion-sys/src/run.rs-281" name="crates/minion-sys/src/run.rs-281"></a>
+</span><a id="crates/minion-sys/src/run.rs-280" name="crates/minion-sys/src/run.rs-280"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="crates/minion-sys/src/run.rs-281" name="crates/minion-sys/src/run.rs-281"></a>
 <a id="crates/minion-sys/src/run.rs-282" name="crates/minion-sys/src/run.rs-282"></a><span class="w">    </span><span class="nb">Ok</span><span class="p">(())</span>
 <a id="crates/minion-sys/src/run.rs-283" name="crates/minion-sys/src/run.rs-283"></a><span class="p">}</span>
 </pre></div></td></tr></table></div>
@@ -1563,8 +1645,8 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <a id="crates/minion-sys/src/run.rs-307" name="crates/minion-sys/src/run.rs-307"></a><span class="w">            </span><span class="n">instance</span><span class="p">,</span>
 <a id="crates/minion-sys/src/run.rs-308" name="crates/minion-sys/src/run.rs-308"></a><span class="w">            </span><span class="n">raw_constraint</span><span class="p">.</span><span class="n">ptr</span><span class="p">,</span>
 <a id="crates/minion-sys/src/run.rs-309" name="crates/minion-sys/src/run.rs-309"></a><span class="hll"><span class="w">        </span><span class="p">))</span><span class="o">?</span><span class="p">;</span>
-</span><a id="crates/minion-sys/src/run.rs-310" name="crates/minion-sys/src/run.rs-310"></a><span class="w">    </span><span class="p">}</span>
-<a id="crates/minion-sys/src/run.rs-311" name="crates/minion-sys/src/run.rs-311"></a>
+</span><a id="crates/minion-sys/src/run.rs-310" name="crates/minion-sys/src/run.rs-310"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="crates/minion-sys/src/run.rs-311" name="crates/minion-sys/src/run.rs-311"></a>
 <a id="crates/minion-sys/src/run.rs-312" name="crates/minion-sys/src/run.rs-312"></a><span class="w">    </span><span class="nb">Ok</span><span class="p">(())</span>
 <a id="crates/minion-sys/src/run.rs-313" name="crates/minion-sys/src/run.rs-313"></a><span class="p">}</span>
 </pre></div></td></tr></table></div>
@@ -1580,7 +1662,8 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <span class="normal">668</span>
 <span class="normal">669</span>
 <span class="normal">670</span>
-<span class="normal">671</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/minion-sys/src/run.rs-660" name="crates/minion-sys/src/run.rs-660"></a><span class="w">            </span><span class="n">read_list</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">r_constr</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
+<span class="normal">671</span>
+<span class="normal">672</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/minion-sys/src/run.rs-660" name="crates/minion-sys/src/run.rs-660"></a><span class="w">            </span><span class="n">read_list</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">r_constr</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
 <a id="crates/minion-sys/src/run.rs-661" name="crates/minion-sys/src/run.rs-661"></a><span class="w">            </span><span class="n">read_list</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">r_constr</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
 <a id="crates/minion-sys/src/run.rs-662" name="crates/minion-sys/src/run.rs-662"></a><span class="w">            </span><span class="nb">Ok</span><span class="p">(())</span>
 <a id="crates/minion-sys/src/run.rs-663" name="crates/minion-sys/src/run.rs-663"></a><span class="w">        </span><span class="p">}</span>
@@ -1588,10 +1671,11 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </span><a id="crates/minion-sys/src/run.rs-665" name="crates/minion-sys/src/run.rs-665"></a><span class="hll"><span class="w">            </span><span class="n">read_list</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">r_constr</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
 </span><a id="crates/minion-sys/src/run.rs-666" name="crates/minion-sys/src/run.rs-666"></a><span class="hll"><span class="w">            </span><span class="n">read_list</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">r_constr</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
 </span><a id="crates/minion-sys/src/run.rs-667" name="crates/minion-sys/src/run.rs-667"></a><span class="hll"><span class="w">            </span><span class="nb">Ok</span><span class="p">(())</span>
-</span><a id="crates/minion-sys/src/run.rs-668" name="crates/minion-sys/src/run.rs-668"></a><span class="w">        </span><span class="p">}</span>
-<a id="crates/minion-sys/src/run.rs-669" name="crates/minion-sys/src/run.rs-669"></a><span class="w">        </span><span class="c1">//Constraint::LitSumGeq(_, _, _) =&gt; todo!(),</span>
+</span><a id="crates/minion-sys/src/run.rs-668" name="crates/minion-sys/src/run.rs-668"></a><span class="hll"><span class="w">        </span><span class="p">}</span>
+</span><a id="crates/minion-sys/src/run.rs-669" name="crates/minion-sys/src/run.rs-669"></a><span class="w">        </span><span class="c1">//Constraint::LitSumGeq(_, _, _) =&gt; todo!(),</span>
 <a id="crates/minion-sys/src/run.rs-670" name="crates/minion-sys/src/run.rs-670"></a><span class="w">        </span><span class="c1">//Constraint::Gcc(_, _, _) =&gt; todo!(),</span>
 <a id="crates/minion-sys/src/run.rs-671" name="crates/minion-sys/src/run.rs-671"></a><span class="w">        </span><span class="c1">//Constraint::GccWeak(_, _, _) =&gt; todo!(),</span>
+<a id="crates/minion-sys/src/run.rs-672" name="crates/minion-sys/src/run.rs-672"></a><span class="w">        </span><span class="c1">//Constraint::LexLeqRv(_, _) =&gt; todo!(),</span>
 </pre></div></td></tr></table></div>
 
             </div>
