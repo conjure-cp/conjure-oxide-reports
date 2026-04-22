@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-69c3ef39.js";
+            window.path_to_searchindex_js = "searchindex-c8f218f0.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-6f625bf4.js"></script>
+        <script src="toc-8d451da0.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -4231,7 +4231,7 @@ Any directories within here than contain a singular <code>.essence</code> or <co
 After creating the Essence or Essence’ file for your test you should run the test suite with <code>ACCEPT=true</code> to generate the expected files.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="creating-types-guide"><a class="header" href="#creating-types-guide">Creating Types Guide</a></h1>
-<p>Currently Conjure-Oxide does not have any support for Essence’s sequences, relations, partitions or variants.
+<p>Currently Conjure-Oxide does not have any support for Essence’s sequences, partitions or variants.
 This guide outlines the process of creating support for those types to the AST. This does not currently cover rewriting rules or solving.</p>
 <h2 id="creating-the-type"><a class="header" href="#creating-the-type">Creating the Type</a></h2>
 <ul>
@@ -4250,15 +4250,15 @@ This guide outlines the process of creating support for those types to the AST. 
 <h2 id="what-are-functions"><a class="header" href="#what-are-functions">What Are Functions</a></h2>
 <p>A function is a binary relation on two sets, from elements of a domain to elements of a codomain.</p>
 <p>Functions have attributes and two domains for the domain and codomain of its results. They are defined for both <code>GroundDomain</code> and <code>UnresolvedDomain</code> as <code>Function(FuncAttr, Moo&lt;GroundDomain&gt;, Moo&lt;GroundDomain&gt;)</code>.</p>
-<p>The result of a function is a list of tuples defined by the mappings. As such the <code>AbstractLiteral</code> for functions is defined <code>Function(Vec&lt;(T, T)&gt;)</code>. This AbstractLiteral type also means that functions can also be represented explicitly.</p>
+<p>The result of a function is a list of tuples defined by the mappings. As such the <code>AbstractLiteral</code> for functions is defined <code>Function(Vec&lt;(T, T)&gt;)</code>. This AbstractLiteral type means that functions can also be represented explicitly.</p>
 <h2 id="attributes"><a class="header" href="#attributes">Attributes</a></h2>
 <p>Functions contain three types of attributes: size, partiality and jectivity.</p>
 <p>Size attributes determine how many mappings the function is true for. Size attributes are converted to a <code>Range&lt;A&gt;</code> type in Conjure-Oxide. This size can be defined as:</p>
 <ul>
-<li>A single size <code>size(x)</code></li>
-<li>A minimum size <code>minSize(x)</code></li>
-<li>A maximum size <code>maxSize(x)</code></li>
-<li>A range of sizes <code>minSize(x) maxSize(x)</code></li>
+<li>A single size <code>size x</code></li>
+<li>A minimum size <code>minSize x</code></li>
+<li>A maximum size <code>maxSize x</code></li>
+<li>A range of sizes <code>minSize x maxSize x</code></li>
 <li>Or unbounded by not specifying any attribute</li>
 </ul>
 <p>Partiality determines whether the function is total or partial. A total function is one which is defined for every possible input in the domain set. A function will have partial partiality unless specified otherwise.
@@ -4266,7 +4266,7 @@ Partiality is stored as an Enum inside Conjure-Oxide.</p>
 <p>Jectivity refers to whether a function is injective, surjective, or bijective. These determine whether elements in the domain and codomain must have only one corresponding mapping. A function can also have no specified jectivity, which is the default.
 Jectivity is also stored as an Enum inside Conjure-Oxide.</p>
 <h2 id="operators"><a class="header" href="#operators">Operators</a></h2>
-<p>There are seven operators which are defined on functions. These are represented as <code>Expressions</code> in Conjure-Oxide.</p>
+<p>There are eight special operators which are defined on functions. These are represented as <code>Expressions</code> in Conjure-Oxide.</p>
 <ul>
 <li><code>Defined(f)</code> - Returns the set of values in the domain for which a function f is defined.</li>
 <li><code>Image(f, x)</code> - Returns the element of the codomain which is mapped to domain element x, in function f.</li>
@@ -4275,9 +4275,10 @@ Jectivity is also stored as an Enum inside Conjure-Oxide.</p>
 <li><code>PreImage(f, x)</code> - Returns the set of elements of the domain which map to codomain element x, in function f.</li>
 <li><code>Range(f)</code> - Returns the set of values in the domain for which a function f is defined.</li>
 <li><code>Restrict(f, D)</code> - Returns a sub-function of f which has its mapping restricted to values in the domain D.</li>
+<li><code>ToRelation(f)</code> - Returns a relation for the converted function f.</li>
 </ul>
 <h2 id="note-on-implementation"><a class="header" href="#note-on-implementation">Note on Implementation</a></h2>
-<p>Currently functions are defined within the AST of Conjure-Oxide and can be parsed with the ‘legacy’ parser. However, there is no support as of Dec-2025 for rewriting rules or solving.</p>
+<p>Currently functions are defined within the AST of Conjure-Oxide and can be parsed with the ‘legacy’ parser. However, there is no support as of Apr-2026 for rewriting rules or solving.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="multisets"><a class="header" href="#multisets">Multisets</a></h1>
 <h2 id="what-are-multisets"><a class="header" href="#what-are-multisets">What Are Multisets</a></h2>
@@ -4296,6 +4297,47 @@ In the new conjure-oxide implementation, a variable’s domain is <em>ground</em
 <li><code>min(m)</code> - largest element in ordered multiset <code>m</code></li>
 <li><code>freq(m,e)</code> - counts occurrences of element <code>e</code> in multiset <code>m</code></li>
 </ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="relations"><a class="header" href="#relations">Relations</a></h1>
+<h2 id="what-are-relations"><a class="header" href="#what-are-relations">What Are Relations</a></h2>
+<p>A relation is effectively a set of tuples. The internal tuples can be of any arity and can have different internal domains, as long as every tuple in the relation has the same arity and domains. If a relation is binary we can also add additional attributes to define properties of the relation.</p>
+<p>Relations have attributes and a list of domains for inside the tuples. They are defined for both <code>GroundDomain</code> and <code>UnresolvedDomain</code> as <code>Relation(RelAttr, Vec&lt;GroundDomain&gt;)</code>.</p>
+<p>The result of a relation is a list of tuples. As such the <code>AbstractLiteral</code> for relations is defined <code>Relation(Vec&lt;Vec&lt;T&gt;&gt;)</code>. This AbstractLiteral type means that relations can also be represented explicitly.</p>
+<h2 id="attributes-2"><a class="header" href="#attributes-2">Attributes</a></h2>
+<p>Relations contain two types of attributes: size and binary attributes.</p>
+<p>Size attributes determine how many tuples are in the relation. Size attributes are converted to a <code>Range&lt;A&gt;</code> type in Conjure-Oxide. This size can be defined as:</p>
+<ul>
+<li>A single size <code>size x</code></li>
+<li>A minimum size <code>minSize x</code></li>
+<li>A maximum size <code>maxSize x</code></li>
+<li>A range of sizes <code>minSize x maxSize x</code></li>
+<li>Or unbounded by not specifying any attribute</li>
+</ul>
+<p>Binary attributes determine properties of the relation when it is a binary relation. Binary attributes are stored as a list of attributes <code>Vec&lt;BinaryAttr&gt;</code> and any number of them can be provided. The available binary attributes are as follows:</p>
+<ul>
+<li><code>reflexive</code></li>
+<li><code>irreflexive</code></li>
+<li><code>coreflexive</code></li>
+<li><code>symmetric</code></li>
+<li><code>antiSymmetric</code></li>
+<li><code>aSymmetric</code></li>
+<li><code>transitive</code></li>
+<li><code>total</code></li>
+<li><code>connex</code></li>
+<li><code>Euclidean</code></li>
+<li><code>serial</code></li>
+<li><code>equivalence</code></li>
+<li><code>partialOrder</code></li>
+</ul>
+<h2 id="operators-2"><a class="header" href="#operators-2">Operators</a></h2>
+<p>There is one special operator which is defined on relations.</p>
+<ul>
+<li><code>RelationProj(r, ps)</code> - Returns a new relation after projecting projectors ps onto relation r.<br>
+The projectors ps are stored a <code>Vec&lt;Option&lt;Expression&gt;&gt;</code>, and the projecting components (denoted <code>_</code> in Essence) are stored as <code>None</code><br>
+For example: <code>r(_,1,_)</code> converts r from a 3-component relation to a 2-component relation, by projecting the 1st and the 3rd columns. It chooses entries where the second column is 1. This is equivalent to the SQL select query: <code>SELECT one, three FROM r WHERE two = 1</code></li>
+</ul>
+<h2 id="note-on-implementation-1"><a class="header" href="#note-on-implementation-1">Note on Implementation</a></h2>
+<p>Currently relations are defined within the AST of Conjure-Oxide and can be parsed with the ‘legacy’ parser. However, there is no support as of Apr-2026 for rewriting rules or solving.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="essence-parser"><a class="header" href="#essence-parser">Essence Parser</a></h1>
 <p>The parser converts incoming Essence programs in Conjure Oxide to the <a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_core/ast/struct.Model.html">Model Object</a> that the rule engine takes in. The relevant parts of the Model object are the SymbolTable and Expression objects. The symbol table is essentially a list of the variables and their corresponding domains. The Expression object is a recursive object that holds all the constraints of the problem, nested into one object. The parser has two main parts. The first is the <code>tree-sitter-essence</code> crate, which is a general Essence parser using the library tree-sitter. The second part is the <code>conjure-cp-essence-parser</code> crate which is Rust code that uses the grammar to parse Essence programs and convert them into the above-mentioned Model object.</p>

@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Conjure Blocks - Conjure Oxide</title>
+        <title>Relations - Conjure Oxide</title>
 
 
         <!-- Custom HTML head -->
@@ -176,24 +176,56 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <!--
-author: Nadine Martin
-last updated: 21-12-2025
--->
-<h1 id="conjure-blocks"><a class="header" href="#conjure-blocks">Conjure Blocks</a></h1>
-<p><img src="../../images/conjure_blocks.png" alt="Conjure Blocks website"></p>
-<p>Conjure blocks is an online block editor for Essence. This tool allows you to write constraint programs in blocks, which are then translated into Essence. <a href="https://conjure-aas.cs.st-andrews.ac.uk/">Conjure-aaS</a> is used to solve these problems. Conjure blocks is an ongoing project.</p>
-<p>See the the <a href="https://github.com/conjure-cp/conjure-blocks">Conjure Blocks repository</a>, the <a href="https://conjure-cp.github.io/conjure-blocks/docs/">Conjure Blocks Documentation</a> and the <a href="https://conjure-cp.github.io/conjure-blocks/">live site</a> for more information.</p>
+                        <h1 id="relations"><a class="header" href="#relations">Relations</a></h1>
+<h2 id="what-are-relations"><a class="header" href="#what-are-relations">What Are Relations</a></h2>
+<p>A relation is effectively a set of tuples. The internal tuples can be of any arity and can have different internal domains, as long as every tuple in the relation has the same arity and domains. If a relation is binary we can also add additional attributes to define properties of the relation.</p>
+<p>Relations have attributes and a list of domains for inside the tuples. They are defined for both <code>GroundDomain</code> and <code>UnresolvedDomain</code> as <code>Relation(RelAttr, Vec&lt;GroundDomain&gt;)</code>.</p>
+<p>The result of a relation is a list of tuples. As such the <code>AbstractLiteral</code> for relations is defined <code>Relation(Vec&lt;Vec&lt;T&gt;&gt;)</code>. This AbstractLiteral type means that relations can also be represented explicitly.</p>
+<h2 id="attributes"><a class="header" href="#attributes">Attributes</a></h2>
+<p>Relations contain two types of attributes: size and binary attributes.</p>
+<p>Size attributes determine how many tuples are in the relation. Size attributes are converted to a <code>Range&lt;A&gt;</code> type in Conjure-Oxide. This size can be defined as:</p>
+<ul>
+<li>A single size <code>size x</code></li>
+<li>A minimum size <code>minSize x</code></li>
+<li>A maximum size <code>maxSize x</code></li>
+<li>A range of sizes <code>minSize x maxSize x</code></li>
+<li>Or unbounded by not specifying any attribute</li>
+</ul>
+<p>Binary attributes determine properties of the relation when it is a binary relation. Binary attributes are stored as a list of attributes <code>Vec&lt;BinaryAttr&gt;</code> and any number of them can be provided. The available binary attributes are as follows:</p>
+<ul>
+<li><code>reflexive</code></li>
+<li><code>irreflexive</code></li>
+<li><code>coreflexive</code></li>
+<li><code>symmetric</code></li>
+<li><code>antiSymmetric</code></li>
+<li><code>aSymmetric</code></li>
+<li><code>transitive</code></li>
+<li><code>total</code></li>
+<li><code>connex</code></li>
+<li><code>Euclidean</code></li>
+<li><code>serial</code></li>
+<li><code>equivalence</code></li>
+<li><code>partialOrder</code></li>
+</ul>
+<h2 id="operators"><a class="header" href="#operators">Operators</a></h2>
+<p>There is one special operator which is defined on relations.</p>
+<ul>
+<li><code>RelationProj(r, ps)</code> - Returns a new relation after projecting projectors ps onto relation r.<br>
+The projectors ps are stored a <code>Vec&lt;Option&lt;Expression&gt;&gt;</code>, and the projecting components (denoted <code>_</code> in Essence) are stored as <code>None</code><br>
+For example: <code>r(_,1,_)</code> converts r from a 3-component relation to a 2-component relation, by projecting the 1st and the 3rd columns. It chooses entries where the second column is 1. This is equivalent to the SQL select query: <code>SELECT one, three FROM r WHERE two = 1</code></li>
+</ul>
+<h2 id="note-on-implementation"><a class="header" href="#note-on-implementation">Note on Implementation</a></h2>
+<p>Currently relations are defined within the AST of Conjure-Oxide and can be parsed with the ‘legacy’ parser. However, there is no support as of Apr-2026 for rewriting rules or solving.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../documentation/error_detection/error_classification.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../documentation/types/multisets.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../documentation/links.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../documentation/essence_parser.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -203,11 +235,11 @@ last updated: 21-12-2025
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../documentation/error_detection/error_classification.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../documentation/types/multisets.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../documentation/links.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../documentation/essence_parser.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>
