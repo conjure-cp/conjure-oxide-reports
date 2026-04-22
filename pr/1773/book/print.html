@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-1c43935c.js";
+            window.path_to_searchindex_js = "searchindex-8eea0b88.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-57f702e9.js"></script>
+        <script src="toc-c21754f8.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -320,6 +320,390 @@ such that x &gt; y
 <p>Want to see exactly what rules were applied? Check out the <a href="getting_started/command-line/logging.html">Logging guide</a>.</p>
 <h2 id="functional-programming-style"><a class="header" href="#functional-programming-style">Functional Programming Style</a></h2>
 <p>For developers who come from programming languages like Scala or Haskell, or those who favour a functional programming style, we have a <a href="getting_started/functional-rust.html">Functional Rust</a> guide that you might find useful.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="design-documents"><a href="#design-documents" class="header">Design Documents</a></h1>
+<div style="break-before: page; page-break-before: always;"></div><!-- maturity: draft
+authors: Niklas Dewally, Hanaa Khan
+created: 08-12-23
+---- -->
+<!-- TODO: highlight essence syntax -->
+<!-- TODO: put stuff from 'improve this page', and to make complete documentation for all the crates (they all point back to the regular docs, idk if they'll need more specificity), into the 'things you could do' page -->
+<h1 id="202311-high-level-plan"><a class="header" href="#202311-high-level-plan">2023‐11: High Level Plan</a></h1>
+<p><em>This page is a summary of discussions about the architecture of the project circa November 2023.</em></p>
+<p>In brief:</p>
+<img src="developers_guide/design_documents/handDrawnDiagram.jpeg" width="300">
+<h2 id="conjure-oxide-1"><a class="header" href="#conjure-oxide-1">Conjure Oxide</a></h2>
+<h3 id="model-rewriting-engine"><a class="header" href="#model-rewriting-engine">Model Rewriting Engine</a></h3>
+<p>The purpose of the model rewriting engine is to turn a high level constraints model into one that can be run by various solvers.
+It incrementally rewrites a given model by applying a series of rules.</p>
+<p>Rules have the type:</p>
+<pre><code class="language-rs">rule :: fn(Expr) -&gt; Result&lt;Expr,Error&gt;
+</code></pre>
+<p>The use of <code>Result</code> here allows for the type checking of the Model at each stage (amongst other things).</p>
+<p>A sketch of a rewriting algorithm is below. As we are using a <code>Result</code> type, backtracks occur when an <code>Err</code> is returned.</p>
+<pre><code>fn apply(rules,x) {
+  new_rules = getApplicable(rules)
+
+  if shouldStop(x) {
+    return Ok(x)
+  }
+ 
+ // Recursive case - multiple rules
+  while len(rules') &gt; 0 {
+   rule = select(new_rules)
+   new_rules.remove(rule)
+   res = apply(rules,rule(x))
+
+   if res is Ok, return Ok
+  }
+
+  // No rules - base case
+  if (compatibleWithSolver(x)) {
+    return Ok(x)
+  }
+
+  return Err()
+}
+</code></pre>
+<p>This is, in effect, a recursive tree search algorithm. The behaviour of the search can be changed by changing the following functions:</p>
+<ul>
+<li>getApplicable: <code>fn(Vec&lt;Rule&gt;) -&gt; Vec&lt;Rule&gt;</code></li>
+<li>select: <code>fn(Vec&lt;Rule&gt;) -&gt; Vec&lt;Rule&gt;</code></li>
+<li>shouldStop: <code>fn(x) -&gt; bool</code></li>
+</ul>
+<hr>
+<p>The following functions are also important to implement the rewriting engine:</p>
+<pre><code class="language-haskell">domainOf:: Expr -&gt; Domain
+typeOf:: Expr -&gt; Type
+typeOfDomain:: Domain -&gt; Type
+categoryOf:: Expr -&gt; Category
+
+data Category = Decision | Unknown | Quantified
+</code></pre>
+<h3 id="solver-adaptors"><a class="header" href="#solver-adaptors">Solver Adaptors</a></h3>
+<p>Once we have a Model object that only uses constraints supported by a particular solver, we are able to translate it to a form the solver understands.</p>
+<p>The solver adaptor layer translates a Model into solver specific data-structures, and then runs the solvers.</p>
+<p>If the given Model isn’t compatible with the solver, the use of a <code>Result</code> type here could allow a type error to be thrown.</p>
+<h2 id="other-crates-inside-this-repository"><a class="header" href="#other-crates-inside-this-repository">Other crates inside this repository</a></h2>
+<p>This repository contains the code for Conjure Oxide as well as the code for some of its dependencies and related works.</p>
+<p>Currently, these are just Rust crates that provide low level bindings to various solvers.</p>
+<!-- TODO: is this still the case? should rewrite slightly if not -->
+<p>There should be a strict separation of concerns between each crate and Conjure Oxide. In particular, each crate in this project should be considered a separate piece of work that could be independently published and used. Therefore:</p>
+<ul>
+<li>The crate should have its own complete documentation and examples.</li>
+<li>The public API should be safe and make sense outside the context of Conjure Oxide.</li>
+</ul>
+<h3 id="solver-crates"><a class="header" href="#solver-crates">Solver Crates</a></h3>
+<p>Each solver crate should have a API that matches the data structures
+used by the solver itself.</p>
+<p>Eventually, there will be a way to generically call solvers using common
+functions and data structures. However, this is to be defined entirely in Conjure Oxide
+and should not affect how the solver crates are written. See <a href="#solver-adaptors">Solver Adaptors</a>.</p>
+<!-- ## Improve this page
+
+---
+
+- [ ] Add details about solution returning.
+- [ ] Typeset the diagram using graphviz.
+- [ ] Add solutions returning to the diagram.
+- [ ] What specific error type do rules use? -->
+<hr>
+<p><em>This section had been taken from the ‘2023‐11: High Level Plan’ page of the conjure-oxide wiki</em></p>
+<div style="break-before: page; page-break-before: always;"></div><!-- maturity: draft
+authors: Niklas Dewally, Hanaa Khan
+created: 21-03-24
+---- -->
+<!-- TODOs -->
+<h1 id="202403-implementing-uniplates-and-biplates-with-structure-preserving-trees"><a class="header" href="#202403-implementing-uniplates-and-biplates-with-structure-preserving-trees">2024‐03: Implementing Uniplates and Biplates with Structure Preserving Trees</a></h1>
+<h2 id="contents"><a class="header" href="#contents">Contents:</a></h2>
+<ul>
+<li><a href="#recap-uniplates-and-biplates">Recap: Uniplates and Biplates</a></li>
+<li><a href="#definition-of-children">Definition of Children</a></li>
+<li><a href="#storing-the-structure-of-children">Storing The Structure of Children</a></li>
+<li><a href="#uniplates-and-biplates-using-structure-preserving-trees">Uniplates and Biplates Using Structure Preserving Trees</a></li>
+</ul>
+<p>Comments and discussion about this document can be found in issue <a href="https://github.com/conjure-cp/conjure-oxide/issues/261">#261</a>.</p>
+<hr>
+<p>In <a href="https://github.com/conjure-cp/conjure-oxide/pull/180">#180</a> and <a href="https://github.com/conjure-cp/conjure-oxide/pull/259">#259</a> we implemented the basic Uniplate interface and a derive macro to automatically implement it for <code>enum</code> types. However, our current implementation is incorrect and problematic: we have defined children wrong; and our children list does not preserve structure, making more complex nested structures hard to recreate in the context function.</p>
+<h2 id="recap-uniplates-and-biplates"><a class="header" href="#recap-uniplates-and-biplates">Recap: Uniplates and Biplates</a></h2>
+<p><em>A quick recap of what we are trying to do - for details, see the <a href="https://hackage.haskell.org/package/uniplate">Uniplate Haskell docs</a>, our Github Issues, and the paper.</em></p>
+<!-- TODO: which paper?? n are there other issues besides the stated one -->
+<p>Uniplates are an easy way to perform recursion over complex recursive data types.</p>
+<p>It is typically used with enums containing multiple variants, many of which may be different types.</p>
+<pre><code class="language-hs">data T = A T [Integer]
+       | B T T
+       | C T U
+       | D [T]
+</code></pre>
+<p>With Uniplate, one can perform a map over this with very little or no boilerplate.</p>
+<p>This is implemented with a single function <code>uniplate</code> that returns a <em>list of children</em> of the current object and a <em>context</em> function to rebuild the object from a list of children.</p>
+<p>Biplates provide recursion over instances of type <code>T</code> within some other type <code>U</code>. They are implemented with a single function <code>biplate</code> of similar type to <code>uniplate</code> (returning <em>children</em> and a <em>context</em> function).</p>
+<p>These functions are able to be implemented on any data type through macros making Uniplate operations boilerplate free.</p>
+<h2 id="definition-of-children"><a class="header" href="#definition-of-children">Definition of Children</a></h2>
+<p>We currently take <em>children of T</em> to mean <em>direct descendants of T inside T</em>. However, the correct definition of children is <em>maximal substructures of type T</em>.</p>
+<p>For example, consider these Haskell types:</p>
+<pre><code class="language-hs">data T = A T [Integer]
+       | B T T
+       | C T U
+       | D [T]
+
+data U = E T T
+       | F Integer
+       | G [T] T
+</code></pre>
+<p>Our current implementation would define children as the following:</p>
+<pre><code class="language-hs">children (A t1 _) = [t1]
+children (B t1 t2) = [t1, t2]
+children (C t1 u) = [t1]
+children (D ts) = ts
+</code></pre>
+<p>However, the proper definition should support transitive children - i.e. T contains a U which contains a T:</p>
+<pre><code class="language-hs">children (A t1 _) = [t1]
+children (B t1 t2) = [t1, t2]
+children (C t1 (E t2 t3)) = [t1,t2,t3]
+children (C t1 (F _)) = [t1]
+children (C t1 (G ts t3)) = [t1] ++ ts ++ [t3]
+children (D ts) = ts
+</code></pre>
+<p>While a seemingly small difference, this complicates how we reconstruct a node from its children: we now need to create a context that takes a list of children and creates an arbitrarily deeply nested data structure containing multiple different types. In particular, the challenge is keeping track of which elements of the children list go into which fields of the enum we are creating.</p>
+<p>We already had this problem dealing with children from lists, but a more general approach is needed.</p>
+<h2 id="storing-the-structure-of-children"><a class="header" href="#storing-the-structure-of-children">Storing The Structure of Children</a></h2>
+<p>How do we know which children go into which fields of the enum variant?</p>
+<p>For example, consider this complicated instance of <code>T</code>:</p>
+<pre><code class="language-hs">data T = A T [Integer]
+       | B T T
+       | C T U 
+       | D [T]
+
+data U = E T T
+       | F Integer
+       | G [T] T
+
+myT = C(D([t0,...,t5),G([t6,...,t12],t13))
+</code></pre>
+<p>Its list of children is: <code>[t0,...,t13]</code>.</p>
+<p>Try creating a function to recreate <code>myT</code> based on a new list of children. <em>Hint: it is difficult, and even more so in full generality!</em></p>
+<p>If we instead consider children to be a tree, where each field in the original enum variant is its own branch, we get:</p>
+<pre><code class="language-hs">data Tree A = Zero | One A | Many [(Tree A)]
+
+myTChildren = 
+  Many [(Many [One(t0),...,One(t5)]),      -- C([XXX], _) field 1 of C
+        (Many [                            -- C([_],XXX)  field 2 of C
+          (Many [One(t6),...,One(t12)]),   -- G([XXX],_)  field 2.1 of C
+          (One  t13))]                     -- G([_],XXX)) field 2.2 of C
+</code></pre>
+<p>This captures, in a type-independent way, the following structural information:</p>
+<ol>
+<li><code>myT</code> has two fields.</li>
+<li>The first field is a container of Ts.</li>
+<li>The second field contains two inner fields: one is a container of Ts, one is a single T.</li>
+</ol>
+<p><strong>Representing non-recursive and primitive types</strong></p>
+<p>Often primitive and non-recursive types are found in the middle of enum variants. How do we say <em>“we don’t care about this field, it does not contain a T”</em> with our <code>Tree</code> type? <code>Zero</code> can be used for this.</p>
+<p>For example:</p>
+<pre><code class="language-hs">data V = V1 V Integer W
+       | V2 Integer
+
+data W = W1 V V
+
+myV = (V1 
+        (V2 1) 
+        1 
+        (W1 
+          (V2 2) 
+          (V2 3)))
+
+myVChildren = 
+  (Many [
+    (One v1),  -- V1(XXX,_,_)
+    Zero,      -- V1(_,XXX,_) 
+    (Many [    -- V1(_,_,XXX)
+      (One v2),
+      (One v3)
+   ]))
+</code></pre>
+<p>This additionally encodes the information that the second field of <code>myV</code> has no Ts at all.</p>
+<p>While this information isn’t too useful for finding or traversing over the target type, it means that the tree structure defines the structure of the target type completely: there are always the same number of tree branches as there are fields in the enum variant.</p>
+<h2 id="uniplates-and-biplates-using-structure-preserving-trees"><a class="header" href="#uniplates-and-biplates-using-structure-preserving-trees">Uniplates and Biplates Using Structure Preserving Trees</a></h2>
+<p>Recall that the <code>uniplate</code> function returns all <em>children</em> of a data structure alongside a <em>context</em> function that rebuilds the data structure using some new children.</p>
+<p>To implement this, for each field in an enum variant, we need to ask the questions: <em>“how do we get the type <code>T</code>s in the type <code>U</code>”</em>, and <em>“how can we rebuild this <code>U</code> based on some new children of type <code>T</code>?”</em>.</p>
+<p>This is just a <code>Biplate&lt;U,T&gt;</code>, which gives us the <em>type <code>T</code> children within a type <code>U</code></em> as well as a <em>context function to reconstruct the <code>U</code> from the <code>T</code></em>.</p>
+<p>Therefore:</p>
+<ul>
+<li>
+<p>We build the <em>children</em> tree by combining the children trees of all fields of the enum (such that each field’s children is a branch on the tree).</p>
+</li>
+<li>
+<p>We build the <em>context</em> function by calling each fields context function on each branch of the input tree.</p>
+</li>
+</ul>
+<p>This is effectively a recursive invocation of <code>Biplate</code>.</p>
+<p>What happens when we reach a T? Under the normal definition, <code>Biplate&lt;T,T&gt;</code> would return its children. This is wrong - we want to return <code>T</code> here, not its children!</p>
+<p>When <code>T == U</code> we need to change the definition of a Biplate: <strong><code>Biplate&lt;T,T&gt;</code> operates over the input structure, not its children.</strong></p>
+<p>For our example AST:</p>
+<pre><code class="language-hs">data T = A T [Integer]
+       | B T T
+       | C T U 
+       | D [T]
+
+data U = E T T
+       | F Integer
+       | G [T] T
+</code></pre>
+<p>Here are some Biplate and Uniplates and their resultant children trees:</p>
+<ul>
+<li>
+<p><code>Biplate&lt;Integer,T&gt; 1</code> is <code>Zero</code>.</p>
+</li>
+<li>
+<p><code>Uniplate&lt;T&gt; (A t [1,2,3])</code> is <code>(Many [Biplate&lt;T,T&gt; t ,Zero])</code>.</p>
+<p>This evaluates to <code>(Many [(One t),Zero])</code></p>
+</li>
+<li>
+<p><code>Biplate&lt;T,T&gt; t</code> is <code>One t</code>.</p>
+</li>
+<li>
+<p><code>Biplate&lt;T,U&gt; (G ts t1)</code> is <code>(Many [Biplate&lt;T,[T]&gt; ts , Biplate&lt;T,T&gt; t ])</code>.</p>
+<p>This evaluates to <code>(Many [(Many [(One t0),...(One tn)]),(One t)])</code></p>
+</li>
+<li>
+<p><code>Uniplate&lt;T,T&gt; (C t (G ts t1))</code> is <code>(Many [Biplate&lt;T,T&gt; t, Biplate&lt;U,T&gt; (G ts t1))</code></p>
+<p>This evaluates to <code>(Many [(One t), (Many [(Many [(One t0),...,(One tn)]), (One t)]))</code></p>
+</li>
+</ul>
+<!-- vim: cc=100 spell
+-->
+<hr>
+<p><em>This section had been taken from the ‘2024‐03: Implementing Uniplates and Biplates with Structure Preserving Trees’ page of the conjure-oxide wiki</em></p>
+<div style="break-before: page; page-break-before: always;"></div><!-- maturity: draft
+authors: Felix Leitner, Niklas Dewally, Hanaa Khan
+created: 19-09-24
+---- -->
+<!-- TODO edit more -->
+<!-- syntax highlighting -->
+<h1 id="semantics-of-rewriting-expressions-with-sideeffects"><a class="header" href="#semantics-of-rewriting-expressions-with-sideeffects">Semantics of Rewriting Expressions with Side‐Effects</a></h1>
+<h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
+<hr>
+<p>When rewriting expressions, a rule may occasionally introduce new variables and constraints. For example, a rule which handles the <code>Min</code> expression may introduce a new variable <code>aux</code> which represents the minimum value itself, and introduce constraints <code>aux &lt;= x</code> for each <code>x</code> in the original <code>Min</code> expression. Conjure and Conjure Oxide provide similar methods of achieving these “side-effects”.</p>
+<h2 id="reductions"><a class="header" href="#reductions">Reductions</a></h2>
+<hr>
+<p>In Conjure Oxide, reduction rules return <code>Reduction</code> values. These contain a new expression, a new (possibly empty) set of top-level constraints, and a new (possibly empty) symbol table. The two latter values are brought up to the top of the AST during rewriting and joined to the model. These reductions, or “local sub-models” therefore can define new requirements which must hold across the model for the change that is made to a specific node of the AST to be valid.</p>
+<p>The example with <code>Min</code> given in the overview is one case where plain <code>Reduction</code>s are used, as a new variable with a new domain is introduced, along with constraints which must hold for that variable.</p>
+<h2 id="bubbles"><a class="header" href="#bubbles">Bubbles</a></h2>
+<hr>
+<p>Reductions are not enough in all cases. For example, when handling a possibly undefined value, changes must be made in the context of the current expression. Simply introducing new top-level constraints may lead to incorrect reductions in these cases. The <code>Bubble</code> expression and associated rules take care of this, bringing new constraints up the tree gradually and expanding in the correct context.</p>
+<p>Essentially, <code>Bubble</code> expressions are a way of attaching a constraint to an expression to say “X is only valid if Y holds”. One example of this is how Conjure Oxide handles division. Since the division expression may possibly be undefined, a constraint must be attached to it which asserts the divisor is != 0.</p>
+<p>An example of division handling is shown below. Bubbles are shown as <code>{X @ Y}</code>, where X is the expression that Y is attached to.</p>
+<pre><code>!(a = b / c)                 Original expression
+
+!(a = {(b / c) @ c != 0})    b/c is possibly undefined, so introduce a bubble saying the divisor is != 0
+
+!({(a = b / c) @ c != 0})    "bubble up" the expression, since b / c is not a bool-type expression
+
+!(a = b / c /\ c != 0)       Now that X is a bool-type expression, we can simply expand the bubble into a conjunction
+</code></pre>
+<p>Why not just use <code>Reduction</code>s to assert at the top-level of the model that <code>c != 0</code>? In the context of undefinedness handling, the final reduction is dependent on the context it occurs in. In the above example, if we continue by simplifying (apply DeMorgan’s), we can see that it becomes <code>a != b / c \/ c = 0</code>. Thus, c = 0 is a valid assignment for this example to be true, and setting <code>c != 0</code> on the top-level would be incorrect.</p>
+<p>In Conjure Oxide, Bubbles are often combined with the power of <code>Reduction</code>s to provide support for solvers like Minion.</p>
+<hr>
+<p><em>This section had been taken from the ‘Semantics of Rewriting Expressions with Side‐Effects’ page of the conjure-oxide wiki</em></p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="what-we-didnt-do"><a class="header" href="#what-we-didnt-do">What we didn’t do</a></h1>
+<p>The intention of this page is to chronicle decisions made during the development of conjure-oxide. There have been many situations where we have thought of something interesting that ends up not being the best solution to a problem and we believe others may come up with the same ideas. This page should be read before contributing so that potential contributors do not go down rabbit holes that have already been thoroughly searched.</p>
+<details>
+<summary>
+<h2>Nested expressions within the polymorphic metadata field </h2>
+</summary>
+<h3 id="background"><a class="header" href="#background">Background</a></h3>
+<p>As discussed in <a href="https://github.com/conjure-cp/conjure-oxide/issues/182">Issue 182</a>, we wanted to create a polymorphic metadata field that would be contained within the expression struct and that could be changed on a case-by-case basis as metadata might only be needed for a single module for example.</p>
+<h3 id="what-we-thought-of"><a class="header" href="#what-we-thought-of">What we thought of</a></h3>
+<p>One interesting idea that was suggested as a structure like this:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// Define a trait for metadata in each module.
+pub trait Metadata {
+    // Define methods specific to the metadata.
+    fn print_metadata(&amp;self);
+    // Add other methods as needed.
+}
+
+// Module-specific metadata types.
+pub mod module1 {
+    pub struct Metadata1 {
+        // Define fields specific to this metadata.
+        pub clean: bool,
+        // Add other fields as needed.
+    }
+
+    impl super::Metadata for Metadata1 {
+        fn print_metadata(&amp;self) {
+            println!("Metadata1: Clean - {}", self.clean);
+        }
+    }
+}
+
+pub mod module2 {
+    pub struct Metadata2 {
+        // Define fields specific to this metadata.
+        pub status: String,
+        // Add other fields as needed.
+    }
+
+    impl super::Metadata for Metadata2 {
+        fn print_metadata(&amp;self) {
+            println!("Metadata2: Status - {}", self.status);
+        }
+    }
+}
+
+// Modify the Expression enum to hold a trait object for metadata.
+#[derive(Clone, Debug)]
+pub enum Expression {
+    // Existing enum variants here...
+    WithMetadata(Box&lt;Expression&gt;, Option&lt;Box&lt;dyn Metadata&gt;&gt;),
+}
+
+impl Expression {
+    // Create a new expression with metadata.
+    pub fn with_metadata(expr: Expression, metadata: Option&lt;Box&lt;dyn Metadata&gt;&gt;) -&gt; Expression {
+        Expression::WithMetadata(Box::new(expr), metadata)
+    }
+
+    // Extract the expression and metadata.
+    pub fn extract_metadata(self) -&gt; (Expression, Option&lt;Box&lt;dyn Metadata&gt;&gt;) {
+        match self {
+            Expression::WithMetadata(expr, metadata) =&gt; (*expr, metadata),
+            _ =&gt; (self, None),
+        }
+    }
+
+    // Set metadata for an expression.
+    pub fn set_metadata(&amp;mut self, metadata: Option&lt;Box&lt;dyn Metadata&gt;&gt;) {
+        if let Expression::WithMetadata(_, ref mut existing_metadata) = *self {
+            *existing_metadata = metadata;
+        }
+    }
+
+    // Get metadata for an expression.
+    pub fn get_metadata(&amp;self) -&gt; Option&lt;&amp;dyn Metadata&gt; {
+        if let Expression::WithMetadata(_, Some(metadata)) = self {
+            Some(metadata.as_ref())
+        } else {
+            None
+        }
+    }
+
+    // Existing methods here...
+}
+
+<span class="boring">}</span></code></pre>
+<h3 id="why-we-didnt-do-it"><a class="header" href="#why-we-didnt-do-it">Why we didn’t do it</a></h3>
+<p>This is nice in the sense that there is less “ugliness” when creating expressions as there is no need to have metadata in every enum variant. However, this severely effects the way that the rewriter traverses the AST as there is now WithMetadata objects sprinkled throughout the AST which would require some way to traverse up the tree while saving the context of nodes below the metadata object. This image shows the differences in a basic AST:</p>
+<img src="https://github.com/conjure-cp/conjure-oxide/assets/27870413/09726bf0-c2ef-4056-b7c3-e011f148774b" width="300" height="600">
+<h3 id="what-we-did-do"><a class="header" href="#what-we-did-do">What we did do</a></h3>
+<p>Due to this issue we decided that a simpler implementation where metadata is explicitly required every time but could be set to some empty metadata object was more practical. More details on this implementation can found in <a href="https://github.com/conjure-cp/conjure-oxide/pull/233">Near Future PR</a></p>
+</details>
+<hr>
+<p><em>This section had been adapted from the ‘What we didn’t do’ page of the conjure-oxide wiki</em></p>
 
                     </main>
 
