@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Installation - Conjure Oxide</title>
+        <title>Creating Types Guide - Conjure Oxide</title>
 
 
         <!-- Custom HTML head -->
@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../searchindex-dd914c34.js";
+            window.path_to_searchindex_js = "../../searchindex-69c3ef39.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-402e02e7.js"></script>
+        <script src="../../toc-6f625bf4.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -176,18 +176,31 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="installation"><a class="header" href="#installation">Installation</a></h1>
-<p>To install Conjure Oxide, either <a href="">build it from source</a>, or use a <a href="">nightly release</a>.</p>
+                        <h1 id="creating-types-guide"><a class="header" href="#creating-types-guide">Creating Types Guide</a></h1>
+<p>Currently Conjure-Oxide does not have any support for Essence’s sequences, relations, partitions or variants.
+This guide outlines the process of creating support for those types to the AST. This does not currently cover rewriting rules or solving.</p>
+<h2 id="creating-the-type"><a class="header" href="#creating-the-type">Creating the Type</a></h2>
+<ul>
+<li>The domains of these types can contain pointers and so must be able to be both ground and unresolved. Hence you must add to the <code>GroundDomain</code> and <code>UnresolvedDomain</code> Enums</li>
+<li>Adding a new domain will require adding implementations for it, for a lot of related functions. To use the roundtrip tests the Display function <code>fmt()</code> must be implemented to match the Essence of the type.</li>
+<li>Next to complete some of these implementation you will need to add to the <code>ReturnType</code> Enum. This is the returned value from a specific element of the abstract type.</li>
+<li>Finally these functions will also require you to add to the <code>AbstractLiteral</code> Enum. This defines the values of a literal of that type. This will be required for defining the type explicitly. You should also note that we implement <code>Uniplate</code> for <code>AbstractLiteral</code>, and so this implementation will be required.</li>
+</ul>
+<h2 id="adding-to-the-legacy-parser"><a class="header" href="#adding-to-the-legacy-parser">Adding to the Legacy Parser</a></h2>
+<p>Once the type can be stored in Conjure-Oxide’s AST, you will need to add parsing support.</p>
+<ul>
+<li>For the legacy parser this involves adding to <code>parse_model.rs</code> to parse the JSON output of Conjure’s parser.</li>
+</ul>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../intro.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../documentation/testing/roundtrip/roundtrip_testing.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../getting_started/command-line/logging.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../documentation/types/functions.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -197,11 +210,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../intro.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../documentation/testing/roundtrip/roundtrip_testing.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../getting_started/command-line/logging.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../documentation/types/functions.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

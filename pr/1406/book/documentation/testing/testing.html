@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Design Documents - Conjure Oxide</title>
+        <title>Testing - Conjure Oxide</title>
 
 
         <!-- Custom HTML head -->
@@ -176,16 +176,42 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        
+                        <h1 id="testing"><a class="header" href="#testing">Testing</a></h1>
+<h2 id="types-of-tests"><a class="header" href="#types-of-tests">Types of Tests</a></h2>
+<p>Conjure-Oxide currently has four forms of tests:</p>
+<ul>
+<li>Integration tests</li>
+<li><a href="./Custom-Tests.html">Custom tests</a></li>
+<li><a href="./roundtrip/roundtrip_testing.html">Roundtrip tests</a></li>
+<li>A small number of unit tests</li>
+</ul>
+<h2 id="test-generation"><a class="header" href="#test-generation">Test generation</a></h2>
+<p>The test generation occurs in the file <code>./tests_integration/build.rs</code>. This generates the integration, custom and roundtrip tests all in a similar manner.</p>
+<p>For each test framework we define a base directory for all these tests:</p>
+<ul>
+<li><code>./tests_integration/tests/integration</code></li>
+<li><code>./tests_integration/tests/custom</code></li>
+<li><code>./tests_integration/tests/roundtrip</code></li>
+</ul>
+<p>Any sub-directory of these defined directories containing the necessary files to make a test, will be considered a test.</p>
+<ul>
+<li>For integration and roundtrip tests this is containing a singular file with a <code>.essence</code> or <code>.eprime</code> extension.</li>
+<li>For custom tests this is containing a <code>run.sh</code> script file.</li>
+</ul>
+<p>Once these tests are identified a Rust <code>#[test]</code> is created using the defined templates (<code>&lt;test type&gt;_test_template</code>). This test is within the pre-generated file <code>gen_tests_&lt;test type&gt;.rs</code> within the specified output directory (<code>OUT_DIR</code>).</p>
+<p>This template contains the code to call a new function which carries out the test. The values passed to the template determines its test name, through sanitation of the path, and determine the arguments to this test function.</p>
+<p>Finally, the test function itself includes the line <code>include!(concat!(env!("OUT_DIR"), "/gen_tests_&lt;test type&gt;.rs"));</code>, such that it is accessible during the test through insertion using the include macro.</p>
+<p>This format improves scalability and allows new tests to be created by just creating the input file.</p>
+
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../developers_guide/coding_resources/benchmarking-guide.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../documentation/flatten.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../developers_guide/design_documents/2023_11.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../documentation/testing/roundtrip/roundtrip_testing.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -195,11 +221,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../developers_guide/coding_resources/benchmarking-guide.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../documentation/flatten.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../developers_guide/design_documents/2023_11.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../documentation/testing/roundtrip/roundtrip_testing.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

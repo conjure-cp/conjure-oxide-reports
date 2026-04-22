@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Design Documents - Conjure Oxide</title>
+        <title>Functions - Conjure Oxide</title>
 
 
         <!-- Custom HTML head -->
@@ -176,16 +176,48 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        
+                        <h1 id="functions"><a class="header" href="#functions">Functions</a></h1>
+<h2 id="what-are-functions"><a class="header" href="#what-are-functions">What Are Functions</a></h2>
+<p>A function is a binary relation on two sets, from elements of a domain to elements of a codomain.</p>
+<p>Functions have attributes and two domains for the domain and codomain of its results. They are defined for both <code>GroundDomain</code> and <code>UnresolvedDomain</code> as <code>Function(FuncAttr, Moo&lt;GroundDomain&gt;, Moo&lt;GroundDomain&gt;)</code>.</p>
+<p>The result of a function is a list of tuples defined by the mappings. As such the <code>AbstractLiteral</code> for functions is defined <code>Function(Vec&lt;(T, T)&gt;)</code>. This AbstractLiteral type also means that functions can also be represented explicitly.</p>
+<h2 id="attributes"><a class="header" href="#attributes">Attributes</a></h2>
+<p>Functions contain three types of attributes: size, partiality and jectivity.</p>
+<p>Size attributes determine how many mappings the function is true for. Size attributes are converted to a <code>Range&lt;A&gt;</code> type in Conjure-Oxide. This size can be defined as:</p>
+<ul>
+<li>A single size <code>size(x)</code></li>
+<li>A minimum size <code>minSize(x)</code></li>
+<li>A maximum size <code>maxSize(x)</code></li>
+<li>A range of sizes <code>minSize(x) maxSize(x)</code></li>
+<li>Or unbounded by not specifying any attribute</li>
+</ul>
+<p>Partiality determines whether the function is total or partial. A total function is one which is defined for every possible input in the domain set. A function will have partial partiality unless specified otherwise.
+Partiality is stored as an Enum inside Conjure-Oxide.</p>
+<p>Jectivity refers to whether a function is injective, surjective, or bijective. These determine whether elements in the domain and codomain must have only one corresponding mapping. A function can also have no specified jectivity, which is the default.
+Jectivity is also stored as an Enum inside Conjure-Oxide.</p>
+<h2 id="operators"><a class="header" href="#operators">Operators</a></h2>
+<p>There are seven operators which are defined on functions. These are represented as <code>Expressions</code> in Conjure-Oxide.</p>
+<ul>
+<li><code>Defined(f)</code> - Returns the set of values in the domain for which a function f is defined.</li>
+<li><code>Image(f, x)</code> - Returns the element of the codomain which is mapped to domain element x, in function f.</li>
+<li><code>ImageSet(f, x)</code> - Returns the set of elements of the codomain which is mapped to domain element x, in function f.</li>
+<li><code>Inverse (f1, f2)</code> - Returns a boolean representing if functions f1 and f2 are inverses of each other.</li>
+<li><code>PreImage(f, x)</code> - Returns the set of elements of the domain which map to codomain element x, in function f.</li>
+<li><code>Range(f)</code> - Returns the set of values in the domain for which a function f is defined.</li>
+<li><code>Restrict(f, D)</code> - Returns a sub-function of f which has its mapping restricted to values in the domain D.</li>
+</ul>
+<h2 id="note-on-implementation"><a class="header" href="#note-on-implementation">Note on Implementation</a></h2>
+<p>Currently functions are defined within the AST of Conjure-Oxide and can be parsed with the ‘legacy’ parser. However, there is no support as of Dec-2025 for rewriting rules or solving.</p>
+
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../developers_guide/coding_resources/benchmarking-guide.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../documentation/types/creating_types_guide.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../developers_guide/design_documents/2023_11.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../documentation/types/multisets.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -195,11 +227,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../developers_guide/coding_resources/benchmarking-guide.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../documentation/types/creating_types_guide.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../developers_guide/design_documents/2023_11.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../documentation/types/multisets.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Ideal Scenario of Testing for Conjure-Oxide - Conjure Oxide</title>
+        <title>Testing: The Ideal Scenario - Conjure Oxide</title>
 
 
         <!-- Custom HTML head -->
@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../searchindex-dd914c34.js";
+            window.path_to_searchindex_js = "../../searchindex-69c3ef39.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-402e02e7.js"></script>
+        <script src="../../toc-6f625bf4.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -176,12 +176,11 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <!-- maturity: draft
-authors: EEJDempster (? no real name), Hanaa Khan
-created: 01-04-24
+                        <!--
+authors: Liz Dempstergit 
+last-updated: 21-12-25
 ---- -->
-<!-- TODO edit more -->
-<h1 id="ideal-scenario-of-testing-for-conjure-oxide-dec-2024"><a class="header" href="#ideal-scenario-of-testing-for-conjure-oxide-dec-2024">Ideal Scenario of Testing for Conjure-Oxide (Dec 2024)</a></h1>
+<h1 id="ideal-scenario-of-testing-for-conjure-oxide"><a class="header" href="#ideal-scenario-of-testing-for-conjure-oxide">Ideal Scenario of Testing for Conjure-Oxide</a></h1>
 <h2 id="introduction"><a class="header" href="#introduction">Introduction</a></h2>
 <h3 id="what-is-the-goal-of-this-document"><a class="header" href="#what-is-the-goal-of-this-document">What is the goal of this document?</a></h3>
 <p>The goal of this document is to provide an ideal testing outline for Conjure-Oxide, a project in development. To do so, this document will be split into definitions (of Conjure-Oxide and other relevant components, as well as key testing terms), current Conjure-Oxide testing, and idealised (to an extent) Conjure-Oxide testing. When discussing idealised testing, any key limitations will also be discussed. Further, this document will address the use of GitHub actions in this project, including code coverage.</p>
@@ -195,7 +194,7 @@ created: 01-04-24
 <p>Conjure is a constraint modelling tool, implemented in Haskell. It uses a rule engine similarly to Conjure-Oxide to simplify from Essence to Essence’ (a subset of Essence which is slightly lower-level), and this “refinement” produces the lower-level model to pass to Savile Row.</p>
 <h4 id="what-is-savile-row"><a class="header" href="#what-is-savile-row">What is Savile Row?</a></h4>
 <p>Savile Row is a constraint modelling assistant which translates from Essence’ to a solver-friendly language. Alongside translating the model to the target language, it can reformat the model with an additional set of rules. This provides a performance increase by improving the model itself. Functionally, the better a model is, the faster a solver will solve it.</p>
-<h4 id="what-is-minion"><a class="header" href="#what-is-minion">What is Minion?}</a></h4>
+<h4 id="what-is-minion"><a class="header" href="#what-is-minion">What is Minion?</a></h4>
 <p>Minion is a Constraint Satisfiability Problem solver, which has bindings to both Conjure suite and Conjure-Oxide. Minion is a fast, scalable, CSP solver, designed to be capable of solving difficult models while still being time optimised. This is the main solver in use by both the Conjure suite and by Conjure-Oxide, due to its flexibility and efficiency.</p>
 <h2 id="definitions-for-testing"><a class="header" href="#definitions-for-testing">Definitions for Testing</a></h2>
 <p>Two main forms of testing will be addressed within this document: correctness testing and performance testing. Fuzz testing (inputting malformed instances to see the program response) is not currently intended as part of testing Conjure-Oxide, and so will not be outlined or addressed. Metamorphic testing may have applications to this project, and so will be defined, but will not be considered as part of the ideal implementation at present as it is not possible to implement at this point in time.</p>
@@ -262,7 +261,7 @@ Another issue present in performance testing is that completely decoupling size 
 <h3 id="code-coverage"><a class="header" href="#code-coverage">Code Coverage</a></h3>
 <p>When pushes are made to the main branch of Conjure-Oxide on GitHub, a code coverage automated workflow is run. This workflow generates a documentation coverage report which outlines what percentage of the code in the repository is being executed when tests are run. The higher the percentage, the more of the code can be relied upon as working under test conditions. This is also already implemented in the GitHub repository, through “code-coverage.yml”, “code-coverage-main.yml” and “code-coverage-deploy.yml”. One of the goals of correctness testing is to increase the code coverage percentage, because this would show that more of the code is functioning correctly.</p>
 <h3 id="automated-performance-testing"><a class="header" href="#automated-performance-testing">Automated Performance Testing</a></h3>
-<p>GitHub workflows can be used to create further custom processed to be automated. Automating performance testing in GitHub allows for them to be run routinely (e.g., every X pushes, or every X days) to ensure consistent performance of the project. As they occur automatically, this means that benchmarks can be set, and failue on any of these benchmarks can reuslt in a flag, allowing for early detection when performance of the program begins to regress, or fall far behind that of the Conjure suite. GitHub Actions allow for the results to be placed into files, and from here an interactive dashboard could be generated (as in PR #291. <sup class="footnote-reference" id="fr-5-1"><a href="#footnote-5">5</a></sup></p>
+<p>GitHub workflows can be used to create further custom processed to be automated. Automating performance testing in GitHub allows for them to be run routinely (e.g., every X pushes, or every X days) to ensure consistent performance of the project. As they occur automatically, this means that benchmarks can be set, and failure on any of these benchmarks can result in a flag, allowing for early detection when performance of the program begins to regress, or fall far behind that of the Conjure suite. GitHub Actions allow for the results to be placed into files, and from here an interactive dashboard could be generated (as in PR #291. <sup class="footnote-reference" id="fr-5-1"><a href="#footnote-5">5</a></sup></p>
 <h2 id="brief-outline-of-possible-future-sub-projects"><a class="header" href="#brief-outline-of-possible-future-sub-projects">Brief Outline of Possible Future Sub-Projects</a></h2>
 <p>Having outlined at least a portion of the ideal testing scenario above, as well as some limitations of this scenario, it is now possible to outline to some degree future sub-projects which could be added to the overall Conjure-Oxide project.</p>
 <h3 id="improving-code-coverage"><a class="header" href="#improving-code-coverage">Improving Code Coverage</a></h3>
@@ -306,11 +305,11 @@ In the future, it may also be worth examining the possibility and likelihood of 
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../developers_guide/design_documents/semantics-of-rewriting-expressions.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../documentation/LSP/lsp_tests.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../developers_guide/ci_cd/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../documentation/testing/Custom-Tests.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -320,11 +319,11 @@ In the future, it may also be worth examining the possibility and likelihood of 
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../developers_guide/design_documents/semantics-of-rewriting-expressions.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../documentation/LSP/lsp_tests.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../developers_guide/ci_cd/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../documentation/testing/Custom-Tests.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>
