@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Style Guide - Conjure Oxide</title>
+        <title>Relations - Conjure Oxide</title>
 
 
         <!-- Custom HTML head -->
@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../searchindex-4cecc308.js";
+            window.path_to_searchindex_js = "../../searchindex-166e0c94.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-942b2e1e.js"></script>
+        <script src="../../toc-f858ad1e.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -176,154 +176,56 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <!-- TODO: Edit this -->
-<blockquote>
-<p><em>“Omit needless words”</em></p>
-<p>(c) William Strunk</p>
-</blockquote>
-<h1 id="key-points"><a class="header" href="#key-points">Key Points</a></h1>
-<h2 id="resources"><a class="header" href="#resources">Resources</a></h2>
-<p>See:</p>
+                        <h1 id="relations"><a class="header" href="#relations">Relations</a></h1>
+<h2 id="what-are-relations"><a class="header" href="#what-are-relations">What Are Relations</a></h2>
+<p>A relation is effectively a set of tuples. The internal tuples can be of any arity and can have different internal domains, as long as every tuple in the relation has the same arity and domains. If a relation is binary we can also add additional attributes to define properties of the relation.</p>
+<p>Relations have attributes and a list of domains for inside the tuples. They are defined for both <code>GroundDomain</code> and <code>UnresolvedDomain</code> as <code>Relation(RelAttr, Vec&lt;GroundDomain&gt;)</code>.</p>
+<p>The result of a relation is a list of tuples. As such the <code>AbstractLiteral</code> for relations is defined <code>Relation(Vec&lt;Vec&lt;T&gt;&gt;)</code>. This AbstractLiteral type means that relations can also be represented explicitly.</p>
+<h2 id="attributes"><a class="header" href="#attributes">Attributes</a></h2>
+<p>Relations contain two types of attributes: size and binary attributes.</p>
+<p>Size attributes determine how many tuples are in the relation. Size attributes are converted to a <code>Range&lt;A&gt;</code> type in Conjure-Oxide. This size can be defined as:</p>
 <ul>
-<li>the <a href="https://github.com/rust-lang/rfcs/blob/master/text/1574-more-api-documentation-conventions.md">Rust doc style conventions</a></li>
+<li>A single size <code>size x</code></li>
+<li>A minimum size <code>minSize x</code></li>
+<li>A maximum size <code>maxSize x</code></li>
+<li>A range of sizes <code>minSize x maxSize x</code></li>
+<li>Or unbounded by not specifying any attribute</li>
 </ul>
-<h2 id="dos"><a class="header" href="#dos">Do’s</a></h2>
-<p>Our documentation is inline with the code. The reader is likely to skim it while scrolling through the file and trying to understand what it does. So, our doc strings should:</p>
+<p>Binary attributes determine properties of the relation when it is a binary relation. Binary attributes are stored as a list of attributes <code>Vec&lt;BinaryAttr&gt;</code> and any number of them can be provided. The available binary attributes are as follows:</p>
 <ul>
-<li>Be as brief and clear as possible</li>
-<li>Ideally, fit comfortably on a standard monitor without obscuring the code</li>
-<li>Contain key information about the method / structure, such as:
+<li><code>reflexive</code></li>
+<li><code>irreflexive</code></li>
+<li><code>coreflexive</code></li>
+<li><code>symmetric</code></li>
+<li><code>antiSymmetric</code></li>
+<li><code>aSymmetric</code></li>
+<li><code>transitive</code></li>
+<li><code>total</code></li>
+<li><code>connex</code></li>
+<li><code>Euclidean</code></li>
+<li><code>serial</code></li>
+<li><code>equivalence</code></li>
+<li><code>partialOrder</code></li>
+</ul>
+<h2 id="operators"><a class="header" href="#operators">Operators</a></h2>
+<p>There is one special operator which is defined on relations.</p>
 <ul>
-<li>A single sentence explaining its purpose</li>
-<li>A brief overview of arguments / return types</li>
-<li>Example snippets for non-trivial methods</li>
+<li><code>RelationProj(r, ps)</code> - Returns a new relation after projecting projectors ps onto relation r.<br>
+The projectors ps are stored a <code>Vec&lt;Option&lt;Expression&gt;&gt;</code>, and the projecting components (denoted <code>_</code> in Essence) are stored as <code>None</code><br>
+For example: <code>r(_,1,_)</code> converts r from a 3-component relation to a 2-component relation, by projecting the 1st and the 3rd columns. It chooses entries where the second column is 1. This is equivalent to the SQL select query: <code>SELECT one, three FROM r WHERE two = 1</code></li>
 </ul>
-</li>
-<li>Explain any details that are <strong>not</strong> obvious from the method signature, such as:
-<ul>
-<li>Details of the method’s “contract” that can’t be easily encoded in the type system
-<blockquote>
-<p>(E.g: <em>“The input must be a sorted slice of positive integers”</em>; <em>“The given expression will be modified in-place”</em>)</p>
-</blockquote>
-</li>
-<li>Non-trivial situations where the method may <code>panic!</code> or cause unintended behaviour
-<blockquote>
-<p>(E.g: <em>“Panics if the connection terminates while the stream is being read”</em>)</p>
-</blockquote>
-</li>
-<li>Any <code>unsafe</code> things a method does
-<blockquote>
-<p>(E.g: <em>“We type-cast the given pointer with <code>mem::transmute</code>. This is safe because…”</em>)</p>
-</blockquote>
-</li>
-<li>Special cases</li>
-</ul>
-</li>
-</ul>
-<h2 id="things-to-avoid"><a class="header" href="#things-to-avoid">Things to Avoid</a></h2>
-<p>Documentation generally should <strong>not</strong>:</p>
-<ul>
-<li>Repeat itself</li>
-<li>Use long, vague, or overly complex sentences</li>
-<li>Re-state things that are obvious from the types / signature of the method</li>
-<li>Explain implementation details</li>
-<li>Explain high-level architectural decisions
-(Consider making a wiki page or opening an RFC issue instead!)</li>
-</ul>
-<p>And finally…
-Please, don’t ask ChatGPT to document your code for you!
-I know that writing documentation can be tedious, but you can always:</p>
-<ul>
-<li>Write a one-sentence doc string for now and come back to it later</li>
-<li>Ask others if you don’t quite understand what a method does</li>
-</ul>
-<h1 id="types-and-tests-are-documentation"><a class="header" href="#types-and-tests-are-documentation">Types and Tests are Documentation</a></h1>
-<p>Documentation is great, but we should also use the type system and other rust features to our advantage!</p>
-<ul>
-<li>
-<p>A lot of things (e.g: error conditions, thread safety, state) can be encoded in the types of arguments / return values.
-This is usually better than just <code>panic!</code>-ing and adding a doc string to explain why.</p>
-</li>
-<li>
-<p>Tests are also a great way to illustrate the behaviour of your code and any special cases - and they also help with catching bugs!</p>
-</li>
-</ul>
-<h1 id="example-snippets"><a class="header" href="#example-snippets">Example Snippets</a></h1>
-<p>For non-trivial methods and user-facing API’s, it may be useful to include an example.
-Examples should be minimal but complete snippets of code that illustrate a method’s behaviour.</p>
-<p>If you wrap your example in a code block:</p>
-<pre><code class="language-markdown">```rust ... ```
-</code></pre>
-<p>Our CI will even run it and complain if the example does not compile / contains an error!</p>
-<p>However, don’t feel obliged to include an example for every method!
-For simple methods they may not be necessary.</p>
-<h1 id="examples"><a class="header" href="#examples">Examples</a></h1>
-<p>⚠️ Good but a bit wordy:</p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>/// Checks if the OPTIMIZATIONS environment variable is set to "1".
-///
-/// # Returns
-/// - true if the environment variable is set to "1".
-/// - false if the environment variable is not set or set to any other value.
-fn optimizations_enabled() -&gt; bool {
-    match env::var("OPTIMIZATIONS") {
-        Ok(val) =&gt; val == "1",
-        Err(_) =&gt; false, // Assume optimizations are disabled if the environment variable is not set
-    }
-}
-<span class="boring">}</span></code></pre>
-<p>✅ Since everything else is obvious from the signature, we can just say:</p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>/// Checks if the OPTIMIZATIONS environment variable is set to "1"
-fn optimizations_enabled() -&gt; bool { ... }
-<span class="boring">}</span></code></pre>
-<p>⚠️ Not bad, but sounds a bit robotic</p>
-<pre><code class="language-markdown"># Side-Effects
-- When the model is rewritten, related data structures such as the symbol table (which tracks variable names and types)
-  or other top-level constraints may also be updated to reflect these changes. These updates are applied to the returned model,
-  ensuring that all related components stay consistent and aligned with the changes made during the rewrite.
-- The function collects statistics about the rewriting process, including the number of rule applications
-  and the total runtime of the rewriter. These statistics are then stored in the model's context for
-  performance monitoring and analysis.
-</code></pre>
-<p>✅ Same idea but shorter</p>
-<pre><code class="language-markdown"># Side-Effects
-- Rules can apply side-effects to the model (e.g. adding new constraints or variables).
-  The original model is cloned and a modified copy is returned.
-- Rule engine statistics (e.g. number of rule applications, run time) are collected and stored in the new model's context.
-</code></pre>
-<p>⚠️ A bit too detailed</p>
-<pre><code class="language-markdown"># Parameters
-- `expression`: A reference to the [`Expression`] that will be evaluated against the given rules. This is the main
-   target for rule transformations and is expected to remain unchanged during the function execution.
-- `model`: A reference to the [`Model`] that provides context for rule evaluation, such as constraints and symbols.
-  Rules may depend on information in the model to determine if they can be applied.
-- `rules`: A vector of references to [`Rule`]s that define the transformations to be applied to the expression.
-  Each rule is applied independently, and all applicable rules are collected.
-- `stats`: A mutable reference to [`RewriterStats`] used to track statistics about rule application, such as
-  the number of attempts and successful applications.
-</code></pre>
-<p>✅ Just describing the meaning of arguments will do</p>
-<p>(Details of the rewriting process belong on the wiki, and details of underlying types such as <code>Model</code> or <code>Expression</code> are already documented next to their implementations)</p>
-<pre><code class="language-markdown">- `expression`: A reference to the [`Expression`] to evaluate.
-- `model`: A reference to the [`Model`] for access to the symbol table and context.
-- `rules`: A vector of references to [`Rule`]s to try.
-- `stats`: A mutable reference to [`RewriterStats`] used to track the number of rule applications and other statistics.
-</code></pre>
-<hr>
-<p><em>This section had been taken from the ‘Documentation Style’ page of the conjure-oxide wiki</em></p>
+<h2 id="note-on-implementation"><a class="header" href="#note-on-implementation">Note on Implementation</a></h2>
+<p>Currently relations are defined within the AST of Conjure-Oxide and can be parsed with the ‘legacy’ parser. However, there is no support as of Apr-2026 for rewriting rules or solving.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../getting_started/functional-rust.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../documentation/types/sequences.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../developers_guide/coding_resources/crate_structure.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../documentation/essence_parser.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -333,11 +235,11 @@ fn optimizations_enabled() -&gt; bool { ... }
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../getting_started/functional-rust.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../documentation/types/sequences.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../developers_guide/coding_resources/crate_structure.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../documentation/essence_parser.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

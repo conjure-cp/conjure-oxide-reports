@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-4cecc308.js";
+            window.path_to_searchindex_js = "searchindex-166e0c94.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-942b2e1e.js"></script>
+        <script src="toc-f858ad1e.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -1094,144 +1094,6 @@ public void fnReturnsError(a,b) {
 <p>This is what caused the infamous cloudflare outage. <a href="#fr-6-1">↩</a></p>
 </li>
 </ol>
-<div style="break-before: page; page-break-before: always;"></div><!-- TODO: Edit this -->
-<blockquote>
-<p><em>“Omit needless words”</em></p>
-<p>(c) William Strunk</p>
-</blockquote>
-<h1 id="key-points-1"><a class="header" href="#key-points-1">Key Points</a></h1>
-<h2 id="resources-1"><a class="header" href="#resources-1">Resources</a></h2>
-<p>See:</p>
-<ul>
-<li>the <a href="https://github.com/rust-lang/rfcs/blob/master/text/1574-more-api-documentation-conventions.md">Rust doc style conventions</a></li>
-</ul>
-<h2 id="dos-1"><a class="header" href="#dos-1">Do’s</a></h2>
-<p>Our documentation is inline with the code. The reader is likely to skim it while scrolling through the file and trying to understand what it does. So, our doc strings should:</p>
-<ul>
-<li>Be as brief and clear as possible</li>
-<li>Ideally, fit comfortably on a standard monitor without obscuring the code</li>
-<li>Contain key information about the method / structure, such as:
-<ul>
-<li>A single sentence explaining its purpose</li>
-<li>A brief overview of arguments / return types</li>
-<li>Example snippets for non-trivial methods</li>
-</ul>
-</li>
-<li>Explain any details that are <strong>not</strong> obvious from the method signature, such as:
-<ul>
-<li>Details of the method’s “contract” that can’t be easily encoded in the type system
-<blockquote>
-<p>(E.g: <em>“The input must be a sorted slice of positive integers”</em>; <em>“The given expression will be modified in-place”</em>)</p>
-</blockquote>
-</li>
-<li>Non-trivial situations where the method may <code>panic!</code> or cause unintended behaviour
-<blockquote>
-<p>(E.g: <em>“Panics if the connection terminates while the stream is being read”</em>)</p>
-</blockquote>
-</li>
-<li>Any <code>unsafe</code> things a method does
-<blockquote>
-<p>(E.g: <em>“We type-cast the given pointer with <code>mem::transmute</code>. This is safe because…”</em>)</p>
-</blockquote>
-</li>
-<li>Special cases</li>
-</ul>
-</li>
-</ul>
-<h2 id="things-to-avoid-1"><a class="header" href="#things-to-avoid-1">Things to Avoid</a></h2>
-<p>Documentation generally should <strong>not</strong>:</p>
-<ul>
-<li>Repeat itself</li>
-<li>Use long, vague, or overly complex sentences</li>
-<li>Re-state things that are obvious from the types / signature of the method</li>
-<li>Explain implementation details</li>
-<li>Explain high-level architectural decisions
-(Consider making a wiki page or opening an RFC issue instead!)</li>
-</ul>
-<p>And finally…
-Please, don’t ask ChatGPT to document your code for you!
-I know that writing documentation can be tedious, but you can always:</p>
-<ul>
-<li>Write a one-sentence doc string for now and come back to it later</li>
-<li>Ask others if you don’t quite understand what a method does</li>
-</ul>
-<h1 id="types-and-tests-are-documentation-1"><a class="header" href="#types-and-tests-are-documentation-1">Types and Tests are Documentation</a></h1>
-<p>Documentation is great, but we should also use the type system and other rust features to our advantage!</p>
-<ul>
-<li>
-<p>A lot of things (e.g: error conditions, thread safety, state) can be encoded in the types of arguments / return values.
-This is usually better than just <code>panic!</code>-ing and adding a doc string to explain why.</p>
-</li>
-<li>
-<p>Tests are also a great way to illustrate the behaviour of your code and any special cases - and they also help with catching bugs!</p>
-</li>
-</ul>
-<h1 id="example-snippets-1"><a class="header" href="#example-snippets-1">Example Snippets</a></h1>
-<p>For non-trivial methods and user-facing API’s, it may be useful to include an example.
-Examples should be minimal but complete snippets of code that illustrate a method’s behaviour.</p>
-<p>If you wrap your example in a code block:</p>
-<pre><code class="language-markdown">```rust ... ```
-</code></pre>
-<p>Our CI will even run it and complain if the example does not compile / contains an error!</p>
-<p>However, don’t feel obliged to include an example for every method!
-For simple methods they may not be necessary.</p>
-<h1 id="examples-1"><a class="header" href="#examples-1">Examples</a></h1>
-<p>⚠️ Good but a bit wordy:</p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>/// Checks if the OPTIMIZATIONS environment variable is set to "1".
-///
-/// # Returns
-/// - true if the environment variable is set to "1".
-/// - false if the environment variable is not set or set to any other value.
-fn optimizations_enabled() -&gt; bool {
-    match env::var("OPTIMIZATIONS") {
-        Ok(val) =&gt; val == "1",
-        Err(_) =&gt; false, // Assume optimizations are disabled if the environment variable is not set
-    }
-}
-<span class="boring">}</span></code></pre>
-<p>✅ Since everything else is obvious from the signature, we can just say:</p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>/// Checks if the OPTIMIZATIONS environment variable is set to "1"
-fn optimizations_enabled() -&gt; bool { ... }
-<span class="boring">}</span></code></pre>
-<p>⚠️ Not bad, but sounds a bit robotic</p>
-<pre><code class="language-markdown"># Side-Effects
-- When the model is rewritten, related data structures such as the symbol table (which tracks variable names and types)
-  or other top-level constraints may also be updated to reflect these changes. These updates are applied to the returned model,
-  ensuring that all related components stay consistent and aligned with the changes made during the rewrite.
-- The function collects statistics about the rewriting process, including the number of rule applications
-  and the total runtime of the rewriter. These statistics are then stored in the model's context for
-  performance monitoring and analysis.
-</code></pre>
-<p>✅ Same idea but shorter</p>
-<pre><code class="language-markdown"># Side-Effects
-- Rules can apply side-effects to the model (e.g. adding new constraints or variables).
-  The original model is cloned and a modified copy is returned.
-- Rule engine statistics (e.g. number of rule applications, run time) are collected and stored in the new model's context.
-</code></pre>
-<p>⚠️ A bit too detailed</p>
-<pre><code class="language-markdown"># Parameters
-- `expression`: A reference to the [`Expression`] that will be evaluated against the given rules. This is the main
-   target for rule transformations and is expected to remain unchanged during the function execution.
-- `model`: A reference to the [`Model`] that provides context for rule evaluation, such as constraints and symbols.
-  Rules may depend on information in the model to determine if they can be applied.
-- `rules`: A vector of references to [`Rule`]s that define the transformations to be applied to the expression.
-  Each rule is applied independently, and all applicable rules are collected.
-- `stats`: A mutable reference to [`RewriterStats`] used to track statistics about rule application, such as
-  the number of attempts and successful applications.
-</code></pre>
-<p>✅ Just describing the meaning of arguments will do</p>
-<p>(Details of the rewriting process belong on the wiki, and details of underlying types such as <code>Model</code> or <code>Expression</code> are already documented next to their implementations)</p>
-<pre><code class="language-markdown">- `expression`: A reference to the [`Expression`] to evaluate.
-- `model`: A reference to the [`Model`] for access to the symbol table and context.
-- `rules`: A vector of references to [`Rule`]s to try.
-- `stats`: A mutable reference to [`RewriterStats`] used to track the number of rule applications and other statistics.
-</code></pre>
-<hr>
-<p><em>This section had been taken from the ‘Documentation Style’ page of the conjure-oxide wiki</em></p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="crate-structure"><a class="header" href="#crate-structure">Crate Structure</a></h1>
 <h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
@@ -1560,10 +1422,9 @@ and should not affect how the solver crates are written. See <a href="#solver-ad
 <hr>
 <p><em>This section had been taken from the ‘2023‐11: High Level Plan’ page of the conjure-oxide wiki</em></p>
 <div style="break-before: page; page-break-before: always;"></div><!-- maturity: draft
-authors: Niklas Dewally, Hanaa Khan
+authors: Niklas Dewally
 created: 21-03-24
 ---- -->
-<!-- TODOs -->
 <h1 id="202403-implementing-uniplates-and-biplates-with-structure-preserving-trees"><a class="header" href="#202403-implementing-uniplates-and-biplates-with-structure-preserving-trees">2024‐03: Implementing Uniplates and Biplates with Structure Preserving Trees</a></h1>
 <h2 id="contents"><a class="header" href="#contents">Contents:</a></h2>
 <ul>
@@ -1577,7 +1438,6 @@ created: 21-03-24
 <p>In <a href="https://github.com/conjure-cp/conjure-oxide/pull/180">#180</a> and <a href="https://github.com/conjure-cp/conjure-oxide/pull/259">#259</a> we implemented the basic Uniplate interface and a derive macro to automatically implement it for <code>enum</code> types. However, our current implementation is incorrect and problematic: we have defined children wrong; and our children list does not preserve structure, making more complex nested structures hard to recreate in the context function.</p>
 <h2 id="recap-uniplates-and-biplates"><a class="header" href="#recap-uniplates-and-biplates">Recap: Uniplates and Biplates</a></h2>
 <p><em>A quick recap of what we are trying to do - for details, see the <a href="https://hackage.haskell.org/package/uniplate">Uniplate Haskell docs</a>, our Github Issues, and the paper.</em></p>
-<!-- TODO: which paper?? n are there other issues besides the stated one -->
 <p>Uniplates are an easy way to perform recursion over complex recursive data types.</p>
 <p>It is typically used with enums containing multiple variants, many of which may be different types.</p>
 <pre><code class="language-hs">data T = A T [Integer]
@@ -1723,8 +1583,6 @@ data U = E T T
 </ul>
 <!-- vim: cc=100 spell
 -->
-<hr>
-<p><em>This section had been taken from the ‘2024‐03: Implementing Uniplates and Biplates with Structure Preserving Trees’ page of the conjure-oxide wiki</em></p>
 <div style="break-before: page; page-break-before: always;"></div><!-- maturity: draft
 authors: Felix Leitner, Niklas Dewally, Hanaa Khan
 created: 19-09-24
@@ -4209,162 +4067,6 @@ fn {test_name}() -&gt; Result&lt;(), Box&lt;dyn Error&gt;&gt; {{
 </code></pre>
 <p>The <code>custom_test</code> function takes the test directory as a parameter. It inherits the current <code>PATH</code> and runs the commands from the <code>run.sh</code> file, saving the produced output. It then overwrites the expected output and error if accept was set to true and compares the actual and expected outputs/errors if not. If either does not match, the expected and actual output are printed and the test fails. Otherwise, the test passes.</p>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="introduction-2"><a class="header" href="#introduction-2">Introduction</a></h1>
-<!-- ## Contents
-- [Recap: Uniplates and Biplates](#recap-uniplates-and-biplates)
-- [Definition of Children](#definition-of-children)
-- [Storing The Structure of Children](#storing-the-structure-of-children)
-- [Uniplates and Biplates Using Structure Preserving Trees](#uniplates-and-biplates-using-structure-preserving-trees) -->
-<p>Comments and discussion about this document can be found in issue <a href="https://github.com/conjure-cp/conjure-oxide/issues/261">#261</a>.</p>
-<p>In <a href="https://github.com/conjure-cp/conjure-oxide/pull/180">#180</a> and <a href="https://github.com/conjure-cp/conjure-oxide/pull/259">#259</a> we implemented the basic Uniplate interface and a derive macro to automatically implement it for <code>enum</code> types. However, our current implementation is incorrect and problematic: we have defined children wrong; and our children list does not preserve structure, making more complex nested structures hard to recreate in the context function.</p>
-<h2 id="recap-uniplates-and-biplates-1"><a class="header" href="#recap-uniplates-and-biplates-1">Recap: Uniplates and Biplates</a></h2>
-<p><em>A quick recap of what we are trying to do - for details, see the <a href="https://hackage.haskell.org/package/uniplate">Uniplate Haskell docs</a>, our Github Issues, and the paper.</em></p>
-<p>Uniplates are an easy way to perform recursion over complex recursive data types.</p>
-<p>It is typically used with enums containing multiple variants, many of which may be different types.</p>
-<pre><code class="language-hs">data T = A T [Integer]
-       | B T T
-       | C T U
-       | D [T]
-</code></pre>
-<p>With Uniplate, one can perform a map over this with very little or no boilerplate.</p>
-<p>This is implemented with a single function <code>uniplate</code> that returns a <em>list of children</em> of the current object and a <em>context</em> function to rebuild the object from a list of children.</p>
-<p>Biplates provide recursion over instances of type <code>T</code> within some other type <code>U</code>. They are implemented with a single function <code>biplate</code> of similar type to <code>uniplate</code> (returning <em>children</em> and a <em>context</em> function).</p>
-<p>These functions are able to be implemented on any data type through macros making Uniplate operations boilerplate free.</p>
-<h2 id="definition-of-children-1"><a class="header" href="#definition-of-children-1">Definition of Children</a></h2>
-<p>We currently take <em>children of T</em> to mean <em>direct descendants of T inside T</em>. However, the correct definition of children is <em>maximal substructures of type T</em>.</p>
-<p>For example, consider these Haskell types:</p>
-<pre><code class="language-hs">data T = A T [Integer]
-       | B T T
-       | C T U
-       | D [T]
-
-data U = E T T
-       | F Integer
-       | G [T] T
-</code></pre>
-<p>Our current implementation would define children as the following:</p>
-<pre><code class="language-hs">children (A t1 _) = [t1]
-children (B t1 t2) = [t1, t2]
-children (C t1 u) = [t1]
-children (D ts) = ts
-</code></pre>
-<p>However, the proper definition should support transitive children - i.e. T contains a U which contains a T:</p>
-<pre><code class="language-hs">children (A t1 _) = [t1]
-children (B t1 t2) = [t1, t2]
-children (C t1 (E t2 t3)) = [t1,t2,t3]
-children (C t1 (F _)) = [t1]
-children (C t1 (G ts t3)) = [t1] ++ ts ++ [t3]
-children (D ts) = ts
-</code></pre>
-<p>While a seemingly small difference, this complicates how we reconstruct a node from its children: we now need to create a context that takes a list of children and creates an arbitrarily deeply nested data structure containing multiple different types. In particular, the challenge is keeping track of which elements of the children list go into which fields of the enum we are creating.</p>
-<p>We already had this problem dealing with children from lists, but a more general approach is needed.</p>
-<h2 id="storing-the-structure-of-children-1"><a class="header" href="#storing-the-structure-of-children-1">Storing The Structure of Children</a></h2>
-<p>How do we know which children go into which fields of the enum variant?</p>
-<p>For example, consider this complicated instance of <code>T</code>:</p>
-<pre><code class="language-hs">data T = A T [Integer]
-       | B T T
-       | C T U 
-       | D [T]
-
-data U = E T T
-       | F Integer
-       | G [T] T
-
-myT = C(D([t0,...,t5]),G([t6,...,t12],t13))
-</code></pre>
-<p>Its list of children is: <code>[t0,...,t13]</code>.</p>
-<p>Try creating a function to recreate <code>myT</code> based on a new list of children. <em>Hint: it is difficult, and even more so in full generality!</em></p>
-<p>If we instead consider children to be a tree, where each field in the original enum variant is its own branch, we get:</p>
-<pre><code class="language-hs">data Tree A = Zero | One A | Many [(Tree A)]
-
-myTChildren = 
-  Many [(Many [One(t0),...,One(t5)]),      -- C([XXX], _) field 1 of C
-        (Many [                            -- C([_],XXX)  field 2 of C
-          (Many [One(t6),...,One(t12)]),   -- G([XXX],_)  field 2.1 of C
-          (One  t13))]                     -- G([_],XXX)) field 2.2 of C
-</code></pre>
-<p>This captures, in a type-independent way, the following structural information:</p>
-<ol>
-<li><code>myT</code> has two fields.</li>
-<li>The first field is a container of Ts.</li>
-<li>The second field contains two inner fields: one is a container of Ts, one is a single T.</li>
-</ol>
-<p><strong>Representing non-recursive and primitive types</strong></p>
-<p>Often primitive and non-recursive types are found in the middle of enum variants. How do we say <em>“we don’t care about this field, it does not contain a T”</em> with our <code>Tree</code> type? <code>Zero</code> can be used for this.</p>
-<p>For example:</p>
-<pre><code class="language-hs">data V = V1 V Integer W
-       | V2 Integer
-
-data W = W1 V V
-
-myV = (V1 
-        (V2 1) 
-        1 
-        (W1 
-          (V2 2) 
-          (V2 3)))
-
-myVChildren = 
-  (Many [
-    (One v1),  -- V1(XXX,_,_)
-    Zero,      -- V1(_,XXX,_) 
-    (Many [    -- V1(_,_,XXX)
-      (One v2),
-      (One v3)
-   ]))
-</code></pre>
-<p>This additionally encodes the information that the second field of <code>myV</code> has no Ts at all.</p>
-<p>While this information isn’t too useful for finding or traversing over the target type, it means that the tree structure defines the structure of the target type completely: there are always the same number of tree branches as there are fields in the enum variant.</p>
-<h2 id="uniplates-and-biplates-using-structure-preserving-trees-1"><a class="header" href="#uniplates-and-biplates-using-structure-preserving-trees-1">Uniplates and Biplates Using Structure Preserving Trees</a></h2>
-<p>Recall that the <code>uniplate</code> function returns all <em>children</em> of a data structure alongside a <em>context</em> function that rebuilds the data structure using some new children.</p>
-<p>To implement this, for each field in an enum variant, we need to ask the questions: <em>“how do we get the type <code>T</code>s in the type <code>U</code>”</em>, and <em>how can we rebuild this <code>U</code> based on some new children of type <code>T</code>?</em>.</p>
-<p>This is just a <code>Biplate&lt;U,T&gt;</code>, which gives us the <em>type <code>T</code> children within a type <code>U</code></em> as well as a <em>context function to reconstruct the <code>U</code> from the <code>T</code></em>.</p>
-<p>Therefore:</p>
-<ul>
-<li>
-<p>We build the <em>children</em> tree by combining the children trees of all fields of the enum (such that each field’s children is a branch on the tree).</p>
-</li>
-<li>
-<p>We build the <em>context</em> function by calling each fields context function on each branch of the input tree.</p>
-</li>
-</ul>
-<p>This is effectively a recursive invocation of <code>Biplate</code>.</p>
-<p>What happens when we reach a T? Under the normal definition, <code>Biplate&lt;T,T&gt;</code> would return its children. This is wrong - we want to return <code>T</code> here, not its children!</p>
-<p>When <code>T == U</code> we need to change the definition of a Biplate: <strong><code>Biplate&lt;T,T&gt;</code> operates over the input structure, not its children.</strong></p>
-<p>For our example AST:</p>
-<pre><code class="language-hs">data T = A T [Integer]
-       | B T T
-       | C T U 
-       | D [T]
-
-data U = E T T
-       | F Integer
-       | G [T] T
-</code></pre>
-<p>Here are some Biplate and Uniplates and their resultant children trees:</p>
-<ul>
-<li>
-<p><code>Biplate&lt;Integer,T&gt; 1</code> is <code>Zero</code>.</p>
-</li>
-<li>
-<p><code>Uniplate&lt;T&gt; (A t [1,2,3])</code> is <code>(Many [Biplate&lt;T,T&gt; t ,Zero])</code>.</p>
-<p>This evaluates to <code>(Many [(One t),Zero])</code></p>
-</li>
-<li>
-<p><code>Biplate&lt;T,T&gt; t</code> is <code>One t</code>.</p>
-</li>
-<li>
-<p><code>Biplate&lt;T,U&gt; (G ts t1)</code> is <code>(Many [Biplate&lt;T,[T]&gt; ts , Biplate&lt;T,T&gt; t ])</code>.</p>
-<p>This evaluates to <code>(Many [(Many [(One t0),...(One tn)]),(One t)])</code></p>
-</li>
-<li>
-<p><code>Uniplate&lt;T,T&gt; (C t (G ts t1))</code> is <code>(Many [Biplate&lt;T,T&gt; t, Biplate&lt;U,T&gt; (G ts t1))</code></p>
-<p>This evaluates to <code>(Many [(One t), (Many [(Many [(One t0),...,(One tn)]), (One t)]))</code></p>
-</li>
-</ul>
-<!-- vim: cc=100 spell
--->
-<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="sat-encoding-types"><a href="#sat-encoding-types" class="header">SAT Encoding Types</a></h1>
 <h2 id="types-of-sat-encodings"><a class="header" href="#types-of-sat-encodings">Types of SAT Encodings</a></h2>
 <p>There are three different types of SAT Encodings planned in conjure oxide. Of these, only Logarithmic Encodings have been implemented thus far. The three types are these:</p>
@@ -4529,7 +4231,7 @@ Any directories within here than contain a singular <code>.essence</code> or <co
 After creating the Essence or Essence’ file for your test you should run the test suite with <code>ACCEPT=true</code> to generate the expected files.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="creating-types-guide"><a class="header" href="#creating-types-guide">Creating Types Guide</a></h1>
-<p>Currently Conjure-Oxide does not have any support for Essence’s relations, partitions or variants.
+<p>Currently Conjure-Oxide does not have any support for Essence’s partitions or variants.
 This guide outlines the process of creating support for those types to the AST. This does not currently cover rewriting rules or solving.</p>
 <h2 id="creating-the-type"><a class="header" href="#creating-the-type">Creating the Type</a></h2>
 <ul>
@@ -4548,15 +4250,15 @@ This guide outlines the process of creating support for those types to the AST. 
 <h2 id="what-are-functions"><a class="header" href="#what-are-functions">What Are Functions</a></h2>
 <p>A function is a binary relation on two sets, from elements of a domain to elements of a codomain.</p>
 <p>Functions have attributes and two domains for the domain and codomain of its results. They are defined for both <code>GroundDomain</code> and <code>UnresolvedDomain</code> as <code>Function(FuncAttr, Moo&lt;GroundDomain&gt;, Moo&lt;GroundDomain&gt;)</code>.</p>
-<p>The result of a function is a list of tuples defined by the mappings. As such the <code>AbstractLiteral</code> for functions is defined <code>Function(Vec&lt;(T, T)&gt;)</code>. This AbstractLiteral type also means that functions can also be represented explicitly.</p>
+<p>The result of a function is a list of tuples defined by the mappings. As such the <code>AbstractLiteral</code> for functions is defined <code>Function(Vec&lt;(T, T)&gt;)</code>. This AbstractLiteral type means that functions can also be represented explicitly.</p>
 <h2 id="attributes"><a class="header" href="#attributes">Attributes</a></h2>
 <p>Functions contain three types of attributes: size, partiality and jectivity.</p>
 <p>Size attributes determine how many mappings the function is true for. Size attributes are converted to a <code>Range&lt;A&gt;</code> type in Conjure-Oxide. This size can be defined as:</p>
 <ul>
-<li>A single size <code>size(x)</code></li>
-<li>A minimum size <code>minSize(x)</code></li>
-<li>A maximum size <code>maxSize(x)</code></li>
-<li>A range of sizes <code>minSize(x) maxSize(x)</code></li>
+<li>A single size <code>size x</code></li>
+<li>A minimum size <code>minSize x</code></li>
+<li>A maximum size <code>maxSize x</code></li>
+<li>A range of sizes <code>minSize x maxSize x</code></li>
 <li>Or unbounded by not specifying any attribute</li>
 </ul>
 <p>Partiality determines whether the function is total or partial. A total function is one which is defined for every possible input in the domain set. A function will have partial partiality unless specified otherwise.
@@ -4564,7 +4266,7 @@ Partiality is stored as an Enum inside Conjure-Oxide.</p>
 <p>Jectivity refers to whether a function is injective, surjective, or bijective. These determine whether elements in the domain and codomain must have only one corresponding mapping. A function can also have no specified jectivity, which is the default.
 Jectivity is also stored as an Enum inside Conjure-Oxide.</p>
 <h2 id="operators"><a class="header" href="#operators">Operators</a></h2>
-<p>There are seven operators which are defined on functions. These are represented as <code>Expressions</code> in Conjure-Oxide.</p>
+<p>There are eight special operators which are defined on functions. These are represented as <code>Expressions</code> in Conjure-Oxide.</p>
 <ul>
 <li><code>Defined(f)</code> - Returns the set of values in the domain for which a function f is defined.</li>
 <li><code>Image(f, x)</code> - Returns the element of the codomain which is mapped to domain element x, in function f.</li>
@@ -4573,9 +4275,10 @@ Jectivity is also stored as an Enum inside Conjure-Oxide.</p>
 <li><code>PreImage(f, x)</code> - Returns the set of elements of the domain which map to codomain element x, in function f.</li>
 <li><code>Range(f)</code> - Returns the set of values in the domain for which a function f is defined.</li>
 <li><code>Restrict(f, D)</code> - Returns a sub-function of f which has its mapping restricted to values in the domain D.</li>
+<li><code>ToRelation(f)</code> - Returns a relation for the converted function f.</li>
 </ul>
 <h2 id="note-on-implementation"><a class="header" href="#note-on-implementation">Note on Implementation</a></h2>
-<p>Currently functions are defined within the AST of Conjure-Oxide and can be parsed with the ‘legacy’ parser. However, there is no support as of Dec-2025 for rewriting rules or solving.</p>
+<p>Currently functions are defined within the AST of Conjure-Oxide and can be parsed with the ‘legacy’ parser. However, there is no support as of Apr-2026 for rewriting rules or solving.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="multisets"><a class="header" href="#multisets">Multisets</a></h1>
 <h2 id="what-are-multisets"><a class="header" href="#what-are-multisets">What Are Multisets</a></h2>
@@ -4603,11 +4306,52 @@ In the new conjure-oxide implementation, a variable’s domain is <em>ground</em
 Three <strong>jectivity</strong> attributes; <code>injective</code>, <code>surjective</code>, <code>bijective</code>.</p>
 <p>Sequences <em>must</em> have either a <code>size</code> or <code>maxSize</code> cardinality attribute.</p>
 <h2 id="operators-2"><a class="header" href="#operators-2">Operators</a></h2>
-<p>There are two operators which are defined on functions. These are represented as <code>Expressions</code> in Conjure-Oxide.</p>
+<p>There are two operators which are defined on sequences. These are represented as <code>Expressions</code> in Conjure-Oxide.</p>
 <ul>
 <li><code>subsequence</code>: does the sequence <code>s</code> appear in the same order in <code>t</code> (e.g. <code>s=1,2,3</code> and <code>t=1,3</code> are subsequences)</li>
 <li><code>substring</code>: does the sequence <code>s</code> appear in the same order <em>and</em> contiguously in <code>t</code> (e.g. <code>s=1,2</code> is a substring of <code>t=1,2,3</code> )</li>
 </ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="relations"><a class="header" href="#relations">Relations</a></h1>
+<h2 id="what-are-relations"><a class="header" href="#what-are-relations">What Are Relations</a></h2>
+<p>A relation is effectively a set of tuples. The internal tuples can be of any arity and can have different internal domains, as long as every tuple in the relation has the same arity and domains. If a relation is binary we can also add additional attributes to define properties of the relation.</p>
+<p>Relations have attributes and a list of domains for inside the tuples. They are defined for both <code>GroundDomain</code> and <code>UnresolvedDomain</code> as <code>Relation(RelAttr, Vec&lt;GroundDomain&gt;)</code>.</p>
+<p>The result of a relation is a list of tuples. As such the <code>AbstractLiteral</code> for relations is defined <code>Relation(Vec&lt;Vec&lt;T&gt;&gt;)</code>. This AbstractLiteral type means that relations can also be represented explicitly.</p>
+<h2 id="attributes-3"><a class="header" href="#attributes-3">Attributes</a></h2>
+<p>Relations contain two types of attributes: size and binary attributes.</p>
+<p>Size attributes determine how many tuples are in the relation. Size attributes are converted to a <code>Range&lt;A&gt;</code> type in Conjure-Oxide. This size can be defined as:</p>
+<ul>
+<li>A single size <code>size x</code></li>
+<li>A minimum size <code>minSize x</code></li>
+<li>A maximum size <code>maxSize x</code></li>
+<li>A range of sizes <code>minSize x maxSize x</code></li>
+<li>Or unbounded by not specifying any attribute</li>
+</ul>
+<p>Binary attributes determine properties of the relation when it is a binary relation. Binary attributes are stored as a list of attributes <code>Vec&lt;BinaryAttr&gt;</code> and any number of them can be provided. The available binary attributes are as follows:</p>
+<ul>
+<li><code>reflexive</code></li>
+<li><code>irreflexive</code></li>
+<li><code>coreflexive</code></li>
+<li><code>symmetric</code></li>
+<li><code>antiSymmetric</code></li>
+<li><code>aSymmetric</code></li>
+<li><code>transitive</code></li>
+<li><code>total</code></li>
+<li><code>connex</code></li>
+<li><code>Euclidean</code></li>
+<li><code>serial</code></li>
+<li><code>equivalence</code></li>
+<li><code>partialOrder</code></li>
+</ul>
+<h2 id="operators-3"><a class="header" href="#operators-3">Operators</a></h2>
+<p>There is one special operator which is defined on relations.</p>
+<ul>
+<li><code>RelationProj(r, ps)</code> - Returns a new relation after projecting projectors ps onto relation r.<br>
+The projectors ps are stored a <code>Vec&lt;Option&lt;Expression&gt;&gt;</code>, and the projecting components (denoted <code>_</code> in Essence) are stored as <code>None</code><br>
+For example: <code>r(_,1,_)</code> converts r from a 3-component relation to a 2-component relation, by projecting the 1st and the 3rd columns. It chooses entries where the second column is 1. This is equivalent to the SQL select query: <code>SELECT one, three FROM r WHERE two = 1</code></li>
+</ul>
+<h2 id="note-on-implementation-1"><a class="header" href="#note-on-implementation-1">Note on Implementation</a></h2>
+<p>Currently relations are defined within the AST of Conjure-Oxide and can be parsed with the ‘legacy’ parser. However, there is no support as of Apr-2026 for rewriting rules or solving.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="essence-parser"><a class="header" href="#essence-parser">Essence Parser</a></h1>
 <p>The parser converts incoming Essence programs in Conjure Oxide to the <a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_core/ast/struct.Model.html">Model Object</a> that the rule engine takes in. The relevant parts of the Model object are the SymbolTable and Expression objects. The symbol table is essentially a list of the variables and their corresponding domains. The Expression object is a recursive object that holds all the constraints of the problem, nested into one object. The parser has two main parts. The first is the <code>tree-sitter-essence</code> crate, which is a general Essence parser using the library tree-sitter. The second part is the <code>conjure-cp-essence-parser</code> crate which is Rust code that uses the grammar to parse Essence programs and convert them into the above-mentioned Model object.</p>
