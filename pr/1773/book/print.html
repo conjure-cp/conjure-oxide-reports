@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-1acca7c6.js";
+            window.path_to_searchindex_js = "searchindex-b58aea65.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-74e6601d.js"></script>
+        <script src="toc-dfef675a.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -415,6 +415,60 @@ such that x &gt; y
 <p>Want to see exactly what rules were applied? Check out the <a href="users-guide/command-line/logging.html">Logging guide</a>.</p>
 <h2 id="functional-programming-style"><a class="header" href="#functional-programming-style">Functional Programming Style</a></h2>
 <p>For developers who come from programming languages like Scala or Haskell, or those who favour a functional programming style, we have a <a href="users-guide/functional-rust.html">Functional Rust</a> guide that you might find useful.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="logging"><a class="header" href="#logging">Logging</a></h1>
+<p><strong>This document is a work in progress - for a full list of logging options,
+see Conjure Oxide’s <code>--help</code> output.</strong></p>
+<h2 id="to-stderr"><a class="header" href="#to-stderr">To <code>stderr</code></a></h2>
+<p>Using <code>--verbose</code>, and the <code>RUST_LOG</code> environment variable, you can control the
+contents, and formatting of, Conjure Oxide’s <code>stderr</code> output:</p>
+<ul>
+<li>
+<p><strong><code>--verbose</code></strong> changes the formatting of the logs for improved readability,
+including printing source locations and line numbers for log events. It also
+enables the printing of the log levels <code>INFO</code> and above.</p>
+</li>
+<li>
+<p>The <strong><code>RUST_LOG</code></strong> environment variable can be used to customise the
+log levels that are printed depending on the module . For more
+information, see:
+<a href="https://docs.rs/env_logger/latest/env_logger/#enabling-logging">https://docs.rs/env_logger/latest/env_logger/#enabling-logging</a>.</p>
+</li>
+</ul>
+<h3 id="example-logging-rule-applications"><a class="header" href="#example-logging-rule-applications">Example: Logging Rule Applications</a></h3>
+<p>Different log levels provide different information about the rules applied to
+the model:</p>
+<ul>
+<li>
+<p><code>INFO</code> provides information on the rules that were applied to the model.</p>
+</li>
+<li>
+<p><code>TRACE</code> additionally prints the rules that were attempted and why they were
+not applicable.</p>
+</li>
+</ul>
+<p>To see TRACE logs in a pretty format (mainly useful for
+debugging):</p>
+<pre><code class="language-sh">$ RUST_LOG=trace conjure-oxide solve --verbose &lt;model&gt;
+</code></pre>
+<p>Or, using cargo:</p>
+<pre><code class="language-sh">$ RUST_LOG=trace cargo run -- solve --verbose &lt;model&gt;
+</code></pre>
+<h3 id="example-tracing-sat-solver-rules"><a class="header" href="#example-tracing-sat-solver-rules">Example: Tracing SAT Solver Rules</a></h3>
+<p>When working with the SAT solver, you can trace the complete transformation pipeline:</p>
+<pre><code class="language-bash">RUST_LOG=TRACE cargo run -- solve --solver sat my_problem.essence --verbose
+</code></pre>
+<p>This will show:</p>
+<ul>
+<li>Integer-to-boolean conversions</li>
+<li>Operation transformations</li>
+<li>Tseytin transformations</li>
+<li>All rules that were tried and applied</li>
+</ul>
+<p>For more detailed testing output (including JSON traces and rewritten models), run specific tests:</p>
+<pre><code class="language-bash">cargo test &lt;test_name&gt;
+</code></pre>
+<p>This generates <code>.json</code> and <code>.txt</code> files containing rule traces, parsed Essence, solutions, and the rewritten model.</p>
 <div style="break-before: page; page-break-before: always;"></div><!-- maturity: draft
 authors: Jamie Melton, Georgii Skorokhod, Özgür Akgün
 created: 24-10-25
@@ -1283,6 +1337,25 @@ jobs:
 <li>Matrix and concurrency: complex matrices, concurrency groups, and reusable workflows can be partially supported but may require extra configuration or run differently.</li>
 </ul>
 <p>When in doubt, use <code>act</code> for fast iteration, then confirm changes with a real GitHub Actions run.</p>
+<div style="break-before: page; page-break-before: always;"></div><!-- maturity: draft
+authors: Edward Lowe
+created: 21-12-25
+---- -->
+<h1 id="flatten"><a class="header" href="#flatten">Flatten</a></h1>
+<h2 id="usage-in-essence"><a class="header" href="#usage-in-essence">Usage in Essence</a></h2>
+<p>With one argument, <code>flatten(M)</code> returns a one-dimensional matrix containing all the elements of the input matrix.</p>
+<p>With two arguments, <code>flatten(n,M)</code> the first n+1 dimensions are flattened into one dimension.</p>
+<blockquote class="blockquote-tag blockquote-tag-warning">
+<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575Zm1.763.707a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368Zm.53 3.996v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg>Warning</p>
+<p><code>flatten(n,M)</code> has not yet been implemented.</p>
+</blockquote>
+<h2 id="expression-variant"><a class="header" href="#expression-variant">Expression variant</a></h2>
+<p>The <code>Flatten</code> variant of <code>Expression</code> in the AST has structure defined as:</p>
+<pre><code>Flatten(Metadata, Option&lt;Moo&lt;Expression&gt;&gt;, Moo&lt;Expression&gt;)
+</code></pre>
+<p>The return type and domain of <code>Flatten</code> is a matrix of the innermost elements of the flattened matrix’s return type or domain. This has not yet been implemented in the case where the dimensions to flatten are provided.</p>
+<h2 id="flatten-rule"><a class="header" href="#flatten-rule">flatten rule</a></h2>
+<p>The flatten rule in <a href="https://github.com/conjure-cp/conjure-oxide/blob/7c0a88d8de7af41758b2020e93662db3a952ddeb/crates/conjure-cp-rules/src/matrix/flatten.rs">crates/conjure-cp-rules/src/matrix/flatten.rs</a> turns flatten expressions containing atomic matrix expressions into a flat matrix literal.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="coding-resources-and-conventions"><a href="#coding-resources-and-conventions" class="header">Coding Resources and Conventions</a></h1>
 <div style="break-before: page; page-break-before: always;"></div>
@@ -1706,11 +1779,740 @@ let op_type = &amp;source_code[op.start_byte()..op.end_byte()];
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="overview-2"><a class="header" href="#overview-2">Overview</a></h1>
+<p>ProTrace is a tracing module created to trace rule applications on expressions when an Essence file is parsed and rewritten by Conjure Oxide. The purpose of the module is to visualise the rules applied on the expressions, and simplify the identification of errors for debugging. The module supports multiple output formats such as <strong>JSON</strong> or <strong>human</strong> readable, along with different verbosity levels to show only what the user would like to see.</p>
+<h3 id="verbosity-level"><a class="header" href="#verbosity-level">Verbosity Level</a></h3>
+<p>The different verbosity levels include:</p>
+<ul>
+<li><strong><code>High</code></strong>: All rule applications.</li>
+<li><strong><code>Medium</code></strong> (default): Successful rule applications.</li>
+<li><strong><code>Low</code></strong>: Only errors are shown (to be implemented).</li>
+</ul>
+<p>Outputs of the trace can be saved in a JSON or text file (depending on the format of trace) when specified by the user, and if the file path is not given, the output will be stored in the location of the input Essence file by default.</p>
+<p>The module also provides filtering functionalities for displaying specific rule or rule set applications.</p>
+<hr>
+<h1 id="trace-type"><a class="header" href="#trace-type">Trace type</a></h1>
+<p>The module is capable of tracing two types of objects: rule and model. A trace can be created using <code>capture_trace</code>, which takes a consumer and a trace type (<a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#rule-trace">RuleTrace</a> or <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#model-trace">ModelTrace</a>).</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub fn capture_trace(consumer: &amp;Consumer, trace: TraceType)
+<span class="boring">}</span></code></pre>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub enum TraceType&lt;'a&gt; {
+    RuleTrace(RuleTrace),
+    ModelTrace(&amp;'a ModelTrace),
+}
+<span class="boring">}</span></code></pre>
+<h2 id="rule-trace"><a class="header" href="#rule-trace">Rule Trace</a></h2>
+<p>Rules are applied to a given expression to rewrite it into the syntax that Conjure understands. These rule applications can be traced by the module to show users what rules have been tried and successfully applied during parsing. A rule trace consists of:</p>
+<ul>
+<li>An <strong>initial expression</strong></li>
+<li>The <strong>name</strong> of the rule being applied</li>
+<li>The <strong>priority</strong> of the rule being applied</li>
+<li>The <strong>rule set</strong> that the rule belongs to</li>
+<li>A <strong>transformed expression</strong> as a result of rule application</li>
+<li>An optional <strong>new variable</strong> created during the rule application</li>
+<li>An optional <strong>new constraint</strong> added to the top of the expression tree created during the rule application</li>
+</ul>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct RuleTrace {
+    pub initial_expression: Expression,
+    pub rule_name: String,
+    pub rule_priority: u16,
+    pub rule_set_name: String,
+    pub transformed_expression: Option&lt;Expression&gt;,
+    pub new_variables_str: Option&lt;String&gt;,
+    pub top_level_str: Option&lt;String&gt;,
+}
+<span class="boring">}</span></code></pre>
+<h2 id="model-trace"><a class="header" href="#model-trace">Model Trace</a></h2>
+<p>Models of the problem contain expressions along with some constraints. A model trace consists of:</p>
+<ul>
+<li>An <strong>initial model</strong></li>
+<li>A <strong>rewritten model</strong> after rule application</li>
+</ul>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct ModelTrace {
+    pub initial_model: Model,
+    pub rewritten_model: Option&lt;Model&gt;,
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h1 id="formatter"><a class="header" href="#formatter">Formatter</a></h1>
+<p>Formatters are responsible for converting trace information into a <strong>human-readable</strong> or <strong>JSON</strong> string format before it is output by a consumer.</p>
+<p>At the core of this system is the <code>MessageFormatter</code> trait, which defines a common interface for all formatters. There are two built-in formatter implementations provided: <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#human-formatter">HumanFormatter</a> and <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#json-formatter">JsonFormatter</a>.</p>
+<h3 id="message-formatter-trait"><a class="header" href="#message-formatter-trait">Message Formatter Trait</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub trait MessageFormatter: Any + Send + Sync {
+    fn format(&amp;self, trace: TraceType) -&gt; String;
+}
+<span class="boring">}</span></code></pre>
+<h2 id="human-formatter"><a class="header" href="#human-formatter">Human Formatter</a></h2>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct HumanFormatter
+<span class="boring">}</span></code></pre>
+<p>The <code>HumanFormatter</code> implements the <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#message-formatter-trait">MessageFormatter</a> trait by matching on <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#trace-type">TraceType</a> and returning a formatted String.
+All <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#trace-type">TraceType</a> variants implement the <code>Display</code> trait, which allows for easy string conversion.</p>
+<p><strong>Behaviour:</strong></p>
+<ul>
+<li>
+<p><strong>Successful Rule Applications</strong></p>
+<ul>
+<li>A message “Successful Transformation” followed by the full formatted <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#rule-trace">RuleTrace</a>, displaying all of its fields.</li>
+</ul>
+</li>
+<li>
+<p><strong>Unsuccessful Rule Applications</strong></p>
+<ul>
+<li>
+<p>A message like “Unsuccessful Transformation” followed by a partial display showing only:</p>
+<ul>
+<li><strong>initial expression</strong></li>
+<li><strong>rule name</strong></li>
+<li><strong>rule priority</strong></li>
+<li><strong>rule set name</strong></li>
+</ul>
+</li>
+<li>
+<p>Only shown if the <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#verbosity-level">VerbosityLevel</a> is set to <code>High</code>.</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Model Traces</strong></p>
+<ul>
+<li>For <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#model-trace">ModelTrace</a>, it simply displays the initial and rewritten model using its Display implementation.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Filtering</strong>:
+Before formatting, the <code>HumanFormatter</code> checks if a <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#rule-filters">rule name filter</a> or <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#rule-filters">rule set name filter</a> has been applied.</p>
+<h2 id="json-formatter"><a class="header" href="#json-formatter">JSON Formatter</a></h2>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct JsonFormatter
+<span class="boring">}</span></code></pre>
+<p>The <code>JsonFormatter</code> implements the <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#message-formatter-trait">MessageFormatter</a> trait by matching on <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#trace-type">TraceType</a> and returning a JSON-formatted String.
+It uses the <code>serde_json</code> library to serialize data into a <strong>pretty-printed JSON structure</strong>.</p>
+<p><strong>Behaviour</strong>:</p>
+<ul>
+<li>
+<p><strong>Rule Transformations</strong></p>
+<ul>
+<li>
+<p>For <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#rule-trace">RuleTrace</a>, it serializes the entire RuleTrace object into a pretty-printed JSON string using <code>serde_json::to_string_pretty</code>.</p>
+</li>
+<li>
+<p>Similar to <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#human-formatter">HumanFormatter</a> displays both successful and unsuccessful rule applications when the verbosity is high.</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Model Traces</strong></p>
+<ul>
+<li>For <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#model-trace">ModelTrace</a>, no JSON output is generated. No need since the parsed and rewritten models are produced in JSON already.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Filtering:</strong>
+Before formatting, the <code>JsonFormatter</code> checks if a <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#rule-filters">rule name filter</a> or <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#rule-filters">rule set name filter</a> has been applied.</p>
+<hr>
+<h1 id="consumer"><a class="header" href="#consumer">Consumer</a></h1>
+<p>The <strong>Consumer</strong> enum represents different types of endpoints that receive, format, and output <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#trace-type">TraceType</a> data.</p>
+<p>Consumers control where the trace data goes to and which format.</p>
+<ul>
+<li><a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#stdout-consumer">StdoutConsumer</a> prints out the trace to the console</li>
+<li><a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#file-consumer">FileConsumer</a> writes the trace data to a file in one of three ways: as human-readable text, as JSON-formatted text, or to both file types simultaneously.</li>
+<li><a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#both-consumer">BothConsumer</a> writes to both stdout and file(s).</li>
+</ul>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub enum Consumer {
+    StdoutConsumer(StdoutConsumer),
+    FileConsumer(FileConsumer),
+    BothConsumer(BothConsumer),
+}
+<span class="boring">}</span></code></pre>
+<h3 id="trace-trait"><a class="header" href="#trace-trait">Trace Trait</a></h3>
+<p>Each variant implements the <code>Trace</code> trait, meaning it can capture traces and send them to the appropriate destination.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub trait Trace {
+    fn capture(&amp;self, trace: TraceType);
+}
+<span class="boring">}</span></code></pre>
+<h2 id="stdout-consumer"><a class="header" href="#stdout-consumer">Stdout Consumer</a></h2>
+<p>A <code>StdoutConsumer</code> outputs the formatted trace data to standard output.</p>
+<p>Holds:</p>
+<ul>
+<li>A reference-counted (Arc) <strong>formatter</strong> that implements the <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#message-formatter-trait">MessageFormatter</a> trait.
+<ul>
+<li><code>Arc</code> (Atomic Reference Counted pointer) allows safe shared ownership across multiple consumers.</li>
+<li>Multiple Consumers might want to share the same formatter without each owning and duplicating it.</li>
+</ul>
+</li>
+<li>A <strong>verbosity</strong> <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#verbosity-level">VerbosityLevel</a> that can influence what gets printed.</li>
+</ul>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct StdoutConsumer {
+    pub formatter: Arc&lt;dyn MessageFormatter&gt;,
+    pub verbosity: VerbosityLevel,
+}
+<span class="boring">}</span></code></pre>
+<p><code>dyn</code> = dynamic dispatch. At runtime, it calls the correct format method for the actual formatter.
+When capturing a trace:
+It formats the trace using its assigned formatter.</p>
+<h2 id="file-consumer"><a class="header" href="#file-consumer">File Consumer</a></h2>
+<p>A <code>FileConsumer</code> writes the formatted trace data to one or more files.</p>
+<p>Holds:</p>
+<ul>
+<li>A reference-counted (Arc) <strong>formatter</strong>.</li>
+<li>A <strong>formatter type</strong> to determine whether to write in Human, JSON, or both formats.</li>
+<li><strong>verbosity</strong></li>
+<li>Path to the <strong>file for the JSON trace</strong>. (Optional)</li>
+<li>Path to the <strong>file for the human-readable trace</strong>. (Optional)</li>
+<li><strong>is first</strong> flag used for managing JSON array formatting when appending traces.</li>
+</ul>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct FileConsumer {
+    pub formatter: Arc&lt;dyn MessageFormatter&gt;,
+    pub formatter_type: FormatterType,
+    pub verbosity: VerbosityLevel,
+    pub json_file_path: Option&lt;String&gt;, 
+    pub human_file_path: Option&lt;String&gt;, 
+    pub is_first: std::cell::Cell&lt;bool&gt;, 
+}
+
+<span class="boring">}</span></code></pre>
+<p>When capturing a trace:</p>
+<p>Based on the selected <code>FormatterType</code>:
+<strong>Human</strong>: Writes human-readable output to the human file.
+<strong>Json</strong>: Writes JSON output to the JSON file.
+<strong>Both</strong>: Writes to both files using respective formatters (<a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#human-formatter">HumanFormatter</a> and <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#json-formatter">JsonFormatter</a> directly).</p>
+<h2 id="both-consumer"><a class="header" href="#both-consumer">Both Consumer</a></h2>
+<p>A <code>BothConsumer</code>sends the formatted trace data to both:</p>
+<ul>
+<li>Standard output (via an internal <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#stdout-consumer">StdoutConsumer</a>)</li>
+<li>Files (via an internal <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#file-consumer">FileConsumer</a>)</li>
+</ul>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct BothConsumer {
+    stdout_consumer: StdoutConsumer,
+    file_consumer: FileConsumer,
+}
+
+<span class="boring">}</span></code></pre>
+<p>It combines the behaviours of <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#stdout-consumer">StdoutConsumer</a> and <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#file-consumer">FileConsumer</a> by calling method <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#trace">capture</a> on both its fields.</p>
+<hr>
+<h1 id="rule-filters"><a class="header" href="#rule-filters">Rule Filters</a></h1>
+<p>If users would like to only see specific rules or rule sets during rule application tracing, rule filters can be applied using the command-line argument <code>--filter-rule-name</code> or <code>--filter-rule-set</code> followed by comma-separated rule names or sets. The output will only show rules that is <strong>in the rule filters</strong>, otherwise the rule application will be completely skipped. This feature was added for the abstraction of unimportant rule applications during tracing, allowing users to only see the rules they require.</p>
+<p>When both rule name and rule set filters are used in tandem, any rules that pass either the rule name or the rule set filter will be displayed. For example, if the rule name filter is <code>normalise_associative_commutative</code> and the rule set filter is <code>Minion</code>, any rule that has the rule name <code>normalise_associative_commutative</code> or is in the rule set <code>Minion</code> will be displayed.</p>
+<p>Rule filters will be applied to both <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#file-consumer">FileConsumer</a> and <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#stdout-consumer">StdoutConsumer</a>.</p>
+<p>Rule filters can also be hard-coded into the program or accessed using the following functions:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub fn set_rule_filter(rule_name: Option&lt;Vec&lt;String&gt;&gt;)
+
+pub fn get_rule_filter() -&gt; Option&lt;Vec&lt;String&gt;&gt;
+
+pub fn set_rule_set_filter(rule_set: Option&lt;Vec&lt;String&gt;&gt;)
+
+pub fn get_rule_set_filter() -&gt; Option&lt;Vec&lt;String&gt;&gt;
+<span class="boring">}</span></code></pre>
+<h1 id="capturing-general-messages-independent-of-the-main-tracing-functionality-set-by"><a class="header" href="#capturing-general-messages-independent-of-the-main-tracing-functionality-set-by">Capturing general messages (independent of the main tracing functionality set by)</a></h1>
+<p>This feature was motivated by the need for a unified interface that allows developers to capture messages—whether to stdout or a file—with the flexibility of a typical debug print statement, but with added control.</p>
+<p><code>Default</code> messages are always printed out and additional message types can be filtered and viewed using the command-line argument <code>--get-info-about</code>, followed by the desired message <code>Kind</code>.</p>
+<p>For example, running <code>--get-info-about rules</code> will display all the enabled rule sets, individual rules, their assigned priorities, and the sets they belong to. To improve readability, output is color-coded: error messages appear in red, while all other information is shown in green.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub enum Kind {
+    Parser,
+    Rules,
+    Error,
+    Solver,
+    Model,
+    Default,
+}
+fn display_message(message: String, file_path: Option&lt;String&gt;, kind: Kind)
+
+
+<span class="boring">}</span></code></pre>
+<h1 id="tracing-in-integration-tests"><a class="header" href="#tracing-in-integration-tests">Tracing in integration tests</a></h1>
+<p>Similar to how a <code>Consumer</code> is created in solve.rs for <code>cargo run solve</code>, a <code>combined_consumer</code> is manually constructed for each integration test, with its fields explicitly set rather than being derived from command-line arguments. This consumer is configured to log successful rule applications to two separate files—one in a human-readable format and the other in JSON. It is then passed to the <code>rewrite_naive</code> function. By establishing a uniform internal interface for tracing in both <code>cargo run</code> and <code>cargo test</code>, we were able to significantly reduce code duplication and streamline the overall tracing logic.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>   let combined_consumer = create_consumer(
+            "file",
+            VerbosityLevel::Medium,
+            "both",
+            Some(format!("{path}/{essence_base}.generated-rule-trace.json")),
+            Some(format!("{path}/{essence_base}.generated-rule-trace.txt")),
+        );
+<span class="boring">}</span></code></pre>
+<p>The rule traces is verified using the functions <code>read_default_rule_trace</code> and <code>read_json_rule_trace</code> defined in <code>testing.rs</code> which compare the generated trace output to the expected one. <code>read_json_rule_trace</code> ignores the <code>id</code> fields since they can change from one run to another.</p>
+<h1 id="command-line-arguments-and-flags"><a class="header" href="#command-line-arguments-and-flags">Command line arguments and flags</a></h1>
+<p>Enable rule tracing</p>
+<pre><code>-T, --tracing
+</code></pre>
+<p>Select output location for trace result: stdout or file [default: stdout]</p>
+<pre><code>-L, --trace-output &lt;TRACE_OUTPUT&gt;
+</code></pre>
+<p>Select verbosity level for trace [default: medium] [possible values: low, medium, high]</p>
+<pre><code>--verbosity &lt;VERBOSITY&gt;
+</code></pre>
+<p>Select the format of the trace output: human or json [default: human]</p>
+<pre><code>-F, --formatter &lt;FORMATTER&gt;
+</code></pre>
+<p>Optionally save traces to specific files: first for JSON, second for human format</p>
+<pre><code>-f, --trace-file [&lt;JSON_TRACE&gt; &lt;HUMAN_TRACE&gt;]
+</code></pre>
+<p>Filter messages by given kind [possible values: parser, rules, error, solver, model, default]</p>
+<pre><code>--get-info-about &lt;KIND_FILTER&gt;
+</code></pre>
+<p>Filter rule trace to only show given rule names (comma separated)</p>
+<pre><code>--filter-rule-name &lt;RULE_NAME_FILTER&gt;
+</code></pre>
+<p>Filter rule trace to only show given rule set names (comma separated)</p>
+<pre><code>--filter-rule-set &lt;RULE_SET_FILTER&gt;
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div>
+<p>Tree-morph is a library that helps you perform boilerplate-free generic tree transformations. In its current state, tree-morph is able to perform transformations in a large number of test cases, and work is now being done to try to implement Essence with tree-morph. When completed, tree-morph will be a very powerful stand-alone crate, as well as sitting at the core of <code>conjure-oxide</code>. Despite its current power, there is a still a lot of work to be done on the <code>tree-morph</code> crate. It is currently in a completely unoptimised state, and will be very slow when performing on large trees with a rich rule set and rule hierarchy. In order to assess progress on new optimisations, it is essential to have a diverse list of benchmarks. All benchmarking has been done using the <a href="https://crates.io/crates/criterion">criterion</a> crate. The following section outlines some of the most important benchmarks.</p>
+<h1 id="benchmarks"><a class="header" href="#benchmarks">Benchmarks</a></h1>
+<h2 id="identity"><a class="header" href="#identity">identity</a></h2>
+<p>The <code>identity benchmark</code> is a test designed to capture how long one tree traversal takes. There is no metadata, and the only rule is <code>do_nothing</code> which is never evaluated. The helper function <code>construct_tree</code> creates a simple tree of variable depth. This is an important benchmark to make sure that new proposed changes do not negatively effect <code>tree-morph</code> traversal speed.</p>
+<p>Filename: <code>conjure-oxide/crates/tree_morph/benches/identity.rs</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use tree_morph::prelude::*;
+use uniplate::derive::Uniplate;
+
+#[derive(Debug, Clone, PartialEq, Eq, Uniplate)]
+#[uniplate()]
+enum Expr {
+    Branch(Box&lt;Expr&gt;, Box&lt;Expr&gt;),
+    Val(i32),
+}
+struct Meta {}
+fn do_nothing(cmds: &amp;mut Commands&lt;Expr, Meta&gt;, subtree: &amp;Expr, meta: &amp;Meta) -&gt; Option&lt;Expr&gt; {
+    None
+}
+
+fn construct_tree(n: i32) -&gt; Box&lt;Expr&gt; {
+    if n == 1 {
+        Box::new(Expr::Val(0))
+    } else {
+        Box::new(Expr::Branch(Box::new(Expr::Val(0)), construct_tree(n - 1)))
+    }
+}
+
+pub fn criterion_benchmark(c: &amp;mut Criterion) {
+    let base: i32 = 2;
+    let expr = *construct_tree(base.pow(5));
+    let rules = vec![vec![do_nothing]];
+
+    c.bench_function("Identity", |b| {
+        b.iter(|| {
+            morph(
+                black_box(rules.clone()),
+                select_first,
+                black_box(expr.clone()),
+                Meta {},
+            )
+        })
+    });
+}
+
+criterion_group!(benches, criterion_benchmark);
+criterion_main!(benches);
+<span class="boring">}</span></code></pre>
+<h2 id="modify_leafs"><a class="header" href="#modify_leafs">modify_leafs</a></h2>
+<p>The <code>modify_leafs</code> benchmark is designed to capture how long it takes for a simple modification rule to be applied to all of the leaf nodes. The function <code>construct_tree</code> creates a tree of variable depth with all leaf nodes initialised to 0. There is no metadata and the only function <code>zero_to_one</code> changes a leaf node of 0 to a leaf node of 1. It should be expected that this will take a lot longer than the identity benchmark, as when a node is changed in <code>tree-morph</code>, an entirely new tree is created.</p>
+<p>Filename: <code>conjure-oxide/crates/tree_morph/benches/modify_leafs.rs</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use tree_morph::prelude::*;
+use uniplate::derive::Uniplate;
+
+#[derive(Debug, Clone, PartialEq, Eq, Uniplate)]
+#[uniplate()]
+enum Expr {
+    Branch(Box&lt;Expr&gt;, Box&lt;Expr&gt;),
+    Val(i32),
+}
+
+struct Meta {} // not relevant for this benchmark
+
+fn zero_to_one(cmds: &amp;mut Commands&lt;Expr, Meta&gt;, subtree: &amp;Expr, meta: &amp;Meta) -&gt; Option&lt;Expr&gt; {
+    if let Expr::Val(a) = subtree {
+        if let 0 = *a {
+            return Some(Expr::Val(1));
+        }
+    }
+    None
+}
+
+fn construct_tree(n: i32) -&gt; Box&lt;Expr&gt; {
+    if n == 1 {
+        Box::new(Expr::Val(0))
+    } else {
+        Box::new(Expr::Branch(Box::new(Expr::Val(0)), construct_tree(n - 1)))
+    }
+}
+
+pub fn criterion_benchmark(c: &amp;mut Criterion) {
+    let base: i32 = 2;
+    let expr = *construct_tree(base.pow(5));
+    let rules = vec![vec![zero_to_one]];
+
+    c.bench_function("Modify_leafs", |b| {
+        b.iter(|| {
+            morph(
+                black_box(rules.clone()),
+                select_first,
+                black_box(expr.clone()),
+                Meta {},
+            )
+        })
+    });
+}
+
+criterion_group!(benches, criterion_benchmark);
+criterion_main!(benches);
+<span class="boring">}</span></code></pre>
+<h2 id="factorial"><a class="header" href="#factorial">factorial</a></h2>
+<p>The <code>factorial</code> benchmark is the most difficult benchmark currently made, and an improved score on factorial will be indicative of serious gains in optimisations. As the name suggests, <code>factorial</code> is centred around the mathematical factorial operation (<code>5! = 5*4*3*2*1</code>), which will grow the tree depth, providing a rich set of transformations for <code>tree-morph</code> to calculate. The tree generating function <code>random_exp_tree</code> here takes as input a random seed and a max depth, and generates a tree of an arithmetic expression involving values, additions, multiplications and factorials. An example of such an expression with a random seed of <code>41</code> and a max depth of <code>5</code> is shown below.</p>
+<pre><code class="language-bash">(((8 + 1!) + (1 * 3)!) + (1!! * ((2 + 1) * (1 * 1))))!
+</code></pre>
+<p>It is worth mentioning that this expression is extremely large due to the nested factorials, and as such we need a way of making sure that calculations are bounded. This is achieved by modding the results of any additions and multiplications in the <code>rule_eval_add</code> and <code>rule_eval_mul</code> functions by <code>10</code>, which will bound all factorial expressions by <code>10!</code>. The benchmark counts the number of addition and multiplication rule applications, and also has a high priority dummy rule <code>do_nothing</code>, in order to increase the benchmark difficulty.</p>
+<p>Filename: <code>conjure-oxide/crates/tree_morph/benches/factorial.rs</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use rand::rngs::StdRng;
+use rand::{Rng, SeedableRng};
+use tree_morph::prelude::*;
+use uniplate::derive::Uniplate;
+
+#[derive(Debug, Clone, PartialEq, Eq, Uniplate)]
+#[uniplate()]
+enum Expr {
+    Add(Box&lt;Expr&gt;, Box&lt;Expr&gt;),
+    Mul(Box&lt;Expr&gt;, Box&lt;Expr&gt;),
+    Val(i32),
+    Factorial(Box&lt;Expr&gt;),
+}
+
+fn random_exp_tree(rng: &amp;mut StdRng, count: &amp;mut usize, depth: usize) -&gt; Expr {
+    if depth == 0 {
+        *count += 1;
+        return Expr::Val(rng.random_range(1..=3));
+    }
+
+    match rng.random_range(1..=13) {
+        x if (1..=4).contains(&amp;x) =&gt; Expr::Add(
+            Box::new(random_exp_tree(rng, count, depth - 1)),
+            Box::new(random_exp_tree(rng, count, depth - 1)),
+        ),
+        x if (5..=8).contains(&amp;x) =&gt; Expr::Mul(
+            Box::new(random_exp_tree(rng, count, depth - 1)),
+            Box::new(random_exp_tree(rng, count, depth - 1)),
+        ),
+        x if (8..=11).contains(&amp;x) =&gt; {
+            Expr::Factorial(Box::new(random_exp_tree(rng, count, depth - 1)))
+        }
+        _ =&gt; Expr::Val(rng.random_range(1..=10)),
+    }
+}
+fn do_nothing(cmds: &amp;mut Commands&lt;Expr, Meta&gt;, subtree: &amp;Expr, meta: &amp;Meta) -&gt; Option&lt;Expr&gt; {
+    None
+}
+
+fn factorial_eval(cmds: &amp;mut Commands&lt;Expr, Meta&gt;, subtree: &amp;Expr, meta: &amp;Meta) -&gt; Option&lt;Expr&gt; {
+    if let Expr::Factorial(a) = subtree {
+        if let Expr::Val(n) = *a.as_ref() {
+            if n == 0 {
+                return Some(Expr::Val(1));
+            }
+            return Some(Expr::Mul(
+                Box::new(Expr::Val(n)),
+                Box::new(Expr::Factorial(Box::new(Expr::Val(n - 1)))),
+            ));
+        }
+    }
+    None
+}
+
+fn rule_eval_add(cmds: &amp;mut Commands&lt;Expr, Meta&gt;, subtree: &amp;Expr, meta: &amp;Meta) -&gt; Option&lt;Expr&gt; {
+    if let Expr::Add(a, b) = subtree {
+        if let (Expr::Val(a_v), Expr::Val(b_v)) = (a.as_ref(), b.as_ref()) {
+            cmds.mut_meta(|m| m.num_applications_addition += 1);
+            return Some(Expr::Val((a_v + b_v) % 10));
+        }
+    }
+    None
+}
+
+fn rule_eval_mul(cmds: &amp;mut Commands&lt;Expr, Meta&gt;, subtree: &amp;Expr, meta: &amp;Meta) -&gt; Option&lt;Expr&gt; {
+    if let Expr::Mul(a, b) = subtree {
+        if let (Expr::Val(a_v), Expr::Val(b_v)) = (a.as_ref(), b.as_ref()) {
+            cmds.mut_meta(|m| m.num_applications_multiplication += 1);
+            return Some(Expr::Val((a_v * b_v) % 10));
+        }
+    }
+    None
+}
+
+#[derive(Debug)]
+struct Meta {
+    num_applications_addition: i32,
+    num_applications_multiplication: i32,
+}
+
+pub fn criterion_benchmark(c: &amp;mut Criterion) {
+    let seed = [41; 32];
+    let mut rng = StdRng::from_seed(seed);
+    let mut count = 0;
+
+    let my_expression = random_exp_tree(&amp;mut rng, &amp;mut count, 10);
+    let rules = vec![
+        rule_fns![do_nothing],
+        rule_fns![rule_eval_add, rule_eval_mul, factorial_eval],
+    ];
+
+    c.bench_function("factorial", |b| {
+        b.iter(|| {
+            let meta = Meta {
+                num_applications_addition: 0,
+                num_applications_multiplication: 0,
+            };
+            morph(
+                black_box(rules.clone()),
+                select_first,
+                black_box(my_expression.clone()),
+                black_box(meta),
+            )
+        })
+    });
+}
+
+criterion_group!(benches, criterion_benchmark);
+criterion_main!(benches);
+<span class="boring">}</span></code></pre>
+<h2 id="left_addleft_add_hard"><a class="header" href="#left_addleft_add_hard">left_add/left_add_hard</a></h2>
+<p>The benchmarks <code>left_add</code> and <code>left_add_hard</code> are two benchmarks that evaluate a very simple nested addition expression <code>(1+(1+(1+...)))</code> of variable depth. In its unoptimised state, all but he final two instances of a <code>1</code> node will undergo several superfluous rule checks. The benchmark <code>left_add_hard</code> also is identical to <code>left_add</code>, except there are also four additional dummy rules, all assigned with a higher priority than the <code>rule_eval_add</code>. As expected, this will reduce code performance by about 400% (shown later). The code for <code>left_add_hard</code> is shown below, with <code>left_add</code> being very similar.</p>
+<p>Filename: <code>conjure-oxide/crates/tree_morph/benches/left_add_hard.rs</code></p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use tree_morph::prelude::*;
+use uniplate::derive::Uniplate;
+
+#[derive(Debug, Clone, PartialEq, Eq, Uniplate)]
+#[uniplate()]
+enum Expr {
+    Add(Box&lt;Expr&gt;, Box&lt;Expr&gt;),
+    Val(i32),
+}
+
+fn rule_eval_add(_: &amp;mut Commands&lt;Expr, Meta&gt;, expr: &amp;Expr, _: &amp;Meta) -&gt; Option&lt;Expr&gt; {
+    match expr {
+        Expr::Add(a, b) =&gt; match (a.as_ref(), b.as_ref()) {
+            (Expr::Val(x), Expr::Val(y)) =&gt; Some(Expr::Val(x + y)),
+            _ =&gt; None,
+        },
+        _ =&gt; None,
+    }
+}
+
+#[derive(Clone)]
+enum MyRule {
+    EvalAdd,
+    Fee,
+    Fi,
+    Fo,
+    Fum,
+}
+
+impl Rule&lt;Expr, Meta&gt; for MyRule {
+    fn apply(&amp;self, cmd: &amp;mut Commands&lt;Expr, Meta&gt;, expr: &amp;Expr, meta: &amp;Meta) -&gt; Option&lt;Expr&gt; {
+        cmd.mut_meta(|m| m.num_applications += 1); // Only applied if successful
+        match self {
+            MyRule::EvalAdd =&gt; rule_eval_add(cmd, expr, meta),
+            MyRule::Fee =&gt; None,
+            MyRule::Fi =&gt; None,
+            MyRule::Fo =&gt; None,
+            MyRule::Fum =&gt; None,
+        }
+    }
+}
+
+#[derive(Clone)]
+struct Meta {
+    num_applications: u32,
+}
+
+fn val(n: i32) -&gt; Box&lt;Expr&gt; {
+    Box::new(Expr::Val(n))
+}
+
+fn add(lhs: Box&lt;Expr&gt;, rhs: Box&lt;Expr&gt;) -&gt; Box&lt;Expr&gt; {
+    Box::new(Expr::Add(lhs, rhs))
+}
+
+fn nested_addition(n: i32) -&gt; Box&lt;Expr&gt; {
+    if n == 1 {
+        val(1)
+    } else {
+        add(val(1), nested_addition(n - 1))
+    }
+}
+
+pub fn criterion_benchmark(c: &amp;mut Criterion) {
+    let base: i32 = 2;
+    let expr = *nested_addition(base.pow(5));
+    let rules = vec![
+        vec![MyRule::Fi],
+        vec![MyRule::Fee],
+        vec![MyRule::Fo],
+        vec![MyRule::Fum],
+        vec![MyRule::EvalAdd],
+    ];
+
+    c.bench_function("left_add_hard", |b| {
+        b.iter(|| {
+            let meta = Meta {
+                num_applications: 0,
+            };
+            morph(rules.clone(), select_first, black_box(expr.clone()), meta)
+        })
+    });
+}
+
+criterion_group!(benches, criterion_benchmark);
+criterion_main!(benches);
+<span class="boring">}</span></code></pre>
+<h2 id="right_add"><a class="header" href="#right_add">right_add</a></h2>
+<p>The benchmark <code>right_add</code> is identical to <code>left_add</code>, except there now we are evaluating <code>((...+1)+1)</code> instead. This is designed to show the inherent left bias used in <code>tree-morph</code>. Performance is a little better than <code>left_add</code>. Due to the similarity with <code>left_add</code>, the code is omitted.</p>
+<h1 id="results"><a class="header" href="#results">results</a></h1>
+<p>The most helpful feature that <code>criterion</code> produces is its automatic graphing software. Upon a run of <code>cargo bench</code>, <code>criterion</code> automatically produces html reports of all benchmarks, accessible in <code>conjure-oxide/target/criterion</code>. An example report is shown below.
+<img width="1300" alt="image" src="https://github.com/user-attachments/assets/963c76eb-2d8c-4c77-8529-8b9b6bc22dc3" />
+The left graph is a probability density function for the run time. It says that on average it takes <code>854.26 µs</code> for identity to run at a fixed depth (in this case <code>2^5</code> was used). The right graph is a cumulative time plot. The fact that the line is almost straight indicates that the run times are all very comparable in time. The additional stats provided are all standard statistics measurements, with MAD standing for the mean absolute deviation.</p>
+<h2 id="identity-vs-modify_leafs"><a class="header" href="#identity-vs-modify_leafs">identity vs modify_leafs</a></h2>
+<p>The probability density functions for <code>identity</code> and <code>modify_leafs</code> are shown below, both evaluated a tree depth of <code>2^5</code>.
+<img width="550" alt="image" src="https://github.com/user-attachments/assets/06fd9c0e-b094-4a5f-ab5e-6d88b3ace29a" />
+<img width="547.5" alt="image" src="https://github.com/user-attachments/assets/2e31067d-a848-4259-bf67-bf516c70a6cf" /></p>
+<p>As you can see, <code>modify_leafs</code> takes significantly longer (<code>2300%</code>) than <code>identity</code> on average, showing how costly even simple tree transformations take. This is most likely due to the fact that <code>tree-morph</code> does not edit in-place, but rather constructs a new tree after applying a transformation.</p>
+<h2 id="factorial-1"><a class="header" href="#factorial-1">factorial</a></h2>
+<p>The following is the probability density function for <code>factorial</code>, ran at a max depth of <code>10</code> and a seed of <code>[41; 32]</code>.
+<img src="https://github.com/user-attachments/assets/afb83193-b33c-452b-a5ba-8b9b9ae66f1a" alt="image"></p>
+<p>As you can see, even for a relatively small max depth compute is large. Also note that <code>factorial</code> still has a very small amount of rule groupings, and performance would likely be orders of magnitude worse if a number of rules comparable to a <code>conjure</code> problem was presented. This shows a significant need for optimisations, and an improved score on <code>factorial</code> would indicate a lot of good progress.</p>
+<h2 id="left_add-vs-left_add_hard"><a class="header" href="#left_add-vs-left_add_hard">left_add vs left_add_hard</a></h2>
+<p>A comparison between <code>left_add</code> and <code>left_add_hard</code> is a clear demonstration of how detrimental duplicate rule checks can be for performance.</p>
+<p><img src="https://github.com/user-attachments/assets/ae292d37-f26d-4080-9520-019f60476e93" alt="image">
+<img src="https://github.com/user-attachments/assets/2f882085-71fc-4d13-a266-ead400db31e8" alt="image"></p>
+<p>Ignoring the differences between the shapes of the graphs (I am unsure why this is the case), we can immediately notice how the extra 4 dummy rules in <code>left_add_hard</code> lead to almost exactly a <code>400%</code> increase in performance!</p>
+<h1 id="further-work"><a class="header" href="#further-work">Further work</a></h1>
+<p>Benchmarks are still in an early stage, and there is lots more to do. Some ideas for future work include:</p>
+<ul>
+<li>Set up some automated infrastructure for running benchmarks automatically on GitHub</li>
+<li>Find out scaling laws for increasing tree depth for current benchmarks</li>
+<li>Set up some head to head tests between two functions</li>
+<li>Set up counters that can measure things like node counts, maximum tree depths and other useful information</li>
+<li>Benchmark individual functions (such as a rule application) in order to better understand how trees grow and shrink during transformations</li>
+<li>Benchmark meta applications</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="overview-3"><a class="header" href="#overview-3">Overview</a></h1>
 <p>The Language Server Protocol (LSP) for Essence is designed to provide error detection and syntax highlighting for the Essence language. It consists of a server component and a diagnostics API. When fully implemented, the server will receive document change events from clients (e.g., VS Code), call the diagnostics API to detect syntactic and semantic errors, and publish these diagnostics back to the client for. The diagnostics API provides error detection and document symbol information for syntax highlighting. Its main purpose is to improve the user experience when formulating the problems in Essence.</p>
 <h1 id="structure"><a class="header" href="#structure">Structure</a></h1>
 <p>The LSP architecture follows a client-server model where the client (editor extension) and server (language server) communicate asynchronously via JSON-RPC 2.0 protocol. The server runs as a separate process, and exchanges messages over standard I/O streams. More on that in <a href="developers-guide/architecture/lsp/lsp-server-client.html">LSP structure docs</a>.</p>
 <p>When the client requests diagnostics (on open, one edit, on hover… etc.), the LSP forwards this request to the Diagnostics API (for more details see <a href="developers-guide/architecture/lsp/diagnostics_api.html">Diagnostics API</a>), which responds with a list of diagnostics which the server converts to <code>tower-lsp</code>-compatible types and publishes to the client.</p>
-<p><img src="developers-guide/architecture/assets/lsp_structure.svg" alt="LSP Structure Diagram"></p>
+<p><img src="developers-guide/architecture/lsp/lsp-structure.svg" alt="LSP Structure Diagram"></p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="diagnostics-api-for-lsp-server"><a class="header" href="#diagnostics-api-for-lsp-server">Diagnostics API for LSP Server</a></h1>
+<h2 id="overview-4"><a class="header" href="#overview-4">Overview</a></h2>
+<p>The Diagnostics API provides tree-sitter and parser–based diagnostics for Essence source files (for error underlining, syntax highlighting, and hover info). It also exposes general LSP-compatible data structures for consumption by editors and tools. Currently, the main functionality of the Diagnostics API is to parse Essence source code and report syntactic errors found by walking the CST (using tree-sitter) and report semantic errors by attempting a semantic parse and reporting parser errors. It serialises diagnostics exposing a <code>get_diagnostics()</code> function, which returns both semantic and syntactic errors as a <code>Vec</code> of <code>Diagnostic</code>s.</p>
+<h2 id="structure-1"><a class="header" href="#structure-1">Structure</a></h2>
+<pre><code class="language-bash">crates/conjure-cp-essence-parser/src/diagnostics/
+├─ mod.rs
+├─ diagnostics_api.rs             # public LSP-facing structs and `get_diagnostics(source)` aggregator
+└─ error_detection/
+  ├─ mod.rs
+  ├─ semantic_errors.rs         # AST-based semantic detection: maps parse errors to Diagnostics
+  └─ syntactic_errors.rs        # tree-sitter traversal: maps erronous parse tree patterns to Diagnostics
+</code></pre>
+<h3 id="key-functions"><a class="header" href="#key-functions">Key Functions</a></h3>
+<ul>
+<li>
+<p><code>get_diagnostics(source: &amp;str) -&gt; Vec&lt;Diagnostic)</code> serves as the main entrypoint. It aggregates <code>detect_semantic_errors(source)</code> and <code>detect_syntactic_errors(source)</code> into a single diagnostics vector, returning a combined, deduplicated-by-call vector of <code>Diagnostic</code>s. That’s the function you would call for error detection and underlining.</p>
+</li>
+<li>
+<p><code>detect_syntactic_errors(source: &amp;str) -&gt; Vec&lt;Diagnostic)</code> Parses with tree-sitter and walks the CST using DFS with early retract on error/missing/zero-length nodes to avoid duplicates. More information on that in <a href="developers-guide/architecture/lsp/error_detection/error_classification.html">error detection docs</a>.</p>
+</li>
+<li>
+<p><code>detect_semantic_errors(source: &amp;str) -&gt; Vec&lt;Diagnostic)</code> Runs <code>parse_essence_with_context</code> and, on <code>Err(EssenceParseError)</code>, maps the error into a <code>Diagnostic</code> using <code>error_to_diagnostic</code>. More information on that in <a href="developers-guide/architecture/lsp/error_detection/error_classification.html">error detection docs</a>.</p>
+</li>
+<li>
+<p>Helpers (for debugging and/or testing):</p>
+<ul>
+<li><code>print_all_error_nodes(source: &amp;str)</code>: prints all tree-sitter error/missing nodes with spans.</li>
+<li><code>print_diagnostics(diags: &amp;[Diagnostic])</code>: pretty-prints diagnostics.</li>
+<li><code>check_diagnostic(...)</code>: asserts diagnostic fields in tests.</li>
+</ul>
+</li>
+</ul>
+<h3 id="key-data-structures"><a class="header" href="#key-data-structures">Key Data Structures</a></h3>
+<ul>
+<li><code>Position</code> and <code>Range</code>: 0-based positions used to locate where in the source code the diagnostic originates from</li>
+<li><code>Severity</code>: indicates the type of diagnostic, i.e., Error, Warn, Info, Hint (numeric alignment with LSP <code>DiagnosticSeverity</code>)</li>
+<li><code>Diagnostic</code>:
+<ul>
+<li><code>range</code>: <code>Range</code></li>
+<li><code>severity</code>: <code>Severity</code></li>
+<li><code>message</code>: human-readable description / error message</li>
+<li><code>source</code>: static string identifying which part of the API the diagnostic comes from (e.g., <code>syntactic-error-detector</code>)</li>
+</ul>
+</li>
+</ul>
+<p>Example of serialized diagnostic:</p>
+<pre><code class="language-json">{
+ "range": {"start": {"line": 0, "character": 0}, "end": {"line": 0, "character": 5}},
+ "severity": 1,
+ "message": "some error message.",
+ "source": "syntactic-error-detector"
+}
+</code></pre>
+<ul>
+<li><code>SymbolKind</code> and <code>DocumentSymbol</code>:
+<ul>
+<li>Intended for document highlighting; currently enumerates a few kinds (e.g., <code>Integer</code>, <code>Decimal</code>, <code>Function</code>, <code>Letting</code>, <code>Find</code>). To be extended in the near future.</li>
+<li><code>DocumentSymbol { name, detail?, kind, range, children? }</code>
+<code>DocumentSymbol</code> and <code>SymbolKind</code> exist to support semantic highlighting; As of now, these are scaffolded and will be extended across the Essence grammar later on.</li>
+</ul>
+</li>
+</ul>
+<h2 id="direction-for-use"><a class="header" href="#direction-for-use">Direction for Use</a></h2>
+<p>The API can be imported via <code>use conjure_cp_essence_parser::diagnostics::diagnostics_api::get_diagnostics</code> or <code>use conjure_cp_essence_parser::diagnostics::diagnostics_api::*</code>, depending on use.</p>
+<h3 id="testing"><a class="header" href="#testing">Testing</a></h3>
+<p>API-specific tests are located in <code>crates/conjure-cp-essence-parser/tests</code> and can be run via</p>
+<pre><code class="language-bash"># to run all tests
+cargo test -p conjure-cp-essence-parser --test
+
+# to run with a specific test target
+cargo test -p conjure-cp-essence-parser --test semantic_test
+cargo test -p conjure-cp-essence-parser --test keywords_as_ident
+cargo test -p conjure-cp-essence-parser --test missing_token
+cargo test -p conjure-cp-essence-parser --test unexpected_token
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="syntax-errors"><a class="header" href="#syntax-errors">Syntax Errors</a></h1>
 <p>(Will produce an invalid CST)</p>
@@ -1934,7 +2736,7 @@ find a : bool such that a = (s[5] = t[1]) $ true
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="semantic-errors-detection"><a class="header" href="#semantic-errors-detection">Semantic Errors Detection</a></h1>
-<h2 id="overview-3"><a class="header" href="#overview-3">Overview</a></h2>
+<h2 id="overview-5"><a class="header" href="#overview-5">Overview</a></h2>
 <p>Semantic errors are not picked up by the tree-sitter parser and result in a valid CST but an invalid AST. They are detected at the stage of parsing the CST into a Rust <a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_core/ast/struct.Model.html"><code>Model</code> object</a> representing the Essence problem. The errors generated from the <a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_cp_essence_parser/parser/index.html">Essence parser</a> are extracted and reported via <a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_cp_essence_parser/diagnostics/diagnostics_api/index.html">Diagnostics API</a>.</p>
 <p>The semantic errors detected include type errors, omitted declarations, invalid indexing and using keywords as identifiers.</p>
 <h2 id="implementation-1"><a class="header" href="#implementation-1">Implementation</a></h2>
@@ -1994,7 +2796,7 @@ Source: "semantic error detection"
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="syntactic-errors-detection"><a class="header" href="#syntactic-errors-detection">Syntactic Errors Detection</a></h1>
-<h2 id="overview-4"><a class="header" href="#overview-4">Overview</a></h2>
+<h2 id="overview-6"><a class="header" href="#overview-6">Overview</a></h2>
 <p>Syntactic errors result in an invalid <strong>Concrete Syntax Tree (CST)</strong> generated by the tree-sitter parser (<a href="https://tree-sitter.github.io/tree-sitter/">Tree-sitter</a>) when parsing Essence code. An invalid CST may contain:</p>
 <ul>
 <li>
@@ -2105,7 +2907,7 @@ Source: syntactic-error-detector
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="lsp-documentation"><a class="header" href="#lsp-documentation">LSP Documentation</a></h1>
-<h2 id="overview-5"><a class="header" href="#overview-5">Overview</a></h2>
+<h2 id="overview-7"><a class="header" href="#overview-7">Overview</a></h2>
 <p>This is the overview documentation for the Language Server which is developed for use by Conjure Oxide. This is developed following the <a href="https://microsoft.github.io/language-server-protocol/">Language Server Protocol</a> developed by Microsoft Visual Studio Code, and implemented following VSCode guidelines. This means that functionality cannot be guaranteed on other IDE, though this does not mean it will/cannot work. The Language Server and Client provide the basis through which a fully functional Essence extension will be produced. The server and client run as separate processes primarily because this minimises performance cost.</p>
 <p>At present this addresses the client and server, with abstraction over lower level functions called by the server.</p>
 <h2 id="current-functionality-goals"><a class="header" href="#current-functionality-goals">Current Functionality Goals</a></h2>
@@ -2233,7 +3035,7 @@ last updated: 3-3-2026
 <li><strong>Semantic errors</strong> are errors that may pass the syntactic error checking (i.e. the file lines have the correct syntax), but ultimately is unable to be parsed due to errors relating to the entire context of the file.</li>
 </ul>
 <p>To be able to accurately diagnose the Essence files for errors, tests cases have been written for situations that <a href="developers-guide/architecture/diagnostics_api.html">Diagnostics API</a> and <a href="developers-guide/architecture/essence_parser.html">Native parser</a> might encounter during diagnosing and parsing, referencing the <a href="developers-guide/architecture/error_detection/error_classification.html">Essence Error Classification</a>).</p>
-<h2 id="testing"><a class="header" href="#testing">Testing</a></h2>
+<h2 id="testing-1"><a class="header" href="#testing-1">Testing</a></h2>
 <h3 id="parser"><a class="header" href="#parser">Parser</a></h3>
 <!-- TODO: Roundtrip testing does not exist -- waiting on an update from LSP team -->
 <p>Test cases that test the coverage of the Native parser use <a href="developers-guide/architecture/testing/roundtrip/roundtrip_testing.html">Roundtrip testing</a>. The <code>syntax-error</code> and <code>semantic-error</code> test directories exist in the <code>test-integration</code> crate as child directories of <code>roundtrip\native-errors</code>. Furthermore, <code>config.toml</code> sets only the Native parser to be used when testing test cases.</p>
@@ -3305,7 +4107,7 @@ created: 16-02-24
 <blockquote>
 <p>NOTE: Once the rewrite engine API is finalised, we should possibly make a separate page for it.</p>
 </blockquote>
-<h1 id="overview-6"><a class="header" href="#overview-6">Overview</a></h1>
+<h1 id="overview-8"><a class="header" href="#overview-8">Overview</a></h1>
 <p>Conjure uses Essence, a high-level DSL for constraints modelling, and converts it into a solver-specific representation of the problem.
 To do that, we parse the Essence file into an AST, then use a rule engine to walk the expression tree and rewrite constraints into a format that is accepted by the solver before passing the AST to a solver adapter.</p>
 <p>The high-level process is as follows:</p>
@@ -3576,7 +4378,116 @@ fn tseitin_and(expr: &amp;Expression) -&gt; Result&lt;Expression, RuleApplicatio
 <hr>
 <p><em>This section had been taken from the ‘Expression rewriting, Rules and RuleSets’ page of the conjure-oxide wiki</em></p>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="testing-1"><a class="header" href="#testing-1">Testing</a></h1>
+<h1 id="creating-types-guide"><a class="header" href="#creating-types-guide">Creating Types Guide</a></h1>
+<p>Currently Conjure-Oxide does not have any support for Essence’s sequences, partitions or variants.
+This guide outlines the process of creating support for those types to the AST. This does not currently cover rewriting rules or solving.</p>
+<h2 id="creating-the-type"><a class="header" href="#creating-the-type">Creating the Type</a></h2>
+<ul>
+<li>The domains of these types can contain pointers and so must be able to be both ground and unresolved. Hence you must add to the <code>GroundDomain</code> and <code>UnresolvedDomain</code> Enums</li>
+<li>Adding a new domain will require adding implementations for it, for a lot of related functions. To use the roundtrip tests the Display function <code>fmt()</code> must be implemented to match the Essence of the type.</li>
+<li>Next to complete some of these implementation you will need to add to the <code>ReturnType</code> Enum. This is the returned value from a specific element of the abstract type.</li>
+<li>Finally these functions will also require you to add to the <code>AbstractLiteral</code> Enum. This defines the values of a literal of that type. This will be required for defining the type explicitly. You should also note that we implement <code>Uniplate</code> for <code>AbstractLiteral</code>, and so this implementation will be required.</li>
+</ul>
+<h2 id="adding-to-the-legacy-parser"><a class="header" href="#adding-to-the-legacy-parser">Adding to the Legacy Parser</a></h2>
+<p>Once the type can be stored in Conjure-Oxide’s AST, you will need to add parsing support.</p>
+<ul>
+<li>For the legacy parser this involves adding to <code>parse_model.rs</code> to parse the JSON output of Conjure’s parser.</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="functions"><a class="header" href="#functions">Functions</a></h1>
+<h2 id="what-are-functions"><a class="header" href="#what-are-functions">What Are Functions</a></h2>
+<p>A function is a binary relation on two sets, from elements of a domain to elements of a codomain.</p>
+<p>Functions have attributes and two domains for the domain and codomain of its results. They are defined for both <code>GroundDomain</code> and <code>UnresolvedDomain</code> as <code>Function(FuncAttr, Moo&lt;GroundDomain&gt;, Moo&lt;GroundDomain&gt;)</code>.</p>
+<p>The result of a function is a list of tuples defined by the mappings. As such the <code>AbstractLiteral</code> for functions is defined <code>Function(Vec&lt;(T, T)&gt;)</code>. This AbstractLiteral type means that functions can also be represented explicitly.</p>
+<h2 id="attributes"><a class="header" href="#attributes">Attributes</a></h2>
+<p>Functions contain three types of attributes: size, partiality and jectivity.</p>
+<p>Size attributes determine how many mappings the function is true for. Size attributes are converted to a <code>Range&lt;A&gt;</code> type in Conjure-Oxide. This size can be defined as:</p>
+<ul>
+<li>A single size <code>size x</code></li>
+<li>A minimum size <code>minSize x</code></li>
+<li>A maximum size <code>maxSize x</code></li>
+<li>A range of sizes <code>minSize x maxSize x</code></li>
+<li>Or unbounded by not specifying any attribute</li>
+</ul>
+<p>Partiality determines whether the function is total or partial. A total function is one which is defined for every possible input in the domain set. A function will have partial partiality unless specified otherwise.
+Partiality is stored as an Enum inside Conjure-Oxide.</p>
+<p>Jectivity refers to whether a function is injective, surjective, or bijective. These determine whether elements in the domain and codomain must have only one corresponding mapping. A function can also have no specified jectivity, which is the default.
+Jectivity is also stored as an Enum inside Conjure-Oxide.</p>
+<h2 id="operators"><a class="header" href="#operators">Operators</a></h2>
+<p>There are eight special operators which are defined on functions. These are represented as <code>Expressions</code> in Conjure-Oxide.</p>
+<ul>
+<li><code>Defined(f)</code> - Returns the set of values in the domain for which a function f is defined.</li>
+<li><code>Image(f, x)</code> - Returns the element of the codomain which is mapped to domain element x, in function f.</li>
+<li><code>ImageSet(f, x)</code> - Returns the set of elements of the codomain which is mapped to domain element x, in function f.</li>
+<li><code>Inverse (f1, f2)</code> - Returns a boolean representing if functions f1 and f2 are inverses of each other.</li>
+<li><code>PreImage(f, x)</code> - Returns the set of elements of the domain which map to codomain element x, in function f.</li>
+<li><code>Range(f)</code> - Returns the set of values in the domain for which a function f is defined.</li>
+<li><code>Restrict(f, D)</code> - Returns a sub-function of f which has its mapping restricted to values in the domain D.</li>
+<li><code>ToRelation(f)</code> - Returns a relation for the converted function f.</li>
+</ul>
+<h2 id="note-on-implementation"><a class="header" href="#note-on-implementation">Note on Implementation</a></h2>
+<p>Currently functions are defined within the AST of Conjure-Oxide and can be parsed with the ‘legacy’ parser. However, there is no support as of Apr-2026 for rewriting rules or solving.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="multisets"><a class="header" href="#multisets">Multisets</a></h1>
+<h2 id="what-are-multisets"><a class="header" href="#what-are-multisets">What Are Multisets</a></h2>
+<p>A multiset is a datatype for storing a set of objects where objects can occur more than once, but the ordering of objects does not matter.
+Multisets have attributes and a single domain. A multiset can be defined for both <code>GroundDomain</code> and <code>UnresolvedDomain</code>.</p>
+<h2 id="attributes-1"><a class="header" href="#attributes-1">Attributes</a></h2>
+<p>Three <strong>cardinality</strong> attributes; <code>size</code>, <code>minSize</code>, <code>maxSize</code>.
+Two <strong>occurrence</strong> attributes; <code>minOccur</code>, <code>maxOccur</code>.</p>
+<p>In the original conjure implementation, a multiset was <em>infinite</em> without <code>size</code>, <code>maxSize</code>, or <code>maxOccur</code>.
+In the new conjure-oxide implementation, a variable’s domain is <em>ground</em> if it is fully-bounded (i.e. has a <code>minSize</code> and <code>maxSize</code>).</p>
+<h2 id="operators-1"><a class="header" href="#operators-1">Operators</a></h2>
+<p>There are four operators which are defined on functions. These are represented as <code>Expressions</code> in Conjure-Oxide.</p>
+<ul>
+<li><code>hist(m)</code> - histogram of multi-set <code>m</code></li>
+<li><code>max(m)</code> - largest element in ordered multiset <code>m</code></li>
+<li><code>min(m)</code> - largest element in ordered multiset <code>m</code></li>
+<li><code>freq(m,e)</code> - counts occurrences of element <code>e</code> in multiset <code>m</code></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="relations"><a class="header" href="#relations">Relations</a></h1>
+<h2 id="what-are-relations"><a class="header" href="#what-are-relations">What Are Relations</a></h2>
+<p>A relation is effectively a set of tuples. The internal tuples can be of any arity and can have different internal domains, as long as every tuple in the relation has the same arity and domains. If a relation is binary we can also add additional attributes to define properties of the relation.</p>
+<p>Relations have attributes and a list of domains for inside the tuples. They are defined for both <code>GroundDomain</code> and <code>UnresolvedDomain</code> as <code>Relation(RelAttr, Vec&lt;GroundDomain&gt;)</code>.</p>
+<p>The result of a relation is a list of tuples. As such the <code>AbstractLiteral</code> for relations is defined <code>Relation(Vec&lt;Vec&lt;T&gt;&gt;)</code>. This AbstractLiteral type means that relations can also be represented explicitly.</p>
+<h2 id="attributes-2"><a class="header" href="#attributes-2">Attributes</a></h2>
+<p>Relations contain two types of attributes: size and binary attributes.</p>
+<p>Size attributes determine how many tuples are in the relation. Size attributes are converted to a <code>Range&lt;A&gt;</code> type in Conjure-Oxide. This size can be defined as:</p>
+<ul>
+<li>A single size <code>size x</code></li>
+<li>A minimum size <code>minSize x</code></li>
+<li>A maximum size <code>maxSize x</code></li>
+<li>A range of sizes <code>minSize x maxSize x</code></li>
+<li>Or unbounded by not specifying any attribute</li>
+</ul>
+<p>Binary attributes determine properties of the relation when it is a binary relation. Binary attributes are stored as a list of attributes <code>Vec&lt;BinaryAttr&gt;</code> and any number of them can be provided. The available binary attributes are as follows:</p>
+<ul>
+<li><code>reflexive</code></li>
+<li><code>irreflexive</code></li>
+<li><code>coreflexive</code></li>
+<li><code>symmetric</code></li>
+<li><code>antiSymmetric</code></li>
+<li><code>aSymmetric</code></li>
+<li><code>transitive</code></li>
+<li><code>total</code></li>
+<li><code>connex</code></li>
+<li><code>Euclidean</code></li>
+<li><code>serial</code></li>
+<li><code>equivalence</code></li>
+<li><code>partialOrder</code></li>
+</ul>
+<h2 id="operators-2"><a class="header" href="#operators-2">Operators</a></h2>
+<p>There is one special operator which is defined on relations.</p>
+<ul>
+<li><code>RelationProj(r, ps)</code> - Returns a new relation after projecting projectors ps onto relation r.<br>
+The projectors ps are stored a <code>Vec&lt;Option&lt;Expression&gt;&gt;</code>, and the projecting components (denoted <code>_</code> in Essence) are stored as <code>None</code><br>
+For example: <code>r(_,1,_)</code> converts r from a 3-component relation to a 2-component relation, by projecting the 1st and the 3rd columns. It chooses entries where the second column is 1. This is equivalent to the SQL select query: <code>SELECT one, three FROM r WHERE two = 1</code></li>
+</ul>
+<h2 id="note-on-implementation-1"><a class="header" href="#note-on-implementation-1">Note on Implementation</a></h2>
+<p>Currently relations are defined within the AST of Conjure-Oxide and can be parsed with the ‘legacy’ parser. However, there is no support as of Apr-2026 for rewriting rules or solving.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="testing-2"><a class="header" href="#testing-2">Testing</a></h1>
 <h2 id="types-of-tests"><a class="header" href="#types-of-tests">Types of Tests</a></h2>
 <p>Conjure-Oxide currently has four forms of tests:</p>
 <ul>
@@ -3728,7 +4639,7 @@ In the future, it may also be worth examining the possibility and likelihood of 
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="roundtrip-testing"><a class="header" href="#roundtrip-testing">Roundtrip Testing</a></h1>
-<h2 id="overview-7"><a class="header" href="#overview-7">Overview</a></h2>
+<h2 id="overview-9"><a class="header" href="#overview-9">Overview</a></h2>
 <p>Roundtrip tests check that parsing is valid and that there is no unexpected behaviour during a full roundtrip of an Essence file.
 Roundtrip tests do not consider rewriting or solving.</p>
 <h2 id="full-test-structure"><a class="header" href="#full-test-structure">Full Test Structure</a></h2>
@@ -3755,7 +4666,7 @@ Both parsers will be used by default for each test unless specified and will use
 Any directories within here than contain a singular <code>.essence</code> or <code>.eprime</code> file will be treated as a test.
 After creating the Essence or Essence’ file for your test you should run the test suite with <code>ACCEPT=true</code> to generate the expected files.</p>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="overview-8"><a class="header" href="#overview-8">Overview</a></h1>
+<h1 id="overview-10"><a class="header" href="#overview-10">Overview</a></h1>
 <p>Custom tests were created as a solution to the problem that integration tests do not allow for testing of error messages, which automatically return from the integration test method and therefore cannot be analyzed. The custom tests, however, work for both erroneous and non-erroneous code. Each test contains an input, a <code>run.sh</code> file to execute the test, and an expected standard output/error (or both) to compare against. Conjure Oxide is set up to automatically create and execute a test for each test folder in the <code>tests/custom </code>directory when <code>cargo test</code> is run, so to add a test case all one must do is add a folder in the directory which contains the necessary components.</p>
 <h1 id="how-to-add-a-test-case"><a class="header" href="#how-to-add-a-test-case">How to add a test case</a></h1>
 <p>Adding a test case is simple. First add a folder with the test case name to the <code>tests/custom</code> directory. Tests can be organized within folders in the directory–only folders with a <code>run.sh</code> file will be treated as a test case. Within the test folder, add these components:</p>
@@ -3816,7 +4727,7 @@ created: 19-09-24
 <!-- TODO edit more -->
 <!-- syntax highlighting -->
 <h1 id="semantics-of-rewriting-expressions-with-sideeffects"><a class="header" href="#semantics-of-rewriting-expressions-with-sideeffects">Semantics of Rewriting Expressions with Side‐Effects</a></h1>
-<h2 id="overview-9"><a class="header" href="#overview-9">Overview</a></h2>
+<h2 id="overview-11"><a class="header" href="#overview-11">Overview</a></h2>
 <hr>
 <p>When rewriting expressions, a rule may occasionally introduce new variables and constraints. For example, a rule which handles the <code>Min</code> expression may introduce a new variable <code>aux</code> which represents the minimum value itself, and introduce constraints <code>aux &lt;= x</code> for each <code>x</code> in the original <code>Min</code> expression. Conjure and Conjure Oxide provide similar methods of achieving these “side-effects”.</p>
 <h2 id="reductions"><a class="header" href="#reductions">Reductions</a></h2>

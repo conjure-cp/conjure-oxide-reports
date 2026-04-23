@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Expression Rewriting, Rules and Rule Sets - Conjure Oxide</title>
+        <title>ProTrace Module - Conjure Oxide</title>
 
 
         <!-- Custom HTML head -->
@@ -176,298 +176,320 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <blockquote>
-<p>NOTE: Once the rewrite engine API is finalized, we should possibly make a separate page for it</p>
-</blockquote>
-<!-- maturity: draft
-authors: Georgii Skorokhod
-created: 16-02-24
----- -->
-<!-- TODO edit more -->
-<h1 id="expression-rewriting-rules-and-rulesets"><a class="header" href="#expression-rewriting-rules-and-rulesets">Expression rewriting, Rules and RuleSets</a></h1>
-<blockquote>
-<p>NOTE: Once the rewrite engine API is finalised, we should possibly make a separate page for it.</p>
-</blockquote>
-<h1 id="overview"><a class="header" href="#overview">Overview</a></h1>
-<p>Conjure uses Essence, a high-level DSL for constraints modelling, and converts it into a solver-specific representation of the problem.
-To do that, we parse the Essence file into an AST, then use a rule engine to walk the expression tree and rewrite constraints into a format that is accepted by the solver before passing the AST to a solver adapter.</p>
-<p>The high-level process is as follows:</p>
-<ol>
-<li>Start with a deterministically ordered list of rules</li>
-<li>For each node in the expression tree:
+                        <h1 id="overview"><a class="header" href="#overview">Overview</a></h1>
+<p>ProTrace is a tracing module created to trace rule applications on expressions when an Essence file is parsed and rewritten by Conjure Oxide. The purpose of the module is to visualise the rules applied on the expressions, and simplify the identification of errors for debugging. The module supports multiple output formats such as <strong>JSON</strong> or <strong>human</strong> readable, along with different verbosity levels to show only what the user would like to see.</p>
+<h3 id="verbosity-level"><a class="header" href="#verbosity-level">Verbosity Level</a></h3>
+<p>The different verbosity levels include:</p>
 <ul>
-<li>Find all rules that can be applied to it</li>
-<li>If there are none, keep traversing the tree. Otherwise:
-<ul>
-<li>Take the rules with the highest priority</li>
-<li>If there is only one, apply it</li>
-<li>If there are multiple, use some strategy to choose a rule
-(the rule selection logic is separate from the rewrite engine itself).
-For testing, we currently just choose the first rule</li>
+<li><strong><code>High</code></strong>: All rule applications.</li>
+<li><strong><code>Medium</code></strong> (default): Successful rule applications.</li>
+<li><strong><code>Low</code></strong>: Only errors are shown (to be implemented).</li>
 </ul>
-</li>
-</ul>
-</li>
-<li>When there are no more rules to apply, the rewrite is complete</li>
-</ol>
-<p>We want the rewrite process to:</p>
-<ul>
-<li>be <strong>flexible</strong> - instead of hard coding the rules, we want an easy way to extend the list of rules and to decide which rules to use, both for ourselves and for any users who may wish to use conjure-oxide in their projects</li>
-<li>be <strong>deterministic</strong> (in a loose sense of the term) - for a given input, set of rules, and a given set of answers to all rule selection questions (see above), the rewriter must always produce the same output</li>
-<li>happen in a single step, instead of doing multiple passes over the model (like it is done in Savile Row currently)</li>
-</ul>
-<h1 id="rules"><a class="header" href="#rules">Rules</a></h1>
-<h2 id="overview-1"><a class="header" href="#overview-1">Overview</a></h2>
-<p>Rules are the fundamental part of the rewrite engine.
-They consist of:</p>
-<ul>
-<li>A unique <strong>name</strong></li>
-<li>An application function which takes an <code>Expression</code> and either rewrites it or errors if the rule is not applicable.
-(Checking applicability and applying the rule are not separated to avoid code duplication and inefficiency - their logic is the same)</li>
-</ul>
-<p>We may also store other metadata in the <code>Rule</code> struct, for example the names of the <code>RuleSet</code>s that it belongs to.</p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>pub struct Rule&lt;'a&gt; {
-    pub name: &amp;'a str,
-    pub application: fn(&amp;Expression) -&gt; Result&lt;Expression, RuleApplicationError&gt;,
-    pub rule_sets: &amp;'a [(&amp;'a str, u8)], // (name, priority). At runtime, we add the rule to rulesets
-}
-<span class="boring">}</span></code></pre>
-<h2 id="registering-rules"><a class="header" href="#registering-rules">Registering Rules</a></h2>
-<p>The main way to register rules is by defining their application function and decorating it with the <code>#[register_rule()]</code> macro.
-When this macro is invoked, it creates a static <code>Rule</code> object and adds it to a global rule registry. Rules may be registered from the <code>conjure_oxide</code> crate, or any downstream crate (so, users may define their own rules).</p>
-<p>Currently, the <code>register_rule</code> macro has the following syntax:</p>
-<pre><code>#[register_rule(("&lt;RuleSet name&gt;", &lt;Rule priority within the ruleset&gt;))]
-</code></pre>
-<h3 id="example"><a class="header" href="#example">Example</a></h3>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>use conjure_core::ast::Expression;
-use conjure_core::rule::RuleApplicationError;
-use conjure_rules::register_rule;
-
-#[register_rule(("RuleSetName", 10))]
-fn identity(expr: &amp;Expression) -&gt; Result&lt;Expression, RuleApplicationError&gt; {
-   Ok(expr.clone())
-}
-<span class="boring">}</span></code></pre>
-<h2 id="getting-rules-from-the-registry"><a class="header" href="#getting-rules-from-the-registry">Getting Rules from the registry</a></h2>
-<p>Rules may be retrieved using the following functions:</p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>pub fn get_rule_by_name(name: &amp;str) -&gt; Option&lt;&amp;'static Rule&lt;'static&gt;&gt;
-<span class="boring">}</span></code></pre>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>pub fn get_rules() -&gt; Vec&lt;&amp;'static Rule&lt;'static&gt;&gt;
-<span class="boring">}</span></code></pre>
-<ul>
-<li><code>get_rules()</code> returns a vector of static references to <code>Rule</code> structs</li>
-<li><code>get_rule_by_name()</code> returns a static reference to a specific rule, if it exists</li>
-</ul>
-<h1 id="rule-sets"><a class="header" href="#rule-sets">Rule Sets</a></h1>
-<p>Rule sets group some <code>Rule</code>s together and map them to their priorities.
-The <code>rewrite</code> function takes a set of <code>RuleSet</code>s and uses it to resolve a final list of rules, ordered by their priority.</p>
-<p>The <code>RuleSet</code> object contains the following fields:</p>
-<ul>
-<li><code>name</code> The name of the rule set.</li>
-<li><code>order</code> The order of the rule set.</li>
-<li><code>rules</code> A map of rules to their priorities. This is evaluated lazily at runtime.</li>
-<li><code>solvers</code> The solvers that this <code>RuleSet</code> applies for.</li>
-<li><code>solver_families</code> The solver families that this <code>RuleSet</code> applies for.</li>
-</ul>
-<blockquote class="blockquote-tag blockquote-tag-note">
-<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
-<p>A <code>RuleSet</code> would apply if EITHER of the following is true:</p>
-<ul>
-<li>The target solver belongs to its list of <code>solvers</code></li>
-<li>The target solver belongs to a family that is listed in <code>solver_families</code>, even if it is not explicitly named in <code>solvers</code></li>
-</ul>
-</blockquote>
-<p>It provides the following public methods:</p>
-<ul>
-<li><code>get_dependencies() -&gt; &amp;HashSet&lt;&amp;'static RuleSet&gt;</code> Get the dependency <code>RuleSet</code>s of this <code>RuleSet</code> (evaluating them lazily if necessary)</li>
-<li><code>get_rules() -&gt; &amp;HashMap&lt;&amp;'a Rule&lt;'a&gt;, u8&gt;</code> Get a map of rules to their priorities (performing lazy evaluation - “reversing the arrows” - if necessary)</li>
-</ul>
-<h2 id="registering-rule-sets"><a class="header" href="#registering-rule-sets">Registering Rule Sets</a></h2>
-<p>Like <code>Rule</code>s, <code>RuleSet</code>s may be registered from anywhere within the <code>conjure_oxide</code> crate or any downstream crate.
-They are registered using the <code>register_rule_set!</code> macro using the following syntax:</p>
-<pre><code>register_rule_set!("&lt;Rule set name&gt;", &lt;order&gt;, ("&lt;name of dependency RuleSet&gt;", ...), (&lt;list of solver families&gt;), (&lt;list of solvers&gt;));
-</code></pre>
-<p>If a bracketed list is omitted, the corresponding list would be empty. However, you must not break the order.
-For example:</p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>register_rule_set!("MyRuleSet", 10) // This is legal (rule set will have no dependencies, solvers or solver families)
-register_rule_set!("MyRuleSet", 10, ("DependencyRS")) // Also legal
-register_rule_set!("MyRuleSet", 10, (SolverFamily::CNF)) // This is illegal because dependencies come before solver families
-register_rule_set!("MyRuleSet", 10, (), (SolverFamily::CNF)) // But this is fine
-<span class="boring">}</span></code></pre>
-<h3 id="example-1"><a class="header" href="#example-1">Example</a></h3>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>register_rule_set!("MyRuleSet", 10, ("DependencyRuleSet", "AnotherRuleSet"), (SolverFamily::CNF), (SolverName::Minion));
-<span class="boring">}</span></code></pre>
-<h3 id="adding-rules-to-rulesets"><a class="header" href="#adding-rules-to-rulesets">Adding Rules to RuleSets</a></h3>
-<p>Notice that we do not add any rules to the <code>RuleSet</code> when we register it.
-Instead, the <code>Rule</code> contains the names of the <code>RuleSets</code> that it needs to be added to.</p>
-<p>At runtime, when we first request the <code>rules</code> from a <code>RuleSet</code>, it retrieves a list of all the rules that reference it by name from the registry, and stores static references to the rules along with their priorities.</p>
-<p>This is done to allow us to statically initialise <code>Rule</code>s and <code>RuleSet</code>s in a decentralised way across multiple files and store them in a single registry. Dynamic data structures (like <code>Vec</code> or <code>HashMap</code>) cannot be initialised at this stage (Rust has no “life before <code>main()</code>”), so we have to initialise them lazily at runtime.</p>
-<p><img src="https://github.com/conjure-cp/conjure-oxide/assets/64529579/6d63547c-6ba0-4eeb-b6ad-0f6ef46f4c43" alt="image"></p>
-<p>Internally, we would sometimes refer to this lazy initialisation as “reversing the arrows”.</p>
-<h2 id="getting-rulesets-from-the-registry"><a class="header" href="#getting-rulesets-from-the-registry">Getting RuleSets from the registry</a></h2>
-<p>Similarly to <code>Rule</code>s, <code>RuleSet</code>s may be retrieved using the following functions:</p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>pub fn get_rule_set_by_name(name: &amp;str) -&gt; Option&lt;&amp;'static RuleSet&lt;'static&gt;&gt;
-<span class="boring">}</span></code></pre>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>pub fn get_rule_sets() -&gt; Vec&lt;&amp;'static RuleSet&lt;'static&gt;&gt;
-<span class="boring">}</span></code></pre>
-<h1 id="resolving-a-final-list-of-rules"><a class="header" href="#resolving-a-final-list-of-rules">Resolving a final list of <code>Rule</code>s</a></h1>
-<p>Our <code>rewrite</code> function takes an <code>Expression</code> along with a list of <code>RuleSet</code>s to apply:</p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>pub fn rewrite&lt;'a&gt;(
-    expression: &amp;Expression,
-    rule_sets: &amp;Vec&lt;&amp;'a RuleSet&lt;'a&gt;&gt;,
-) -&gt; Result&lt;Expression, RewriteError&gt;
-<span class="boring">}</span></code></pre>
-<p>Before we start rewriting the AST, we must first resolve the final list of rules to apply.</p>
-<p>This is done via the following steps:</p>
-<ol>
-<li>
-<p>Add all given <code>RuleSet</code>s to a set of rulesets</p>
-</li>
-<li>
-<p>Recursively look up all their dependencies by name and add them to the set as well</p>
-</li>
-<li>
-<p>Once we have a final set of <code>RuleSet</code>s:</p>
-<ol>
-<li>
-<p>Construct a <code>HashMap&lt;&amp;Rule, priority&gt;)</code>. This will hold our final mapping of rules to priorities</p>
-</li>
-<li>
-<p>Loop over all the rules of every <code>RuleSet</code></p>
-</li>
-<li>
-<p>If a rule is not yet present in the final <code>HashMap</code>, add it and its priority within the <code>RuleSet</code></p>
-</li>
-<li>
-<p>If it is already present:</p>
-<ul>
-<li>Compare the order of the current <code>RuleSet</code> and the one that the rule originally came from</li>
-<li>If the new <code>RuleSet</code> has a higher order, update the <code>Rule</code>’s priority</li>
-</ul>
-</li>
-</ol>
-</li>
-<li>
-<p>Once all rules have been added to the <code>HashMap</code>:</p>
-<ol>
-<li>Take all its keys and put them in a vector</li>
-<li>Sort it by rule priority</li>
-<li>In the case that two rules have the same priority, sort them lexicographically by <code>name</code></li>
-</ol>
-</li>
-</ol>
-<p>In the end, we should have a final deterministically ordered list of rules and a <code>HashMap</code> that maps them to their priorities.
-Now, we can proceed with rewriting.</p>
-<h2 id="why-all-this-weirdness"><a class="header" href="#why-all-this-weirdness">Why all this weirdness?</a></h2>
-<h3 id="rule-ordering"><a class="header" href="#rule-ordering">Rule ordering</a></h3>
-<p>We want to always have a single deterministic ordering of <code>Rule</code>s. This way, for a given set of rules, the <code>select_rule</code> strategy would always give the same result.</p>
-<p>Think of it as a multiple choice quiz: if we want to know that the same numbers in the answer sheet actually correspond to the same set of answers, we must make sure that all students get the questions in the same order.</p>
-<p>This is why we sort <code>Rule</code>s by priority, and then use their name (which is guaranteed to be unique) as a tie breaker.</p>
-<p>Normally, one would just construct a vector of <code>Rule</code>s and use it as the final ordering, but we cannot do that, because rules are registered in a decentralised way across many files, and when we get them from the rule registry, they are not guaranteed to be in any specific order</p>
-<h3 id="ruleset-ordering"><a class="header" href="#ruleset-ordering">RuleSet ordering</a></h3>
-<p>As part of resolving the list of rules to use, we need to take rules from multiple <code>RuleSet</code>s and put these rules and their priorities in a <code>HashMap</code>. However, the <code>RuleSet</code>s may overlap (i.e. contain the same rules but with different priorities), and we want to make sure that, for a given set of <code>RuleSet</code>s, the final rule priorities will always be the same.</p>
-<p>Normally, this would not be an issue - entries in the <code>HashMap</code> would be added and updated as needed as we loop over the <code>RuleSet</code>s. However, since the <code>RuleSet</code>s are stored in a decentralised registry and are not guaranteed to come in any particular order (i.e. this order may change every time we recompile the project), we need to ensure that the order in which the entries are added to the <code>HashMap</code> (and thus the final rule priorities) doesn’t change.</p>
-<p>To achieve this, we use the following algorithm:</p>
-<ol>
-<li>Loop over all given <code>RuleSet</code>s</li>
-<li>Loop over all the rules in a <code>RuleSet</code>
-<ul>
-<li>If the rule is not present in the <code>HashMap</code>, add it</li>
-<li>If the rule is already there:
-<ul>
-<li>If this <code>RuleSet</code> has a higher <code>order</code> than the one that the rule came from, update its priority</li>
-<li>Otherwise, don’t change anything</li>
-</ul>
-</li>
-</ul>
-</li>
-</ol>
-<blockquote class="blockquote-tag blockquote-tag-note">
-<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg>Note</p>
-<p>The <code>order</code> of a <code>RuleSet</code> should not be thought of as a “priority” and does not affect the priorities of the rules in it.
-It only provides a consistent order of operations when resolving the final set of rules
-NOTE: The <code>order</code> of a <code>RuleSet</code> should not be thought of as a “priority” and does not affect the priorities of the rules in it.
-It only provides a consistent order of operations when resolving the final set of rules</p>
-</blockquote>
-<h2 id="concrete-example--sat-backend-pipeline"><a class="header" href="#concrete-example--sat-backend-pipeline">Concrete Example:  SAT Backend Pipeline</a></h2>
-<p>To see how rules and rulesets work in practice, let’s walk through the SAT backend transformation of a simple Essence model.</p>
-<blockquote>
-<p><strong>Note:</strong> The actual RuleSet names and groupings in the codebase may differ from this simplified explanation, but the general priority ordering and transformation pipeline described here is accurate.</p>
-</blockquote>
-<h3 id="input-model"><a class="header" href="#input-model">Input Model</a></h3>
-<pre><code class="language-essence">find x : int(1..3)
-find y : int(2..5)
-such that x &gt; y
-</code></pre>
-<h3 id="transformation-pipeline"><a class="header" href="#transformation-pipeline">Transformation Pipeline</a></h3>
-<p>The SAT backend applies rules in three priority groups:</p>
-<h4 id="1-integer-representation-rules-highest-priority"><a class="header" href="#1-integer-representation-rules-highest-priority">1. Integer Representation Rules (Highest Priority)</a></h4>
-<p><strong>RuleSet</strong>: <code>integer_repr</code></p>
-<p>These rules convert integer variables into <code>SATInt</code> representations (boolean vectors):</p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>#[register_rule(("integer_repr", 100))]
-fn integer_decision_representation(expr: &amp;Expression) -&gt; Result&lt;Expression, RuleApplicationError&gt; {
-    // Converts:  find x : int(1..3)
-    // Into: SATInt([bool_0, bool_1, ... ])
-}
-<span class="boring">}</span></code></pre>
-<h4 id="2-operation-transformation-rules"><a class="header" href="#2-operation-transformation-rules">2. Operation Transformation Rules</a></h4>
-<p><strong>RuleSet</strong>: <code>integer_operations</code></p>
-<p>These rules convert operations on <code>SATInt</code>s into boolean expressions:</p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>#[register_rule(("integer_operations", 50))]
-fn cnf_int_ineq(expr: &amp;Expression) -&gt; Result&lt;Expression, RuleApplicationError&gt; {
-    // Converts: SATInt(x) &gt; SATInt(y)
-    // Into: complex boolean expression
-}
-<span class="boring">}</span></code></pre>
-<h4 id="3-tseytin-transformation-rules-lowest-priority"><a class="header" href="#3-tseytin-transformation-rules-lowest-priority">3. Tseytin Transformation Rules (Lowest Priority)</a></h4>
-<p><strong>RuleSet</strong>: <code>boolean</code></p>
-<p>These rules convert the resulting boolean expressions into Conjunctive Normal Form:</p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>#[register_rule(("boolean", 10))]
-fn tseitin_and(expr: &amp;Expression) -&gt; Result&lt;Expression, RuleApplicationError&gt; {
-    // Converts: A AND B
-    // Into: auxiliary variable C with clauses enforcing C &lt;-&gt; A AND B
-}
-<span class="boring">}</span></code></pre>
-<h3 id="viewing-the-transformations"><a class="header" href="#viewing-the-transformations">Viewing the Transformations</a></h3>
-<p>You can see this pipeline in action using logging:</p>
-<pre><code class="language-bash">RUST_LOG=TRACE cargo run -- solve --solver sat my_problem.essence --verbose
-</code></pre>
+<p>Outputs of the trace can be saved in a JSON or text file (depending on the format of trace) when specified by the user, and if the file path is not given, the output will be stored in the location of the input Essence file by default.</p>
+<p>The module also provides filtering functionalities for displaying specific rule or rule set applications.</p>
 <hr>
-<p><em>This section had been taken from the ‘Expression rewriting, Rules and RuleSets’ page of the conjure-oxide wiki</em></p>
+<h1 id="trace-type"><a class="header" href="#trace-type">Trace type</a></h1>
+<p>The module is capable of tracing two types of objects: rule and model. A trace can be created using <code>capture_trace</code>, which takes a consumer and a trace type (<a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#rule-trace">RuleTrace</a> or <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#model-trace">ModelTrace</a>).</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub fn capture_trace(consumer: &amp;Consumer, trace: TraceType)
+<span class="boring">}</span></code></pre>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub enum TraceType&lt;'a&gt; {
+    RuleTrace(RuleTrace),
+    ModelTrace(&amp;'a ModelTrace),
+}
+<span class="boring">}</span></code></pre>
+<h2 id="rule-trace"><a class="header" href="#rule-trace">Rule Trace</a></h2>
+<p>Rules are applied to a given expression to rewrite it into the syntax that Conjure understands. These rule applications can be traced by the module to show users what rules have been tried and successfully applied during parsing. A rule trace consists of:</p>
+<ul>
+<li>An <strong>initial expression</strong></li>
+<li>The <strong>name</strong> of the rule being applied</li>
+<li>The <strong>priority</strong> of the rule being applied</li>
+<li>The <strong>rule set</strong> that the rule belongs to</li>
+<li>A <strong>transformed expression</strong> as a result of rule application</li>
+<li>An optional <strong>new variable</strong> created during the rule application</li>
+<li>An optional <strong>new constraint</strong> added to the top of the expression tree created during the rule application</li>
+</ul>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct RuleTrace {
+    pub initial_expression: Expression,
+    pub rule_name: String,
+    pub rule_priority: u16,
+    pub rule_set_name: String,
+    pub transformed_expression: Option&lt;Expression&gt;,
+    pub new_variables_str: Option&lt;String&gt;,
+    pub top_level_str: Option&lt;String&gt;,
+}
+<span class="boring">}</span></code></pre>
+<h2 id="model-trace"><a class="header" href="#model-trace">Model Trace</a></h2>
+<p>Models of the problem contain expressions along with some constraints. A model trace consists of:</p>
+<ul>
+<li>An <strong>initial model</strong></li>
+<li>A <strong>rewritten model</strong> after rule application</li>
+</ul>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct ModelTrace {
+    pub initial_model: Model,
+    pub rewritten_model: Option&lt;Model&gt;,
+}
+<span class="boring">}</span></code></pre>
+<hr>
+<h1 id="formatter"><a class="header" href="#formatter">Formatter</a></h1>
+<p>Formatters are responsible for converting trace information into a <strong>human-readable</strong> or <strong>JSON</strong> string format before it is output by a consumer.</p>
+<p>At the core of this system is the <code>MessageFormatter</code> trait, which defines a common interface for all formatters. There are two built-in formatter implementations provided: <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#human-formatter">HumanFormatter</a> and <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#json-formatter">JsonFormatter</a>.</p>
+<h3 id="message-formatter-trait"><a class="header" href="#message-formatter-trait">Message Formatter Trait</a></h3>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub trait MessageFormatter: Any + Send + Sync {
+    fn format(&amp;self, trace: TraceType) -&gt; String;
+}
+<span class="boring">}</span></code></pre>
+<h2 id="human-formatter"><a class="header" href="#human-formatter">Human Formatter</a></h2>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct HumanFormatter
+<span class="boring">}</span></code></pre>
+<p>The <code>HumanFormatter</code> implements the <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#message-formatter-trait">MessageFormatter</a> trait by matching on <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#trace-type">TraceType</a> and returning a formatted String.
+All <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#trace-type">TraceType</a> variants implement the <code>Display</code> trait, which allows for easy string conversion.</p>
+<p><strong>Behaviour:</strong></p>
+<ul>
+<li>
+<p><strong>Successful Rule Applications</strong></p>
+<ul>
+<li>A message “Successful Transformation” followed by the full formatted <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#rule-trace">RuleTrace</a>, displaying all of its fields.</li>
+</ul>
+</li>
+<li>
+<p><strong>Unsuccessful Rule Applications</strong></p>
+<ul>
+<li>
+<p>A message like “Unsuccessful Transformation” followed by a partial display showing only:</p>
+<ul>
+<li><strong>initial expression</strong></li>
+<li><strong>rule name</strong></li>
+<li><strong>rule priority</strong></li>
+<li><strong>rule set name</strong></li>
+</ul>
+</li>
+<li>
+<p>Only shown if the <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#verbosity-level">VerbosityLevel</a> is set to <code>High</code>.</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Model Traces</strong></p>
+<ul>
+<li>For <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#model-trace">ModelTrace</a>, it simply displays the initial and rewritten model using its Display implementation.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Filtering</strong>:
+Before formatting, the <code>HumanFormatter</code> checks if a <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#rule-filters">rule name filter</a> or <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#rule-filters">rule set name filter</a> has been applied.</p>
+<h2 id="json-formatter"><a class="header" href="#json-formatter">JSON Formatter</a></h2>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct JsonFormatter
+<span class="boring">}</span></code></pre>
+<p>The <code>JsonFormatter</code> implements the <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#message-formatter-trait">MessageFormatter</a> trait by matching on <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#trace-type">TraceType</a> and returning a JSON-formatted String.
+It uses the <code>serde_json</code> library to serialize data into a <strong>pretty-printed JSON structure</strong>.</p>
+<p><strong>Behaviour</strong>:</p>
+<ul>
+<li>
+<p><strong>Rule Transformations</strong></p>
+<ul>
+<li>
+<p>For <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#rule-trace">RuleTrace</a>, it serializes the entire RuleTrace object into a pretty-printed JSON string using <code>serde_json::to_string_pretty</code>.</p>
+</li>
+<li>
+<p>Similar to <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#human-formatter">HumanFormatter</a> displays both successful and unsuccessful rule applications when the verbosity is high.</p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Model Traces</strong></p>
+<ul>
+<li>For <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#model-trace">ModelTrace</a>, no JSON output is generated. No need since the parsed and rewritten models are produced in JSON already.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Filtering:</strong>
+Before formatting, the <code>JsonFormatter</code> checks if a <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#rule-filters">rule name filter</a> or <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#rule-filters">rule set name filter</a> has been applied.</p>
+<hr>
+<h1 id="consumer"><a class="header" href="#consumer">Consumer</a></h1>
+<p>The <strong>Consumer</strong> enum represents different types of endpoints that receive, format, and output <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#trace-type">TraceType</a> data.</p>
+<p>Consumers control where the trace data goes to and which format.</p>
+<ul>
+<li><a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#stdout-consumer">StdoutConsumer</a> prints out the trace to the console</li>
+<li><a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#file-consumer">FileConsumer</a> writes the trace data to a file in one of three ways: as human-readable text, as JSON-formatted text, or to both file types simultaneously.</li>
+<li><a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#both-consumer">BothConsumer</a> writes to both stdout and file(s).</li>
+</ul>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub enum Consumer {
+    StdoutConsumer(StdoutConsumer),
+    FileConsumer(FileConsumer),
+    BothConsumer(BothConsumer),
+}
+<span class="boring">}</span></code></pre>
+<h3 id="trace-trait"><a class="header" href="#trace-trait">Trace Trait</a></h3>
+<p>Each variant implements the <code>Trace</code> trait, meaning it can capture traces and send them to the appropriate destination.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub trait Trace {
+    fn capture(&amp;self, trace: TraceType);
+}
+<span class="boring">}</span></code></pre>
+<h2 id="stdout-consumer"><a class="header" href="#stdout-consumer">Stdout Consumer</a></h2>
+<p>A <code>StdoutConsumer</code> outputs the formatted trace data to standard output.</p>
+<p>Holds:</p>
+<ul>
+<li>A reference-counted (Arc) <strong>formatter</strong> that implements the <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#message-formatter-trait">MessageFormatter</a> trait.
+<ul>
+<li><code>Arc</code> (Atomic Reference Counted pointer) allows safe shared ownership across multiple consumers.</li>
+<li>Multiple Consumers might want to share the same formatter without each owning and duplicating it.</li>
+</ul>
+</li>
+<li>A <strong>verbosity</strong> <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#verbosity-level">VerbosityLevel</a> that can influence what gets printed.</li>
+</ul>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct StdoutConsumer {
+    pub formatter: Arc&lt;dyn MessageFormatter&gt;,
+    pub verbosity: VerbosityLevel,
+}
+<span class="boring">}</span></code></pre>
+<p><code>dyn</code> = dynamic dispatch. At runtime, it calls the correct format method for the actual formatter.
+When capturing a trace:
+It formats the trace using its assigned formatter.</p>
+<h2 id="file-consumer"><a class="header" href="#file-consumer">File Consumer</a></h2>
+<p>A <code>FileConsumer</code> writes the formatted trace data to one or more files.</p>
+<p>Holds:</p>
+<ul>
+<li>A reference-counted (Arc) <strong>formatter</strong>.</li>
+<li>A <strong>formatter type</strong> to determine whether to write in Human, JSON, or both formats.</li>
+<li><strong>verbosity</strong></li>
+<li>Path to the <strong>file for the JSON trace</strong>. (Optional)</li>
+<li>Path to the <strong>file for the human-readable trace</strong>. (Optional)</li>
+<li><strong>is first</strong> flag used for managing JSON array formatting when appending traces.</li>
+</ul>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct FileConsumer {
+    pub formatter: Arc&lt;dyn MessageFormatter&gt;,
+    pub formatter_type: FormatterType,
+    pub verbosity: VerbosityLevel,
+    pub json_file_path: Option&lt;String&gt;, 
+    pub human_file_path: Option&lt;String&gt;, 
+    pub is_first: std::cell::Cell&lt;bool&gt;, 
+}
+
+<span class="boring">}</span></code></pre>
+<p>When capturing a trace:</p>
+<p>Based on the selected <code>FormatterType</code>:
+<strong>Human</strong>: Writes human-readable output to the human file.
+<strong>Json</strong>: Writes JSON output to the JSON file.
+<strong>Both</strong>: Writes to both files using respective formatters (<a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#human-formatter">HumanFormatter</a> and <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#json-formatter">JsonFormatter</a> directly).</p>
+<h2 id="both-consumer"><a class="header" href="#both-consumer">Both Consumer</a></h2>
+<p>A <code>BothConsumer</code>sends the formatted trace data to both:</p>
+<ul>
+<li>Standard output (via an internal <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#stdout-consumer">StdoutConsumer</a>)</li>
+<li>Files (via an internal <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#file-consumer">FileConsumer</a>)</li>
+</ul>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub struct BothConsumer {
+    stdout_consumer: StdoutConsumer,
+    file_consumer: FileConsumer,
+}
+
+<span class="boring">}</span></code></pre>
+<p>It combines the behaviours of <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#stdout-consumer">StdoutConsumer</a> and <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#file-consumer">FileConsumer</a> by calling method <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#trace">capture</a> on both its fields.</p>
+<hr>
+<h1 id="rule-filters"><a class="header" href="#rule-filters">Rule Filters</a></h1>
+<p>If users would like to only see specific rules or rule sets during rule application tracing, rule filters can be applied using the command-line argument <code>--filter-rule-name</code> or <code>--filter-rule-set</code> followed by comma-separated rule names or sets. The output will only show rules that is <strong>in the rule filters</strong>, otherwise the rule application will be completely skipped. This feature was added for the abstraction of unimportant rule applications during tracing, allowing users to only see the rules they require.</p>
+<p>When both rule name and rule set filters are used in tandem, any rules that pass either the rule name or the rule set filter will be displayed. For example, if the rule name filter is <code>normalise_associative_commutative</code> and the rule set filter is <code>Minion</code>, any rule that has the rule name <code>normalise_associative_commutative</code> or is in the rule set <code>Minion</code> will be displayed.</p>
+<p>Rule filters will be applied to both <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#file-consumer">FileConsumer</a> and <a href="https://github.com/conjure-cp/conjure-oxide/wiki/ProTrace-module/_edit#stdout-consumer">StdoutConsumer</a>.</p>
+<p>Rule filters can also be hard-coded into the program or accessed using the following functions:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub fn set_rule_filter(rule_name: Option&lt;Vec&lt;String&gt;&gt;)
+
+pub fn get_rule_filter() -&gt; Option&lt;Vec&lt;String&gt;&gt;
+
+pub fn set_rule_set_filter(rule_set: Option&lt;Vec&lt;String&gt;&gt;)
+
+pub fn get_rule_set_filter() -&gt; Option&lt;Vec&lt;String&gt;&gt;
+<span class="boring">}</span></code></pre>
+<h1 id="capturing-general-messages-independent-of-the-main-tracing-functionality-set-by"><a class="header" href="#capturing-general-messages-independent-of-the-main-tracing-functionality-set-by">Capturing general messages (independent of the main tracing functionality set by)</a></h1>
+<p>This feature was motivated by the need for a unified interface that allows developers to capture messages—whether to stdout or a file—with the flexibility of a typical debug print statement, but with added control.</p>
+<p><code>Default</code> messages are always printed out and additional message types can be filtered and viewed using the command-line argument <code>--get-info-about</code>, followed by the desired message <code>Kind</code>.</p>
+<p>For example, running <code>--get-info-about rules</code> will display all the enabled rule sets, individual rules, their assigned priorities, and the sets they belong to. To improve readability, output is color-coded: error messages appear in red, while all other information is shown in green.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>pub enum Kind {
+    Parser,
+    Rules,
+    Error,
+    Solver,
+    Model,
+    Default,
+}
+fn display_message(message: String, file_path: Option&lt;String&gt;, kind: Kind)
+
+
+<span class="boring">}</span></code></pre>
+<h1 id="tracing-in-integration-tests"><a class="header" href="#tracing-in-integration-tests">Tracing in integration tests</a></h1>
+<p>Similar to how a <code>Consumer</code> is created in solve.rs for <code>cargo run solve</code>, a <code>combined_consumer</code> is manually constructed for each integration test, with its fields explicitly set rather than being derived from command-line arguments. This consumer is configured to log successful rule applications to two separate files—one in a human-readable format and the other in JSON. It is then passed to the <code>rewrite_naive</code> function. By establishing a uniform internal interface for tracing in both <code>cargo run</code> and <code>cargo test</code>, we were able to significantly reduce code duplication and streamline the overall tracing logic.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>   let combined_consumer = create_consumer(
+            "file",
+            VerbosityLevel::Medium,
+            "both",
+            Some(format!("{path}/{essence_base}.generated-rule-trace.json")),
+            Some(format!("{path}/{essence_base}.generated-rule-trace.txt")),
+        );
+<span class="boring">}</span></code></pre>
+<p>The rule traces is verified using the functions <code>read_default_rule_trace</code> and <code>read_json_rule_trace</code> defined in <code>testing.rs</code> which compare the generated trace output to the expected one. <code>read_json_rule_trace</code> ignores the <code>id</code> fields since they can change from one run to another.</p>
+<h1 id="command-line-arguments-and-flags"><a class="header" href="#command-line-arguments-and-flags">Command line arguments and flags</a></h1>
+<p>Enable rule tracing</p>
+<pre><code>-T, --tracing
+</code></pre>
+<p>Select output location for trace result: stdout or file [default: stdout]</p>
+<pre><code>-L, --trace-output &lt;TRACE_OUTPUT&gt;
+</code></pre>
+<p>Select verbosity level for trace [default: medium] [possible values: low, medium, high]</p>
+<pre><code>--verbosity &lt;VERBOSITY&gt;
+</code></pre>
+<p>Select the format of the trace output: human or json [default: human]</p>
+<pre><code>-F, --formatter &lt;FORMATTER&gt;
+</code></pre>
+<p>Optionally save traces to specific files: first for JSON, second for human format</p>
+<pre><code>-f, --trace-file [&lt;JSON_TRACE&gt; &lt;HUMAN_TRACE&gt;]
+</code></pre>
+<p>Filter messages by given kind [possible values: parser, rules, error, solver, model, default]</p>
+<pre><code>--get-info-about &lt;KIND_FILTER&gt;
+</code></pre>
+<p>Filter rule trace to only show given rule names (comma separated)</p>
+<pre><code>--filter-rule-name &lt;RULE_NAME_FILTER&gt;
+</code></pre>
+<p>Filter rule trace to only show given rule set names (comma separated)</p>
+<pre><code>--filter-rule-set &lt;RULE_SET_FILTER&gt;
+</code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../../developers-guide/architecture/sets/horizontal-rules.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../../developers-guide/architecture/essence-parser/index.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../../developers-guide/architecture/types/creating-types.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../../developers-guide/architecture/essence-parser/treemorph-benchmarking.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -477,11 +499,11 @@ fn tseitin_and(expr: &amp;Expression) -&gt; Result&lt;Expression, RuleApplicatio
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../../developers-guide/architecture/sets/horizontal-rules.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../../developers-guide/architecture/essence-parser/index.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../../developers-guide/architecture/types/creating-types.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../../developers-guide/architecture/essence-parser/treemorph-benchmarking.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>
