@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/conjure-cp-core/src/ast/domains/ground.rs`."><title>ground.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-17e0aaed.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="conjure_cp_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.97.0-nightly (9ec5d5f32 2026-04-21)" data-channel="nightly" data-search-js="search-b5634cc7.js" data-stringdex-js="stringdex-2da4960a.js" data-settings-js="settings-170eb4bf.js" ><script src="../../../../static.files/storage-41dd4d93.js"></script><script defer src="../../../../static.files/src-script-813739b1.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-aa4d37ac.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-f7c3ffd8.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><a class="skip-main-content" href="#main-content">Skip to main content</a><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><section id="main-content" class="content" tabindex="-1"><div class="main-heading"><h1><div class="sub-heading">conjure_cp_core/ast/domains/</div>ground.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-4"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="kw">use </span><span class="kw">crate</span>::ast::domains::MSetAttr;
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/conjure-cp-core/src/ast/domains/ground.rs`."><title>ground.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-17e0aaed.css"><meta name="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="conjure_cp_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.97.0-nightly (913e4bea8 2026-04-22)" data-channel="nightly" data-search-js="search-b5634cc7.js" data-stringdex-js="stringdex-2da4960a.js" data-settings-js="settings-170eb4bf.js" ><script src="../../../../static.files/storage-41dd4d93.js"></script><script defer src="../../../../static.files/src-script-813739b1.js"></script><script defer src="../../../../src-files.js"></script><script defer src="../../../../static.files/main-aa4d37ac.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-f7c3ffd8.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><a class="skip-main-content" href="#main-content">Skip to main content</a><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><section id="main-content" class="content" tabindex="-1"><div class="main-heading"><h1><div class="sub-heading">conjure_cp_core/ast/domains/</div>ground.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-4"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="kw">use </span><span class="kw">crate</span>::ast::domains::MSetAttr;
 <a href=#2 id=2 data-nosnippet>2</a><span class="kw">use </span><span class="kw">crate</span>::ast::pretty::pretty_vec;
 <a href=#3 id=3 data-nosnippet>3</a><span class="kw">use </span><span class="kw">crate</span>::ast::{
 <a href=#4 id=4 data-nosnippet>4</a>    AbstractLiteral, Domain, DomainOpError, FuncAttr, HasDomain, Literal, Moo, RecordEntry,
@@ -1049,48 +1049,46 @@
 <a href=#1049 id=1049 data-nosnippet>1049</a>            GroundDomain::Record(entries) =&gt; {
 <a href=#1050 id=1050 data-nosnippet>1050</a>                <span class="macro">write!</span>(
 <a href=#1051 id=1051 data-nosnippet>1051</a>                    f,
-<a href=#1052 id=1052 data-nosnippet>1052</a>                    <span class="string">"record of ({})"</span>,
-<a href=#1053 id=1053 data-nosnippet>1053</a>                    pretty_vec(
-<a href=#1054 id=1054 data-nosnippet>1054</a>                        <span class="kw-2">&amp;</span>entries
-<a href=#1055 id=1055 data-nosnippet>1055</a>                            .iter()
-<a href=#1056 id=1056 data-nosnippet>1056</a>                            .map(|entry| <span class="macro">format!</span>(<span class="string">"{}: {}"</span>, entry.name, entry.domain))
-<a href=#1057 id=1057 data-nosnippet>1057</a>                            .collect_vec()
-<a href=#1058 id=1058 data-nosnippet>1058</a>                    )
-<a href=#1059 id=1059 data-nosnippet>1059</a>                )
-<a href=#1060 id=1060 data-nosnippet>1060</a>            }
-<a href=#1061 id=1061 data-nosnippet>1061</a>            GroundDomain::Function(attribute, domain, codomain) =&gt; {
-<a href=#1062 id=1062 data-nosnippet>1062</a>                <span class="macro">write!</span>(f, <span class="string">"function {} {} --&gt; {} "</span>, attribute, domain, codomain)
-<a href=#1063 id=1063 data-nosnippet>1063</a>            }
-<a href=#1064 id=1064 data-nosnippet>1064</a>            GroundDomain::Relation(attrs, domains) =&gt; {
-<a href=#1065 id=1065 data-nosnippet>1065</a>                <span class="macro">write!</span>(f, <span class="string">"relation {} of ({})"</span>, attrs, domains.iter().join(<span class="string">" * "</span>))
-<a href=#1066 id=1066 data-nosnippet>1066</a>            }
-<a href=#1067 id=1067 data-nosnippet>1067</a>        }
-<a href=#1068 id=1068 data-nosnippet>1068</a>    }
-<a href=#1069 id=1069 data-nosnippet>1069</a>}
-<a href=#1070 id=1070 data-nosnippet>1070</a>
-<a href=#1071 id=1071 data-nosnippet>1071</a><span class="kw">fn </span>enumerate_matrix_values(
-<a href=#1072 id=1072 data-nosnippet>1072</a>    elem_domain: <span class="kw-2">&amp;</span>GroundDomain,
-<a href=#1073 id=1073 data-nosnippet>1073</a>    index_domains: <span class="kw-2">&amp;</span>[Moo&lt;GroundDomain&gt;],
-<a href=#1074 id=1074 data-nosnippet>1074</a>) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Literal&gt;, DomainOpError&gt; {
-<a href=#1075 id=1075 data-nosnippet>1075</a>    <span class="kw">let </span><span class="prelude-val">Some</span>((current_index_domain, remaining_index_domains)) = index_domains.split_first() <span class="kw">else </span>{
-<a href=#1076 id=1076 data-nosnippet>1076</a>        <span class="macro">panic!</span>(<span class="string">"a matrix should have at least one index domain"</span>);
-<a href=#1077 id=1077 data-nosnippet>1077</a>    };
-<a href=#1078 id=1078 data-nosnippet>1078</a>
-<a href=#1079 id=1079 data-nosnippet>1079</a>    <span class="kw">let </span>current_dimension_len =
-<a href=#1080 id=1080 data-nosnippet>1080</a>        usize::try_from(current_index_domain.length()<span class="question-mark">?</span>).map_err(|<span class="kw">_</span>| DomainOpError::TooLarge)<span class="question-mark">?</span>;
-<a href=#1081 id=1081 data-nosnippet>1081</a>
-<a href=#1082 id=1082 data-nosnippet>1082</a>    <span class="kw">let </span>entry_values = <span class="kw">if </span>remaining_index_domains.is_empty() {
-<a href=#1083 id=1083 data-nosnippet>1083</a>        elem_domain.values()<span class="question-mark">?</span>.collect_vec()
-<a href=#1084 id=1084 data-nosnippet>1084</a>    } <span class="kw">else </span>{
-<a href=#1085 id=1085 data-nosnippet>1085</a>        enumerate_matrix_values(elem_domain, remaining_index_domains)<span class="question-mark">?
-<a href=#1086 id=1086 data-nosnippet>1086</a>    </span>};
-<a href=#1087 id=1087 data-nosnippet>1087</a>
-<a href=#1088 id=1088 data-nosnippet>1088</a>    <span class="prelude-val">Ok</span>((<span class="number">0</span>..current_dimension_len)
-<a href=#1089 id=1089 data-nosnippet>1089</a>        .map(|<span class="kw">_</span>| entry_values.iter().cloned())
-<a href=#1090 id=1090 data-nosnippet>1090</a>        .multi_cartesian_product()
-<a href=#1091 id=1091 data-nosnippet>1091</a>        .map(|elems| {
-<a href=#1092 id=1092 data-nosnippet>1092</a>            Literal::AbstractLiteral(AbstractLiteral::Matrix(elems, current_index_domain.clone()))
-<a href=#1093 id=1093 data-nosnippet>1093</a>        })
-<a href=#1094 id=1094 data-nosnippet>1094</a>        .collect())
-<a href=#1095 id=1095 data-nosnippet>1095</a>}
+<a href=#1052 id=1052 data-nosnippet>1052</a>                    <span class="string">"record {{{}}}"</span>,
+<a href=#1053 id=1053 data-nosnippet>1053</a>                    entries
+<a href=#1054 id=1054 data-nosnippet>1054</a>                        .iter()
+<a href=#1055 id=1055 data-nosnippet>1055</a>                        .map(|entry| <span class="macro">format!</span>(<span class="string">"{}: {}"</span>, entry.name, entry.domain))
+<a href=#1056 id=1056 data-nosnippet>1056</a>                        .join(<span class="string">", "</span>)
+<a href=#1057 id=1057 data-nosnippet>1057</a>                )
+<a href=#1058 id=1058 data-nosnippet>1058</a>            }
+<a href=#1059 id=1059 data-nosnippet>1059</a>            GroundDomain::Function(attribute, domain, codomain) =&gt; {
+<a href=#1060 id=1060 data-nosnippet>1060</a>                <span class="macro">write!</span>(f, <span class="string">"function {} {} --&gt; {} "</span>, attribute, domain, codomain)
+<a href=#1061 id=1061 data-nosnippet>1061</a>            }
+<a href=#1062 id=1062 data-nosnippet>1062</a>            GroundDomain::Relation(attrs, domains) =&gt; {
+<a href=#1063 id=1063 data-nosnippet>1063</a>                <span class="macro">write!</span>(f, <span class="string">"relation {} of ({})"</span>, attrs, domains.iter().join(<span class="string">" * "</span>))
+<a href=#1064 id=1064 data-nosnippet>1064</a>            }
+<a href=#1065 id=1065 data-nosnippet>1065</a>        }
+<a href=#1066 id=1066 data-nosnippet>1066</a>    }
+<a href=#1067 id=1067 data-nosnippet>1067</a>}
+<a href=#1068 id=1068 data-nosnippet>1068</a>
+<a href=#1069 id=1069 data-nosnippet>1069</a><span class="kw">fn </span>enumerate_matrix_values(
+<a href=#1070 id=1070 data-nosnippet>1070</a>    elem_domain: <span class="kw-2">&amp;</span>GroundDomain,
+<a href=#1071 id=1071 data-nosnippet>1071</a>    index_domains: <span class="kw-2">&amp;</span>[Moo&lt;GroundDomain&gt;],
+<a href=#1072 id=1072 data-nosnippet>1072</a>) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Literal&gt;, DomainOpError&gt; {
+<a href=#1073 id=1073 data-nosnippet>1073</a>    <span class="kw">let </span><span class="prelude-val">Some</span>((current_index_domain, remaining_index_domains)) = index_domains.split_first() <span class="kw">else </span>{
+<a href=#1074 id=1074 data-nosnippet>1074</a>        <span class="macro">panic!</span>(<span class="string">"a matrix should have at least one index domain"</span>);
+<a href=#1075 id=1075 data-nosnippet>1075</a>    };
+<a href=#1076 id=1076 data-nosnippet>1076</a>
+<a href=#1077 id=1077 data-nosnippet>1077</a>    <span class="kw">let </span>current_dimension_len =
+<a href=#1078 id=1078 data-nosnippet>1078</a>        usize::try_from(current_index_domain.length()<span class="question-mark">?</span>).map_err(|<span class="kw">_</span>| DomainOpError::TooLarge)<span class="question-mark">?</span>;
+<a href=#1079 id=1079 data-nosnippet>1079</a>
+<a href=#1080 id=1080 data-nosnippet>1080</a>    <span class="kw">let </span>entry_values = <span class="kw">if </span>remaining_index_domains.is_empty() {
+<a href=#1081 id=1081 data-nosnippet>1081</a>        elem_domain.values()<span class="question-mark">?</span>.collect_vec()
+<a href=#1082 id=1082 data-nosnippet>1082</a>    } <span class="kw">else </span>{
+<a href=#1083 id=1083 data-nosnippet>1083</a>        enumerate_matrix_values(elem_domain, remaining_index_domains)<span class="question-mark">?
+<a href=#1084 id=1084 data-nosnippet>1084</a>    </span>};
+<a href=#1085 id=1085 data-nosnippet>1085</a>
+<a href=#1086 id=1086 data-nosnippet>1086</a>    <span class="prelude-val">Ok</span>((<span class="number">0</span>..current_dimension_len)
+<a href=#1087 id=1087 data-nosnippet>1087</a>        .map(|<span class="kw">_</span>| entry_values.iter().cloned())
+<a href=#1088 id=1088 data-nosnippet>1088</a>        .multi_cartesian_product()
+<a href=#1089 id=1089 data-nosnippet>1089</a>        .map(|elems| {
+<a href=#1090 id=1090 data-nosnippet>1090</a>            Literal::AbstractLiteral(AbstractLiteral::Matrix(elems, current_index_domain.clone()))
+<a href=#1091 id=1091 data-nosnippet>1091</a>        })
+<a href=#1092 id=1092 data-nosnippet>1092</a>        .collect())
+<a href=#1093 id=1093 data-nosnippet>1093</a>}
 </code></pre></div></section></main></body></html>
