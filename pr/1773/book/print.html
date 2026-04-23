@@ -184,11 +184,11 @@ Essence Prime constraints modelling languages.</p>
 <p>Conjure Oxide is in the early stages of development, so most Essence language
 features are not supported yet. However, it does currently support most of
 Essence Prime.</p>
-<p>This site contains the user documentation for Conjure Oxide; other useful links can be found on the <a href="documentation/links.html">useful links</a> page.</p>
+<p>This site contains the user documentation for Conjure Oxide; other useful links can be found on the <a href="#useful-links">useful links</a> page.</p>
 <h2 id="contributing"><a class="header" href="#contributing">Contributing</a></h2>
 <p>The project is primarily developed by students and staff at the University of
 St Andrews, but we also welcome outside contributors; for more information see the
-<a href="developers_guide/contributors_guide/index.html">contributor’s guide</a>.</p>
+<a href="#contributors-guide">contributor’s guide</a>.</p>
 <!-- original link: https://github.com/conjure-cp/conjure-oxide/blob/main/CONTRIBUTING.md -->
 <h2 id="licence"><a class="header" href="#licence">Licence</a></h2>
 <p>The Conjure Oxide source and documentation are released under the <a href="https://github.com/conjure-cp/conjure-oxide/blob/main/LICENSE">Mozilla Public Licence v2.0</a>.</p>
@@ -199,7 +199,7 @@ St Andrews, but we also welcome outside contributors; for more information see t
 author: Nadine Martin
 last updated: 21-12-2025
 -->
-<p><img src="../images/conjure_blocks.png" alt="Conjure Blocks website"></p>
+<p><img src="welcome/conjure-blocks.png" alt="Conjure Blocks website"></p>
 <p>Conjure blocks is an online block editor for Essence. This tool allows you to write constraint programs in blocks, which are then translated into Essence. <a href="https://conjure-aas.cs.st-andrews.ac.uk/">Conjure-aaS</a> is used to solve these problems. Conjure blocks is an ongoing project.</p>
 <p>See the the <a href="https://github.com/conjure-cp/conjure-blocks">Conjure Blocks repository</a>, the <a href="https://conjure-cp.github.io/conjure-blocks/docs/">Conjure Blocks Documentation</a> and the <a href="https://conjure-cp.github.io/conjure-blocks/">live site</a> for more information.</p>
 <div style="break-before: page; page-break-before: always;"></div>
@@ -412,9 +412,9 @@ such that x &gt; y
 <li><strong>Solving</strong> - The transformed model was sent to the solver</li>
 <li><strong>Solution Extraction</strong> - The solver’s output was converted back to Essence format</li>
 </ol>
-<p>Want to see exactly what rules were applied? Check out the <a href="users-guide/command-line/logging.html">Logging guide</a>.</p>
+<p>Want to see exactly what rules were applied? Check out the <a href="#logging">Logging guide</a>.</p>
 <h2 id="functional-programming-style"><a class="header" href="#functional-programming-style">Functional Programming Style</a></h2>
-<p>For developers who come from programming languages like Scala or Haskell, or those who favour a functional programming style, we have a <a href="users-guide/functional-rust.html">Functional Rust</a> guide that you might find useful.</p>
+<p>For developers who come from programming languages like Scala or Haskell, or those who favour a functional programming style, we have a <a href="users-guide/developers-guide/resources-conventions/functional-rust.html">Functional Rust</a> guide that you might find useful.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="logging"><a class="header" href="#logging">Logging</a></h1>
 <p><strong>This document is a work in progress - for a full list of logging options,
@@ -2434,8 +2434,8 @@ The left graph is a probability density function for the run time. It says that 
 <h1 id="overview-3"><a class="header" href="#overview-3">Overview</a></h1>
 <p>The Language Server Protocol (LSP) for Essence is designed to provide error detection and syntax highlighting for the Essence language. It consists of a server component and a diagnostics API. When fully implemented, the server will receive document change events from clients (e.g., VS Code), call the diagnostics API to detect syntactic and semantic errors, and publish these diagnostics back to the client for. The diagnostics API provides error detection and document symbol information for syntax highlighting. Its main purpose is to improve the user experience when formulating the problems in Essence.</p>
 <h1 id="structure"><a class="header" href="#structure">Structure</a></h1>
-<p>The LSP architecture follows a client-server model where the client (editor extension) and server (language server) communicate asynchronously via JSON-RPC 2.0 protocol. The server runs as a separate process, and exchanges messages over standard I/O streams. More on that in <a href="developers-guide/architecture/lsp/lsp-server-client.html">LSP structure docs</a>.</p>
-<p>When the client requests diagnostics (on open, one edit, on hover… etc.), the LSP forwards this request to the Diagnostics API (for more details see <a href="developers-guide/architecture/lsp/diagnostics_api.html">Diagnostics API</a>), which responds with a list of diagnostics which the server converts to <code>tower-lsp</code>-compatible types and publishes to the client.</p>
+<p>The LSP architecture follows a client-server model where the client (editor extension) and server (language server) communicate asynchronously via JSON-RPC 2.0 protocol. The server runs as a separate process, and exchanges messages over standard I/O streams. More on that in <a href="#lsp-documentation">LSP structure docs</a>.</p>
+<p>When the client requests diagnostics (on open, one edit, on hover… etc.), the LSP forwards this request to the Diagnostics API (for more details see <a href="#diagnostics-api-for-lsp-server">Diagnostics API</a>), which responds with a list of diagnostics which the server converts to <code>tower-lsp</code>-compatible types and publishes to the client.</p>
 <p><img src="developers-guide/architecture/lsp/lsp-structure.svg" alt="LSP Structure Diagram"></p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="diagnostics-api-for-lsp-server"><a class="header" href="#diagnostics-api-for-lsp-server">Diagnostics API for LSP Server</a></h1>
@@ -2456,10 +2456,10 @@ The left graph is a probability density function for the run time. It says that 
 <p><code>get_diagnostics(source: &amp;str) -&gt; Vec&lt;Diagnostic)</code> serves as the main entrypoint. It aggregates <code>detect_semantic_errors(source)</code> and <code>detect_syntactic_errors(source)</code> into a single diagnostics vector, returning a combined, deduplicated-by-call vector of <code>Diagnostic</code>s. That’s the function you would call for error detection and underlining.</p>
 </li>
 <li>
-<p><code>detect_syntactic_errors(source: &amp;str) -&gt; Vec&lt;Diagnostic)</code> Parses with tree-sitter and walks the CST using DFS with early retract on error/missing/zero-length nodes to avoid duplicates. More information on that in <a href="developers-guide/architecture/lsp/error_detection/error_classification.html">error detection docs</a>.</p>
+<p><code>detect_syntactic_errors(source: &amp;str) -&gt; Vec&lt;Diagnostic)</code> Parses with tree-sitter and walks the CST using DFS with early retract on error/missing/zero-length nodes to avoid duplicates. More information on that in <a href="#syntax-errors-1">error detection docs</a>.</p>
 </li>
 <li>
-<p><code>detect_semantic_errors(source: &amp;str) -&gt; Vec&lt;Diagnostic)</code> Runs <code>parse_essence_with_context</code> and, on <code>Err(EssenceParseError)</code>, maps the error into a <code>Diagnostic</code> using <code>error_to_diagnostic</code>. More information on that in <a href="developers-guide/architecture/lsp/error_detection/error_classification.html">error detection docs</a>.</p>
+<p><code>detect_semantic_errors(source: &amp;str) -&gt; Vec&lt;Diagnostic)</code> Runs <code>parse_essence_with_context</code> and, on <code>Err(EssenceParseError)</code>, maps the error into a <code>Diagnostic</code> using <code>error_to_diagnostic</code>. More information on that in <a href="#syntax-errors-1">error detection docs</a>.</p>
 </li>
 <li>
 <p>Helpers (for debugging and/or testing):</p>
@@ -3028,17 +3028,17 @@ last updated: 3-3-2026
 -->
 <h1 id="lsp-error-testing"><a class="header" href="#lsp-error-testing">LSP Error Testing</a></h1>
 <h2 id="introduction"><a class="header" href="#introduction">Introduction</a></h2>
-<p>Conjure Oxide includes a server that uses a Language Server Protocol (LSP) to check Essence files for errors before the file is parsed. The LSP server communicates with the Diagnostics API to check for errors, and it will return the error message along with the range of where the error occurred in the given Essence file. The server will then use the diagnosis to perform error underlining, and syntax and semantic highlighting (more details in <a href="developers-guide/architecture/lsp-server-client.html">LSP Documentation</a> and <a href="developers-guide/architecture/diagnostics_api.html">Diagnostics API documentation</a>).</p>
+<p>Conjure Oxide includes a server that uses a Language Server Protocol (LSP) to check Essence files for errors before the file is parsed. The LSP server communicates with the Diagnostics API to check for errors, and it will return the error message along with the range of where the error occurred in the given Essence file. The server will then use the diagnosis to perform error underlining, and syntax and semantic highlighting (more details in <a href="#lsp-documentation">LSP Documentation</a> and <a href="#diagnostics-api-for-lsp-server">Diagnostics API documentation</a>).</p>
 <p>There are two types of error when trying to diagnose a given Essence file, which are <strong>syntactic</strong> and <strong>semantic errors</strong>:</p>
 <ul>
 <li><strong>Syntactic errors</strong> are errors that stem from the tokens in the Essence file not being in the correct syntax when given into the parser.</li>
 <li><strong>Semantic errors</strong> are errors that may pass the syntactic error checking (i.e. the file lines have the correct syntax), but ultimately is unable to be parsed due to errors relating to the entire context of the file.</li>
 </ul>
-<p>To be able to accurately diagnose the Essence files for errors, tests cases have been written for situations that <a href="developers-guide/architecture/diagnostics_api.html">Diagnostics API</a> and <a href="developers-guide/architecture/essence_parser.html">Native parser</a> might encounter during diagnosing and parsing, referencing the <a href="developers-guide/architecture/error_detection/error_classification.html">Essence Error Classification</a>).</p>
+<p>To be able to accurately diagnose the Essence files for errors, tests cases have been written for situations that <a href="#diagnostics-api-for-lsp-server">Diagnostics API</a> and <a href="#overview-1">Native parser</a> might encounter during diagnosing and parsing, referencing the <a href="#syntax-errors-1">Essence Error Classification</a>).</p>
 <h2 id="testing-1"><a class="header" href="#testing-1">Testing</a></h2>
 <h3 id="parser"><a class="header" href="#parser">Parser</a></h3>
 <!-- TODO: Roundtrip testing does not exist -- waiting on an update from LSP team -->
-<p>Test cases that test the coverage of the Native parser use <a href="developers-guide/architecture/testing/roundtrip/roundtrip_testing.html">Roundtrip testing</a>. The <code>syntax-error</code> and <code>semantic-error</code> test directories exist in the <code>test-integration</code> crate as child directories of <code>roundtrip\native-errors</code>. Furthermore, <code>config.toml</code> sets only the Native parser to be used when testing test cases.</p>
+<p>Test cases that test the coverage of the Native parser use <a href="developers-guide/architecture/testing/roundtrip-testing.html">Roundtrip testing</a>. The <code>syntax-error</code> and <code>semantic-error</code> test directories exist in the <code>test-integration</code> crate as child directories of <code>roundtrip\native-errors</code>. Furthermore, <code>config.toml</code> sets only the Native parser to be used when testing test cases.</p>
 <p>These test cases will run alongside all the integration tests in the <code>tests-integration</code> crate, which can be done by using:</p>
 <pre><code class="language-bash">cargo test
 </code></pre>
@@ -4492,8 +4492,8 @@ For example: <code>r(_,1,_)</code> converts r from a 3-component relation to a 2
 <p>Conjure-Oxide currently has four forms of tests:</p>
 <ul>
 <li>Integration tests</li>
-<li><a href="developers-guide/testing/Custom-Tests.html">Custom tests</a></li>
-<li><a href="developers-guide/testing/roundtrip/roundtrip_testing.html">Roundtrip tests</a></li>
+<li><a href="#overview-10">Custom tests</a></li>
+<li><a href="#roundtrip-testing">Roundtrip tests</a></li>
 <li>A small number of unit tests</li>
 </ul>
 <h2 id="test-generation"><a class="header" href="#test-generation">Test generation</a></h2>

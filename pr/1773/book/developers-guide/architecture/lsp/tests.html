@@ -182,17 +182,17 @@ last updated: 3-3-2026
 -->
 <h1 id="lsp-error-testing"><a class="header" href="#lsp-error-testing">LSP Error Testing</a></h1>
 <h2 id="introduction"><a class="header" href="#introduction">Introduction</a></h2>
-<p>Conjure Oxide includes a server that uses a Language Server Protocol (LSP) to check Essence files for errors before the file is parsed. The LSP server communicates with the Diagnostics API to check for errors, and it will return the error message along with the range of where the error occurred in the given Essence file. The server will then use the diagnosis to perform error underlining, and syntax and semantic highlighting (more details in <a href="../lsp-server-client.html">LSP Documentation</a> and <a href="../diagnostics_api.html">Diagnostics API documentation</a>).</p>
+<p>Conjure Oxide includes a server that uses a Language Server Protocol (LSP) to check Essence files for errors before the file is parsed. The LSP server communicates with the Diagnostics API to check for errors, and it will return the error message along with the range of where the error occurred in the given Essence file. The server will then use the diagnosis to perform error underlining, and syntax and semantic highlighting (more details in <a href="server-client-model.html">LSP Documentation</a> and <a href="diagnostics-api.html">Diagnostics API documentation</a>).</p>
 <p>There are two types of error when trying to diagnose a given Essence file, which are <strong>syntactic</strong> and <strong>semantic errors</strong>:</p>
 <ul>
 <li><strong>Syntactic errors</strong> are errors that stem from the tokens in the Essence file not being in the correct syntax when given into the parser.</li>
 <li><strong>Semantic errors</strong> are errors that may pass the syntactic error checking (i.e. the file lines have the correct syntax), but ultimately is unable to be parsed due to errors relating to the entire context of the file.</li>
 </ul>
-<p>To be able to accurately diagnose the Essence files for errors, tests cases have been written for situations that <a href="../diagnostics_api.html">Diagnostics API</a> and <a href="../essence_parser.html">Native parser</a> might encounter during diagnosing and parsing, referencing the <a href="../error_detection/error_classification.html">Essence Error Classification</a>).</p>
+<p>To be able to accurately diagnose the Essence files for errors, tests cases have been written for situations that <a href="diagnostics-api.html">Diagnostics API</a> and <a href="../essence-parser/index.html">Native parser</a> might encounter during diagnosing and parsing, referencing the <a href="error-detection/error-classification.html">Essence Error Classification</a>).</p>
 <h2 id="testing"><a class="header" href="#testing">Testing</a></h2>
 <h3 id="parser"><a class="header" href="#parser">Parser</a></h3>
 <!-- TODO: Roundtrip testing does not exist -- waiting on an update from LSP team -->
-<p>Test cases that test the coverage of the Native parser use <a href="../testing/roundtrip/roundtrip_testing.html">Roundtrip testing</a>. The <code>syntax-error</code> and <code>semantic-error</code> test directories exist in the <code>test-integration</code> crate as child directories of <code>roundtrip\native-errors</code>. Furthermore, <code>config.toml</code> sets only the Native parser to be used when testing test cases.</p>
+<p>Test cases that test the coverage of the Native parser use <a href="../testing/roundtrip-testing.html">Roundtrip testing</a>. The <code>syntax-error</code> and <code>semantic-error</code> test directories exist in the <code>test-integration</code> crate as child directories of <code>roundtrip\native-errors</code>. Furthermore, <code>config.toml</code> sets only the Native parser to be used when testing test cases.</p>
 <p>These test cases will run alongside all the integration tests in the <code>tests-integration</code> crate, which can be done by using:</p>
 <pre><code class="language-bash">cargo test
 </code></pre>
