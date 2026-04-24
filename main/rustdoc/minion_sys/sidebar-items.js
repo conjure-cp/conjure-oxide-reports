@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["add_aux_var_during_search","add_constraint_during_search","run_minion"],"mod":["ast","error","print"],"struct":["SolverContext"],"type":["Callback"]};
+window.SIDEBAR_ITEMS = {"enum":["ValueOrder"],"fn":["add_aux_var_during_search","add_constraint_during_search","run_minion","run_minion_with_options"],"mod":["ast","error","print"],"struct":["RunOptions","SolverContext"],"type":["Callback"]};

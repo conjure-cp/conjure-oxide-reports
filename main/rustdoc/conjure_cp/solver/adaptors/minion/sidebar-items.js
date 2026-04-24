@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["Minion"]};
+window.SIDEBAR_ITEMS = {"enum":["MinionValueOrder"],"struct":["Minion"]};
