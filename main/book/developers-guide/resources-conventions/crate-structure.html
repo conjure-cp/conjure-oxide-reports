@@ -3,8 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Page not found - Conjure Oxide</title>
-        <base href="/">
+        <title>Crate Structure - Conjure Oxide</title>
 
 
         <!-- Custom HTML head -->
@@ -13,20 +12,20 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="favicon-de23e50b.svg">
-        <link rel="shortcut icon" href="favicon-8114d1fc.png">
-        <link rel="stylesheet" href="css/variables-8adf115d.css">
-        <link rel="stylesheet" href="css/general-2459343d.css">
-        <link rel="stylesheet" href="css/chrome-ae938929.css">
-        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
-        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
-        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
 
         <!-- Custom theme stylesheets -->
 
@@ -35,13 +34,13 @@
 
         <!-- Provide site root and default themes to javascript -->
         <script>
-            const path_to_root = "";
+            const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-b58aea65.js";
+            window.path_to_searchindex_js = "../../searchindex-b58aea65.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-dfef675a.js"></script>
+        <script src="../../toc-dfef675a.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -108,7 +107,7 @@
             <!-- populated by js -->
             <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
             <noscript>
-                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
             </noscript>
             <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -143,7 +142,7 @@
                     <h1 class="menu-title">Conjure Oxide</h1>
 
                     <div class="right-buttons">
-                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
                             <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
                         </a>
 
@@ -177,14 +176,87 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="document-not-found-404"><a class="header" href="#document-not-found-404">Document not found (404)</a></h1>
-<p>This URL is invalid, sorry. Please use the navigation bar or search to continue.</p>
+                        <h1 id="crate-structure"><a class="header" href="#crate-structure">Crate Structure</a></h1>
+<h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
+<p>We follow a “monorepo” approach; That is, a number of related modules are developed in a single repository.
+This makes it easier to integrate them and test our entire project all at once.</p>
+<p>Our repository can be broken down into four key components:</p>
+<ol>
+<li>The user-facing <code>conjure-oxide</code> command line tool and library, and its integration tests.
+This is stored in <code>conjure-oxide/conjure_oxide</code>.</li>
+<li>The AST type definitions, rewrite engine, and related implementation code.
+These are broken up into separate crates and stored in <code>conjure-oxide/crates/</code>.</li>
+<li>Rust bindings for solvers; That is, wrapper code and build files that enable us to:
+<ul>
+<li>
+<p>Compile solvers (which are developed outside of this project and written in other languages, such as C++) together with our project</p>
+</li>
+<li>
+<p>“Hook into” solver methods and call them from inside our Rust code</p>
+<p>These are stored in <code>conjure-oxide/solvers/</code> on a per-solver basis.</p>
+</li>
+</ul>
+</li>
+<li>Various other scripts and tools that we use to build, document and test our project.
+These are stored in <code>conjure-oxide/tools/</code>.</li>
+</ol>
+<h2 id="cli-tool"><a class="header" href="#cli-tool">CLI Tool</a></h2>
+<p>The command-line <code>conjure-oxide</code> tool is the final product we ship to users.
+All logic related to the CLI, parsing user input, and displaying solutions is implemented in <code>conjure-oxide/conjure_oxide/src</code>.</p>
+<p>This module (called a “crate” in Rust) also re-exports some type definitions and functions from <code>conjure_core</code> and other crates.
+This is our public, user-facing API that could eventually be used by other people in their projects. At the moment, our project is under development and there is no stable API specification.</p>
+<p>There are some <code>examples/</code> illustrating how various parts of the project are used.
+Finally, for historical reasons, this folder contains some utility code that may be refactored or moved elsewhere in the future.</p>
+<h2 id="tests"><a class="header" href="#tests">Tests</a></h2>
+<p>Our suite of integration tests runs automatically on every commit to the main repository.
+It tests <code>conjure-oxide</code> end-to-end: parsing an example Essence file, running the rewriter, calling the solver, and validating the solution.</p>
+<p>The test files are stored in <code>conjure_oxide/tests/integration/</code>, sorted into sub-directories.
+Code to run our project on these files is contained in <code>integration_tests.rs</code>.</p>
+<h2 id="crates"><a class="header" href="#crates">Crates</a></h2>
+<p>Most of our implementation is contained in the <code>crates/</code> directory. Here is an overview of what each crate does:</p>
+<ul>
+<li><code>conjure_core</code> contains:
+<ul>
+<li>Our rule engine implementation (<code>conjure_core/src/rule_engine/</code>)</li>
+<li>The definition of our Abstract Syntax Tree (AST) for Essence; That is, the Rust representation of an Essence program (<code>conjure_core/src/ast</code>)</li>
+<li>The generic <code>SolverAdaptor</code> interface for interacting with solvers (<code>conjure_core/src/solver</code>)</li>
+<li>Concrete implementations of <code>SolverAdaptor</code> for each solver we support, such as Minion or RustSAT (<code>conjure_core/src/solver/adaptors</code>)</li>
+<li>Other miscellaneous types and utilities</li>
+</ul>
+</li>
+<li><code>conjure_rules</code> defines rules and rule sets for our rewrite engine to use.
+Rules are grouped into files and directories based on their purpose: for example, all rules for normalising boolean expressions are in <code>conjure_rules/src/normalisers/bool.rs</code></li>
+<li><code>conjure_rule_macros</code> implements the <code>#[register_rule(...)]</code> and <code>#[register_rule_set(...)]</code> procedural macros. See also: <a href="https://github.com/conjure-cp/conjure-oxide/wiki/Expression-rewriting%2C-Rules-and-RuleSets">Wiki - Rules and RuleSets</a>.</li>
+<li><code>conjure_essence_parser</code> implements the native Rust parser for Essence.
+It uses our Tree-sitter grammar, which is defined <em>separately</em> in<code>tree-sitter-essence</code></li>
+<li><code>conjure_essence_macros</code> implements the <code>essence_expr!</code> procedural macro.</li>
+<li><code>enum_compatability_macro</code> is a macro that allows us to indicate whether certain features of Essence are compatible with certain solvers, for documentation purposes.</li>
+<li><code>randicheck</code> is a somewhat separate project developed by Ty (@TAswan) and others.
+It aims to use Conjure to automatically validate Haskell code and generate minimal failing tests. (TODO is this accurate?)</li>
+<li><code>tree_morph</code> is a generic library for tree transformations.
+In the future, it will replace our current rule engine implementation.</li>
+</ul>
+<p>Also:</p>
+<ul>
+<li>The <code>uniplate</code> crate, which we use to traverse the AST, used to be part of this repository.
+It is now maintained separately at https://github.com/conjure-cp/uniplate.</li>
+</ul>
+<h2 id="dependencies"><a class="header" href="#dependencies">Dependencies</a></h2>
+<p>The dependencies between crates are shown bellow.</p>
+<p><img src="https://github.com/user-attachments/assets/ffda823b-b5f9-4fa8-b66e-e74d2c08a75b" alt="graphviz(3)"></p>
+<p>An arrow <code>A -&gt; B</code> means that <code>A</code> imports from <code>B</code>. The diagram is made using Graphviz, and its source code is located TODO.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../developers-guide/resources-conventions/benchmarking-guide.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
 
+                            <a rel="next prefetch" href="../../developers-guide/resources-conventions/functional-rust.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
 
                         <div style="clear: both"></div>
                     </nav>
@@ -192,7 +264,13 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../developers-guide/resources-conventions/benchmarking-guide.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
 
+                    <a rel="next prefetch" href="../../developers-guide/resources-conventions/functional-rust.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
             </nav>
 
         </div>
@@ -210,13 +288,13 @@
         </script>
 
 
-        <script src="elasticlunr-ef4e11c1.min.js"></script>
-        <script src="mark-09e88c2c.min.js"></script>
-        <script src="searcher-c2a407aa.js"></script>
+        <script src="../../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../../mark-09e88c2c.min.js"></script>
+        <script src="../../searcher-c2a407aa.js"></script>
 
-        <script src="clipboard-1626706a.min.js"></script>
-        <script src="highlight-abc7f01d.js"></script>
-        <script src="book-a0b12cfe.js"></script>
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-abc7f01d.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
 
