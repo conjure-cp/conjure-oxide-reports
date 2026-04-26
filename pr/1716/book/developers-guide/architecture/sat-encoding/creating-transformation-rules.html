@@ -3,8 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Page not found - Conjure Oxide</title>
-        <base href="/">
+        <title>Creating Transformation Rules - Conjure Oxide</title>
 
 
         <!-- Custom HTML head -->
@@ -13,20 +12,20 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="favicon-de23e50b.svg">
-        <link rel="shortcut icon" href="favicon-8114d1fc.png">
-        <link rel="stylesheet" href="css/variables-8adf115d.css">
-        <link rel="stylesheet" href="css/general-2459343d.css">
-        <link rel="stylesheet" href="css/chrome-ae938929.css">
-        <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
+        <link rel="icon" href="../../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../../css/print-9e4910d8.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+        <link rel="stylesheet" href="../../../fonts/fonts-9644e21d.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
-        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
-        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../../ayu-highlight-3fdfc3ac.css">
 
         <!-- Custom theme stylesheets -->
 
@@ -35,13 +34,13 @@
 
         <!-- Provide site root and default themes to javascript -->
         <script>
-            const path_to_root = "";
+            const path_to_root = "../../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-c7d4e386.js";
+            window.path_to_searchindex_js = "../../../searchindex-c7d4e386.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-dfef675a.js"></script>
+        <script src="../../../toc-dfef675a.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -108,7 +107,7 @@
             <!-- populated by js -->
             <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
             <noscript>
-                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+                <iframe class="sidebar-iframe-outer" src="../../../toc.html"></iframe>
             </noscript>
             <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -143,7 +142,7 @@
                     <h1 class="menu-title">Conjure Oxide</h1>
 
                     <div class="right-buttons">
-                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                        <a href="../../../print.html" title="Print this book" aria-label="Print this book">
                             <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
                         </a>
 
@@ -177,14 +176,129 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="document-not-found-404"><a class="header" href="#document-not-found-404">Document not found (404)</a></h1>
-<p>This URL is invalid, sorry. Please use the navigation bar or search to continue.</p>
+                        <h2 id="creating-transformation-rules"><a class="header" href="#creating-transformation-rules">Creating Transformation Rules</a></h2>
+<p>The logic behind a SAT encoding will vary depending on the expression, but any transformation rule should be constructed in a particular way (regardless of which encoding type is being used):</p>
+<ul>
+<li>Input validation - this is standard for any rule, the rule must check the input expression is the target expression for this rule. Some rules may also further check that the sub-components of the expression are also valid.</li>
+<li>Extract the raw data - the raw data from the input expression needs to be extracted, for integer operations this means extracting the operand bit vectors and ranges.</li>
+<li>Create the new expression with CNF clauses - the returned expression should be constructed using only boolean expressions; the AST has expressions for most of the common boolean operations, but the dedicated <code>tseytin_...</code> functions should be used within SAT rules. This is because tseytin transformations directly create the CNF clauses for a boolean operation, significantly reducing the number of rule applications needed to get a solver-ready input. Tseytin transformations add new CNF clauses and create new auxiliary variables so a mutable clauses vector and symbol table should be passed to any transformation to modify in-place. Some rules may encapsulate this process in another function, this is helpful for common operations that may be used within multiple rules.</li>
+<li>Domain propagation (Integers only) - for integers, the range of values a <code>SATInt</code> integer can take is stored using a closed range in the form of a tuple. When an operation returns a new <code>SATInt</code> the range must be updated to reflect the new range of the returned integer. The length of the bitvector should also be changed to reflect this change.</li>
+<li>Return the result - any transformation rule involving SAT encodings should use <code>Reduction::cnf(..)</code> to return the created expression and new CNF clauses and symbol table.</li>
+</ul>
+<h3 id="example---negation-of-log-integers"><a class="header" href="#example---negation-of-log-integers">Example - negation of log integers</a></h3>
+<p>Here is a worked example; this is the rule that encodes the negation operation between two log-encoded <code>SATInt</code>s</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>/// Converts negation of a SATInt to a SATInt
+///
+/// ```text
+/// -SATInt(a) ~&gt; SATInt(b)
+///
+/// ```
+#[register_rule(("SAT", 4100))]
+fn cnf_int_neg(expr: &amp;Expr, symbols: &amp;SymbolTable) -&gt; ApplicationResult {
+    let Expr::Neg(_, expr) = expr else {
+        return Err(RuleNotApplicable);
+    };
+
+    let Expr::SATInt(_, _, _, (min, max)) = expr.as_ref() else {
+        return Err(RuleNotApplicable);
+    };
+
+    let binding = validate_log_int_operands(vec![expr.as_ref().clone()], None)?;
+    let [bits] = binding.as_slice() else {
+        return Err(RuleNotApplicable);
+    };
+
+    let mut new_clauses = vec![];
+    let mut new_symbols = symbols.clone();
+
+    let result = tseytin_negate(bits, bits.len(), &amp;mut new_clauses, &amp;mut new_symbols);
+
+    Ok(Reduction::cnf(
+        Expr::SATInt(
+            Metadata::new(),
+            SATIntEncoding::Log,
+            Moo::new(into_matrix_expr!(result)),
+            (-max, -min),
+        ),
+        new_clauses,
+        new_symbols,
+    ))
+}
+<span class="boring">}</span></code></pre>
+<h4 id="input-validation--extracting-the-raw-data"><a class="header" href="#input-validation--extracting-the-raw-data">Input validation &amp; extracting the raw data</a></h4>
+<p>Extraction and validation tend to be closely related so many functions perform both at once.</p>
+<p>The first step is simply checking that the input is actually a negation expression.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn cnf_int_neg(expr: &amp;Expr, symbols: &amp;SymbolTable) -&gt; ApplicationResult {
+    let Expr::Neg(_, expr) = expr else {
+        return Err(RuleNotApplicable);
+    };
+    ...
+<span class="boring">}</span></code></pre>
+<p>Next, we extract the range for the integer we are negating.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>    ...
+    let Expr::SATInt(_, _, _, (min, max)) = expr.as_ref() else {
+        return Err(RuleNotApplicable);
+    };
+    ...
+<span class="boring">}</span></code></pre>
+<p>Now, we extract the input bitvectors. The logic for this is held in <code>validate_log_int_operands</code>, which also checks that the input is formed correctly and actually uses log-encoding.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>    ...
+    let binding = validate_log_int_operands(vec![expr.as_ref().clone()], None)?;
+    let [bits] = binding.as_slice() else {
+        return Err(RuleNotApplicable);
+    };
+    ...
+<span class="boring">}</span></code></pre>
+<h4 id="creating-the-new-expression"><a class="header" href="#creating-the-new-expression">Creating the new expression</a></h4>
+<p>Negation is an integer operation, it takes an integer input and returns an integer output. This means the result should be stored as a log-encoded <code>SATInt</code>. For this specific rule, the logic is encapsulated in a separate function (as integer negation is a common operation within other, more complex operations) you can see that we created new structs for the tseytin transformation to modify.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>    ...
+    let mut new_clauses = vec![];
+    let mut new_symbols = symbols.clone();
+
+    let result = tseytin_negate(bits, bits.len(), &amp;mut new_clauses, &amp;mut new_symbols);
+    ...
+<span class="boring">}</span></code></pre>
+<h4 id="domain-propagation--returning-the-result"><a class="header" href="#domain-propagation--returning-the-result">Domain propagation &amp; returning the result</a></h4>
+<p>For negation, calculating the new domain is very simple:
+For
+$<code>x \in [a, b]</code>$ The new range is $<code> -x \in [-b, -a]</code>$. So here the domain propagation is calculated within the output.</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>    ...
+    Ok(Reduction::cnf(
+        Expr::SATInt(
+            Metadata::new(),
+            SATIntEncoding::Log,
+            Moo::new(into_matrix_expr!(result)),
+            (-max, -min),
+        ),
+        new_clauses,
+        new_symbols,
+    ))
+}
+<span class="boring">}</span></code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../../../developers-guide/architecture/sat-encoding/rule-types.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                            </a>
 
+                            <a rel="next prefetch" href="../../../developers-guide/architecture/sat-encoding/booleans.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                            </a>
 
                         <div style="clear: both"></div>
                     </nav>
@@ -192,7 +306,13 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../../../developers-guide/architecture/sat-encoding/rule-types.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
+                    </a>
 
+                    <a rel="next prefetch" href="../../../developers-guide/architecture/sat-encoding/booleans.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
+                    </a>
             </nav>
 
         </div>
@@ -210,13 +330,13 @@
         </script>
 
 
-        <script src="elasticlunr-ef4e11c1.min.js"></script>
-        <script src="mark-09e88c2c.min.js"></script>
-        <script src="searcher-c2a407aa.js"></script>
+        <script src="../../../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../../../mark-09e88c2c.min.js"></script>
+        <script src="../../../searcher-c2a407aa.js"></script>
 
-        <script src="clipboard-1626706a.min.js"></script>
-        <script src="highlight-abc7f01d.js"></script>
-        <script src="book-a0b12cfe.js"></script>
+        <script src="../../../clipboard-1626706a.min.js"></script>
+        <script src="../../../highlight-abc7f01d.js"></script>
+        <script src="../../../book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
 
