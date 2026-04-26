@@ -37,7 +37,7 @@
             const path_to_root = "../../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../../searchindex-8f1d34f8.js";
+            window.path_to_searchindex_js = "../../../searchindex-4ea9449e.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../../toc-b49720e0.js"></script>
@@ -178,13 +178,28 @@
                     <main>
                         <h1 id="partitions"><a class="header" href="#partitions">Partitions</a></h1>
 <h2 id="what-are-partitions"><a class="header" href="#what-are-partitions">What are Partitions</a></h2>
-<p>A partitions is a datatype that splits some domain into parts. A good example of a partition in use is in the <a href="https://www.csplib.org/Problems/prob010/models/SocialGolfersProblem.essence.html">Social Golfers</a> problem (CSPLib.org, problem #10).</p>
+<p>A partition is a datatype that splits some domain into parts. A good example of a partition in use is in the <a href="https://www.csplib.org/Problems/prob010/models/SocialGolfersProblem.essence.html">Social Golfers</a> problem (CSPLib.org, problem #10).</p>
 <h2 id="attributes"><a class="header" href="#attributes">Attributes</a></h2>
 <ul>
 <li>Number of Parts (as a range): <code>numParts</code>, <code>minNumParts</code>, <code>maxNumParts</code></li>
 <li>Cardinality of each Part (as a range): <code>partSize</code>, <code>minPartSize</code>, <code>maxPartSize</code></li>
 <li>Regularity (i.e. every part has the same cardinality): <code>regular</code></li>
 </ul>
+<p>For example:</p>
+<pre><code>find foo : partition (maxNumParts 3, partSize 1) from int(1..5) 
+$ ({1})                 i.e. 1 part of cardinality 1
+$ ... 
+$ ({2}, {4}, {5})       i.e. 3 parts of cardinality 3
+$ ({3}, {4}, {5})       i.e. 3 parts of cardinality 3
+
+find bar : partition (minNumParts 1, maxNumParts 3, minPartSize 2, maxPartSize 4, regular) from int(1..20)
+$ ({1, 2})                           i.e. 1 part of cadinality 2
+$ ({1,2,5}, {3,4,12}, {6,7,15})      i.e. 3 parts of cardinality 3
+$ 
+$ ({2,3}, {5})                       this would be invalid for two reasons: 
+$                                       &gt; it is not regular (different cardinalities)
+$                                       &gt; there is a minPartSize of 2, and one part has a cardinality of 1
+</code></pre>
 <h2 id="operators"><a class="header" href="#operators">Operators</a></h2>
 <ul>
 <li><code>apart</code>: test if a list of elements are not all contained in one part of the partition</li>
@@ -194,9 +209,7 @@
 <li><code>together</code>: test if a list of elements are all in the same part of the partition</li>
 </ul>
 <blockquote>
-<p>As of writing (26/04/2026), none of these Operators are implemented in conjure-oxide.
-As of writing (26/04/2026), Partitions cannot be parsed using the native parser, they must be parsed with the legacy parser.
-As of writing (26/04/2026), there is no support for rewriting or solving with partitions.</p>
+<p>As of writing (26/04/2026): none of these Operators are implemented in conjure-oxide, partitions cannot be parsed using the native parser, and there is no support for rewriting or solving with partitions.</p>
 </blockquote>
 
                     </main>
