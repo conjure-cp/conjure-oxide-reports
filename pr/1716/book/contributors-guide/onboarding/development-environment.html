@@ -37,7 +37,7 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../searchindex-c7d4e386.js";
+            window.path_to_searchindex_js = "../../searchindex-0f40724d.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-dfef675a.js"></script>
@@ -184,7 +184,7 @@ created: 31-03-25
 <p>Conjure Oxide supports Linux and Mac.</p>
 <p>Windows users should install <a href="https://learn.microsoft.com/en-us/windows/wsl/setup/environment#set-up-your-linux-username-and-password">WSL</a> and follow the Linux (Ubuntu) instructions below:</p>
 <details><summary><b>Linux (Debian/Ubuntu)</b></summary>
-<p><strong>The following software is required:</strong></p>
+<p>The following software is required:</p>
 <ul>
 <li>The latest version of stable Rust, installed using <a href="https://www.rust-lang.org/tools/install">rustup</a>.</li>
 <li>A C/C++ compilation toolchain and libraries:
@@ -200,9 +200,8 @@ created: 31-03-25
 <li><strong>Ensure that Conjure is placed early in your PATH to avoid conflicts with ImageMagick’s <code>conjure</code> command!</strong></li>
 </ul>
 </li>
+<li>Z3, one of the solver backends, requires a separate install. Using a package installer (e.g. <code>apt</code>), install Z3.</li>
 </ul>
-<p><strong>Z3</strong>
-One of the solver backends, Z3, requires a separate install. Using some command-line package installer, install Z3. (e.g. <code>apt</code>).</p>
 </details>
 <details><summary><b>MacOS</b></summary>
 <p><strong>The following software is required:</strong></p>
@@ -211,20 +210,11 @@ One of the solver backends, Z3, requires a separate install. Using some command-
 <li>an XCode Command Line Tools installation (installable using <code>xcode-select --install</code>)</li>
 <li>CMake: <code>brew install cmake</code> (for SAT solving)</li>
 <li><a href="https://github.com/conjure-cp/conjure">Conjure</a>.</li>
+<li>Z3, one of the solver backends, requires a separate install. Using a package installer, install Z3 (e.g. for <code>Homebrew</code> run <code>brew install z3</code>).</li>
 </ul>
-<p><strong>Z3</strong>
-One of the solver backends, Z3, requires a separate install. Using some command-line package installer, install Z3. (e.g. for <code>Homebrew</code> run <code>brew install z3</code>). Depending on your device, you may need to do additional configuration:</p>
-<ul>
-<li>For <strong>Intel</strong> Macs, you may need to update your <code>~/.cargo/config.toml</code>:</li>
-</ul>
-<pre><code>[env]
-Z3_LIBRARY_PATH_OVERRIDE = "/usr/local/lib"
-Z3_SYS_Z3_HEADER = "/usr/local/include/z3.h"
-</code></pre>
-<p>Note that the Z3 shared object file (<code>libz3.dylib</code>) and header (<code>z3.h</code>) may be elsewhere. E.g. on a M3 Mac using Homebrew, the paths (as of writing) were:</p>
-<pre><code>Z3_LIBRARY_PATH_OVERRIDE = "/opt/homebrew/opt/z3/lib"
-Z3_SYS_Z3_HEADER = "/opt/homebrew/opt/z3/include/z3.h"
-</code></pre>
+<blockquote>
+<p>If you are having issues with Z3, you may need to update <code>~/.cargo/config.toml</code> to ensure the <code>Z3_LIBRARY_PATH_OVERRIDE</code> and <code>Z3_SYS_Z3_HEADER</code> environment variables are pointed to the right library path and <code>z3.h</code> file that you installed.</p>
+</blockquote>
 </details>
 <details><summary><b>St Andrews CS Linux Systems</b></summary>
 <ol>
