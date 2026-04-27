@@ -1,0 +1,869 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+        <title>Diff Coverage</title>
+        <style>
+            .src-snippet { margin-top: 2em; }
+            .src-name { font-weight: bold; }
+            .snippets {
+                border-top: 1px solid #bdbdbd;
+                border-bottom: 1px solid #bdbdbd;
+            }
+            pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.hll { background-color: #ffcccc }
+.c { color: #3D7B7B; font-style: italic } /* Comment */
+.err { border: 1px solid #F00 } /* Error */
+.k { color: #008000; font-weight: bold } /* Keyword */
+.o { color: #666 } /* Operator */
+.ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.cp { color: #9C6500 } /* Comment.Preproc */
+.cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.gd { color: #A00000 } /* Generic.Deleted */
+.ge { font-style: italic } /* Generic.Emph */
+.ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.gr { color: #E40000 } /* Generic.Error */
+.gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.gi { color: #008400 } /* Generic.Inserted */
+.go { color: #717171 } /* Generic.Output */
+.gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.gs { font-weight: bold } /* Generic.Strong */
+.gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.gt { color: #04D } /* Generic.Traceback */
+.kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.kp { color: #008000 } /* Keyword.Pseudo */
+.kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.kt { color: #B00040 } /* Keyword.Type */
+.m { color: #666 } /* Literal.Number */
+.s { color: #BA2121 } /* Literal.String */
+.na { color: #687822 } /* Name.Attribute */
+.nb { color: #008000 } /* Name.Builtin */
+.nc { color: #00F; font-weight: bold } /* Name.Class */
+.no { color: #800 } /* Name.Constant */
+.nd { color: #A2F } /* Name.Decorator */
+.ni { color: #717171; font-weight: bold } /* Name.Entity */
+.ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.nf { color: #00F } /* Name.Function */
+.nl { color: #767600 } /* Name.Label */
+.nn { color: #00F; font-weight: bold } /* Name.Namespace */
+.nt { color: #008000; font-weight: bold } /* Name.Tag */
+.nv { color: #19177C } /* Name.Variable */
+.ow { color: #A2F; font-weight: bold } /* Operator.Word */
+.w { color: #BBB } /* Text.Whitespace */
+.mb { color: #666 } /* Literal.Number.Bin */
+.mf { color: #666 } /* Literal.Number.Float */
+.mh { color: #666 } /* Literal.Number.Hex */
+.mi { color: #666 } /* Literal.Number.Integer */
+.mo { color: #666 } /* Literal.Number.Oct */
+.sa { color: #BA2121 } /* Literal.String.Affix */
+.sb { color: #BA2121 } /* Literal.String.Backtick */
+.sc { color: #BA2121 } /* Literal.String.Char */
+.dl { color: #BA2121 } /* Literal.String.Delimiter */
+.sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.s2 { color: #BA2121 } /* Literal.String.Double */
+.se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.sh { color: #BA2121 } /* Literal.String.Heredoc */
+.si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.sx { color: #008000 } /* Literal.String.Other */
+.sr { color: #A45A77 } /* Literal.String.Regex */
+.s1 { color: #BA2121 } /* Literal.String.Single */
+.ss { color: #19177C } /* Literal.String.Symbol */
+.bp { color: #008000 } /* Name.Builtin.Pseudo */
+.fm { color: #00F } /* Name.Function.Magic */
+.vc { color: #19177C } /* Name.Variable.Class */
+.vg { color: #19177C } /* Name.Variable.Global */
+.vi { color: #19177C } /* Name.Variable.Instance */
+.vm { color: #19177C } /* Name.Variable.Magic */
+.il { color: #666 } /* Literal.Number.Integer.Long */
+        </style>
+    </head>
+    <body>
+        <h1>Diff Coverage</h1>
+        <p>Diff: upstream/main...HEAD, staged and unstaged changes</p>
+        <ul>
+            <li><b>Total</b>: 255 lines</li>
+            <li><b>Missing</b>: 129 lines</li>
+            <li><b>Coverage</b>: 49%</li>
+        </ul>
+        <table border="1">
+            <tr>
+                <th>Source File</th>
+                <th>Diff Coverage (%)</th>
+                <th>Missing Lines</th>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-cli/src/cli.rs</td>
+                <td>0.0%</td>
+                <td>241-248,250</td>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-cli/src/solve.rs</td>
+                <td>100%</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-core/src/ast/domains/domain.rs</td>
+                <td>100%</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-core/src/ast/domains/ground.rs</td>
+                <td>80.0%</td>
+                <td>1052</td>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-core/src/ast/domains/unresolved.rs</td>
+                <td>80.0%</td>
+                <td>586</td>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-core/src/ast/literals.rs</td>
+                <td>100%</td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-core/src/rule_engine/rewriter_common.rs</td>
+                <td>0.0%</td>
+                <td>257-264,266-269,272-278,281-283,286-288,291-297,299-301,303-304</td>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs</td>
+                <td>77.8%</td>
+                <td>52-56,58</td>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs</td>
+                <td>50.0%</td>
+                <td>634,640-643</td>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-essence-parser/src/parser/atom.rs</td>
+                <td>25.0%</td>
+                <td>233,237-241,244,246-251,253-255,257,470-480,482-483</td>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-essence-parser/src/parser/expression.rs</td>
+                <td>66.7%</td>
+                <td>19-20</td>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-rules/src/comprehensions/expansion.rs</td>
+                <td>88.2%</td>
+                <td>109,112</td>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-rules/src/matrix/repr_matrix.rs</td>
+                <td>75.0%</td>
+                <td>74</td>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-rules/src/minion.rs</td>
+                <td>54.5%</td>
+                <td>830,832-833,835,838</td>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-rules/src/normalisers/bool.rs</td>
+                <td>54.2%</td>
+                <td>68,181,186-193,195,198-199,203,205-209,211,239-240</td>
+            </tr>
+            <tr>
+                <td>crates/minion-sys/src/run.rs</td>
+                <td>52.9%</td>
+                <td>248-251,253-256</td>
+            </tr>
+        </table>
+        <div class="src-snippet">
+            <div class="src-name">crates/conjure-cp-cli/src/cli.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-cli/src/cli.rs-237" name="crates/conjure-cp-cli/src/cli.rs-237"></a><span class="k">fn</span><span class="w"> </span><span class="nf">parse_parser</span><span class="p">(</span><span class="n">input</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="kt">str</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nb">Result</span><span class="o">&lt;</span><span class="n">InputParser</span><span class="p">,</span><span class="w"> </span><span class="nb">String</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-cli/src/cli.rs-238" name="crates/conjure-cp-cli/src/cli.rs-238"></a><span class="w">    </span><span class="n">input</span><span class="p">.</span><span class="n">parse</span><span class="p">()</span>
+<a id="crates/conjure-cp-cli/src/cli.rs-239" name="crates/conjure-cp-cli/src/cli.rs-239"></a><span class="p">}</span>
+<a id="crates/conjure-cp-cli/src/cli.rs-240" name="crates/conjure-cp-cli/src/cli.rs-240"></a>
+<a id="crates/conjure-cp-cli/src/cli.rs-241" name="crates/conjure-cp-cli/src/cli.rs-241"></a><span class="hll"><span class="k">fn</span><span class="w"> </span><span class="nf">parse_minion_value_order</span><span class="p">(</span><span class="n">input</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="kt">str</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nb">Result</span><span class="o">&lt;</span><span class="n">MinionValueOrder</span><span class="p">,</span><span class="w"> </span><span class="nb">String</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-cli/src/cli.rs-242" name="crates/conjure-cp-cli/src/cli.rs-242"></a><span class="hll"><span class="w">    </span><span class="k">match</span><span class="w"> </span><span class="n">input</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-cli/src/cli.rs-243" name="crates/conjure-cp-cli/src/cli.rs-243"></a><span class="hll"><span class="w">        </span><span class="s">&quot;ascend&quot;</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">Ok</span><span class="p">(</span><span class="n">MinionValueOrder</span><span class="p">::</span><span class="n">Ascend</span><span class="p">),</span>
+</span><a id="crates/conjure-cp-cli/src/cli.rs-244" name="crates/conjure-cp-cli/src/cli.rs-244"></a><span class="hll"><span class="w">        </span><span class="s">&quot;descend&quot;</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">Ok</span><span class="p">(</span><span class="n">MinionValueOrder</span><span class="p">::</span><span class="n">Descend</span><span class="p">),</span>
+</span><a id="crates/conjure-cp-cli/src/cli.rs-245" name="crates/conjure-cp-cli/src/cli.rs-245"></a><span class="hll"><span class="w">        </span><span class="s">&quot;random&quot;</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">Ok</span><span class="p">(</span><span class="n">MinionValueOrder</span><span class="p">::</span><span class="n">Random</span><span class="p">),</span>
+</span><a id="crates/conjure-cp-cli/src/cli.rs-246" name="crates/conjure-cp-cli/src/cli.rs-246"></a><span class="hll"><span class="w">        </span><span class="n">other</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="fm">format!</span><span class="p">(</span>
+</span><a id="crates/conjure-cp-cli/src/cli.rs-247" name="crates/conjure-cp-cli/src/cli.rs-247"></a><span class="hll"><span class="w">            </span><span class="s">&quot;unknown minion value order &#39;{other}&#39;, expected one of: ascend, descend, random&quot;</span>
+</span><a id="crates/conjure-cp-cli/src/cli.rs-248" name="crates/conjure-cp-cli/src/cli.rs-248"></a><span class="hll"><span class="w">        </span><span class="p">)),</span>
+</span><a id="crates/conjure-cp-cli/src/cli.rs-249" name="crates/conjure-cp-cli/src/cli.rs-249"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/conjure-cp-cli/src/cli.rs-250" name="crates/conjure-cp-cli/src/cli.rs-250"></a><span class="hll"><span class="p">}</span>
+</span></pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/conjure-cp-core/src/ast/domains/ground.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">1048</span>
+<span class="normal">1049</span>
+<span class="normal">1050</span>
+<span class="normal">1051</span>
+<span class="normal">1052</span>
+<span class="normal">1053</span>
+<span class="normal">1054</span>
+<span class="normal">1055</span>
+<span class="normal">1056</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/ast/domains/ground.rs-1048" name="crates/conjure-cp-core/src/ast/domains/ground.rs-1048"></a><span class="w">            </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/ast/domains/ground.rs-1049" name="crates/conjure-cp-core/src/ast/domains/ground.rs-1049"></a><span class="w">            </span><span class="n">GroundDomain</span><span class="p">::</span><span class="n">Record</span><span class="p">(</span><span class="n">entries</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/ast/domains/ground.rs-1050" name="crates/conjure-cp-core/src/ast/domains/ground.rs-1050"></a><span class="w">                </span><span class="fm">write!</span><span class="p">(</span>
+<a id="crates/conjure-cp-core/src/ast/domains/ground.rs-1051" name="crates/conjure-cp-core/src/ast/domains/ground.rs-1051"></a><span class="w">                    </span><span class="n">f</span><span class="p">,</span>
+<a id="crates/conjure-cp-core/src/ast/domains/ground.rs-1052" name="crates/conjure-cp-core/src/ast/domains/ground.rs-1052"></a><span class="hll"><span class="w">                    </span><span class="s">&quot;record {{{}}}&quot;</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-core/src/ast/domains/ground.rs-1053" name="crates/conjure-cp-core/src/ast/domains/ground.rs-1053"></a><span class="w">                    </span><span class="n">entries</span>
+<a id="crates/conjure-cp-core/src/ast/domains/ground.rs-1054" name="crates/conjure-cp-core/src/ast/domains/ground.rs-1054"></a><span class="w">                        </span><span class="p">.</span><span class="n">iter</span><span class="p">()</span>
+<a id="crates/conjure-cp-core/src/ast/domains/ground.rs-1055" name="crates/conjure-cp-core/src/ast/domains/ground.rs-1055"></a><span class="w">                        </span><span class="p">.</span><span class="n">map</span><span class="p">(</span><span class="o">|</span><span class="n">entry</span><span class="o">|</span><span class="w"> </span><span class="fm">format!</span><span class="p">(</span><span class="s">&quot;{}: {}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">entry</span><span class="p">.</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">entry</span><span class="p">.</span><span class="n">domain</span><span class="p">))</span>
+<a id="crates/conjure-cp-core/src/ast/domains/ground.rs-1056" name="crates/conjure-cp-core/src/ast/domains/ground.rs-1056"></a><span class="w">                        </span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="s">&quot;, &quot;</span><span class="p">)</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/conjure-cp-core/src/ast/domains/unresolved.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">582</span>
+<span class="normal">583</span>
+<span class="normal">584</span>
+<span class="normal">585</span>
+<span class="normal">586</span>
+<span class="normal">587</span>
+<span class="normal">588</span>
+<span class="normal">589</span>
+<span class="normal">590</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/ast/domains/unresolved.rs-582" name="crates/conjure-cp-core/src/ast/domains/unresolved.rs-582"></a><span class="w">            </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/ast/domains/unresolved.rs-583" name="crates/conjure-cp-core/src/ast/domains/unresolved.rs-583"></a><span class="w">            </span><span class="n">UnresolvedDomain</span><span class="p">::</span><span class="n">Record</span><span class="p">(</span><span class="n">entries</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/ast/domains/unresolved.rs-584" name="crates/conjure-cp-core/src/ast/domains/unresolved.rs-584"></a><span class="w">                </span><span class="fm">write!</span><span class="p">(</span>
+<a id="crates/conjure-cp-core/src/ast/domains/unresolved.rs-585" name="crates/conjure-cp-core/src/ast/domains/unresolved.rs-585"></a><span class="w">                    </span><span class="n">f</span><span class="p">,</span>
+<a id="crates/conjure-cp-core/src/ast/domains/unresolved.rs-586" name="crates/conjure-cp-core/src/ast/domains/unresolved.rs-586"></a><span class="hll"><span class="w">                    </span><span class="s">&quot;record {{{}}}&quot;</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-core/src/ast/domains/unresolved.rs-587" name="crates/conjure-cp-core/src/ast/domains/unresolved.rs-587"></a><span class="w">                    </span><span class="n">entries</span>
+<a id="crates/conjure-cp-core/src/ast/domains/unresolved.rs-588" name="crates/conjure-cp-core/src/ast/domains/unresolved.rs-588"></a><span class="w">                        </span><span class="p">.</span><span class="n">iter</span><span class="p">()</span>
+<a id="crates/conjure-cp-core/src/ast/domains/unresolved.rs-589" name="crates/conjure-cp-core/src/ast/domains/unresolved.rs-589"></a><span class="w">                        </span><span class="p">.</span><span class="n">map</span><span class="p">(</span><span class="o">|</span><span class="n">entry</span><span class="o">|</span><span class="w"> </span><span class="fm">format!</span><span class="p">(</span><span class="s">&quot;{}: {}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">entry</span><span class="p">.</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">entry</span><span class="p">.</span><span class="n">domain</span><span class="p">))</span>
+<a id="crates/conjure-cp-core/src/ast/domains/unresolved.rs-590" name="crates/conjure-cp-core/src/ast/domains/unresolved.rs-590"></a><span class="w">                        </span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="s">&quot;, &quot;</span><span class="p">)</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/conjure-cp-core/src/rule_engine/rewriter_common.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span>
+<span class="normal">299</span>
+<span class="normal">300</span>
+<span class="normal">301</span>
+<span class="normal">302</span>
+<span class="normal">303</span>
+<span class="normal">304</span>
+<span class="normal">305</span>
+<span class="normal">306</span>
+<span class="normal">307</span>
+<span class="normal">308</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-253" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-253"></a><span class="sd">///</span>
+<a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-254" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-254"></a><span class="sd">/// Morph normally rewrites within the root expression. This hook lets root-specific rules perform</span>
+<a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-255" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-255"></a><span class="sd">/// whole-model normalisation before the regular tree morph pass runs.</span>
+<a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-256" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-256"></a><span class="cp">#[allow(dead_code)]</span>
+<a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-257" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-257"></a><span class="hll"><span class="k">pub</span><span class="p">(</span><span class="k">crate</span><span class="p">)</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">try_rewrite_root_once</span><span class="p">(</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-258" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-258"></a><span class="hll"><span class="w">    </span><span class="n">model</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">mut</span><span class="w"> </span><span class="n">Model</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-259" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-259"></a><span class="hll"><span class="w">    </span><span class="n">rules_grouped</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="p">(</span><span class="kt">u16</span><span class="p">,</span><span class="w"> </span><span class="nb">Vec</span><span class="o">&lt;</span><span class="n">RuleData</span><span class="o">&lt;&#39;</span><span class="nb">_</span><span class="o">&gt;&gt;</span><span class="p">)</span><span class="o">&gt;</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-260" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-260"></a><span class="hll"><span class="w">    </span><span class="n">prop_multiple_equally_applicable</span><span class="p">:</span><span class="w"> </span><span class="kt">bool</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-261" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-261"></a><span class="hll"><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nb">Option</span><span class="o">&lt;</span><span class="p">()</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-262" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-262"></a><span class="hll"><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">symbols</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="n">symbols</span><span class="p">().</span><span class="n">clone</span><span class="p">();</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-263" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-263"></a><span class="hll"><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">root</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="n">root</span><span class="p">().</span><span class="n">clone</span><span class="p">();</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-264" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-264"></a><span class="hll"><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">results</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Vec</span><span class="p">::</span><span class="n">new</span><span class="p">();</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-265" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-265"></a>
+<a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-266" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-266"></a><span class="hll"><span class="w">    </span><span class="o">&#39;</span><span class="na">top</span><span class="p">:</span><span class="w"> </span><span class="nc">for</span><span class="w"> </span><span class="p">(</span><span class="n">priority</span><span class="p">,</span><span class="w"> </span><span class="n">rules</span><span class="p">)</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">rules_grouped</span><span class="p">.</span><span class="n">iter</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-267" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-267"></a><span class="hll"><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="n">rd</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">rules</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-268" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-268"></a><span class="hll"><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="nb">Ok</span><span class="p">(</span><span class="n">reduction</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">rd</span><span class="p">.</span><span class="n">rule</span><span class="p">.</span><span class="n">application</span><span class="p">)(</span><span class="o">&amp;</span><span class="n">root</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">symbols</span><span class="p">)</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-269" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-269"></a><span class="hll"><span class="w">                </span><span class="k">continue</span><span class="p">;</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-270" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-270"></a><span class="w">            </span><span class="p">};</span>
+<a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-271" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-271"></a>
+<a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-272" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-272"></a><span class="hll"><span class="w">            </span><span class="n">results</span><span class="p">.</span><span class="n">push</span><span class="p">((</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-273" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-273"></a><span class="hll"><span class="w">                </span><span class="n">RuleResult</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-274" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-274"></a><span class="hll"><span class="w">                    </span><span class="n">rule_data</span><span class="p">:</span><span class="w"> </span><span class="nc">rd</span><span class="p">.</span><span class="n">clone</span><span class="p">(),</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-275" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-275"></a><span class="hll"><span class="w">                    </span><span class="n">reduction</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-276" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-276"></a><span class="hll"><span class="w">                </span><span class="p">},</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-277" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-277"></a><span class="hll"><span class="w">                </span><span class="o">*</span><span class="n">priority</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-278" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-278"></a><span class="hll"><span class="w">            </span><span class="p">));</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-279" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-279"></a><span class="w">        </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-280" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-280"></a>
+<a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-281" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-281"></a><span class="hll"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="o">!</span><span class="n">results</span><span class="p">.</span><span class="n">is_empty</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-282" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-282"></a><span class="hll"><span class="w">            </span><span class="k">break</span><span class="w"> </span><span class="nl">&#39;top</span><span class="p">;</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-283" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-283"></a><span class="hll"><span class="w">        </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-284" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-284"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-285" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-285"></a>
+<a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-286" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-286"></a><span class="hll"><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="p">(</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">match</span><span class="w"> </span><span class="n">results</span><span class="p">.</span><span class="n">as_slice</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-287" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-287"></a><span class="hll"><span class="w">        </span><span class="p">[]</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="nb">None</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-288" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-288"></a><span class="hll"><span class="w">        </span><span class="p">[</span><span class="n">single</span><span class="p">,</span><span class="w"> </span><span class="o">..</span><span class="p">]</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">single</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-289" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-289"></a><span class="w">    </span><span class="p">};</span>
+<a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-290" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-290"></a>
+<a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-291" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-291"></a><span class="hll"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">prop_multiple_equally_applicable</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">results</span><span class="p">.</span><span class="n">len</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-292" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-292"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">names</span><span class="p">:</span><span class="w"> </span><span class="nb">Vec</span><span class="o">&lt;</span><span class="n">_</span><span class="o">&gt;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">results</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-293" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-293"></a><span class="hll"><span class="w">            </span><span class="p">.</span><span class="n">iter</span><span class="p">()</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-294" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-294"></a><span class="hll"><span class="w">            </span><span class="p">.</span><span class="n">map</span><span class="p">(</span><span class="o">|</span><span class="p">(</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">)</span><span class="o">|</span><span class="w"> </span><span class="n">result</span><span class="p">.</span><span class="n">rule_data</span><span class="p">.</span><span class="n">rule</span><span class="p">.</span><span class="n">name</span><span class="p">)</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-295" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-295"></a><span class="hll"><span class="w">            </span><span class="p">.</span><span class="n">collect</span><span class="p">();</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-296" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-296"></a><span class="hll"><span class="w">        </span><span class="fm">panic!</span><span class="p">(</span><span class="s">&quot;Multiple equally applicable rules for root expression {root}: {names:?}&quot;</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-297" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-297"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-298" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-298"></a>
+<a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-299" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-299"></a><span class="hll"><span class="w">    </span><span class="n">log_rule_application</span><span class="p">(</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">root</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">symbols</span><span class="p">,</span><span class="w"> </span><span class="nb">None</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-300" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-300"></a><span class="hll"><span class="w">    </span><span class="n">result</span><span class="p">.</span><span class="n">reduction</span><span class="p">.</span><span class="n">clone</span><span class="p">().</span><span class="n">apply</span><span class="p">(</span><span class="n">model</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-301" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-301"></a><span class="hll"><span class="w">    </span><span class="n">model</span><span class="p">.</span><span class="n">replace_root</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">reduction</span><span class="p">.</span><span class="n">new_expression</span><span class="p">.</span><span class="n">clone</span><span class="p">());</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-302" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-302"></a>
+<a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-303" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-303"></a><span class="hll"><span class="w">    </span><span class="nb">Some</span><span class="p">(())</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-304" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-304"></a><span class="hll"><span class="p">}</span>
+</span><a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-305" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-305"></a>
+<a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-306" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-306"></a><span class="sd">/// Represents errors that can occur during the model rewriting process.</span>
+<a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-307" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-307"></a><span class="cp">#[derive(Debug, Error)]</span>
+<a id="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-308" name="crates/conjure-cp-core/src/rule_engine/rewriter_common.rs-308"></a><span class="k">pub</span><span class="w"> </span><span class="k">enum</span><span class="w"> </span><span class="nc">RewriteError</span><span class="w"> </span><span class="p">{</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-48" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-48"></a><span class="w">    </span><span class="n">Random</span><span class="p">,</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-49" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-49"></a><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-50" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-50"></a>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-51" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-51"></a><span class="k">impl</span><span class="w"> </span><span class="nb">From</span><span class="o">&lt;</span><span class="n">MinionValueOrder</span><span class="o">&gt;</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">ValueOrder</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-52" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-52"></a><span class="hll"><span class="w">    </span><span class="k">fn</span><span class="w"> </span><span class="nf">from</span><span class="p">(</span><span class="n">value</span><span class="p">:</span><span class="w"> </span><span class="nc">MinionValueOrder</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">Self</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-53" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-53"></a><span class="hll"><span class="w">        </span><span class="k">match</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-54" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-54"></a><span class="hll"><span class="w">            </span><span class="n">MinionValueOrder</span><span class="p">::</span><span class="n">Ascend</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">ValueOrder</span><span class="p">::</span><span class="n">Ascend</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-55" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-55"></a><span class="hll"><span class="w">            </span><span class="n">MinionValueOrder</span><span class="p">::</span><span class="n">Descend</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">ValueOrder</span><span class="p">::</span><span class="n">Descend</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-56" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-56"></a><span class="hll"><span class="w">            </span><span class="n">MinionValueOrder</span><span class="p">::</span><span class="n">Random</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">ValueOrder</span><span class="p">::</span><span class="n">Random</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-57" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-57"></a><span class="w">        </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-58" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-58"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-59" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-59"></a><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-60" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-60"></a>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-61" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-61"></a><span class="k">fn</span><span class="w"> </span><span class="nf">parse_name</span><span class="p">(</span><span class="n">minion_name</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="kt">str</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">Name</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-62" name="crates/conjure-cp-core/src/solver/adaptors/minion/adaptor.rs-62"></a><span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="n">MACHINE_NAME_RE</span><span class="p">:</span><span class="w"> </span><span class="nc">LazyLock</span><span class="o">&lt;</span><span class="n">Regex</span><span class="o">&gt;</span><span class="w"> </span><span class="o">=</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">630</span>
+<span class="normal">631</span>
+<span class="normal">632</span>
+<span class="normal">633</span>
+<span class="normal">634</span>
+<span class="normal">635</span>
+<span class="normal">636</span>
+<span class="normal">637</span>
+<span class="normal">638</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-630" name="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-630"></a>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-631" name="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-631"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">dominance_rewriter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">current_rewriter</span><span class="p">();</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-632" name="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-632"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">rule_sets</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">resolve_rule_sets</span><span class="p">(</span><span class="n">SolverFamily</span><span class="p">::</span><span class="n">Minion</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="p">[]).</span><span class="n">map_err</span><span class="p">(</span><span class="o">|</span><span class="n">e</span><span class="o">|</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-633" name="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-633"></a><span class="w">        </span><span class="n">Runtime</span><span class="p">(</span><span class="fm">format!</span><span class="p">(</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-634" name="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-634"></a><span class="hll"><span class="w">            </span><span class="s">&quot;failed to resolve Minion rule sets for dominance injection: {e}&quot;</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-635" name="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-635"></a><span class="w">        </span><span class="p">))</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-636" name="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-636"></a><span class="w">    </span><span class="p">})</span><span class="o">?</span><span class="p">;</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-637" name="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-637"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">rewritten</span><span class="w"> </span><span class="o">=</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-638" name="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-638"></a><span class="w">        </span><span class="n">rewrite_model_with_configured_rewriter</span><span class="p">(</span><span class="n">dominance_model</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">rule_sets</span><span class="p">,</span><span class="w"> </span><span class="n">dominance_rewriter</span><span class="p">)</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">636</span>
+<span class="normal">637</span>
+<span class="normal">638</span>
+<span class="normal">639</span>
+<span class="normal">640</span>
+<span class="normal">641</span>
+<span class="normal">642</span>
+<span class="normal">643</span>
+<span class="normal">644</span>
+<span class="normal">645</span>
+<span class="normal">646</span>
+<span class="normal">647</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-636" name="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-636"></a><span class="w">    </span><span class="p">})</span><span class="o">?</span><span class="p">;</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-637" name="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-637"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">rewritten</span><span class="w"> </span><span class="o">=</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-638" name="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-638"></a><span class="w">        </span><span class="n">rewrite_model_with_configured_rewriter</span><span class="p">(</span><span class="n">dominance_model</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">rule_sets</span><span class="p">,</span><span class="w"> </span><span class="n">dominance_rewriter</span><span class="p">)</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-639" name="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-639"></a><span class="w">            </span><span class="p">.</span><span class="n">map_err</span><span class="p">(</span><span class="o">|</span><span class="n">e</span><span class="o">|</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-640" name="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-640"></a><span class="hll"><span class="w">                </span><span class="n">Runtime</span><span class="p">(</span><span class="fm">format!</span><span class="p">(</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-641" name="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-641"></a><span class="hll"><span class="w">                    </span><span class="s">&quot;failed to rewrite dominance constraint for Minion injection: {e}&quot;</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-642" name="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-642"></a><span class="hll"><span class="w">                </span><span class="p">))</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-643" name="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-643"></a><span class="hll"><span class="w">            </span><span class="p">})</span><span class="o">?</span><span class="p">;</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-644" name="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-644"></a>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-645" name="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-645"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">dominance_minion_model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">model_to_minion</span><span class="p">(</span><span class="n">rewritten</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-646" name="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-646"></a><span class="w">    </span><span class="n">append_minion_injection_log</span><span class="p">(</span><span class="o">&amp;</span><span class="fm">format!</span><span class="p">(</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-647" name="crates/conjure-cp-core/src/solver/adaptors/minion/dominance_injection.rs-647"></a><span class="w">        </span><span class="s">&quot;[minion-inject] minion_model(solution#{solution_ordinal}) START&quot;</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/conjure-cp-essence-parser/src/parser/atom.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">229</span>
+<span class="normal">230</span>
+<span class="normal">231</span>
+<span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-229" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-229"></a><span class="w">        </span><span class="c1">// It&#39;s an index</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-230" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-230"></a><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">idx_exprs</span><span class="p">:</span><span class="w"> </span><span class="nb">Vec</span><span class="o">&lt;</span><span class="n">Expression</span><span class="o">&gt;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">indices</span><span class="p">.</span><span class="n">into_iter</span><span class="p">().</span><span class="n">map</span><span class="p">(</span><span class="o">|</span><span class="n">idx</span><span class="o">|</span><span class="w"> </span><span class="n">idx</span><span class="p">.</span><span class="n">unwrap</span><span class="p">()).</span><span class="n">collect</span><span class="p">();</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-231" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-231"></a><span class="w">        </span><span class="n">Expression</span><span class="p">::</span><span class="n">UnsafeIndex</span><span class="p">(</span><span class="n">Metadata</span><span class="p">::</span><span class="n">new</span><span class="p">(),</span><span class="w"> </span><span class="n">Moo</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="n">collection</span><span class="p">),</span><span class="w"> </span><span class="n">idx_exprs</span><span class="p">)</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-232" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-232"></a><span class="w">    </span><span class="p">};</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-233" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-233"></a><span class="hll">
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-234" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-234"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">inferred_context</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">inferred_context_from_expression</span><span class="p">(</span><span class="o">&amp;</span><span class="n">expr</span><span class="p">);</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-235" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-235"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">is_compatible</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="fm">matches!</span><span class="p">(</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-236" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-236"></a><span class="w">        </span><span class="p">(</span><span class="n">saved_context</span><span class="p">,</span><span class="w"> </span><span class="n">inferred_context</span><span class="p">),</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-237" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-237"></a><span class="hll"><span class="w">        </span><span class="p">(</span><span class="n">TypecheckingContext</span><span class="p">::</span><span class="n">Unknown</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">)</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-238" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-238"></a><span class="hll"><span class="w">            </span><span class="o">|</span><span class="w"> </span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">TypecheckingContext</span><span class="p">::</span><span class="n">Unknown</span><span class="p">)</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-239" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-239"></a><span class="hll"><span class="w">            </span><span class="o">|</span><span class="w"> </span><span class="p">(</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-240" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-240"></a><span class="hll"><span class="w">                </span><span class="n">TypecheckingContext</span><span class="p">::</span><span class="n">SetOrMatrix</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-241" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-241"></a><span class="hll"><span class="w">                </span><span class="n">TypecheckingContext</span><span class="p">::</span><span class="n">Set</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">TypecheckingContext</span><span class="p">::</span><span class="n">Matrix</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-242" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-242"></a><span class="w">            </span><span class="p">)</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-243" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-243"></a><span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">saved_context</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">inferred_context</span><span class="p">;</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-244" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-244"></a><span class="hll">
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-245" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-245"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">!</span><span class="n">is_compatible</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-246" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-246"></a><span class="hll"><span class="w">        </span><span class="n">ctx</span><span class="p">.</span><span class="n">record_error</span><span class="p">(</span><span class="n">RecoverableParseError</span><span class="p">::</span><span class="n">new</span><span class="p">(</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-247" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-247"></a><span class="hll"><span class="w">            </span><span class="fm">format!</span><span class="p">(</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-248" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-248"></a><span class="hll"><span class="w">                </span><span class="s">&quot;Type error: {}</span><span class="se">\n\t</span><span class="s">Expected: {}</span><span class="se">\n\t</span><span class="s">Got: {}&quot;</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-249" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-249"></a><span class="hll"><span class="w">                </span><span class="n">ctx</span><span class="p">.</span><span class="n">source_code</span><span class="p">[</span><span class="n">node</span><span class="p">.</span><span class="n">start_byte</span><span class="p">()</span><span class="o">..</span><span class="n">node</span><span class="p">.</span><span class="n">end_byte</span><span class="p">()].</span><span class="n">trim</span><span class="p">(),</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-250" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-250"></a><span class="hll"><span class="w">                </span><span class="n">context_name</span><span class="p">(</span><span class="n">saved_context</span><span class="p">),</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-251" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-251"></a><span class="hll"><span class="w">                </span><span class="n">context_name</span><span class="p">(</span><span class="n">inferred_context</span><span class="p">)</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-252" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-252"></a><span class="w">            </span><span class="p">),</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-253" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-253"></a><span class="hll"><span class="w">            </span><span class="nb">Some</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="n">range</span><span class="p">()),</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-254" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-254"></a><span class="hll"><span class="w">        </span><span class="p">));</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-255" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-255"></a><span class="hll"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">Ok</span><span class="p">(</span><span class="nb">None</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-256" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-256"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-257" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-257"></a><span class="hll">
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-258" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-258"></a><span class="w">    </span><span class="nb">Ok</span><span class="p">(</span><span class="nb">Some</span><span class="p">(</span><span class="n">expr</span><span class="p">))</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-259" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-259"></a><span class="p">}</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-260" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-260"></a>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-261" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-261"></a><span class="k">fn</span><span class="w"> </span><span class="nf">parse_index</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">mut</span><span class="w"> </span><span class="n">ParseContext</span><span class="p">,</span><span class="w"> </span><span class="n">node</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">Node</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nb">Result</span><span class="o">&lt;</span><span class="nb">Option</span><span class="o">&lt;</span><span class="n">Expression</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">FatalParseError</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">466</span>
+<span class="normal">467</span>
+<span class="normal">468</span>
+<span class="normal">469</span>
+<span class="normal">470</span>
+<span class="normal">471</span>
+<span class="normal">472</span>
+<span class="normal">473</span>
+<span class="normal">474</span>
+<span class="normal">475</span>
+<span class="normal">476</span>
+<span class="normal">477</span>
+<span class="normal">478</span>
+<span class="normal">479</span>
+<span class="normal">480</span>
+<span class="normal">481</span>
+<span class="normal">482</span>
+<span class="normal">483</span>
+<span class="normal">484</span>
+<span class="normal">485</span>
+<span class="normal">486</span>
+<span class="normal">487</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-466" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-466"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-467" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-467"></a><span class="w">    </span><span class="nb">Ok</span><span class="p">(</span><span class="nb">Some</span><span class="p">(</span><span class="n">lit</span><span class="p">))</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-468" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-468"></a><span class="p">}</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-469" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-469"></a>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-470" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-470"></a><span class="hll"><span class="k">fn</span><span class="w"> </span><span class="nf">context_name</span><span class="p">(</span><span class="n">context</span><span class="p">:</span><span class="w"> </span><span class="nc">TypecheckingContext</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="kp">&amp;</span><span class="o">&#39;</span><span class="nb">static</span><span class="w"> </span><span class="kt">str</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-471" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-471"></a><span class="hll"><span class="w">    </span><span class="k">match</span><span class="w"> </span><span class="n">context</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-472" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-472"></a><span class="hll"><span class="w">        </span><span class="n">TypecheckingContext</span><span class="p">::</span><span class="n">Boolean</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;bool&quot;</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-473" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-473"></a><span class="hll"><span class="w">        </span><span class="n">TypecheckingContext</span><span class="p">::</span><span class="n">Arithmetic</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;int&quot;</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-474" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-474"></a><span class="hll"><span class="w">        </span><span class="n">TypecheckingContext</span><span class="p">::</span><span class="n">Set</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;set&quot;</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-475" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-475"></a><span class="hll"><span class="w">        </span><span class="n">TypecheckingContext</span><span class="p">::</span><span class="n">SetOrMatrix</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;set or matrix&quot;</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-476" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-476"></a><span class="hll"><span class="w">        </span><span class="n">TypecheckingContext</span><span class="p">::</span><span class="n">MSet</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;mset&quot;</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-477" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-477"></a><span class="hll"><span class="w">        </span><span class="n">TypecheckingContext</span><span class="p">::</span><span class="n">Matrix</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;matrix&quot;</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-478" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-478"></a><span class="hll"><span class="w">        </span><span class="n">TypecheckingContext</span><span class="p">::</span><span class="n">Tuple</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;tuple&quot;</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-479" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-479"></a><span class="hll"><span class="w">        </span><span class="n">TypecheckingContext</span><span class="p">::</span><span class="n">Record</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;record&quot;</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-480" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-480"></a><span class="hll"><span class="w">        </span><span class="n">TypecheckingContext</span><span class="p">::</span><span class="n">Unknown</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;unknown&quot;</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-481" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-481"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-482" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-482"></a><span class="hll"><span class="p">}</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-483" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-483"></a><span class="hll">
+</span><a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-484" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-484"></a><span class="k">pub</span><span class="p">(</span><span class="k">crate</span><span class="p">)</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">parse_int</span><span class="p">(</span><span class="n">ctx</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">mut</span><span class="w"> </span><span class="n">ParseContext</span><span class="p">,</span><span class="w"> </span><span class="n">node</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">Node</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nb">Option</span><span class="o">&lt;</span><span class="kt">i32</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-485" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-485"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">raw_value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ctx</span><span class="p">.</span><span class="n">source_code</span><span class="p">[</span><span class="n">node</span><span class="p">.</span><span class="n">start_byte</span><span class="p">()</span><span class="o">..</span><span class="n">node</span><span class="p">.</span><span class="n">end_byte</span><span class="p">()];</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-486" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-486"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nb">Ok</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">raw_value</span><span class="p">.</span><span class="n">parse</span><span class="p">::</span><span class="o">&lt;</span><span class="kt">i32</span><span class="o">&gt;</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/atom.rs-487" name="crates/conjure-cp-essence-parser/src/parser/atom.rs-487"></a><span class="w">        </span><span class="nb">Some</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/conjure-cp-essence-parser/src/parser/expression.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-15" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-15"></a><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nb">Result</span><span class="o">&lt;</span><span class="nb">Option</span><span class="o">&lt;</span><span class="n">Expression</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">FatalParseError</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-16" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-16"></a><span class="w">    </span><span class="k">match</span><span class="w"> </span><span class="n">node</span><span class="p">.</span><span class="n">kind</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-17" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-17"></a><span class="w">        </span><span class="s">&quot;indexable_expr&quot;</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-18" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-18"></a><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">inner</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">named_child</span><span class="o">!</span><span class="p">(</span><span class="n">recover</span><span class="p">,</span><span class="w"> </span><span class="n">ctx</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">node</span><span class="p">)</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-19" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-19"></a><span class="hll"><span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="nb">Ok</span><span class="p">(</span><span class="nb">None</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-20" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-20"></a><span class="hll"><span class="w">            </span><span class="p">};</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-21" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-21"></a><span class="w">            </span><span class="n">parse_expression</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span><span class="w"> </span><span class="n">inner</span><span class="p">)</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-22" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-22"></a><span class="w">        </span><span class="p">}</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-23" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-23"></a><span class="w">        </span><span class="s">&quot;atom&quot;</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">parse_atom</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">node</span><span class="p">),</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/expression.rs-24" name="crates/conjure-cp-essence-parser/src/parser/expression.rs-24"></a><span class="w">        </span><span class="s">&quot;bool_expr&quot;</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/conjure-cp-rules/src/comprehensions/expansion.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-rules/src/comprehensions/expansion.rs-105" name="crates/conjure-cp-rules/src/comprehensions/expansion.rs-105"></a>
+<a id="crates/conjure-cp-rules/src/comprehensions/expansion.rs-106" name="crates/conjure-cp-rules/src/comprehensions/expansion.rs-106"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">comprehension_expander</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">QuantifiedExpander</span><span class="p">::</span><span class="n">Native</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">constraints</span><span class="p">.</span><span class="n">len</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-rules/src/comprehensions/expansion.rs-107" name="crates/conjure-cp-rules/src/comprehensions/expansion.rs-107"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">RuleNotApplicable</span><span class="p">);</span>
+<a id="crates/conjure-cp-rules/src/comprehensions/expansion.rs-108" name="crates/conjure-cp-rules/src/comprehensions/expansion.rs-108"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/conjure-cp-rules/src/comprehensions/expansion.rs-109" name="crates/conjure-cp-rules/src/comprehensions/expansion.rs-109"></a><span class="hll">
+</span><a id="crates/conjure-cp-rules/src/comprehensions/expansion.rs-110" name="crates/conjure-cp-rules/src/comprehensions/expansion.rs-110"></a><span class="w">    </span><span class="n">as_bottom_up</span><span class="p">(</span><span class="n">expand_comprehension_native_impl</span><span class="p">)(</span><span class="n">expr</span><span class="p">,</span><span class="w"> </span><span class="n">symbols</span><span class="p">)</span>
+<a id="crates/conjure-cp-rules/src/comprehensions/expansion.rs-111" name="crates/conjure-cp-rules/src/comprehensions/expansion.rs-111"></a><span class="p">}</span>
+<a id="crates/conjure-cp-rules/src/comprehensions/expansion.rs-112" name="crates/conjure-cp-rules/src/comprehensions/expansion.rs-112"></a><span class="hll">
+</span><a id="crates/conjure-cp-rules/src/comprehensions/expansion.rs-113" name="crates/conjure-cp-rules/src/comprehensions/expansion.rs-113"></a><span class="cp">#[register_rule(</span><span class="s">&quot;Base&quot;</span><span class="cp">, 2000, [Comprehension])]</span>
+<a id="crates/conjure-cp-rules/src/comprehensions/expansion.rs-114" name="crates/conjure-cp-rules/src/comprehensions/expansion.rs-114"></a><span class="k">fn</span><span class="w"> </span><span class="nf">expand_comprehension_native</span><span class="p">(</span><span class="n">expr</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">Expr</span><span class="p">,</span><span class="w"> </span><span class="n">symbols</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">SymbolTable</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">ApplicationResult</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-rules/src/comprehensions/expansion.rs-115" name="crates/conjure-cp-rules/src/comprehensions/expansion.rs-115"></a><span class="w">    </span><span class="n">expand_comprehension_native_impl</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span><span class="w"> </span><span class="n">symbols</span><span class="p">)</span>
+<a id="crates/conjure-cp-rules/src/comprehensions/expansion.rs-116" name="crates/conjure-cp-rules/src/comprehensions/expansion.rs-116"></a><span class="p">}</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/conjure-cp-rules/src/matrix/repr_matrix.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-rules/src/matrix/repr_matrix.rs-70" name="crates/conjure-cp-rules/src/matrix/repr_matrix.rs-70"></a><span class="w">            </span><span class="p">)));</span>
+<a id="crates/conjure-cp-rules/src/matrix/repr_matrix.rs-71" name="crates/conjure-cp-rules/src/matrix/repr_matrix.rs-71"></a>
+<a id="crates/conjure-cp-rules/src/matrix/repr_matrix.rs-72" name="crates/conjure-cp-rules/src/matrix/repr_matrix.rs-72"></a><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="n">represented</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">repr</span><span class="p">.</span><span class="n">expression_down</span><span class="p">(</span><span class="n">symbols</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
+<a id="crates/conjure-cp-rules/src/matrix/repr_matrix.rs-73" name="crates/conjure-cp-rules/src/matrix/repr_matrix.rs-73"></a><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">represented</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="o">&amp;</span><span class="n">indices_as_name</span><span class="p">).</span><span class="n">cloned</span><span class="p">()</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-rules/src/matrix/repr_matrix.rs-74" name="crates/conjure-cp-rules/src/matrix/repr_matrix.rs-74"></a><span class="hll"><span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">RuleNotApplicable</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-rules/src/matrix/repr_matrix.rs-75" name="crates/conjure-cp-rules/src/matrix/repr_matrix.rs-75"></a><span class="w">            </span><span class="p">};</span>
+<a id="crates/conjure-cp-rules/src/matrix/repr_matrix.rs-76" name="crates/conjure-cp-rules/src/matrix/repr_matrix.rs-76"></a><span class="w">            </span><span class="nb">Ok</span><span class="p">(</span><span class="n">Reduction</span><span class="p">::</span><span class="n">pure</span><span class="p">(</span><span class="n">subject</span><span class="p">))</span>
+<a id="crates/conjure-cp-rules/src/matrix/repr_matrix.rs-77" name="crates/conjure-cp-rules/src/matrix/repr_matrix.rs-77"></a><span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-rules/src/matrix/repr_matrix.rs-78" name="crates/conjure-cp-rules/src/matrix/repr_matrix.rs-78"></a><span class="w">            </span><span class="c1">// indices are not constant -&gt; flatten matrix and return [flattened_matrix][flattened_index_expr]</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/conjure-cp-rules/src/minion.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">826</span>
+<span class="normal">827</span>
+<span class="normal">828</span>
+<span class="normal">829</span>
+<span class="normal">830</span>
+<span class="normal">831</span>
+<span class="normal">832</span>
+<span class="normal">833</span>
+<span class="normal">834</span>
+<span class="normal">835</span>
+<span class="normal">836</span>
+<span class="normal">837</span>
+<span class="normal">838</span>
+<span class="normal">839</span>
+<span class="normal">840</span>
+<span class="normal">841</span>
+<span class="normal">842</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-rules/src/minion.rs-826" name="crates/conjure-cp-rules/src/minion.rs-826"></a><span class="w">    </span><span class="c1">// bulky Eq node through later Minion rewrites.</span>
+<a id="crates/conjure-cp-rules/src/minion.rs-827" name="crates/conjure-cp-rules/src/minion.rs-827"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="n">Expr</span><span class="p">::</span><span class="nb">Eq</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">lhs</span><span class="p">,</span><span class="w"> </span><span class="n">rhs</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">y</span><span class="p">.</span><span class="n">as_ref</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-rules/src/minion.rs-828" name="crates/conjure-cp-rules/src/minion.rs-828"></a><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">lhs_is_atom</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TryInto</span><span class="p">::</span><span class="o">&lt;&amp;</span><span class="n">Atom</span><span class="o">&gt;</span><span class="p">::</span><span class="n">try_into</span><span class="p">(</span><span class="n">lhs</span><span class="p">.</span><span class="n">as_ref</span><span class="p">()).</span><span class="n">is_ok</span><span class="p">();</span>
+<a id="crates/conjure-cp-rules/src/minion.rs-829" name="crates/conjure-cp-rules/src/minion.rs-829"></a><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">rhs_is_atom</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TryInto</span><span class="p">::</span><span class="o">&lt;&amp;</span><span class="n">Atom</span><span class="o">&gt;</span><span class="p">::</span><span class="n">try_into</span><span class="p">(</span><span class="n">rhs</span><span class="p">.</span><span class="n">as_ref</span><span class="p">()).</span><span class="n">is_ok</span><span class="p">();</span>
+<a id="crates/conjure-cp-rules/src/minion.rs-830" name="crates/conjure-cp-rules/src/minion.rs-830"></a><span class="hll">
+</span><a id="crates/conjure-cp-rules/src/minion.rs-831" name="crates/conjure-cp-rules/src/minion.rs-831"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="n">lhs</span><span class="p">.</span><span class="n">as_ref</span><span class="p">().</span><span class="n">return_type</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ReturnType</span><span class="p">::</span><span class="n">Bool</span>
+<a id="crates/conjure-cp-rules/src/minion.rs-832" name="crates/conjure-cp-rules/src/minion.rs-832"></a><span class="hll"><span class="w">            </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">rhs</span><span class="p">.</span><span class="n">as_ref</span><span class="p">().</span><span class="n">return_type</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ReturnType</span><span class="p">::</span><span class="n">Bool</span>
+</span><a id="crates/conjure-cp-rules/src/minion.rs-833" name="crates/conjure-cp-rules/src/minion.rs-833"></a><span class="hll"><span class="w">            </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="p">(</span><span class="n">lhs_is_atom</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">rhs_is_atom</span><span class="p">)</span>
+</span><a id="crates/conjure-cp-rules/src/minion.rs-834" name="crates/conjure-cp-rules/src/minion.rs-834"></a><span class="w">        </span><span class="p">{</span>
+<a id="crates/conjure-cp-rules/src/minion.rs-835" name="crates/conjure-cp-rules/src/minion.rs-835"></a><span class="hll"><span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">RuleNotApplicable</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-rules/src/minion.rs-836" name="crates/conjure-cp-rules/src/minion.rs-836"></a><span class="w">        </span><span class="p">}</span>
+<a id="crates/conjure-cp-rules/src/minion.rs-837" name="crates/conjure-cp-rules/src/minion.rs-837"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/conjure-cp-rules/src/minion.rs-838" name="crates/conjure-cp-rules/src/minion.rs-838"></a><span class="hll">
+</span><a id="crates/conjure-cp-rules/src/minion.rs-839" name="crates/conjure-cp-rules/src/minion.rs-839"></a><span class="w">    </span><span class="c1">// if both x and y are atoms,  x -&gt; y ~&gt; ineq(x,y,0)</span>
+<a id="crates/conjure-cp-rules/src/minion.rs-840" name="crates/conjure-cp-rules/src/minion.rs-840"></a><span class="w">    </span><span class="c1">//</span>
+<a id="crates/conjure-cp-rules/src/minion.rs-841" name="crates/conjure-cp-rules/src/minion.rs-841"></a><span class="w">    </span><span class="c1">// if only x is an atom, x -&gt; y ~&gt; reifyimply(y,x)</span>
+<a id="crates/conjure-cp-rules/src/minion.rs-842" name="crates/conjure-cp-rules/src/minion.rs-842"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nb">Ok</span><span class="p">(</span><span class="n">y_atom</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">TryInto</span><span class="p">::</span><span class="o">&lt;&amp;</span><span class="n">Atom</span><span class="o">&gt;</span><span class="p">::</span><span class="n">try_into</span><span class="p">(</span><span class="n">y</span><span class="p">.</span><span class="n">as_ref</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/conjure-cp-rules/src/normalisers/bool.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-rules/src/normalisers/bool.rs-64" name="crates/conjure-cp-rules/src/normalisers/bool.rs-64"></a><span class="w">                            </span><span class="c1">// simplifications only.</span>
+<a id="crates/conjure-cp-rules/src/normalisers/bool.rs-65" name="crates/conjure-cp-rules/src/normalisers/bool.rs-65"></a><span class="w">                            </span><span class="k">if</span><span class="w"> </span><span class="n">and_exprs</span><span class="p">.</span><span class="n">len</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-rules/src/normalisers/bool.rs-66" name="crates/conjure-cp-rules/src/normalisers/bool.rs-66"></a><span class="w">                                </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">RuleNotApplicable</span><span class="p">);</span>
+<a id="crates/conjure-cp-rules/src/normalisers/bool.rs-67" name="crates/conjure-cp-rules/src/normalisers/bool.rs-67"></a><span class="w">                            </span><span class="p">}</span>
+<a id="crates/conjure-cp-rules/src/normalisers/bool.rs-68" name="crates/conjure-cp-rules/src/normalisers/bool.rs-68"></a><span class="hll">
+</span><a id="crates/conjure-cp-rules/src/normalisers/bool.rs-69" name="crates/conjure-cp-rules/src/normalisers/bool.rs-69"></a><span class="w">                            </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">new_and_contents</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Vec</span><span class="p">::</span><span class="n">new</span><span class="p">();</span>
+<a id="crates/conjure-cp-rules/src/normalisers/bool.rs-70" name="crates/conjure-cp-rules/src/normalisers/bool.rs-70"></a>
+<a id="crates/conjure-cp-rules/src/normalisers/bool.rs-71" name="crates/conjure-cp-rules/src/normalisers/bool.rs-71"></a><span class="w">                            </span><span class="k">for</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">and_exprs</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-rules/src/normalisers/bool.rs-72" name="crates/conjure-cp-rules/src/normalisers/bool.rs-72"></a><span class="w">                                </span><span class="c1">// ToDo: Cloning everything may be a bit inefficient - discuss</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-rules/src/normalisers/bool.rs-177" name="crates/conjure-cp-rules/src/normalisers/bool.rs-177"></a><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">ApplicationResult</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-rules/src/normalisers/bool.rs-178" name="crates/conjure-cp-rules/src/normalisers/bool.rs-178"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">exprs</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">exprs</span><span class="p">.</span><span class="n">as_ref</span><span class="p">().</span><span class="n">clone</span><span class="p">().</span><span class="n">unwrap_list</span><span class="p">()</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-rules/src/normalisers/bool.rs-179" name="crates/conjure-cp-rules/src/normalisers/bool.rs-179"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">RuleNotApplicable</span><span class="p">);</span>
+<a id="crates/conjure-cp-rules/src/normalisers/bool.rs-180" name="crates/conjure-cp-rules/src/normalisers/bool.rs-180"></a><span class="w">    </span><span class="p">};</span>
+<a id="crates/conjure-cp-rules/src/normalisers/bool.rs-181" name="crates/conjure-cp-rules/src/normalisers/bool.rs-181"></a><span class="hll">
+</span><a id="crates/conjure-cp-rules/src/normalisers/bool.rs-182" name="crates/conjure-cp-rules/src/normalisers/bool.rs-182"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">changed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<a id="crates/conjure-cp-rules/src/normalisers/bool.rs-183" name="crates/conjure-cp-rules/src/normalisers/bool.rs-183"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">new_exprs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Vec</span><span class="p">::</span><span class="n">with_capacity</span><span class="p">(</span><span class="n">exprs</span><span class="p">.</span><span class="n">len</span><span class="p">());</span>
+<a id="crates/conjure-cp-rules/src/normalisers/bool.rs-184" name="crates/conjure-cp-rules/src/normalisers/bool.rs-184"></a>
+<a id="crates/conjure-cp-rules/src/normalisers/bool.rs-185" name="crates/conjure-cp-rules/src/normalisers/bool.rs-185"></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">child</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">exprs</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-rules/src/normalisers/bool.rs-186" name="crates/conjure-cp-rules/src/normalisers/bool.rs-186"></a><span class="hll"><span class="w">        </span><span class="k">match</span><span class="w"> </span><span class="n">child</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-rules/src/normalisers/bool.rs-187" name="crates/conjure-cp-rules/src/normalisers/bool.rs-187"></a><span class="hll"><span class="w">            </span><span class="n">Expr</span><span class="p">::</span><span class="n">Atomic</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">Atom</span><span class="p">::</span><span class="n">Literal</span><span class="p">(</span><span class="n">Lit</span><span class="p">::</span><span class="n">Bool</span><span class="p">(</span><span class="n">value</span><span class="p">)))</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-rules/src/normalisers/bool.rs-188" name="crates/conjure-cp-rules/src/normalisers/bool.rs-188"></a><span class="hll"><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">is_and</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">is_and</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-rules/src/normalisers/bool.rs-189" name="crates/conjure-cp-rules/src/normalisers/bool.rs-189"></a><span class="hll"><span class="w">                    </span><span class="k">return</span><span class="w"> </span><span class="nb">Ok</span><span class="p">(</span><span class="n">Reduction</span><span class="p">::</span><span class="n">pure</span><span class="p">(</span><span class="n">Expr</span><span class="p">::</span><span class="n">Atomic</span><span class="p">(</span>
+</span><a id="crates/conjure-cp-rules/src/normalisers/bool.rs-190" name="crates/conjure-cp-rules/src/normalisers/bool.rs-190"></a><span class="hll"><span class="w">                        </span><span class="n">Metadata</span><span class="p">::</span><span class="n">new</span><span class="p">(),</span>
+</span><a id="crates/conjure-cp-rules/src/normalisers/bool.rs-191" name="crates/conjure-cp-rules/src/normalisers/bool.rs-191"></a><span class="hll"><span class="w">                        </span><span class="n">Atom</span><span class="p">::</span><span class="n">Literal</span><span class="p">(</span><span class="n">Lit</span><span class="p">::</span><span class="n">Bool</span><span class="p">(</span><span class="n">value</span><span class="p">)),</span>
+</span><a id="crates/conjure-cp-rules/src/normalisers/bool.rs-192" name="crates/conjure-cp-rules/src/normalisers/bool.rs-192"></a><span class="hll"><span class="w">                    </span><span class="p">)));</span>
+</span><a id="crates/conjure-cp-rules/src/normalisers/bool.rs-193" name="crates/conjure-cp-rules/src/normalisers/bool.rs-193"></a><span class="hll"><span class="w">                </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-rules/src/normalisers/bool.rs-194" name="crates/conjure-cp-rules/src/normalisers/bool.rs-194"></a>
+<a id="crates/conjure-cp-rules/src/normalisers/bool.rs-195" name="crates/conjure-cp-rules/src/normalisers/bool.rs-195"></a><span class="hll"><span class="w">                </span><span class="n">changed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+</span><a id="crates/conjure-cp-rules/src/normalisers/bool.rs-196" name="crates/conjure-cp-rules/src/normalisers/bool.rs-196"></a><span class="w">            </span><span class="p">}</span>
+<a id="crates/conjure-cp-rules/src/normalisers/bool.rs-197" name="crates/conjure-cp-rules/src/normalisers/bool.rs-197"></a><span class="w">            </span><span class="n">other</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">new_exprs</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">other</span><span class="p">),</span>
+<a id="crates/conjure-cp-rules/src/normalisers/bool.rs-198" name="crates/conjure-cp-rules/src/normalisers/bool.rs-198"></a><span class="hll"><span class="w">        </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-rules/src/normalisers/bool.rs-199" name="crates/conjure-cp-rules/src/normalisers/bool.rs-199"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-rules/src/normalisers/bool.rs-200" name="crates/conjure-cp-rules/src/normalisers/bool.rs-200"></a>
+<a id="crates/conjure-cp-rules/src/normalisers/bool.rs-201" name="crates/conjure-cp-rules/src/normalisers/bool.rs-201"></a><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">!</span><span class="n">changed</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-rules/src/normalisers/bool.rs-202" name="crates/conjure-cp-rules/src/normalisers/bool.rs-202"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">RuleNotApplicable</span><span class="p">);</span>
+<a id="crates/conjure-cp-rules/src/normalisers/bool.rs-203" name="crates/conjure-cp-rules/src/normalisers/bool.rs-203"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-rules/src/normalisers/bool.rs-204" name="crates/conjure-cp-rules/src/normalisers/bool.rs-204"></a>
+<a id="crates/conjure-cp-rules/src/normalisers/bool.rs-205" name="crates/conjure-cp-rules/src/normalisers/bool.rs-205"></a><span class="hll"><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">is_and</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-rules/src/normalisers/bool.rs-206" name="crates/conjure-cp-rules/src/normalisers/bool.rs-206"></a><span class="hll"><span class="w">        </span><span class="n">Expr</span><span class="p">::</span><span class="n">And</span><span class="p">(</span><span class="n">Metadata</span><span class="p">::</span><span class="n">new</span><span class="p">(),</span><span class="w"> </span><span class="n">Moo</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="n">into_matrix_expr</span><span class="o">!</span><span class="p">[</span><span class="n">new_exprs</span><span class="p">]))</span>
+</span><a id="crates/conjure-cp-rules/src/normalisers/bool.rs-207" name="crates/conjure-cp-rules/src/normalisers/bool.rs-207"></a><span class="hll"><span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-rules/src/normalisers/bool.rs-208" name="crates/conjure-cp-rules/src/normalisers/bool.rs-208"></a><span class="hll"><span class="w">        </span><span class="n">Expr</span><span class="p">::</span><span class="n">Or</span><span class="p">(</span><span class="n">Metadata</span><span class="p">::</span><span class="n">new</span><span class="p">(),</span><span class="w"> </span><span class="n">Moo</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="n">into_matrix_expr</span><span class="o">!</span><span class="p">[</span><span class="n">new_exprs</span><span class="p">]))</span>
+</span><a id="crates/conjure-cp-rules/src/normalisers/bool.rs-209" name="crates/conjure-cp-rules/src/normalisers/bool.rs-209"></a><span class="hll"><span class="w">    </span><span class="p">};</span>
+</span><a id="crates/conjure-cp-rules/src/normalisers/bool.rs-210" name="crates/conjure-cp-rules/src/normalisers/bool.rs-210"></a>
+<a id="crates/conjure-cp-rules/src/normalisers/bool.rs-211" name="crates/conjure-cp-rules/src/normalisers/bool.rs-211"></a><span class="hll"><span class="w">    </span><span class="nb">Ok</span><span class="p">(</span><span class="n">Reduction</span><span class="p">::</span><span class="n">pure</span><span class="p">(</span><span class="n">out</span><span class="p">))</span>
+</span><a id="crates/conjure-cp-rules/src/normalisers/bool.rs-212" name="crates/conjure-cp-rules/src/normalisers/bool.rs-212"></a><span class="p">}</span>
+<a id="crates/conjure-cp-rules/src/normalisers/bool.rs-213" name="crates/conjure-cp-rules/src/normalisers/bool.rs-213"></a>
+<a id="crates/conjure-cp-rules/src/normalisers/bool.rs-214" name="crates/conjure-cp-rules/src/normalisers/bool.rs-214"></a><span class="sd">/// Removes neutral boolean constants from `and` and short-circuits `false`.</span>
+<a id="crates/conjure-cp-rules/src/normalisers/bool.rs-215" name="crates/conjure-cp-rules/src/normalisers/bool.rs-215"></a><span class="sd">///</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-rules/src/normalisers/bool.rs-235" name="crates/conjure-cp-rules/src/normalisers/bool.rs-235"></a><span class="cp">#[register_rule(</span><span class="s">&quot;Base&quot;</span><span class="cp">, 8800, [Or])]</span>
+<a id="crates/conjure-cp-rules/src/normalisers/bool.rs-236" name="crates/conjure-cp-rules/src/normalisers/bool.rs-236"></a><span class="k">fn</span><span class="w"> </span><span class="nf">remove_or_identities</span><span class="p">(</span><span class="n">expr</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">Expr</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">SymbolTable</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">ApplicationResult</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-rules/src/normalisers/bool.rs-237" name="crates/conjure-cp-rules/src/normalisers/bool.rs-237"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">Expr</span><span class="p">::</span><span class="n">Or</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">exprs</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">expr</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-rules/src/normalisers/bool.rs-238" name="crates/conjure-cp-rules/src/normalisers/bool.rs-238"></a><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">RuleNotApplicable</span><span class="p">);</span>
+<a id="crates/conjure-cp-rules/src/normalisers/bool.rs-239" name="crates/conjure-cp-rules/src/normalisers/bool.rs-239"></a><span class="hll"><span class="w">    </span><span class="p">};</span>
+</span><a id="crates/conjure-cp-rules/src/normalisers/bool.rs-240" name="crates/conjure-cp-rules/src/normalisers/bool.rs-240"></a><span class="hll">
+</span><a id="crates/conjure-cp-rules/src/normalisers/bool.rs-241" name="crates/conjure-cp-rules/src/normalisers/bool.rs-241"></a><span class="w">    </span><span class="n">remove_boolean_identities_from_expr</span><span class="p">(</span><span class="n">exprs</span><span class="p">.</span><span class="n">clone</span><span class="p">(),</span><span class="w"> </span><span class="kc">false</span><span class="p">)</span>
+<a id="crates/conjure-cp-rules/src/normalisers/bool.rs-242" name="crates/conjure-cp-rules/src/normalisers/bool.rs-242"></a><span class="p">}</span>
+<a id="crates/conjure-cp-rules/src/normalisers/bool.rs-243" name="crates/conjure-cp-rules/src/normalisers/bool.rs-243"></a>
+<a id="crates/conjure-cp-rules/src/normalisers/bool.rs-244" name="crates/conjure-cp-rules/src/normalisers/bool.rs-244"></a><span class="sd">/// Removes ands with a single argument.</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/minion-sys/src/run.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/minion-sys/src/run.rs-244" name="crates/minion-sys/src/run.rs-244"></a><span class="w">        </span><span class="c1">// themselves instead of going through this wrapper.</span>
+<a id="crates/minion-sys/src/run.rs-245" name="crates/minion-sys/src/run.rs-245"></a><span class="w">        </span><span class="p">(</span><span class="o">*</span><span class="n">search_opts</span><span class="p">).</span><span class="n">silent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<a id="crates/minion-sys/src/run.rs-246" name="crates/minion-sys/src/run.rs-246"></a><span class="w">        </span><span class="p">(</span><span class="o">*</span><span class="n">search_opts</span><span class="p">).</span><span class="n">print_solution</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<a id="crates/minion-sys/src/run.rs-247" name="crates/minion-sys/src/run.rs-247"></a><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="kd">let</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">value_order</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">options</span><span class="p">.</span><span class="n">value_order</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/minion-sys/src/run.rs-248" name="crates/minion-sys/src/run.rs-248"></a><span class="hll"><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="n">value_order</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">match</span><span class="w"> </span><span class="n">value_order</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/minion-sys/src/run.rs-249" name="crates/minion-sys/src/run.rs-249"></a><span class="hll"><span class="w">                </span><span class="n">ValueOrder</span><span class="p">::</span><span class="n">Ascend</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">ffi</span><span class="p">::</span><span class="n">ValOrderEnum_VALORDER_ASCEND</span><span class="p">,</span>
+</span><a id="crates/minion-sys/src/run.rs-250" name="crates/minion-sys/src/run.rs-250"></a><span class="hll"><span class="w">                </span><span class="n">ValueOrder</span><span class="p">::</span><span class="n">Descend</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">ffi</span><span class="p">::</span><span class="n">ValOrderEnum_VALORDER_DESCEND</span><span class="p">,</span>
+</span><a id="crates/minion-sys/src/run.rs-251" name="crates/minion-sys/src/run.rs-251"></a><span class="hll"><span class="w">                </span><span class="n">ValueOrder</span><span class="p">::</span><span class="n">Random</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">ffi</span><span class="p">::</span><span class="n">ValOrderEnum_VALORDER_RANDOM</span><span class="p">,</span>
+</span><a id="crates/minion-sys/src/run.rs-252" name="crates/minion-sys/src/run.rs-252"></a><span class="w">            </span><span class="p">};</span>
+<a id="crates/minion-sys/src/run.rs-253" name="crates/minion-sys/src/run.rs-253"></a><span class="hll"><span class="w">            </span><span class="p">(</span><span class="o">*</span><span class="n">search_method</span><span class="p">).</span><span class="n">valorder</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ffi</span><span class="p">::</span><span class="n">ValOrder</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/minion-sys/src/run.rs-254" name="crates/minion-sys/src/run.rs-254"></a><span class="hll"><span class="w">                </span><span class="n">type_</span><span class="p">:</span><span class="w"> </span><span class="nc">value_order</span><span class="p">,</span>
+</span><a id="crates/minion-sys/src/run.rs-255" name="crates/minion-sys/src/run.rs-255"></a><span class="hll"><span class="w">                </span><span class="n">bias</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+</span><a id="crates/minion-sys/src/run.rs-256" name="crates/minion-sys/src/run.rs-256"></a><span class="hll"><span class="w">            </span><span class="p">};</span>
+</span><a id="crates/minion-sys/src/run.rs-257" name="crates/minion-sys/src/run.rs-257"></a><span class="w">        </span><span class="p">}</span>
+<a id="crates/minion-sys/src/run.rs-258" name="crates/minion-sys/src/run.rs-258"></a>
+<a id="crates/minion-sys/src/run.rs-259" name="crates/minion-sys/src/run.rs-259"></a><span class="w">        </span><span class="n">convert_model_to_raw</span><span class="p">(</span><span class="n">search_instance</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">state</span><span class="p">.</span><span class="n">print_vars</span><span class="p">)</span><span class="o">?</span><span class="p">;</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+    </body>
+</html>
