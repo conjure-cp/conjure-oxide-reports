@@ -22,7 +22,7 @@
 <a href=#22 id=22 data-nosnippet>22</a>    ctx.add_span_and_doc_hover(<span class="kw-2">&amp;</span>keyword, <span class="string">"find"</span>, SymbolKind::Find, <span class="prelude-val">None</span>, <span class="prelude-val">None</span>);
 <a href=#23 id=23 data-nosnippet>23</a>    <span class="kw">let </span><span class="kw-2">mut </span>var_hashmap = BTreeMap::new();
 <a href=#24 id=24 data-nosnippet>24</a>    <span class="kw">for </span>var_decl <span class="kw">in </span>named_children(<span class="kw-2">&amp;</span>find_statement) {
-<a href=#25 id=25 data-nosnippet>25</a>        <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>decls) = parse_declaration_statement(ctx, var_decl, SymbolKind::Find) {
+<a href=#25 id=25 data-nosnippet>25</a>        <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>decls) = parse_declaration_statement(ctx, var_decl, SymbolKind::FindVar) {
 <a href=#26 id=26 data-nosnippet>26</a>            var_hashmap.append(<span class="kw-2">&amp;mut </span>decls);
 <a href=#27 id=27 data-nosnippet>27</a>        }
 <a href=#28 id=28 data-nosnippet>28</a>    }
@@ -50,7 +50,7 @@
 <a href=#50 id=50 data-nosnippet>50</a>
 <a href=#51 id=51 data-nosnippet>51</a>    <span class="kw">let </span><span class="kw-2">mut </span>var_hashmap = BTreeMap::new();
 <a href=#52 id=52 data-nosnippet>52</a>    <span class="kw">for </span>var_decl <span class="kw">in </span>named_children(<span class="kw-2">&amp;</span>given_statement) {
-<a href=#53 id=53 data-nosnippet>53</a>        <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>decls) = parse_declaration_statement(ctx, var_decl, SymbolKind::Given) {
+<a href=#53 id=53 data-nosnippet>53</a>        <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>decls) = parse_declaration_statement(ctx, var_decl, SymbolKind::GivenVar) {
 <a href=#54 id=54 data-nosnippet>54</a>            var_hashmap.append(<span class="kw-2">&amp;mut </span>decls);
 <a href=#55 id=55 data-nosnippet>55</a>        }
 <a href=#56 id=56 data-nosnippet>56</a>    }
@@ -96,8 +96,8 @@
 <a href=#96 id=96 data-nosnippet>96</a>                    <span class="string">"Variable '{}' is already declared in this {} statement"</span>,
 <a href=#97 id=97 data-nosnippet>97</a>                    variable_name,
 <a href=#98 id=98 data-nosnippet>98</a>                    <span class="kw">match </span>symbol_kind {
-<a href=#99 id=99 data-nosnippet>99</a>                        SymbolKind::Find =&gt; <span class="string">"find"</span>,
-<a href=#100 id=100 data-nosnippet>100</a>                        SymbolKind::Given =&gt; <span class="string">"given"</span>,
+<a href=#99 id=99 data-nosnippet>99</a>                        SymbolKind::FindVar =&gt; <span class="string">"find"</span>,
+<a href=#100 id=100 data-nosnippet>100</a>                        SymbolKind::GivenVar =&gt; <span class="string">"given"</span>,
 <a href=#101 id=101 data-nosnippet>101</a>                        <span class="kw">_ </span>=&gt; <span class="string">"declaration"</span>,
 <a href=#102 id=102 data-nosnippet>102</a>                    }
 <a href=#103 id=103 data-nosnippet>103</a>                ),
@@ -134,8 +134,8 @@
 <a href=#134 id=134 data-nosnippet>134</a>            description: <span class="macro">format!</span>(
 <a href=#135 id=135 data-nosnippet>135</a>                <span class="string">"{} variable: {variable_name}"</span>,
 <a href=#136 id=136 data-nosnippet>136</a>                <span class="kw">match </span>symbol_kind {
-<a href=#137 id=137 data-nosnippet>137</a>                    SymbolKind::Find =&gt; <span class="string">"Find"</span>,
-<a href=#138 id=138 data-nosnippet>138</a>                    SymbolKind::Given =&gt; <span class="string">"Given"</span>,
+<a href=#137 id=137 data-nosnippet>137</a>                    SymbolKind::FindVar =&gt; <span class="string">"Find"</span>,
+<a href=#138 id=138 data-nosnippet>138</a>                    SymbolKind::GivenVar =&gt; <span class="string">"Given"</span>,
 <a href=#139 id=139 data-nosnippet>139</a>                    <span class="kw">_ </span>=&gt; <span class="string">"Declaration"</span>,
 <a href=#140 id=140 data-nosnippet>140</a>                }
 <a href=#141 id=141 data-nosnippet>141</a>            ),

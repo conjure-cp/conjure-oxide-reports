@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["diagnostics_api","error_detection","source_map"]};
+window.SIDEBAR_ITEMS = {"mod":["diagnostics_api","error_detection","semantic_tokens","source_map"]};
