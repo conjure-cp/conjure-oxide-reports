@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/conjure-cp-core/src/ast/partial_eval.rs`."><title>partial_eval.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-17e0aaed.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="conjure_cp_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.97.0-nightly (ca9a134e0 2026-04-26)" data-channel="nightly" data-search-js="search-b5634cc7.js" data-stringdex-js="stringdex-2da4960a.js" data-settings-js="settings-170eb4bf.js" ><script src="../../../static.files/storage-41dd4d93.js"></script><script defer src="../../../static.files/src-script-813739b1.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-aa4d37ac.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-f7c3ffd8.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><a class="skip-main-content" href="#main-content">Skip to main content</a><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><section id="main-content" class="content" tabindex="-1"><div class="main-heading"><h1><div class="sub-heading">conjure_cp_core/ast/</div>partial_eval.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-3"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="kw">use </span>std::collections::HashSet;
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/conjure-cp-core/src/ast/partial_eval.rs`."><title>partial_eval.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-17e0aaed.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="conjure_cp_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.97.0-nightly (52b6e2c20 2026-04-27)" data-channel="nightly" data-search-js="search-b5634cc7.js" data-stringdex-js="stringdex-2da4960a.js" data-settings-js="settings-170eb4bf.js" ><script src="../../../static.files/storage-41dd4d93.js"></script><script defer src="../../../static.files/src-script-813739b1.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-aa4d37ac.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-f7c3ffd8.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><a class="skip-main-content" href="#main-content">Skip to main content</a><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><section id="main-content" class="content" tabindex="-1"><div class="main-heading"><h1><div class="sub-heading">conjure_cp_core/ast/</div>partial_eval.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-3"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="kw">use </span>std::collections::HashSet;
 <a href=#2 id=2 data-nosnippet>2</a>
 <a href=#3 id=3 data-nosnippet>3</a><span class="kw">use </span><span class="kw">crate</span>::ast::Typeable;
 <a href=#4 id=4 data-nosnippet>4</a><span class="kw">use </span>crate::{
@@ -827,61 +827,63 @@
 <a href=#827 id=827 data-nosnippet>827</a>        Expr::ToMSet(<span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="macro">todo!</span>(),
 <a href=#828 id=828 data-nosnippet>828</a>        Expr::ToRelation(<span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="macro">todo!</span>(),
 <a href=#829 id=829 data-nosnippet>829</a>        Expr::RelationProj(<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="macro">todo!</span>(),
-<a href=#830 id=830 data-nosnippet>830</a>        Expr::LexLt(<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Err</span>(RuleNotApplicable),
-<a href=#831 id=831 data-nosnippet>831</a>        Expr::LexLeq(<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Err</span>(RuleNotApplicable),
-<a href=#832 id=832 data-nosnippet>832</a>        Expr::LexGt(<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Err</span>(RuleNotApplicable),
-<a href=#833 id=833 data-nosnippet>833</a>        Expr::LexGeq(<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Err</span>(RuleNotApplicable),
-<a href=#834 id=834 data-nosnippet>834</a>        Expr::FlatLexLt(<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Err</span>(RuleNotApplicable),
-<a href=#835 id=835 data-nosnippet>835</a>        Expr::FlatLexLeq(<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Err</span>(RuleNotApplicable),
-<a href=#836 id=836 data-nosnippet>836</a>    }
-<a href=#837 id=837 data-nosnippet>837</a>}
-<a href=#838 id=838 data-nosnippet>838</a>
-<a href=#839 id=839 data-nosnippet>839</a><span class="doccomment">/// Checks for tautologies involving pairs of terms inside an or, returning true if one is found.
-<a href=#840 id=840 data-nosnippet>840</a>///
-<a href=#841 id=841 data-nosnippet>841</a>/// This applies the following rules:
+<a href=#830 id=830 data-nosnippet>830</a>        Expr::Subsequence(<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="macro">todo!</span>(),
+<a href=#831 id=831 data-nosnippet>831</a>        Expr::Substring(<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="macro">todo!</span>(),
+<a href=#832 id=832 data-nosnippet>832</a>        Expr::LexLt(<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Err</span>(RuleNotApplicable),
+<a href=#833 id=833 data-nosnippet>833</a>        Expr::LexLeq(<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Err</span>(RuleNotApplicable),
+<a href=#834 id=834 data-nosnippet>834</a>        Expr::LexGt(<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Err</span>(RuleNotApplicable),
+<a href=#835 id=835 data-nosnippet>835</a>        Expr::LexGeq(<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Err</span>(RuleNotApplicable),
+<a href=#836 id=836 data-nosnippet>836</a>        Expr::FlatLexLt(<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Err</span>(RuleNotApplicable),
+<a href=#837 id=837 data-nosnippet>837</a>        Expr::FlatLexLeq(<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="prelude-val">Err</span>(RuleNotApplicable),
+<a href=#838 id=838 data-nosnippet>838</a>    }
+<a href=#839 id=839 data-nosnippet>839</a>}
+<a href=#840 id=840 data-nosnippet>840</a>
+<a href=#841 id=841 data-nosnippet>841</a><span class="doccomment">/// Checks for tautologies involving pairs of terms inside an or, returning true if one is found.
 <a href=#842 id=842 data-nosnippet>842</a>///
-<a href=#843 id=843 data-nosnippet>843</a>/// ```text
-<a href=#844 id=844 data-nosnippet>844</a>/// (p-&gt;q) \/ (q-&gt;p) ~&gt; true    [totality of implication]
-<a href=#845 id=845 data-nosnippet>845</a>/// (p-&gt;q) \/ (p-&gt; !q) ~&gt; true  [conditional excluded middle]
-<a href=#846 id=846 data-nosnippet>846</a>/// ```
-<a href=#847 id=847 data-nosnippet>847</a>///
-<a href=#848 id=848 data-nosnippet>848</a></span><span class="kw">fn </span>check_pairwise_or_tautologies(or_terms: <span class="kw-2">&amp;</span>[Expr]) -&gt; bool {
-<a href=#849 id=849 data-nosnippet>849</a>    <span class="comment">// Collect terms that are structurally identical to the rule input.
-<a href=#850 id=850 data-nosnippet>850</a>    // Then, try the rules on these terms, also checking the other conditions of the rules.
-<a href=#851 id=851 data-nosnippet>851</a>
-<a href=#852 id=852 data-nosnippet>852</a>    // stores (p,q) in p -&gt; q
-<a href=#853 id=853 data-nosnippet>853</a>    </span><span class="kw">let </span><span class="kw-2">mut </span>p_implies_q: Vec&lt;(<span class="kw-2">&amp;</span>Expr, <span class="kw-2">&amp;</span>Expr)&gt; = <span class="macro">vec!</span>[];
-<a href=#854 id=854 data-nosnippet>854</a>
-<a href=#855 id=855 data-nosnippet>855</a>    <span class="comment">// stores (p,q) in p -&gt; !q
-<a href=#856 id=856 data-nosnippet>856</a>    </span><span class="kw">let </span><span class="kw-2">mut </span>p_implies_not_q: Vec&lt;(<span class="kw-2">&amp;</span>Expr, <span class="kw-2">&amp;</span>Expr)&gt; = <span class="macro">vec!</span>[];
-<a href=#857 id=857 data-nosnippet>857</a>
-<a href=#858 id=858 data-nosnippet>858</a>    <span class="kw">for </span>term <span class="kw">in </span>or_terms.iter() {
-<a href=#859 id=859 data-nosnippet>859</a>        <span class="kw">if let </span>Expr::Imply(<span class="kw">_</span>, p, q) = term {
-<a href=#860 id=860 data-nosnippet>860</a>            <span class="comment">// we use identical_atom_to for equality later on, so these sets are mutually exclusive.
-<a href=#861 id=861 data-nosnippet>861</a>            //
-<a href=#862 id=862 data-nosnippet>862</a>            // in general however, p -&gt; !q would be in p_implies_q as (p,!q)
-<a href=#863 id=863 data-nosnippet>863</a>            </span><span class="kw">if let </span>Expr::Not(<span class="kw">_</span>, q_1) = q.as_ref() {
-<a href=#864 id=864 data-nosnippet>864</a>                p_implies_not_q.push((p.as_ref(), q_1.as_ref()));
-<a href=#865 id=865 data-nosnippet>865</a>            } <span class="kw">else </span>{
-<a href=#866 id=866 data-nosnippet>866</a>                p_implies_q.push((p.as_ref(), q.as_ref()));
-<a href=#867 id=867 data-nosnippet>867</a>            }
-<a href=#868 id=868 data-nosnippet>868</a>        }
-<a href=#869 id=869 data-nosnippet>869</a>    }
-<a href=#870 id=870 data-nosnippet>870</a>
-<a href=#871 id=871 data-nosnippet>871</a>    <span class="comment">// `(p-&gt;q) \/ (q-&gt;p) ~&gt; true    [totality of implication]`
-<a href=#872 id=872 data-nosnippet>872</a>    </span><span class="kw">for </span>((p1, q1), (q2, p2)) <span class="kw">in </span><span class="macro">iproduct!</span>(p_implies_q.iter(), p_implies_q.iter()) {
-<a href=#873 id=873 data-nosnippet>873</a>        <span class="kw">if </span>p1.identical_atom_to(p2) &amp;&amp; q1.identical_atom_to(q2) {
-<a href=#874 id=874 data-nosnippet>874</a>            <span class="kw">return </span><span class="bool-val">true</span>;
-<a href=#875 id=875 data-nosnippet>875</a>        }
-<a href=#876 id=876 data-nosnippet>876</a>    }
-<a href=#877 id=877 data-nosnippet>877</a>
-<a href=#878 id=878 data-nosnippet>878</a>    <span class="comment">// `(p-&gt;q) \/ (p-&gt; !q) ~&gt; true`    [conditional excluded middle]
-<a href=#879 id=879 data-nosnippet>879</a>    </span><span class="kw">for </span>((p1, q1), (p2, q2)) <span class="kw">in </span><span class="macro">iproduct!</span>(p_implies_q.iter(), p_implies_not_q.iter()) {
-<a href=#880 id=880 data-nosnippet>880</a>        <span class="kw">if </span>p1.identical_atom_to(p2) &amp;&amp; q1.identical_atom_to(q2) {
-<a href=#881 id=881 data-nosnippet>881</a>            <span class="kw">return </span><span class="bool-val">true</span>;
-<a href=#882 id=882 data-nosnippet>882</a>        }
-<a href=#883 id=883 data-nosnippet>883</a>    }
-<a href=#884 id=884 data-nosnippet>884</a>
-<a href=#885 id=885 data-nosnippet>885</a>    <span class="bool-val">false
-<a href=#886 id=886 data-nosnippet>886</a></span>}
+<a href=#843 id=843 data-nosnippet>843</a>/// This applies the following rules:
+<a href=#844 id=844 data-nosnippet>844</a>///
+<a href=#845 id=845 data-nosnippet>845</a>/// ```text
+<a href=#846 id=846 data-nosnippet>846</a>/// (p-&gt;q) \/ (q-&gt;p) ~&gt; true    [totality of implication]
+<a href=#847 id=847 data-nosnippet>847</a>/// (p-&gt;q) \/ (p-&gt; !q) ~&gt; true  [conditional excluded middle]
+<a href=#848 id=848 data-nosnippet>848</a>/// ```
+<a href=#849 id=849 data-nosnippet>849</a>///
+<a href=#850 id=850 data-nosnippet>850</a></span><span class="kw">fn </span>check_pairwise_or_tautologies(or_terms: <span class="kw-2">&amp;</span>[Expr]) -&gt; bool {
+<a href=#851 id=851 data-nosnippet>851</a>    <span class="comment">// Collect terms that are structurally identical to the rule input.
+<a href=#852 id=852 data-nosnippet>852</a>    // Then, try the rules on these terms, also checking the other conditions of the rules.
+<a href=#853 id=853 data-nosnippet>853</a>
+<a href=#854 id=854 data-nosnippet>854</a>    // stores (p,q) in p -&gt; q
+<a href=#855 id=855 data-nosnippet>855</a>    </span><span class="kw">let </span><span class="kw-2">mut </span>p_implies_q: Vec&lt;(<span class="kw-2">&amp;</span>Expr, <span class="kw-2">&amp;</span>Expr)&gt; = <span class="macro">vec!</span>[];
+<a href=#856 id=856 data-nosnippet>856</a>
+<a href=#857 id=857 data-nosnippet>857</a>    <span class="comment">// stores (p,q) in p -&gt; !q
+<a href=#858 id=858 data-nosnippet>858</a>    </span><span class="kw">let </span><span class="kw-2">mut </span>p_implies_not_q: Vec&lt;(<span class="kw-2">&amp;</span>Expr, <span class="kw-2">&amp;</span>Expr)&gt; = <span class="macro">vec!</span>[];
+<a href=#859 id=859 data-nosnippet>859</a>
+<a href=#860 id=860 data-nosnippet>860</a>    <span class="kw">for </span>term <span class="kw">in </span>or_terms.iter() {
+<a href=#861 id=861 data-nosnippet>861</a>        <span class="kw">if let </span>Expr::Imply(<span class="kw">_</span>, p, q) = term {
+<a href=#862 id=862 data-nosnippet>862</a>            <span class="comment">// we use identical_atom_to for equality later on, so these sets are mutually exclusive.
+<a href=#863 id=863 data-nosnippet>863</a>            //
+<a href=#864 id=864 data-nosnippet>864</a>            // in general however, p -&gt; !q would be in p_implies_q as (p,!q)
+<a href=#865 id=865 data-nosnippet>865</a>            </span><span class="kw">if let </span>Expr::Not(<span class="kw">_</span>, q_1) = q.as_ref() {
+<a href=#866 id=866 data-nosnippet>866</a>                p_implies_not_q.push((p.as_ref(), q_1.as_ref()));
+<a href=#867 id=867 data-nosnippet>867</a>            } <span class="kw">else </span>{
+<a href=#868 id=868 data-nosnippet>868</a>                p_implies_q.push((p.as_ref(), q.as_ref()));
+<a href=#869 id=869 data-nosnippet>869</a>            }
+<a href=#870 id=870 data-nosnippet>870</a>        }
+<a href=#871 id=871 data-nosnippet>871</a>    }
+<a href=#872 id=872 data-nosnippet>872</a>
+<a href=#873 id=873 data-nosnippet>873</a>    <span class="comment">// `(p-&gt;q) \/ (q-&gt;p) ~&gt; true    [totality of implication]`
+<a href=#874 id=874 data-nosnippet>874</a>    </span><span class="kw">for </span>((p1, q1), (q2, p2)) <span class="kw">in </span><span class="macro">iproduct!</span>(p_implies_q.iter(), p_implies_q.iter()) {
+<a href=#875 id=875 data-nosnippet>875</a>        <span class="kw">if </span>p1.identical_atom_to(p2) &amp;&amp; q1.identical_atom_to(q2) {
+<a href=#876 id=876 data-nosnippet>876</a>            <span class="kw">return </span><span class="bool-val">true</span>;
+<a href=#877 id=877 data-nosnippet>877</a>        }
+<a href=#878 id=878 data-nosnippet>878</a>    }
+<a href=#879 id=879 data-nosnippet>879</a>
+<a href=#880 id=880 data-nosnippet>880</a>    <span class="comment">// `(p-&gt;q) \/ (p-&gt; !q) ~&gt; true`    [conditional excluded middle]
+<a href=#881 id=881 data-nosnippet>881</a>    </span><span class="kw">for </span>((p1, q1), (p2, q2)) <span class="kw">in </span><span class="macro">iproduct!</span>(p_implies_q.iter(), p_implies_not_q.iter()) {
+<a href=#882 id=882 data-nosnippet>882</a>        <span class="kw">if </span>p1.identical_atom_to(p2) &amp;&amp; q1.identical_atom_to(q2) {
+<a href=#883 id=883 data-nosnippet>883</a>            <span class="kw">return </span><span class="bool-val">true</span>;
+<a href=#884 id=884 data-nosnippet>884</a>        }
+<a href=#885 id=885 data-nosnippet>885</a>    }
+<a href=#886 id=886 data-nosnippet>886</a>
+<a href=#887 id=887 data-nosnippet>887</a>    <span class="bool-val">false
+<a href=#888 id=888 data-nosnippet>888</a></span>}
 </code></pre></div></section></main></body></html>
