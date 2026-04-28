@@ -38,7 +38,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-e46bcd35.js";
+            window.path_to_searchindex_js = "searchindex-3a660e18.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-b56bd59b.js"></script>
@@ -4490,9 +4490,13 @@ For example: <code>r(_,1,_)</code> converts r from a 3-component relation to a 2
 <h1 id="domain-refinement"><a class="header" href="#domain-refinement">Domain Refinement</a></h1>
 <h2 id="the-project"><a class="header" href="#the-project">The Project</a></h2>
 <p>In Conjure-Oxide when we convert Essence-level domains into lower-level domains for the solver they can often be blown-up necessarily large, which negatively impacts solver performance.</p>
-<p>We can see an example of this in the following Essence code:<br>
-<code>find a : set (maxSize 2) of int(1..10)</code><br> <code>find b : set of int(1..1000)</code><br><code>such that b subset a</code><br>
-Here instead of being treated as a set of maximum size 1000, we can deduce that b has a maximum size of 1.</p>
+<p>We can see an example of this in the following Essence code:<br></p>
+<pre><code>find a : set (maxSize 2) of int(1..10)
+find b : set of int(1..1000)
+such that b subset a
+</code></pre>
+<br>
+Here instead of being treated as a set of maximum size 1000, we can deduce that b has a maximum size of 1.
 <p>There is lot of domain refinement that can be done at an Essence level, making this a very interesting project. This has the potential to make measurable improvements to Conjure-Oxide in a way that goes beyond Conjure, and is the first step in an Essence-level solver.</p>
 <h2 id="how-would-it-work"><a class="header" href="#how-would-it-work">How Would It Work</a></h2>
 <p>To carry out domain refinement we suggest creating an arc-consistency-style algorithm. This can be run between parsing and rule rewriting, to infer the minimal domains of all variables before they are expanded. The algorithm would iterate over constraints, stored as expressions in Conjure-Oxide, and refine the internal variable’s domains. Not all constraints in Conjure-Oxide are binary, and so a form of generalised arc consistency might be necessary. Once the domains have been refined any constraints also containing the newly changed variable must be rechecked for further refinements.</p>
