@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-4ea9449e.js";
+            window.path_to_searchindex_js = "searchindex-5b6372f8.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-b49720e0.js"></script>
+        <script src="toc-e1c87826.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -4379,7 +4379,7 @@ fn tseitin_and(expr: &amp;Expression) -&gt; Result&lt;Expression, RuleApplicatio
 <p><em>This section had been taken from the ‘Expression rewriting, Rules and RuleSets’ page of the conjure-oxide wiki</em></p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="creating-types-guide"><a class="header" href="#creating-types-guide">Creating Types Guide</a></h1>
-<p>Currently Conjure-Oxide does not have any support for Essence’s sequences, partitions or variants.
+<p>Currently Conjure-Oxide does not have any support for Essence’s partitions or variants.
 This guide outlines the process of creating support for those types to the AST. This does not currently cover rewriting rules or solving.</p>
 <h2 id="creating-the-type"><a class="header" href="#creating-the-type">Creating the Type</a></h2>
 <ul>
@@ -4522,6 +4522,20 @@ $                                       &gt; there is a minPartSize of 2, and on
 <blockquote>
 <p>As of writing (26/04/2026): none of these Operators are implemented in conjure-oxide, partitions cannot be parsed using the native parser, and there is no support for rewriting or solving with partitions.</p>
 </blockquote>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="sequences"><a class="header" href="#sequences">Sequences</a></h1>
+<h2 id="what-are-sequences"><a class="header" href="#what-are-sequences">What Are Sequences</a></h2>
+<p>A sequence is a datatype for storing a series of values, where values can occur multiple times and ordering is preserved. It differs from a <a href="https://github.com/conjure-cp/conjure-oxide/wiki/">matrix</a>, in that it can have defined attributes; i.e. you can define a sequence to have varying lengths, and to restrict what values it can draw from it’s inner domain.</p>
+<h2 id="attributes-4"><a class="header" href="#attributes-4">Attributes</a></h2>
+<p>Three <strong>cardinality</strong> attributes; <code>size</code>, <code>minSize</code>, <code>maxSize</code>.
+Three <strong>jectivity</strong> attributes; <code>injective</code>, <code>surjective</code>, <code>bijective</code>.</p>
+<p>Sequences <em>must</em> have either a <code>size</code> or <code>maxSize</code> cardinality attribute.</p>
+<h2 id="operators-4"><a class="header" href="#operators-4">Operators</a></h2>
+<p>There are two operators which are defined on sequences. These are represented as <code>Expressions</code> in Conjure-Oxide.</p>
+<ul>
+<li><code>subsequence</code>: does the sequence <code>s</code> appear in the same order in <code>t</code> (e.g. <code>s=1,2,3</code> and <code>t=1,3</code> are subsequences)</li>
+<li><code>substring</code>: does the sequence <code>s</code> appear in the same order <em>and</em> contiguously in <code>t</code> (e.g. <code>s=1,2</code> is a substring of <code>t=1,2,3</code> )</li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="testing-2"><a class="header" href="#testing-2">Testing</a></h1>
 <h2 id="types-of-tests"><a class="header" href="#types-of-tests">Types of Tests</a></h2>
