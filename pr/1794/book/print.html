@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-5b6372f8.js";
+            window.path_to_searchindex_js = "searchindex-1b877d3f.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-e1c87826.js"></script>
+        <script src="toc-2344e88a.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -4379,7 +4379,7 @@ fn tseitin_and(expr: &amp;Expression) -&gt; Result&lt;Expression, RuleApplicatio
 <p><em>This section had been taken from the ‘Expression rewriting, Rules and RuleSets’ page of the conjure-oxide wiki</em></p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="creating-types-guide"><a class="header" href="#creating-types-guide">Creating Types Guide</a></h1>
-<p>Currently Conjure-Oxide does not have any support for Essence’s partitions or variants.
+<p>Currently Conjure-Oxide does not have any support for Essence’s partitions.
 This guide outlines the process of creating support for those types to the AST. This does not currently cover rewriting rules or solving.</p>
 <h2 id="creating-the-type"><a class="header" href="#creating-the-type">Creating the Type</a></h2>
 <ul>
@@ -4523,6 +4523,20 @@ $                                       &gt; there is a minPartSize of 2, and on
 <p>As of writing (26/04/2026): none of these Operators are implemented in conjure-oxide, partitions cannot be parsed using the native parser, and there is no support for rewriting or solving with partitions.</p>
 </blockquote>
 <div style="break-before: page; page-break-before: always;"></div>
+<h1 id="variants"><a class="header" href="#variants">Variants</a></h1>
+<h2 id="what-are-variants"><a class="header" href="#what-are-variants">What Are Variants</a></h2>
+<p>A variant domain stores key value domain pair fields. However, unlike a record, a variant literal can only use one of these fields at once. This field is referred to as active.</p>
+<p>Variants contain a list of fields, with domains, which they can take. They are defined for both <code>GroundDomain</code> and <code>UnresolvedDomain</code>, and stored as <code>Variant(Vec&lt;FieldEntry&gt;)</code>.</p>
+<p>The result of a variant is a single field value. As such the <code>AbstractLiteral</code> for variants is defined as <code>Variant(Moo&lt;FieldValue&lt;T&gt;&gt;)</code>. This AbstractLiteral type means variants can be represented explicitly.</p>
+<h2 id="operators-4"><a class="header" href="#operators-4">Operators</a></h2>
+<p>There is one special operator which is defined on only variants.</p>
+<ul>
+<li><code>Active(v, f)</code> - Returns whether field f is currently the field active in variant v.</li>
+</ul>
+<p>Variants can also be indexed, which makes use of Conjure-Oxide’s <code>UnsafeIndex</code> and <code>SafeIndex</code>.</p>
+<h2 id="note-on-implementation-2"><a class="header" href="#note-on-implementation-2">Note on Implementation</a></h2>
+<p>Currently variants are defined within the AST of Conjure-Oxide and can be parsed with the ‘legacy’ parser. However, there is no support as of Apr-2026 for rewriting rules or solving.</p>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="sequences"><a class="header" href="#sequences">Sequences</a></h1>
 <h2 id="what-are-sequences"><a class="header" href="#what-are-sequences">What Are Sequences</a></h2>
 <p>A sequence is a datatype for storing a series of values, where values can occur multiple times and ordering is preserved. It differs from a <a href="https://github.com/conjure-cp/conjure-oxide/wiki/">matrix</a>, in that it can have defined attributes; i.e. you can define a sequence to have varying lengths, and to restrict what values it can draw from it’s inner domain.</p>
@@ -4530,7 +4544,7 @@ $                                       &gt; there is a minPartSize of 2, and on
 <p>Three <strong>cardinality</strong> attributes; <code>size</code>, <code>minSize</code>, <code>maxSize</code>.
 Three <strong>jectivity</strong> attributes; <code>injective</code>, <code>surjective</code>, <code>bijective</code>.</p>
 <p>Sequences <em>must</em> have either a <code>size</code> or <code>maxSize</code> cardinality attribute.</p>
-<h2 id="operators-4"><a class="header" href="#operators-4">Operators</a></h2>
+<h2 id="operators-5"><a class="header" href="#operators-5">Operators</a></h2>
 <p>There are two operators which are defined on sequences. These are represented as <code>Expressions</code> in Conjure-Oxide.</p>
 <ul>
 <li><code>subsequence</code>: does the sequence <code>s</code> appear in the same order in <code>t</code> (e.g. <code>s=1,2,3</code> and <code>t=1,3</code> are subsequences)</li>
