@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Encoding Types - Conjure Oxide</title>
+        <title>Domains - Conjure Oxide</title>
 
 
         <!-- Custom HTML head -->
@@ -176,60 +176,35 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h2 id="types-of-sat-encodings"><a class="header" href="#types-of-sat-encodings">Types of SAT Encodings</a></h2>
-<p>There are three different types of SAT Encodings planned in conjure oxide. Of these, only Logarithmic Encodings have been implemented thus far. The three types are these:</p>
-<ul>
-<li>Direct Encodings</li>
-<li>Logarithmic Encodings</li>
-<li>Order Encodings</li>
-</ul>
-<p>Each type of encoding has pros and cons, and a different one may be selected based on the type of constraint problem.</p>
-<h3 id="satint-expression"><a class="header" href="#satint-expression">SATInt Expression</a></h3>
-<p>All encodings are stored using the same <code>SATInt</code> expression type. This expression type holds: an enum specifying the encoding, a bitvector of boolean expressions (these can be literals, variables, or complex operations), and the domain of the integer. This expression cannot be created through parsing and should only be created by SAT rules.</p>
-<h3 id="logarithmic-encoding"><a class="header" href="#logarithmic-encoding">Logarithmic Encoding</a></h3>
-<p>The base principle is quite simple: encode an integer as a bitvector. This allows us to represent integers as a series of boolean constraints – one for each bit.</p>
-<p>For example, the integer ‘6’ can be represented in binary as ‘0110’. We can then represent this as (P = 0 ∨ 1, Q = 0 ∨ 1, R = 0 ∨ 1, S = 0 ∨ 1). The connection that is missing, however, is that this isn’t actually a representation of a constraint problem, but of a solution to a problem.</p>
-<h3 id="direct-encoding"><a class="header" href="#direct-encoding">Direct Encoding</a></h3>
-<p>Direct encodings are the most straightforward type of encoding - it involves creating a vector of boolean variables, one corresponding to each member of the domain. Only one of these variables can be true at a time, and it is the one corresponding to the value of the integer.</p>
-<h3 id="order-encoding"><a class="header" href="#order-encoding">Order Encoding</a></h3>
-<p>Order follows the same principle as direct encoding, but instead of each boolean variable ‘specifying’ a value in the way that direct encodings do, each bit specifies whether the integer corresponding to it is less than or equal to the integer variable’s value.</p>
-<h3 id="why-have-multiple-types-of-encoding"><a class="header" href="#why-have-multiple-types-of-encoding">Why have multiple types of encoding?</a></h3>
-<p>Only logarithmic encodings are currently implemented in conjure-oxide. We’re planning to include other encodings such as direct and order encodings. This is motivated by their potential advantages over the log encoding in some cases.</p>
-<p>Direct encodings should perform well for equality-heavy constraints but may scale poorly with larger domains or inequalities. Logarithmic encodings are expected to handle inequalities more efficiently. Order encodings are often viewed as a compromise, potentially balancing these trade-offs.</p>
-<h3 id="performance-comparison"><a class="header" href="#performance-comparison">Performance Comparison</a></h3>
-<p>The choice of encoding significantly impacts performance depending on the constraint types used.</p>
-<h4 id="direct-encoding-better-for-equality-and-disequality"><a class="header" href="#direct-encoding-better-for-equality-and-disequality">Direct Encoding: Better for Equality and Disequality</a></h4>
-<p>Direct encoding excels in models dominated by <code>=</code> and <code>!=</code> constraints, such as graph coloring. It enables immediate unit propagation in the SAT solver, pruning values faster than bitwise reasoning.</p>
-<p><strong>Example: Graph Coloring</strong></p>
-<pre><code class="language-essence">find c1, c2, c3, c4, c5 : int(1..3)
-such that
-    c1 != c2, c1 != c3, c2 != c3, c2 != c4,
-    c3 != c4, c3 != c5, c4 != c5
+                        <h1 id="domains"><a class="header" href="#domains">Domains</a></h1>
+<h2 id="what-are-domains"><a class="header" href="#what-are-domains">What are Domains</a></h2>
+<p>Domains are essentially some collection of values that some type can inherit. In maths, there are a few very common domains such as the set of natural numbers or the empty set.</p>
+<p>The word ‘domain’ is <em>seemingly</em> used in multiple different contexts; in the original <a href="https://conjure.readthedocs.io/en/latest/essence.html">Conjure docs</a>, ‘domain’ is both used to describe high level ‘types’ (e.g. sets, matrices, sequences) and the collection inner atomic literals (i.e. booleans and integers). The trick is that a domain is both, and recursive in a sense where the atomic literals are the base case, and complex high-level types are domains composed of domains.</p>
+<h2 id="domains-in-essence-and-conjure-oxide"><a class="header" href="#domains-in-essence-and-conjure-oxide">Domains in Essence and Conjure-Oxide</a></h2>
+<p>Looking at <code>conjure-cp-core::ast::domains</code>, you can see that a <code>Domain</code> is an Enum, that is either <code>Ground</code> or <code>Unresolved</code> (this is discussed in more detail below). These themselves are both Enums that can be any one of the many complex types or simple types like booleans, integers, and the empty domain. The variants also have values, with the complex types often containing attribute structs and some ‘inner’ domain from which the complex type pulls it’s values.</p>
+<blockquote>
+<p>When defining a Set type, it may have attributes and an inner domain. For example, the domain <code>set (size 2) of int(1..3)</code> could have valid values like <code>{1,2}</code>, <code>{1,3}</code>, <code>{2,3}</code>. The ‘inner’ domain is <code>int(1..3)</code>, from which the values that make up the set are pulled.</p>
+</blockquote>
+<p>The <code>Domain</code> enum (which must either be <code>Ground</code> or <code>Unresolved</code>) has it’s value wrapped in a <code>ast::Moo</code> (titled as a pun on Cow, or Clone-on-Write) which ensures the Domain</p>
+<h2 id="ground-and-unresolved"><a class="header" href="#ground-and-unresolved">Ground and Unresolved</a></h2>
+<p>A ground domain is a domain that has set values. For example:</p>
+<pre><code>int(2..5)
+int(1, 5..8, 9)
+int(1..)
 </code></pre>
-<ul>
-<li><strong>Direct:</strong> ~0.55s Rewriting / 0.001s Solving</li>
-<li><strong>Log:</strong> ~1.61s Rewriting / 0.002s Solving</li>
-</ul>
-<h4 id="logarithmic-encoding-better-for-inequalities"><a class="header" href="#logarithmic-encoding-better-for-inequalities">Logarithmic Encoding: Better for Inequalities</a></h4>
-<p>Logarithmic encoding is superior for arithmetic and inequalities (<code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, <code>&gt;=</code>) over large or sparse domains. Binary bit-vectors result in a more compact representation and reduced overhead.</p>
-<p><strong>Example: Sparse Domain with Inequalities</strong></p>
-<pre><code class="language-essence">find x : int(1, 10, 20, 30, 40, 50)
-such that x &gt; 10
-</code></pre>
-<ul>
-<li><strong>Direct:</strong> ~1.24s Rewriting / 0.005s Solving</li>
-<li><strong>Log:</strong> ~0.07s Rewriting / 0.000s Solving</li>
-</ul>
+<p>An unresolved domain is a domain that does not have set values. For example, <code>int(1..n)</code>.</p>
+<h2 id="attributes"><a class="header" href="#attributes">Attributes</a></h2>
+<p>Domain attributes add a lot of the generality and power to Essence that simpler languages lack. In Essence Prime (a.k.a Essence’), if you wanted to capture the concept that some set has a variable size, you must have a large fixed-size collection wherein as the size varies, there are some slots that are tagged as out-of-bounds. In Essence, you can define a set domain <code>set (minSize 3, maxSize 5) ...</code> which handles this for you. This <code>size</code> field is an attribute.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../../developers-guide/architecture/lsp/tests.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../../developers-guide/architecture/types/creating-types.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../../developers-guide/architecture/sat-encoding/rule-types.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../../developers-guide/architecture/types/functions.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -239,11 +214,11 @@ such that x &gt; 10
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../../developers-guide/architecture/lsp/tests.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../../developers-guide/architecture/types/creating-types.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../../developers-guide/architecture/sat-encoding/rule-types.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../../developers-guide/architecture/types/functions.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

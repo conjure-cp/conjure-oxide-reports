@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-bcf5d2f5.js";
+            window.path_to_searchindex_js = "searchindex-f52b0048.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-3f1a2d08.js"></script>
+        <script src="toc-cc912de5.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -4394,12 +4394,32 @@ This guide outlines the process of creating support for those types to the AST. 
 <li>For the legacy parser this involves adding to <code>parse_model.rs</code> to parse the JSON output of Conjure’s parser.</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
+<h1 id="domains"><a class="header" href="#domains">Domains</a></h1>
+<h2 id="what-are-domains"><a class="header" href="#what-are-domains">What are Domains</a></h2>
+<p>Domains are essentially some collection of values that some type can inherit. In maths, there are a few very common domains such as the set of natural numbers or the empty set.</p>
+<p>The word ‘domain’ is <em>seemingly</em> used in multiple different contexts; in the original <a href="https://conjure.readthedocs.io/en/latest/essence.html">Conjure docs</a>, ‘domain’ is both used to describe high level ‘types’ (e.g. sets, matrices, sequences) and the collection inner atomic literals (i.e. booleans and integers). The trick is that a domain is both, and recursive in a sense where the atomic literals are the base case, and complex high-level types are domains composed of domains.</p>
+<h2 id="domains-in-essence-and-conjure-oxide"><a class="header" href="#domains-in-essence-and-conjure-oxide">Domains in Essence and Conjure-Oxide</a></h2>
+<p>Looking at <code>conjure-cp-core::ast::domains</code>, you can see that a <code>Domain</code> is an Enum, that is either <code>Ground</code> or <code>Unresolved</code> (this is discussed in more detail below). These themselves are both Enums that can be any one of the many complex types or simple types like booleans, integers, and the empty domain. The variants also have values, with the complex types often containing attribute structs and some ‘inner’ domain from which the complex type pulls it’s values.</p>
+<blockquote>
+<p>When defining a Set type, it may have attributes and an inner domain. For example, the domain <code>set (size 2) of int(1..3)</code> could have valid values like <code>{1,2}</code>, <code>{1,3}</code>, <code>{2,3}</code>. The ‘inner’ domain is <code>int(1..3)</code>, from which the values that make up the set are pulled.</p>
+</blockquote>
+<p>The <code>Domain</code> enum (which must either be <code>Ground</code> or <code>Unresolved</code>) has it’s value wrapped in a <code>ast::Moo</code> (titled as a pun on Cow, or Clone-on-Write) which ensures the Domain</p>
+<h2 id="ground-and-unresolved"><a class="header" href="#ground-and-unresolved">Ground and Unresolved</a></h2>
+<p>A ground domain is a domain that has set values. For example:</p>
+<pre><code>int(2..5)
+int(1, 5..8, 9)
+int(1..)
+</code></pre>
+<p>An unresolved domain is a domain that does not have set values. For example, <code>int(1..n)</code>.</p>
+<h2 id="attributes"><a class="header" href="#attributes">Attributes</a></h2>
+<p>Domain attributes add a lot of the generality and power to Essence that simpler languages lack. In Essence Prime (a.k.a Essence’), if you wanted to capture the concept that some set has a variable size, you must have a large fixed-size collection wherein as the size varies, there are some slots that are tagged as out-of-bounds. In Essence, you can define a set domain <code>set (minSize 3, maxSize 5) ...</code> which handles this for you. This <code>size</code> field is an attribute.</p>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="functions"><a class="header" href="#functions">Functions</a></h1>
 <h2 id="what-are-functions"><a class="header" href="#what-are-functions">What Are Functions</a></h2>
 <p>A function is a binary relation on two sets, from elements of a domain to elements of a codomain.</p>
 <p>Functions have attributes and two domains for the domain and codomain of its results. They are defined for both <code>GroundDomain</code> and <code>UnresolvedDomain</code> as <code>Function(FuncAttr, Moo&lt;GroundDomain&gt;, Moo&lt;GroundDomain&gt;)</code>.</p>
 <p>The result of a function is a list of tuples defined by the mappings. As such the <code>AbstractLiteral</code> for functions is defined <code>Function(Vec&lt;(T, T)&gt;)</code>. This AbstractLiteral type means that functions can also be represented explicitly.</p>
-<h2 id="attributes"><a class="header" href="#attributes">Attributes</a></h2>
+<h2 id="attributes-1"><a class="header" href="#attributes-1">Attributes</a></h2>
 <p>Functions contain three types of attributes: size, partiality and jectivity.</p>
 <p>Size attributes determine how many mappings the function is true for. Size attributes are converted to a <code>Range&lt;A&gt;</code> type in Conjure-Oxide. This size can be defined as:</p>
 <ul>
@@ -4432,7 +4452,7 @@ Jectivity is also stored as an Enum inside Conjure-Oxide.</p>
 <h2 id="what-are-multisets"><a class="header" href="#what-are-multisets">What Are Multisets</a></h2>
 <p>A multiset is a datatype for storing a set of objects where objects can occur more than once, but the ordering of objects does not matter.
 Multisets have attributes and a single domain. A multiset can be defined for both <code>GroundDomain</code> and <code>UnresolvedDomain</code>.</p>
-<h2 id="attributes-1"><a class="header" href="#attributes-1">Attributes</a></h2>
+<h2 id="attributes-2"><a class="header" href="#attributes-2">Attributes</a></h2>
 <ul>
 <li>A <strong>cardinality</strong> attribute, as a range; <code>size</code>, <code>minSize</code>, <code>maxSize</code>.</li>
 <li>An <strong>occurrence</strong> attribute, as a range; <code>minOccur</code>, <code>maxOccur</code>.</li>
@@ -4465,7 +4485,7 @@ find buzz: multiset (minSize 3) of int(1..10)   $ this is a lower bound, there i
 <p>A relation is effectively a set of tuples. The internal tuples can be of any arity and can have different internal domains, as long as every tuple in the relation has the same arity and domains. If a relation is binary we can also add additional attributes to define properties of the relation.</p>
 <p>Relations have attributes and a list of domains for inside the tuples. They are defined for both <code>GroundDomain</code> and <code>UnresolvedDomain</code> as <code>Relation(RelAttr, Vec&lt;GroundDomain&gt;)</code>.</p>
 <p>The result of a relation is a list of tuples. As such the <code>AbstractLiteral</code> for relations is defined <code>Relation(Vec&lt;Vec&lt;T&gt;&gt;)</code>. This AbstractLiteral type means that relations can also be represented explicitly.</p>
-<h2 id="attributes-2"><a class="header" href="#attributes-2">Attributes</a></h2>
+<h2 id="attributes-3"><a class="header" href="#attributes-3">Attributes</a></h2>
 <p>Relations contain two types of attributes: size and binary attributes.</p>
 <p>Size attributes determine how many tuples are in the relation. Size attributes are converted to a <code>Range&lt;A&gt;</code> type in Conjure-Oxide. This size can be defined as:</p>
 <ul>
@@ -4504,7 +4524,7 @@ For example: <code>r(_,1,_)</code> converts r from a 3-component relation to a 2
 <h1 id="sequences"><a class="header" href="#sequences">Sequences</a></h1>
 <h2 id="what-are-sequences"><a class="header" href="#what-are-sequences">What Are Sequences</a></h2>
 <p>A sequence is a datatype for storing a series of values, where values can occur multiple times and ordering is preserved. It differs from a <a href="https://github.com/conjure-cp/conjure-oxide/wiki/">matrix</a>, in that it can have defined attributes; i.e. you can define a sequence to have varying lengths, and to restrict what values it can draw from it’s inner domain.</p>
-<h2 id="attributes-3"><a class="header" href="#attributes-3">Attributes</a></h2>
+<h2 id="attributes-4"><a class="header" href="#attributes-4">Attributes</a></h2>
 <ul>
 <li>A <strong>cardinality</strong> attribute, as a range; <code>size</code>, <code>minSize</code>, <code>maxSize</code>.</li>
 <li>A <strong>jectivity</strong> attribute, with three options; <code>injective</code>, <code>surjective</code>, <code>bijective</code>.</li>
