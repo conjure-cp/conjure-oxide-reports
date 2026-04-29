@@ -9,7 +9,7 @@
 <a href=#9 id=9 data-nosnippet>9</a>
 <a href=#10 id=10 data-nosnippet>10</a><span class="attr">#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, Hash, Quine)]
 <a href=#11 id=11 data-nosnippet>11</a>#[path_prefix(conjure_cp::ast)]
-<a href=#12 id=12 data-nosnippet>12</a></span><span class="kw">pub struct </span>RecordValue&lt;T: AbstractLiteralValue&gt; {
+<a href=#12 id=12 data-nosnippet>12</a></span><span class="kw">pub struct </span>FieldValue&lt;T: AbstractLiteralValue&gt; {
 <a href=#13 id=13 data-nosnippet>13</a>    <span class="kw">pub </span>name: Name,
 <a href=#14 id=14 data-nosnippet>14</a>    <span class="kw">pub </span>value: T,
 <a href=#15 id=15 data-nosnippet>15</a>}
@@ -18,29 +18,29 @@
 <a href=#18 id=18 data-nosnippet>18</a>
 <a href=#19 id=19 data-nosnippet>19</a>// derive macro doesn't work as this has a generic type (for the same reasons as AbstractLiteral) ~nd60
 <a href=#20 id=20 data-nosnippet>20</a>
-<a href=#21 id=21 data-nosnippet>21</a></span><span class="kw">impl</span>&lt;T&gt; Uniplate <span class="kw">for </span>RecordValue&lt;T&gt;
+<a href=#21 id=21 data-nosnippet>21</a></span><span class="kw">impl</span>&lt;T&gt; Uniplate <span class="kw">for </span>FieldValue&lt;T&gt;
 <a href=#22 id=22 data-nosnippet>22</a><span class="kw">where
 <a href=#23 id=23 data-nosnippet>23</a>    </span>T: AbstractLiteralValue,
 <a href=#24 id=24 data-nosnippet>24</a>{
 <a href=#25 id=25 data-nosnippet>25</a>    <span class="kw">fn </span>uniplate(
 <a href=#26 id=26 data-nosnippet>26</a>        <span class="kw-2">&amp;</span><span class="self">self</span>,
 <a href=#27 id=27 data-nosnippet>27</a>    ) -&gt; (
-<a href=#28 id=28 data-nosnippet>28</a>        ::uniplate::Tree&lt;RecordValue&lt;T&gt;&gt;,
-<a href=#29 id=29 data-nosnippet>29</a>        Box&lt;<span class="kw">dyn </span>Fn(::uniplate::Tree&lt;RecordValue&lt;T&gt;&gt;) -&gt; RecordValue&lt;T&gt;&gt;,
+<a href=#28 id=28 data-nosnippet>28</a>        ::uniplate::Tree&lt;FieldValue&lt;T&gt;&gt;,
+<a href=#29 id=29 data-nosnippet>29</a>        Box&lt;<span class="kw">dyn </span>Fn(::uniplate::Tree&lt;FieldValue&lt;T&gt;&gt;) -&gt; FieldValue&lt;T&gt;&gt;,
 <a href=#30 id=30 data-nosnippet>30</a>    ) {
 <a href=#31 id=31 data-nosnippet>31</a>        <span class="kw">let </span>_name_copy = <span class="self">self</span>.name.clone();
-<a href=#32 id=32 data-nosnippet>32</a>        <span class="kw">let </span>(tree_value, ctx_value) = &lt;T <span class="kw">as </span>Biplate&lt;RecordValue&lt;T&gt;&gt;&gt;::biplate(<span class="kw-2">&amp;</span><span class="self">self</span>.value);
+<a href=#32 id=32 data-nosnippet>32</a>        <span class="kw">let </span>(tree_value, ctx_value) = &lt;T <span class="kw">as </span>Biplate&lt;FieldValue&lt;T&gt;&gt;&gt;::biplate(<span class="kw-2">&amp;</span><span class="self">self</span>.value);
 <a href=#33 id=33 data-nosnippet>33</a>        <span class="kw">let </span>children = ::uniplate::Tree::Many(::std::collections::VecDeque::from([
 <a href=#34 id=34 data-nosnippet>34</a>            tree_value,
 <a href=#35 id=35 data-nosnippet>35</a>            ::uniplate::Tree::Zero,
 <a href=#36 id=36 data-nosnippet>36</a>        ]));
-<a href=#37 id=37 data-nosnippet>37</a>        <span class="kw">let </span>ctx = Box::new(<span class="kw">move </span>|x: ::uniplate::Tree&lt;RecordValue&lt;T&gt;&gt;| {
+<a href=#37 id=37 data-nosnippet>37</a>        <span class="kw">let </span>ctx = Box::new(<span class="kw">move </span>|x: ::uniplate::Tree&lt;FieldValue&lt;T&gt;&gt;| {
 <a href=#38 id=38 data-nosnippet>38</a>            <span class="kw">let </span>::uniplate::Tree::Many(xs) = x <span class="kw">else </span>{
 <a href=#39 id=39 data-nosnippet>39</a>                <span class="macro">panic!</span>()
 <a href=#40 id=40 data-nosnippet>40</a>            };
 <a href=#41 id=41 data-nosnippet>41</a>            <span class="kw">let </span>tree_value = xs[<span class="number">0</span>].clone();
 <a href=#42 id=42 data-nosnippet>42</a>            <span class="kw">let </span>value = ctx_value(tree_value);
-<a href=#43 id=43 data-nosnippet>43</a>            RecordValue {
+<a href=#43 id=43 data-nosnippet>43</a>            FieldValue {
 <a href=#44 id=44 data-nosnippet>44</a>                name: _name_copy.clone(),
 <a href=#45 id=45 data-nosnippet>45</a>                value,
 <a href=#46 id=46 data-nosnippet>46</a>            }
@@ -51,7 +51,7 @@
 <a href=#51 id=51 data-nosnippet>51</a>
 <a href=#52 id=52 data-nosnippet>52</a><span class="comment">// want to be able to go anywhere U can go
 <a href=#53 id=53 data-nosnippet>53</a>// (I'll follow U wherever U will go)
-<a href=#54 id=54 data-nosnippet>54</a></span><span class="kw">impl</span>&lt;To, U&gt; Biplate&lt;To&gt; <span class="kw">for </span>RecordValue&lt;U&gt;
+<a href=#54 id=54 data-nosnippet>54</a></span><span class="kw">impl</span>&lt;To, U&gt; Biplate&lt;To&gt; <span class="kw">for </span>FieldValue&lt;U&gt;
 <a href=#55 id=55 data-nosnippet>55</a><span class="kw">where
 <a href=#56 id=56 data-nosnippet>56</a>    </span>U: AbstractLiteralValue + Biplate&lt;To&gt;,
 <a href=#57 id=57 data-nosnippet>57</a>    To: Uniplate,
@@ -59,26 +59,26 @@
 <a href=#59 id=59 data-nosnippet>59</a>    <span class="kw">fn </span>biplate(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; (uniplate::Tree&lt;To&gt;, Box&lt;<span class="kw">dyn </span>Fn(uniplate::Tree&lt;To&gt;) -&gt; <span class="self">Self</span>&gt;) {
 <a href=#60 id=60 data-nosnippet>60</a>        <span class="kw">use </span>uniplate::Tree;
 <a href=#61 id=61 data-nosnippet>61</a>
-<a href=#62 id=62 data-nosnippet>62</a>        <span class="kw">if </span>std::any::TypeId::of::&lt;To&gt;() == std::any::TypeId::of::&lt;RecordValue&lt;U&gt;&gt;() {
+<a href=#62 id=62 data-nosnippet>62</a>        <span class="kw">if </span>std::any::TypeId::of::&lt;To&gt;() == std::any::TypeId::of::&lt;FieldValue&lt;U&gt;&gt;() {
 <a href=#63 id=63 data-nosnippet>63</a>            <span class="comment">// To ==From =&gt; return One(self)
 <a href=#64 id=64 data-nosnippet>64</a>
 <a href=#65 id=65 data-nosnippet>65</a>            </span><span class="kw">unsafe </span>{
 <a href=#66 id=66 data-nosnippet>66</a>                <span class="comment">// SAFETY: asserted the type equality above
-<a href=#67 id=67 data-nosnippet>67</a>                </span><span class="kw">let </span>self_to = std::mem::transmute::&lt;<span class="kw-2">&amp;</span>RecordValue&lt;U&gt;, <span class="kw-2">&amp;</span>To&gt;(<span class="self">self</span>).clone();
+<a href=#67 id=67 data-nosnippet>67</a>                </span><span class="kw">let </span>self_to = std::mem::transmute::&lt;<span class="kw-2">&amp;</span>FieldValue&lt;U&gt;, <span class="kw-2">&amp;</span>To&gt;(<span class="self">self</span>).clone();
 <a href=#68 id=68 data-nosnippet>68</a>                <span class="kw">let </span>tree = Tree::One(self_to);
 <a href=#69 id=69 data-nosnippet>69</a>                <span class="kw">let </span>ctx = Box::new(<span class="kw">move </span>|x| {
 <a href=#70 id=70 data-nosnippet>70</a>                    <span class="kw">let </span>Tree::One(x) = x <span class="kw">else </span>{
 <a href=#71 id=71 data-nosnippet>71</a>                        <span class="macro">panic!</span>();
 <a href=#72 id=72 data-nosnippet>72</a>                    };
 <a href=#73 id=73 data-nosnippet>73</a>
-<a href=#74 id=74 data-nosnippet>74</a>                    std::mem::transmute::&lt;<span class="kw-2">&amp;</span>To, <span class="kw-2">&amp;</span>RecordValue&lt;U&gt;&gt;(<span class="kw-2">&amp;</span>x).clone()
+<a href=#74 id=74 data-nosnippet>74</a>                    std::mem::transmute::&lt;<span class="kw-2">&amp;</span>To, <span class="kw-2">&amp;</span>FieldValue&lt;U&gt;&gt;(<span class="kw-2">&amp;</span>x).clone()
 <a href=#75 id=75 data-nosnippet>75</a>                });
 <a href=#76 id=76 data-nosnippet>76</a>
 <a href=#77 id=77 data-nosnippet>77</a>                (tree, ctx)
 <a href=#78 id=78 data-nosnippet>78</a>            }
 <a href=#79 id=79 data-nosnippet>79</a>        } <span class="kw">else if </span>std::any::TypeId::of::&lt;To&gt;() == std::any::TypeId::of::&lt;Name&gt;() {
 <a href=#80 id=80 data-nosnippet>80</a>            <span class="comment">// return name field, as well as any names inside the value
-<a href=#81 id=81 data-nosnippet>81</a>            </span><span class="kw">let </span>self2: RecordValue&lt;U&gt; = <span class="self">self</span>.clone();
+<a href=#81 id=81 data-nosnippet>81</a>            </span><span class="kw">let </span>self2: FieldValue&lt;U&gt; = <span class="self">self</span>.clone();
 <a href=#82 id=82 data-nosnippet>82</a>            <span class="kw">let </span>f_name: Name = self2.name;
 <a href=#83 id=83 data-nosnippet>83</a>            <span class="kw">let </span>f_val: U = self2.value;
 <a href=#84 id=84 data-nosnippet>84</a>
@@ -108,7 +108,7 @@
 <a href=#108 id=108 data-nosnippet>108</a>                    <span class="kw">let </span>value = ctx_val(tree_val);
 <a href=#109 id=109 data-nosnippet>109</a>
 <a href=#110 id=110 data-nosnippet>110</a>                    <span class="comment">// reconstruct things
-<a href=#111 id=111 data-nosnippet>111</a>                    </span>RecordValue { name, value }
+<a href=#111 id=111 data-nosnippet>111</a>                    </span>FieldValue { name, value }
 <a href=#112 id=112 data-nosnippet>112</a>                });
 <a href=#113 id=113 data-nosnippet>113</a>
 <a href=#114 id=114 data-nosnippet>114</a>                (tree, ctx)
@@ -116,7 +116,7 @@
 <a href=#116 id=116 data-nosnippet>116</a>        } <span class="kw">else </span>{
 <a href=#117 id=117 data-nosnippet>117</a>            <span class="comment">// walk into To ignoring name field, as Name can only biplate into Name
 <a href=#118 id=118 data-nosnippet>118</a>
-<a href=#119 id=119 data-nosnippet>119</a>            </span><span class="kw">let </span>self2: RecordValue&lt;U&gt; = <span class="self">self</span>.clone();
+<a href=#119 id=119 data-nosnippet>119</a>            </span><span class="kw">let </span>self2: FieldValue&lt;U&gt; = <span class="self">self</span>.clone();
 <a href=#120 id=120 data-nosnippet>120</a>            <span class="kw">let </span>f_name: Name = self2.name;
 <a href=#121 id=121 data-nosnippet>121</a>            <span class="kw">let </span>f_val: U = self2.value;
 <a href=#122 id=122 data-nosnippet>122</a>
@@ -133,7 +133,7 @@
 <a href=#133 id=133 data-nosnippet>133</a>                <span class="kw">let </span>tree_val = xs[<span class="number">0</span>].clone();
 <a href=#134 id=134 data-nosnippet>134</a>
 <a href=#135 id=135 data-nosnippet>135</a>                <span class="comment">// reconstruct things
-<a href=#136 id=136 data-nosnippet>136</a>                </span>RecordValue {
+<a href=#136 id=136 data-nosnippet>136</a>                </span>FieldValue {
 <a href=#137 id=137 data-nosnippet>137</a>                    name: f_name.clone(),
 <a href=#138 id=138 data-nosnippet>138</a>                    value: ctx_val(tree_val),
 <a href=#139 id=139 data-nosnippet>139</a>                }

@@ -2,7 +2,7 @@
 <a href=#2 id=2 data-nosnippet>2</a><span class="kw">use </span><span class="kw">super</span>::name::Name;
 <a href=#3 id=3 data-nosnippet>3</a><span class="kw">use </span><span class="kw">super</span>::serde::{DefaultWithId, HasId, IdPtr, ObjId, PtrAsInner};
 <a href=#4 id=4 data-nosnippet>4</a><span class="kw">use </span>super::{
-<a href=#5 id=5 data-nosnippet>5</a>    DecisionVariable, DomainPtr, Expression, GroundDomain, HasDomain, Moo, RecordEntry, Reference,
+<a href=#5 id=5 data-nosnippet>5</a>    DecisionVariable, DomainPtr, Expression, FieldEntry, GroundDomain, HasDomain, Moo, Reference,
 <a href=#6 id=6 data-nosnippet>6</a>    ReturnType, Typeable,
 <a href=#7 id=7 data-nosnippet>7</a>};
 <a href=#8 id=8 data-nosnippet>8</a><span class="kw">use </span>parking_lot::{
@@ -265,19 +265,19 @@
 <a href=#265 id=265 data-nosnippet>265</a>    /// # Examples
 <a href=#266 id=266 data-nosnippet>266</a>    ///
 <a href=#267 id=267 data-nosnippet>267</a>    /// ```
-<a href=#268 id=268 data-nosnippet>268</a>    /// use conjure_cp_core::ast::{DeclarationPtr,Name,RecordEntry,Domain,Range};
+<a href=#268 id=268 data-nosnippet>268</a>    /// use conjure_cp_core::ast::{DeclarationPtr,Name,FieldEntry,Domain,Range};
 <a href=#269 id=269 data-nosnippet>269</a>    ///
 <a href=#270 id=270 data-nosnippet>270</a>    /// // create declaration for field A in `find rec: record {A: int(0..1), B: int(0..2)}`
 <a href=#271 id=271 data-nosnippet>271</a>    ///
-<a href=#272 id=272 data-nosnippet>272</a>    /// let field = RecordEntry {
+<a href=#272 id=272 data-nosnippet>272</a>    /// let field = FieldEntry {
 <a href=#273 id=273 data-nosnippet>273</a>    ///     name: Name::User("n".into()),
 <a href=#274 id=274 data-nosnippet>274</a>    ///     domain: Domain::int(vec![Range::Bounded(1,5)])
 <a href=#275 id=275 data-nosnippet>275</a>    /// };
 <a href=#276 id=276 data-nosnippet>276</a>    ///
 <a href=#277 id=277 data-nosnippet>277</a>    /// let declaration = DeclarationPtr::new_record_field(field);
 <a href=#278 id=278 data-nosnippet>278</a>    /// ```
-<a href=#279 id=279 data-nosnippet>279</a>    </span><span class="kw">pub fn </span>new_record_field(entry: RecordEntry) -&gt; DeclarationPtr {
-<a href=#280 id=280 data-nosnippet>280</a>        <span class="kw">let </span>kind = DeclarationKind::RecordField(entry.domain);
+<a href=#279 id=279 data-nosnippet>279</a>    </span><span class="kw">pub fn </span>new_record_field(entry: FieldEntry) -&gt; DeclarationPtr {
+<a href=#280 id=280 data-nosnippet>280</a>        <span class="kw">let </span>kind = DeclarationKind::Field(entry.domain);
 <a href=#281 id=281 data-nosnippet>281</a>        DeclarationPtr::new(entry.name, kind)
 <a href=#282 id=282 data-nosnippet>282</a>    }
 <a href=#283 id=283 data-nosnippet>283</a>
@@ -308,7 +308,7 @@
 <a href=#308 id=308 data-nosnippet>308</a>            DeclarationKind::Given(domain) =&gt; <span class="prelude-val">Some</span>(domain.clone()),
 <a href=#309 id=309 data-nosnippet>309</a>            DeclarationKind::Quantified(inner) =&gt; <span class="prelude-val">Some</span>(inner.domain.clone()),
 <a href=#310 id=310 data-nosnippet>310</a>            DeclarationKind::QuantifiedExpr(expr) =&gt; expr.domain_of(),
-<a href=#311 id=311 data-nosnippet>311</a>            DeclarationKind::RecordField(domain) =&gt; <span class="prelude-val">Some</span>(domain.clone()),
+<a href=#311 id=311 data-nosnippet>311</a>            DeclarationKind::Field(domain) =&gt; <span class="prelude-val">Some</span>(domain.clone()),
 <a href=#312 id=312 data-nosnippet>312</a>        }
 <a href=#313 id=313 data-nosnippet>313</a>    }
 <a href=#314 id=314 data-nosnippet>314</a>
@@ -594,7 +594,7 @@
 <a href=#594 id=594 data-nosnippet>594</a>            DeclarationKind::Given(<span class="kw">_</span>) =&gt; Category::Parameter,
 <a href=#595 id=595 data-nosnippet>595</a>            DeclarationKind::Quantified(..) =&gt; Category::Quantified,
 <a href=#596 id=596 data-nosnippet>596</a>            DeclarationKind::QuantifiedExpr(..) =&gt; Category::Quantified,
-<a href=#597 id=597 data-nosnippet>597</a>            DeclarationKind::RecordField(<span class="kw">_</span>) =&gt; Category::Bottom,
+<a href=#597 id=597 data-nosnippet>597</a>            DeclarationKind::Field(<span class="kw">_</span>) =&gt; Category::Bottom,
 <a href=#598 id=598 data-nosnippet>598</a>        }
 <a href=#599 id=599 data-nosnippet>599</a>    }
 <a href=#600 id=600 data-nosnippet>600</a>}
@@ -629,7 +629,7 @@
 <a href=#629 id=629 data-nosnippet>629</a>            DeclarationKind::Given(domain) =&gt; domain.return_type(),
 <a href=#630 id=630 data-nosnippet>630</a>            DeclarationKind::Quantified(inner) =&gt; inner.domain.return_type(),
 <a href=#631 id=631 data-nosnippet>631</a>            DeclarationKind::QuantifiedExpr(expr) =&gt; expr.return_type(),
-<a href=#632 id=632 data-nosnippet>632</a>            DeclarationKind::RecordField(domain) =&gt; domain.return_type(),
+<a href=#632 id=632 data-nosnippet>632</a>            DeclarationKind::Field(domain) =&gt; domain.return_type(),
 <a href=#633 id=633 data-nosnippet>633</a>        }
 <a href=#634 id=634 data-nosnippet>634</a>    }
 <a href=#635 id=635 data-nosnippet>635</a>}
@@ -746,11 +746,11 @@
 <a href=#746 id=746 data-nosnippet>746</a>                Box::new(<span class="kw">move </span>|x| DeclarationKind::DomainLetting(recons_domain(x))),
 <a href=#747 id=747 data-nosnippet>747</a>            )
 <a href=#748 id=748 data-nosnippet>748</a>        }
-<a href=#749 id=749 data-nosnippet>749</a>        DeclarationKind::RecordField(domain) =&gt; {
+<a href=#749 id=749 data-nosnippet>749</a>        DeclarationKind::Field(domain) =&gt; {
 <a href=#750 id=750 data-nosnippet>750</a>            <span class="kw">let </span>(tree, recons_domain) = biplate_domain_ptr_references(domain);
 <a href=#751 id=751 data-nosnippet>751</a>            (
 <a href=#752 id=752 data-nosnippet>752</a>                tree,
-<a href=#753 id=753 data-nosnippet>753</a>                Box::new(<span class="kw">move </span>|x| DeclarationKind::RecordField(recons_domain(x))),
+<a href=#753 id=753 data-nosnippet>753</a>                Box::new(<span class="kw">move </span>|x| DeclarationKind::Field(recons_domain(x))),
 <a href=#754 id=754 data-nosnippet>754</a>            )
 <a href=#755 id=755 data-nosnippet>755</a>        }
 <a href=#756 id=756 data-nosnippet>756</a>        DeclarationKind::ValueLetting(expression, domain) =&gt; {
@@ -903,9 +903,9 @@
 <a href=#903 id=903 data-nosnippet>903</a>    /// Unlike `ValueLetting`, this is not intended to represent a user-visible top-level `letting`.
 <a href=#904 id=904 data-nosnippet>904</a>    </span>TemporaryValueLetting(Expression),
 <a href=#905 id=905 data-nosnippet>905</a>
-<a href=#906 id=906 data-nosnippet>906</a>    <span class="doccomment">/// A named field inside a record type.
+<a href=#906 id=906 data-nosnippet>906</a>    <span class="doccomment">/// A named field inside a record / variant type.
 <a href=#907 id=907 data-nosnippet>907</a>    /// e.g. A, B in record{A: int(0..1), B: int(0..2)}
-<a href=#908 id=908 data-nosnippet>908</a>    </span>RecordField(DomainPtr),
+<a href=#908 id=908 data-nosnippet>908</a>    </span>Field(DomainPtr),
 <a href=#909 id=909 data-nosnippet>909</a>}
 <a href=#910 id=910 data-nosnippet>910</a>
 <a href=#911 id=911 data-nosnippet>911</a><span class="attr">#[serde_as]
