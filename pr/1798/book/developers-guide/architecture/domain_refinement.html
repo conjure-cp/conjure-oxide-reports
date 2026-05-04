@@ -37,7 +37,7 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../searchindex-ab27ce77.js";
+            window.path_to_searchindex_js = "../../searchindex-8cdbf4e0.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-80f3c401.js"></script>
@@ -193,8 +193,10 @@ Instead of being treated as a set of maximum size 1000, we can deduce that `b` h
 <p>Currently all expressions contain the domain of the result of the expression. The first task and a current roadblock would be to propagate this expression domain to the internal variables involved. Conjure-Oxide does not currently use the expression domains in any way when it comes to rewriting.</p>
 <p>A final roadblock for this project is how to test it. In specific cases, where you know a refinement has occurred, you can use Conjure-Oxide Pretty’s new expression-domains option to view all domains in the model. However, for a more comprehensive testing you need a large number of test cases. One consideration was using a LLM to generate these cases. As of Dec-2025 the free AI models included in APIs were not capable of doing this at scale.</p>
 <h2 id="what-has-been-done-so-far"><a class="header" href="#what-has-been-done-so-far">What Has Been Done So Far</a></h2>
+<p>To aid with explainability and debugging while tightening the domains, an option has been added to Conjure-Oxide Pretty to print out the domains of all expressions as a trace. This can be accessed using <code>--output-format=expression-domains</code> and when combined with custom tests can effectively test the domain refinement.</p>
 <p>Before work on the consistency algorithm could have began it was important that the domain of expressions is actually fully-tightened. This will allow for maximum inference. As such, all work up to this point has been focused on tightening the domains returned from the <code>Expression::domain_of()</code> function.</p>
 <h3 id="set-operators"><a class="header" href="#set-operators">Set Operators</a></h3>
+<p>The intersect and union set expressions have been tightened, such that both the domain and the set attributes which are returned are optimal.</p>
 <h3 id="function-operators"><a class="header" href="#function-operators">Function Operators</a></h3>
 <p>The operators on functions have a lot of potential to be tightened due to them resulting in sets and functions. These operators include <code>defined</code>, <code>range</code>, <code>imageSet</code>, <code>preimage</code>, and <code>restrict</code>. For a function domain we can infer information from both its attributes and the length of its domain and codomain.</p>
 <p>To understand this, consider the defined operator, which results in a set of all domain values defined for the function. This has the domain of a set containing the same domain as the function. However, we can infer a tighter set domain using set attributes. For this operator, the size attributes of the function directly map to the set. We consider the partiality and jectivity attributes.</p>
@@ -206,8 +208,6 @@ Instead of being treated as a set of maximum size 1000, we can deduce that `b` h
 </ul>
 <p>Whilst these conditions are specific to defined as an operator, similarly logic is applied to all other function operators. All partiality and jectivity inference is based around the length of the domain / codomain, and so can only be done if the domain is ground.</p>
 <p>There is however, one currently known limitation, so the results are not always completely minimal. We cannot guarantee a domain is ground and the lengths are known, so there are specific cases where we could infer simple bounds based on domain size, but the added complexity is not worth it in individual parts of the code. In these cases, the size is left as UnboundedR. Instead of adding these extra checks, I propose a separate small project could be to add the inferred domain size of a function as size attributes to that function, when the domain lengths are first known as ground. This means we do not need to separately check the domain size every time.</p>
-<h3 id="partition-operators"><a class="header" href="#partition-operators">Partition Operators</a></h3>
-<p>There are 5 operators for Partitions, three return sets (<code>Parts</code>, <code>Party</code>, <code>Participants</code>) and two return booleans (<code>Together</code>, <code>Apart</code>). The current implementations of these may be improved upon, and have just been added as a part of supporting the Partition type.</p>
 <h3 id="sequence-operators"><a class="header" href="#sequence-operators">Sequence Operators</a></h3>
 <p>There are 2 operators for Sequences (<code>Subsequence</code>, <code>Substring</code>), and booth return booleans. They are both of the form <code>s sub.. t</code>, where <code>s</code> must occur in <code>t</code>. You can conclude that either a <code>Subsequence</code> or <code>Substring</code> is definitively false if <code>s</code> is strictly larger than <code>t</code>, but as of writing this documentation there is no mechanism to ‘restrict’ the domain of a boolean to being strictly true or false.</p>
 <p>When it becomes possible to alter the domains of children of an expression, <code>s</code> and <code>t</code> may be able to trim each others domains. Take the following example:</p>
