@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-c83c281f.js";
+            window.path_to_searchindex_js = "searchindex-72ef2f11.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-4edf9945.js"></script>
+        <script src="toc-2344e88a.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -4502,12 +4502,48 @@ For example: <code>r(_,1,_)</code> converts r from a 3-component relation to a 2
 <h2 id="note-on-implementation-1"><a class="header" href="#note-on-implementation-1">Note on Implementation</a></h2>
 <p>Currently relations are defined within the AST of Conjure-Oxide and can be parsed with the ‘legacy’ parser. However, there is no support as of Apr-2026 for rewriting rules or solving.</p>
 <div style="break-before: page; page-break-before: always;"></div>
+<h1 id="partitions"><a class="header" href="#partitions">Partitions</a></h1>
+<h2 id="what-are-partitions"><a class="header" href="#what-are-partitions">What are Partitions</a></h2>
+<p>A partition is a datatype that splits some domain into parts. A good example of a partition in use is in the <a href="https://www.csplib.org/Problems/prob010/models/SocialGolfersProblem.essence.html">Social Golfers</a> problem (CSPLib.org, problem #10).</p>
+<h2 id="attributes-3"><a class="header" href="#attributes-3">Attributes</a></h2>
+<ul>
+<li>Number of Parts (as a range): <code>numParts</code>, <code>minNumParts</code>, <code>maxNumParts</code></li>
+<li>Cardinality of each Part (as a range): <code>partSize</code>, <code>minPartSize</code>, <code>maxPartSize</code></li>
+<li>Regularity (i.e. every part has the same cardinality): <code>regular</code></li>
+</ul>
+<p>For example:</p>
+<pre><code>find foo : partition (maxNumParts 3, partSize 1) from int(1..5) 
+$ ({1})                 i.e. 1 part of cardinality 1
+$ ... 
+$ ({2}, {4}, {5})       i.e. 3 parts of cardinality 3
+$ ({3}, {4}, {5})       i.e. 3 parts of cardinality 3
+
+find bar : partition (minNumParts 1, maxNumParts 3, minPartSize 2, maxPartSize 4, regular) from int(1..20)
+$ ({1, 2})                           i.e. 1 part of cadinality 2
+$ ({1,2,5}, {3,4,12}, {6,7,15})      i.e. 3 parts of cardinality 3
+$ 
+$ ({2,3}, {5})                       this would be invalid for two reasons: 
+$                                       &gt; it is not regular (different cardinalities)
+$                                       &gt; there is a minPartSize of 2, and one part has a cardinality of 1
+</code></pre>
+<h2 id="operators-3"><a class="header" href="#operators-3">Operators</a></h2>
+<ul>
+<li><code>apart</code>: test if a list of elements are not all contained in one part of the partition</li>
+<li><code>participants</code>: union of all parts of a partition</li>
+<li><code>party</code>: part of partition that contains specified element</li>
+<li><code>parts</code>: partition to its set of parts</li>
+<li><code>together</code>: test if a list of elements are all in the same part of the partition</li>
+</ul>
+<blockquote>
+<p>As of writing (26/04/2026): none of these Operators are implemented in conjure-oxide, partitions cannot be parsed using the native parser, and there is no support for rewriting or solving with partitions.</p>
+</blockquote>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="variants"><a class="header" href="#variants">Variants</a></h1>
 <h2 id="what-are-variants"><a class="header" href="#what-are-variants">What Are Variants</a></h2>
 <p>A variant domain stores key value domain pair fields. However, unlike a record, a variant literal can only use one of these fields at once. This field is referred to as active.</p>
 <p>Variants contain a list of fields, with domains, which they can take. They are defined for both <code>GroundDomain</code> and <code>UnresolvedDomain</code>, and stored as <code>Variant(Vec&lt;FieldEntry&gt;)</code>.</p>
 <p>The result of a variant is a single field value. As such the <code>AbstractLiteral</code> for variants is defined as <code>Variant(Moo&lt;FieldValue&lt;T&gt;&gt;)</code>. This AbstractLiteral type means variants can be represented explicitly.</p>
-<h2 id="operators-3"><a class="header" href="#operators-3">Operators</a></h2>
+<h2 id="operators-4"><a class="header" href="#operators-4">Operators</a></h2>
 <p>There is one special operator which is defined on only variants.</p>
 <ul>
 <li><code>Active(v, f)</code> - Returns whether field f is currently the field active in variant v.</li>
@@ -4519,11 +4555,11 @@ For example: <code>r(_,1,_)</code> converts r from a 3-component relation to a 2
 <h1 id="sequences"><a class="header" href="#sequences">Sequences</a></h1>
 <h2 id="what-are-sequences"><a class="header" href="#what-are-sequences">What Are Sequences</a></h2>
 <p>A sequence is a datatype for storing a series of values, where values can occur multiple times and ordering is preserved. It differs from a <a href="https://github.com/conjure-cp/conjure-oxide/wiki/">matrix</a>, in that it can have defined attributes; i.e. you can define a sequence to have varying lengths, and to restrict what values it can draw from it’s inner domain.</p>
-<h2 id="attributes-3"><a class="header" href="#attributes-3">Attributes</a></h2>
+<h2 id="attributes-4"><a class="header" href="#attributes-4">Attributes</a></h2>
 <p>Three <strong>cardinality</strong> attributes; <code>size</code>, <code>minSize</code>, <code>maxSize</code>.
 Three <strong>jectivity</strong> attributes; <code>injective</code>, <code>surjective</code>, <code>bijective</code>.</p>
 <p>Sequences <em>must</em> have either a <code>size</code> or <code>maxSize</code> cardinality attribute.</p>
-<h2 id="operators-4"><a class="header" href="#operators-4">Operators</a></h2>
+<h2 id="operators-5"><a class="header" href="#operators-5">Operators</a></h2>
 <p>There are two operators which are defined on sequences. These are represented as <code>Expressions</code> in Conjure-Oxide.</p>
 <ul>
 <li><code>subsequence</code>: does the sequence <code>s</code> appear in the same order in <code>t</code> (e.g. <code>s=1,2,3</code> and <code>t=1,3</code> are subsequences)</li>

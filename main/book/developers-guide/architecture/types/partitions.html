@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Booleans - Conjure Oxide</title>
+        <title>Partitions - Conjure Oxide</title>
 
 
         <!-- Custom HTML head -->
@@ -176,23 +176,51 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h2 id="sat-booleans"><a class="header" href="#sat-booleans">SAT Booleans</a></h2>
-<p>The most basic form of a constraint is a boolean expression. SAT solvers work with boolean variables, but require input in Conjunctive Normal Form (which will be referred to as CNF). This means that any boolean expression must be converted to a series of clauses composed entirely of atoms (true/false values or variables). Here’s an example:</p>
-<p>Original Expression:</p>
-<p>$$((A \land B) \to (C \lor \lnot D)) \land E$$</p>
-<p>In CNF:</p>
-<p>$$(\lnot A \lor \lnot B \lor C \lor \lnot D) \land (E)$$</p>
-<p>The simplest approach to this conversion is by repeatedly applying rules (De Morgan’s, double negation, distributivity, etc) until the expression is in CNF. This works well for smaller expressions but slows down massively when dealing with larger expressions (like the once generated when dealing with integers). To solve this, we use Tseytin transformations (see <a href="https://en.wikipedia.org/wiki/Tseytin_transformation">https://en.wikipedia.org/wiki/Tseytin_transformation</a>) - these transformations allow us to convert an operation straight into CNF by introducing new auxiliary variables. This method makes rule applications significantly faster but with the downside of producing longer CNF with more variables to solve to give to the solver. Modern SAT solvers, however, are very efficient and this extra performance cost is negligible compared to the time saved in conversion.</p>
+                        <h1 id="partitions"><a class="header" href="#partitions">Partitions</a></h1>
+<h2 id="what-are-partitions"><a class="header" href="#what-are-partitions">What are Partitions</a></h2>
+<p>A partition is a datatype that splits some domain into parts. A good example of a partition in use is in the <a href="https://www.csplib.org/Problems/prob010/models/SocialGolfersProblem.essence.html">Social Golfers</a> problem (CSPLib.org, problem #10).</p>
+<h2 id="attributes"><a class="header" href="#attributes">Attributes</a></h2>
+<ul>
+<li>Number of Parts (as a range): <code>numParts</code>, <code>minNumParts</code>, <code>maxNumParts</code></li>
+<li>Cardinality of each Part (as a range): <code>partSize</code>, <code>minPartSize</code>, <code>maxPartSize</code></li>
+<li>Regularity (i.e. every part has the same cardinality): <code>regular</code></li>
+</ul>
+<p>For example:</p>
+<pre><code>find foo : partition (maxNumParts 3, partSize 1) from int(1..5) 
+$ ({1})                 i.e. 1 part of cardinality 1
+$ ... 
+$ ({2}, {4}, {5})       i.e. 3 parts of cardinality 3
+$ ({3}, {4}, {5})       i.e. 3 parts of cardinality 3
+
+find bar : partition (minNumParts 1, maxNumParts 3, minPartSize 2, maxPartSize 4, regular) from int(1..20)
+$ ({1, 2})                           i.e. 1 part of cadinality 2
+$ ({1,2,5}, {3,4,12}, {6,7,15})      i.e. 3 parts of cardinality 3
+$ 
+$ ({2,3}, {5})                       this would be invalid for two reasons: 
+$                                       &gt; it is not regular (different cardinalities)
+$                                       &gt; there is a minPartSize of 2, and one part has a cardinality of 1
+</code></pre>
+<h2 id="operators"><a class="header" href="#operators">Operators</a></h2>
+<ul>
+<li><code>apart</code>: test if a list of elements are not all contained in one part of the partition</li>
+<li><code>participants</code>: union of all parts of a partition</li>
+<li><code>party</code>: part of partition that contains specified element</li>
+<li><code>parts</code>: partition to its set of parts</li>
+<li><code>together</code>: test if a list of elements are all in the same part of the partition</li>
+</ul>
+<blockquote>
+<p>As of writing (26/04/2026): none of these Operators are implemented in conjure-oxide, partitions cannot be parsed using the native parser, and there is no support for rewriting or solving with partitions.</p>
+</blockquote>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../../developers-guide/architecture/sat-encoding/creating-transformation-rules.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../../developers-guide/architecture/types/relations.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../../developers-guide/architecture/sets/vertical-rules.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../../developers-guide/architecture/types/variants.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -202,11 +230,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../../developers-guide/architecture/sat-encoding/creating-transformation-rules.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../../developers-guide/architecture/types/relations.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../../developers-guide/architecture/sets/vertical-rules.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../../developers-guide/architecture/types/variants.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>
