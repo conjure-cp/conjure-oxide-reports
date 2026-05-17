@@ -37,10 +37,10 @@
             const path_to_root = "../../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../../searchindex-2be5b128.js";
+            window.path_to_searchindex_js = "../../../searchindex-204a0e1e.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../../toc-80f3c401.js"></script>
+        <script src="../../../toc-9a01e759.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -181,10 +181,21 @@
 <p>A multiset is a datatype for storing a set of objects where objects can occur more than once, but the ordering of objects does not matter.
 Multisets have attributes and a single domain. A multiset can be defined for both <code>GroundDomain</code> and <code>UnresolvedDomain</code>.</p>
 <h2 id="attributes"><a class="header" href="#attributes">Attributes</a></h2>
-<p>Three <strong>cardinality</strong> attributes; <code>size</code>, <code>minSize</code>, <code>maxSize</code>.
-Two <strong>occurrence</strong> attributes; <code>minOccur</code>, <code>maxOccur</code>.</p>
+<ul>
+<li>A <strong>cardinality</strong> attribute, as a range; <code>size</code>, <code>minSize</code>, <code>maxSize</code>.</li>
+<li>An <strong>occurrence</strong> attribute, as a range; <code>minOccur</code>, <code>maxOccur</code>.</li>
+</ul>
 <p>In the original conjure implementation, a multiset was <em>infinite</em> without <code>size</code>, <code>maxSize</code>, or <code>maxOccur</code>.
 In the new conjure-oxide implementation, a variable’s domain is <em>ground</em> if it is fully-bounded (i.e. has a <code>minSize</code> and <code>maxSize</code>).</p>
+<pre><code>$ Valid
+find foo: multiset (maxSize 5, minOccur 2) of int(1..10)
+find bar: multiset (size 3) of int(1..4)
+
+
+$ Invalid
+find fizz: multiset of int(1..10)               $ there must be a upper-bounded size attribute
+find buzz: multiset (minSize 3) of int(1..10)   $ this is a lower bound, there is no upper bound on the size attribute
+</code></pre>
 <h2 id="operators"><a class="header" href="#operators">Operators</a></h2>
 <p>There are four operators which are defined on functions. These are represented as <code>Expressions</code> in Conjure-Oxide.</p>
 <ul>
@@ -193,6 +204,9 @@ In the new conjure-oxide implementation, a variable’s domain is <em>ground</em
 <li><code>min(m)</code> - largest element in ordered multiset <code>m</code></li>
 <li><code>freq(m,e)</code> - counts occurrences of element <code>e</code> in multiset <code>m</code></li>
 </ul>
+<blockquote>
+<p>As of 29th April 2026, <code>Min</code> and <code>Max</code> have been added as Expressions, but <code>Hist</code> and <code>Freq</code> have not. There is no support for rewriting rules or solving.</p>
+</blockquote>
 
                     </main>
 
