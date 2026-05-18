@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../searchindex-b58aea65.js";
+            window.path_to_searchindex_js = "../../searchindex-5e7b8a83.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-dfef675a.js"></script>
+        <script src="../../toc-d34621ed.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -184,7 +184,7 @@ created: 31-03-25
 <p>Conjure Oxide supports Linux and Mac.</p>
 <p>Windows users should install <a href="https://learn.microsoft.com/en-us/windows/wsl/setup/environment#set-up-your-linux-username-and-password">WSL</a> and follow the Linux (Ubuntu) instructions below:</p>
 <details><summary><b>Linux (Debian/Ubuntu)</b></summary>
-<p><strong>The following software is required:</strong></p>
+<p>The following software is required:</p>
 <ul>
 <li>The latest version of stable Rust, installed using <a href="https://www.rust-lang.org/tools/install">rustup</a>.</li>
 <li>A C/C++ compilation toolchain and libraries:
@@ -200,6 +200,7 @@ created: 31-03-25
 <li><strong>Ensure that Conjure is placed early in your PATH to avoid conflicts with ImageMagick’s <code>conjure</code> command!</strong></li>
 </ul>
 </li>
+<li>Z3, one of the solver backends, requires a separate install. Using a package installer (e.g. <code>apt</code>), install Z3.</li>
 </ul>
 </details>
 <details><summary><b>MacOS</b></summary>
@@ -209,7 +210,11 @@ created: 31-03-25
 <li>an XCode Command Line Tools installation (installable using <code>xcode-select --install</code>)</li>
 <li>CMake: <code>brew install cmake</code> (for SAT solving)</li>
 <li><a href="https://github.com/conjure-cp/conjure">Conjure</a>.</li>
+<li>Z3, one of the solver backends, requires a separate install. Using a package installer, install Z3 (e.g. for <code>Homebrew</code> run <code>brew install z3</code>).</li>
 </ul>
+<blockquote>
+<p>If you are having issues with Z3, you may need to update <code>~/.cargo/config.toml</code> to ensure the <code>Z3_LIBRARY_PATH_OVERRIDE</code> and <code>Z3_SYS_Z3_HEADER</code> environment variables are pointed to the right library path and <code>z3.h</code> file that you installed.</p>
+</blockquote>
 </details>
 <details><summary><b>St Andrews CS Linux Systems</b></summary>
 <ol>
@@ -223,7 +228,17 @@ created: 31-03-25
 <li>By default, <code>rustup</code> installs to your local home directory; therefore, you may need to re-install <code>rustup</code> and Rust after restarting a machine or when using a new lab PC.</li>
 </ul>
 </li>
+<li>
+<p>Install <code>z3</code>, one of the solver backends. You may have to build it from <a href="https://github.com/Z3Prover/z3">source</a>, and then add the binary to your path.</p>
+</li>
 </ol>
+<blockquote>
+<p>To add a binary to your PATH in a way that persists every time you log out, run:</p>
+</blockquote>
+<pre><code>mkdir -p /cs/home/$USER/.paths.d`
+echo ~/Documents/... &gt; /cs/home/$USER/.paths.d/z3
+// where the "..." is the path to your compiled z3 binary
+</code></pre>
 </details>
 <hr>
 <h3 id="improving-compilation-speed"><a class="header" href="#improving-compilation-speed">Improving Compilation Speed</a></h3>

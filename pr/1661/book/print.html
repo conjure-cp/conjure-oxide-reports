@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-b58aea65.js";
+            window.path_to_searchindex_js = "searchindex-5e7b8a83.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-dfef675a.js"></script>
+        <script src="toc-d34621ed.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -530,7 +530,7 @@ created: 31-03-25
 <p>Conjure Oxide supports Linux and Mac.</p>
 <p>Windows users should install <a href="https://learn.microsoft.com/en-us/windows/wsl/setup/environment#set-up-your-linux-username-and-password">WSL</a> and follow the Linux (Ubuntu) instructions below:</p>
 <details><summary><b>Linux (Debian/Ubuntu)</b></summary>
-<p><strong>The following software is required:</strong></p>
+<p>The following software is required:</p>
 <ul>
 <li>The latest version of stable Rust, installed using <a href="https://www.rust-lang.org/tools/install">rustup</a>.</li>
 <li>A C/C++ compilation toolchain and libraries:
@@ -546,6 +546,7 @@ created: 31-03-25
 <li><strong>Ensure that Conjure is placed early in your PATH to avoid conflicts with ImageMagick’s <code>conjure</code> command!</strong></li>
 </ul>
 </li>
+<li>Z3, one of the solver backends, requires a separate install. Using a package installer (e.g. <code>apt</code>), install Z3.</li>
 </ul>
 </details>
 <details><summary><b>MacOS</b></summary>
@@ -555,7 +556,11 @@ created: 31-03-25
 <li>an XCode Command Line Tools installation (installable using <code>xcode-select --install</code>)</li>
 <li>CMake: <code>brew install cmake</code> (for SAT solving)</li>
 <li><a href="https://github.com/conjure-cp/conjure">Conjure</a>.</li>
+<li>Z3, one of the solver backends, requires a separate install. Using a package installer, install Z3 (e.g. for <code>Homebrew</code> run <code>brew install z3</code>).</li>
 </ul>
+<blockquote>
+<p>If you are having issues with Z3, you may need to update <code>~/.cargo/config.toml</code> to ensure the <code>Z3_LIBRARY_PATH_OVERRIDE</code> and <code>Z3_SYS_Z3_HEADER</code> environment variables are pointed to the right library path and <code>z3.h</code> file that you installed.</p>
+</blockquote>
 </details>
 <details><summary><b>St Andrews CS Linux Systems</b></summary>
 <ol>
@@ -569,7 +574,17 @@ created: 31-03-25
 <li>By default, <code>rustup</code> installs to your local home directory; therefore, you may need to re-install <code>rustup</code> and Rust after restarting a machine or when using a new lab PC.</li>
 </ul>
 </li>
+<li>
+<p>Install <code>z3</code>, one of the solver backends. You may have to build it from <a href="https://github.com/Z3Prover/z3">source</a>, and then add the binary to your path.</p>
+</li>
 </ol>
+<blockquote>
+<p>To add a binary to your PATH in a way that persists every time you log out, run:</p>
+</blockquote>
+<pre><code>mkdir -p /cs/home/$USER/.paths.d`
+echo ~/Documents/... &gt; /cs/home/$USER/.paths.d/z3
+// where the "..." is the path to your compiled z3 binary
+</code></pre>
 </details>
 <hr>
 <h3 id="improving-compilation-speed"><a class="header" href="#improving-compilation-speed">Improving Compilation Speed</a></h3>
@@ -4379,7 +4394,7 @@ fn tseitin_and(expr: &amp;Expression) -&gt; Result&lt;Expression, RuleApplicatio
 <p><em>This section had been taken from the ‘Expression rewriting, Rules and RuleSets’ page of the conjure-oxide wiki</em></p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="creating-types-guide"><a class="header" href="#creating-types-guide">Creating Types Guide</a></h1>
-<p>Currently Conjure-Oxide does not have any support for Essence’s sequences, partitions or variants.
+<p>Currently Conjure-Oxide does not have any support for Essence’s partitions.
 This guide outlines the process of creating support for those types to the AST. This does not currently cover rewriting rules or solving.</p>
 <h2 id="creating-the-type"><a class="header" href="#creating-the-type">Creating the Type</a></h2>
 <ul>
@@ -4394,12 +4409,55 @@ This guide outlines the process of creating support for those types to the AST. 
 <li>For the legacy parser this involves adding to <code>parse_model.rs</code> to parse the JSON output of Conjure’s parser.</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
+<h1 id="domains"><a class="header" href="#domains">Domains</a></h1>
+<h2 id="what-are-domains-and-types"><a class="header" href="#what-are-domains-and-types">What are Domains and Types</a></h2>
+<p>A <strong>Domain</strong> is the discrete and finite set of values that a variable or expression can take. A <strong>Type</strong> is a more general description about some collection. The simplest domains are <strong>Concrete</strong> domains: <code>empty</code>, <code>boolean</code>, <code>int(min..max)</code>. <strong>Abstract</strong> domains use some high-level types (such as a <code>Set</code>, <code>Matrix</code>, etc) to instantiate a domain where the objects of the domain contain more objects. These objects are called <strong>Literals</strong>; a literal is <em>one</em> specific value taken from a domain.</p>
+<p>In the original language description, found in the <a href="https://conjure.readthedocs.io/en/latest/essence.html">Conjure Docs</a></p>
+<pre><code>Domain := "bool"
+        | "int" list(Range, ",", "()")
+        | "int" "(" Expression ")"
+        | Name list(Range, ",", "()") # the Name refers to an enumerated type
+        | Name                        # the Name refers to an unnamed type
+        | "tuple" list(Domain, ",", "()")
+        | "record" list(NameDomain, ",", "{}")
+        | "variant" list(NameDomain, ",", "{}")
+        | "matrix indexed by" list(Domain, ",", "[]") "of" Domain
+        | "set" list(Attribute, ",", "()") "of" Domain
+        | "mset" list(Attribute, ",", "()") "of" Domain
+        | "function" list(Attribute, ",", "()") Domain "--&gt;" Domain
+        | "sequence" list(Attribute, ",", "()") "of" Domain
+        | "relation" list(Attribute, ",", "()") "of" list(Domain, "*", "()")
+        | "partition" list(Attribute, ",", "()") "from" Domain
+
+Range := Expression
+       | Expression ".."
+       | ".." Expression
+       | Expression ".." Expression
+
+Attribute := Name
+           | Name Expression
+
+NameDomain := Name ":" Domain
+</code></pre>
+<h2 id="ground-and-unresolved"><a class="header" href="#ground-and-unresolved">Ground and Unresolved</a></h2>
+<p>Looking at <code>conjure-cp-core::ast::domains</code>, there is a <code>Domain</code> Enum, with variants <code>Ground</code> and <code>Unresolved</code>.</p>
+<ul>
+<li>An <code>Unresolved</code> domain is a domain whose bounds are tied to an expression that has not been evaluated. For example <code>x: int(1..(2+1))</code> and <code>x: int(1..n)</code> are both unresolved.</li>
+<li>A <code>Ground</code> domain is a domain entirely composed of literals. For example: <code>int(2..5)</code>, <code>set (maxSize 2) of int(1..3)</code>.</li>
+</ul>
+<h2 id="attributes"><a class="header" href="#attributes">Attributes</a></h2>
+<p>Abstract domains tend to also have attributes defined on them, which often restricts the possible values of the domain.</p>
+<blockquote>
+<p>When defining a Set type, it may have attributes and an inner domain. For example, the domain <code>set (size 2) of int(1..3)</code> could have valid values like <code>{1,2}</code>, <code>{1,3}</code>, <code>{2,3}</code>. The ‘inner’ domain is <code>int(1..3)</code>, from which the values that make up the set are pulled.</p>
+</blockquote>
+<p>The most common attribute is cardinality (which restricts the range objects in an object), but they are type-specific and there is a large variety.</p>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="functions"><a class="header" href="#functions">Functions</a></h1>
 <h2 id="what-are-functions"><a class="header" href="#what-are-functions">What Are Functions</a></h2>
 <p>A function is a binary relation on two sets, from elements of a domain to elements of a codomain.</p>
 <p>Functions have attributes and two domains for the domain and codomain of its results. They are defined for both <code>GroundDomain</code> and <code>UnresolvedDomain</code> as <code>Function(FuncAttr, Moo&lt;GroundDomain&gt;, Moo&lt;GroundDomain&gt;)</code>.</p>
 <p>The result of a function is a list of tuples defined by the mappings. As such the <code>AbstractLiteral</code> for functions is defined <code>Function(Vec&lt;(T, T)&gt;)</code>. This AbstractLiteral type means that functions can also be represented explicitly.</p>
-<h2 id="attributes"><a class="header" href="#attributes">Attributes</a></h2>
+<h2 id="attributes-1"><a class="header" href="#attributes-1">Attributes</a></h2>
 <p>Functions contain three types of attributes: size, partiality and jectivity.</p>
 <p>Size attributes determine how many mappings the function is true for. Size attributes are converted to a <code>Range&lt;A&gt;</code> type in Conjure-Oxide. This size can be defined as:</p>
 <ul>
@@ -4432,11 +4490,22 @@ Jectivity is also stored as an Enum inside Conjure-Oxide.</p>
 <h2 id="what-are-multisets"><a class="header" href="#what-are-multisets">What Are Multisets</a></h2>
 <p>A multiset is a datatype for storing a set of objects where objects can occur more than once, but the ordering of objects does not matter.
 Multisets have attributes and a single domain. A multiset can be defined for both <code>GroundDomain</code> and <code>UnresolvedDomain</code>.</p>
-<h2 id="attributes-1"><a class="header" href="#attributes-1">Attributes</a></h2>
-<p>Three <strong>cardinality</strong> attributes; <code>size</code>, <code>minSize</code>, <code>maxSize</code>.
-Two <strong>occurrence</strong> attributes; <code>minOccur</code>, <code>maxOccur</code>.</p>
+<h2 id="attributes-2"><a class="header" href="#attributes-2">Attributes</a></h2>
+<ul>
+<li>A <strong>cardinality</strong> attribute, as a range; <code>size</code>, <code>minSize</code>, <code>maxSize</code>.</li>
+<li>An <strong>occurrence</strong> attribute, as a range; <code>minOccur</code>, <code>maxOccur</code>.</li>
+</ul>
 <p>In the original conjure implementation, a multiset was <em>infinite</em> without <code>size</code>, <code>maxSize</code>, or <code>maxOccur</code>.
 In the new conjure-oxide implementation, a variable’s domain is <em>ground</em> if it is fully-bounded (i.e. has a <code>minSize</code> and <code>maxSize</code>).</p>
+<pre><code>$ Valid
+find foo: multiset (maxSize 5, minOccur 2) of int(1..10)
+find bar: multiset (size 3) of int(1..4)
+
+
+$ Invalid
+find fizz: multiset of int(1..10)               $ there must be a upper-bounded size attribute
+find buzz: multiset (minSize 3) of int(1..10)   $ this is a lower bound, there is no upper bound on the size attribute
+</code></pre>
 <h2 id="operators-1"><a class="header" href="#operators-1">Operators</a></h2>
 <p>There are four operators which are defined on functions. These are represented as <code>Expressions</code> in Conjure-Oxide.</p>
 <ul>
@@ -4445,13 +4514,16 @@ In the new conjure-oxide implementation, a variable’s domain is <em>ground</em
 <li><code>min(m)</code> - largest element in ordered multiset <code>m</code></li>
 <li><code>freq(m,e)</code> - counts occurrences of element <code>e</code> in multiset <code>m</code></li>
 </ul>
+<blockquote>
+<p>As of 29th April 2026, <code>Min</code> and <code>Max</code> have been added as Expressions, but <code>Hist</code> and <code>Freq</code> have not. There is no support for rewriting rules or solving.</p>
+</blockquote>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="relations"><a class="header" href="#relations">Relations</a></h1>
 <h2 id="what-are-relations"><a class="header" href="#what-are-relations">What Are Relations</a></h2>
 <p>A relation is effectively a set of tuples. The internal tuples can be of any arity and can have different internal domains, as long as every tuple in the relation has the same arity and domains. If a relation is binary we can also add additional attributes to define properties of the relation.</p>
 <p>Relations have attributes and a list of domains for inside the tuples. They are defined for both <code>GroundDomain</code> and <code>UnresolvedDomain</code> as <code>Relation(RelAttr, Vec&lt;GroundDomain&gt;)</code>.</p>
 <p>The result of a relation is a list of tuples. As such the <code>AbstractLiteral</code> for relations is defined <code>Relation(Vec&lt;Vec&lt;T&gt;&gt;)</code>. This AbstractLiteral type means that relations can also be represented explicitly.</p>
-<h2 id="attributes-2"><a class="header" href="#attributes-2">Attributes</a></h2>
+<h2 id="attributes-3"><a class="header" href="#attributes-3">Attributes</a></h2>
 <p>Relations contain two types of attributes: size and binary attributes.</p>
 <p>Size attributes determine how many tuples are in the relation. Size attributes are converted to a <code>Range&lt;A&gt;</code> type in Conjure-Oxide. This size can be defined as:</p>
 <ul>
@@ -4486,6 +4558,86 @@ For example: <code>r(_,1,_)</code> converts r from a 3-component relation to a 2
 </ul>
 <h2 id="note-on-implementation-1"><a class="header" href="#note-on-implementation-1">Note on Implementation</a></h2>
 <p>Currently relations are defined within the AST of Conjure-Oxide and can be parsed with the ‘legacy’ parser. However, there is no support as of Apr-2026 for rewriting rules or solving.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="partitions"><a class="header" href="#partitions">Partitions</a></h1>
+<h2 id="what-are-partitions"><a class="header" href="#what-are-partitions">What are Partitions</a></h2>
+<p>A partition is a datatype that splits some domain into parts. A good example of a partition in use is in the <a href="https://www.csplib.org/Problems/prob010/models/SocialGolfersProblem.essence.html">Social Golfers</a> problem (CSPLib.org, problem #10).</p>
+<h2 id="attributes-4"><a class="header" href="#attributes-4">Attributes</a></h2>
+<ul>
+<li>Number of Parts (as a range): <code>numParts</code>, <code>minNumParts</code>, <code>maxNumParts</code></li>
+<li>Cardinality of each Part (as a range): <code>partSize</code>, <code>minPartSize</code>, <code>maxPartSize</code></li>
+<li>Regularity (i.e. every part has the same cardinality): <code>regular</code></li>
+</ul>
+<p>For example:</p>
+<pre><code>find foo : partition (maxNumParts 3, partSize 1) from int(1..5) 
+$ ({1})                 i.e. 1 part of cardinality 1
+$ ... 
+$ ({2}, {4}, {5})       i.e. 3 parts of cardinality 3
+$ ({3}, {4}, {5})       i.e. 3 parts of cardinality 3
+
+find bar : partition (minNumParts 1, maxNumParts 3, minPartSize 2, maxPartSize 4, regular) from int(1..20)
+$ ({1, 2})                           i.e. 1 part of cadinality 2
+$ ({1,2,5}, {3,4,12}, {6,7,15})      i.e. 3 parts of cardinality 3
+$ 
+$ ({2,3}, {5})                       this would be invalid for two reasons: 
+$                                       &gt; it is not regular (different cardinalities)
+$                                       &gt; there is a minPartSize of 2, and one part has a cardinality of 1
+</code></pre>
+<h2 id="operators-3"><a class="header" href="#operators-3">Operators</a></h2>
+<ul>
+<li><code>apart</code>: test if a list of elements are not all contained in one part of the partition</li>
+<li><code>participants</code>: union of all parts of a partition</li>
+<li><code>party</code>: part of partition that contains specified element</li>
+<li><code>parts</code>: partition to its set of parts</li>
+<li><code>together</code>: test if a list of elements are all in the same part of the partition</li>
+</ul>
+<blockquote>
+<p>As of writing (26/04/2026): none of these Operators are implemented in conjure-oxide, partitions cannot be parsed using the native parser, and there is no support for rewriting or solving with partitions.</p>
+</blockquote>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="variants"><a class="header" href="#variants">Variants</a></h1>
+<h2 id="what-are-variants"><a class="header" href="#what-are-variants">What Are Variants</a></h2>
+<p>A variant domain stores key value domain pair fields. However, unlike a record, a variant literal can only use one of these fields at once. This field is referred to as active.</p>
+<p>Variants contain a list of fields, with domains, which they can take. They are defined for both <code>GroundDomain</code> and <code>UnresolvedDomain</code>, and stored as <code>Variant(Vec&lt;FieldEntry&gt;)</code>.</p>
+<p>The result of a variant is a single field value. As such the <code>AbstractLiteral</code> for variants is defined as <code>Variant(Moo&lt;FieldValue&lt;T&gt;&gt;)</code>. This AbstractLiteral type means variants can be represented explicitly.</p>
+<h2 id="operators-4"><a class="header" href="#operators-4">Operators</a></h2>
+<p>There is one special operator which is defined on only variants.</p>
+<ul>
+<li><code>Active(v, f)</code> - Returns whether field f is currently the field active in variant v.</li>
+</ul>
+<p>Variants can also be indexed, which makes use of Conjure-Oxide’s <code>UnsafeIndex</code> and <code>SafeIndex</code>.</p>
+<h2 id="note-on-implementation-2"><a class="header" href="#note-on-implementation-2">Note on Implementation</a></h2>
+<p>Currently variants are defined within the AST of Conjure-Oxide and can be parsed with the ‘legacy’ parser. However, there is no support as of Apr-2026 for rewriting rules or solving.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="sequences"><a class="header" href="#sequences">Sequences</a></h1>
+<h2 id="what-are-sequences"><a class="header" href="#what-are-sequences">What Are Sequences</a></h2>
+<p>A sequence is a datatype for storing a series of values, where values can occur multiple times and ordering is preserved. It differs from a <a href="https://github.com/conjure-cp/conjure-oxide/wiki/">matrix</a>, in that it can have defined attributes; i.e. you can define a sequence to have varying lengths, and to restrict what values it can draw from it’s inner domain.</p>
+<h2 id="attributes-5"><a class="header" href="#attributes-5">Attributes</a></h2>
+<ul>
+<li>A <strong>cardinality</strong> attribute, as a range; <code>size</code>, <code>minSize</code>, <code>maxSize</code>.</li>
+<li>A <strong>jectivity</strong> attribute, with three options; <code>injective</code>, <code>surjective</code>, <code>bijective</code>.</li>
+</ul>
+<p>Sequences <em>must</em> have either a <code>size</code> or <code>maxSize</code> cardinality attribute.</p>
+<p>The cardinality attribute is used with some value (i.e. <code>size 4</code>), whereas the jectivity attribute is used by itself.
+For example;</p>
+<pre><code>$ Valid
+find foo: sequence of int(1..5)
+find bar: sequence (size 5, surjective) of int(1..5)
+find fizz: sequence (minSize 2, maxSize 7, injective) of int(1..10)
+find buzz: sequence (bijective) of int(1..5)
+
+$ Syntactically Invalid
+find biff: sequence (minSize 3, size 4) of int(2..7) $ Cardinality attribute cannot be single and not single
+</code></pre>
+<h2 id="operators-5"><a class="header" href="#operators-5">Operators</a></h2>
+<p>There are two operators which are defined on sequences. These are represented as <code>Expressions</code> in Conjure-Oxide.</p>
+<ul>
+<li><code>subsequence</code>: does the sequence <code>s</code> appear in the same order in <code>t</code> (e.g. <code>s=1,2,3</code> and <code>t=1,3</code> are subsequences)</li>
+<li><code>substring</code>: does the sequence <code>s</code> appear in the same order <em>and</em> contiguously in <code>t</code> (e.g. <code>s=1,2</code> is a substring of <code>t=1,2,3</code> )</li>
+</ul>
+<blockquote>
+<p>As of writing in April 2026, there is no support for rewriting rules or solving.</p>
+</blockquote>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="testing-2"><a class="header" href="#testing-2">Testing</a></h1>
 <h2 id="types-of-tests"><a class="header" href="#types-of-tests">Types of Tests</a></h2>
