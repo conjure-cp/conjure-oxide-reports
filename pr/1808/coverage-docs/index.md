@@ -2,7 +2,7 @@
 
 **conjure-cp:** 0% with examples, 25% documented -- 0/1/4
 **conjure-cp-cli:** 0% with examples, 35% documented -- 0/48/137
-**conjure-cp-core:** 3% with examples, 48% documented -- 23/323/676
+**conjure-cp-core:** 3% with examples, 48% documented -- 23/323/677
 **conjure-cp-enum-compatibility-macro:** 33% with examples, 100% documented -- 1/3/3
 **conjure-cp-essence-macros:** 67% with examples, 67% documented -- 2/2/3
 **conjure-cp-essence-parser:** 0% with examples, 16% documented -- 0/29/185
@@ -15,7 +15,7 @@
 **tree-sitter-essence:** 33% with examples, 100% documented -- 1/3/3
 
 PR: [#1808](https://github.com/conjure-cp/conjure-oxide/pull/1808)
-Commit: [798218423b0a395137786b0ac94515461653e64f](https://github.com/matteraggi/conjure-oxide/commit/798218423b0a395137786b0ac94515461653e64f)
+Commit: [d86099ace807279655c512e8433ecd04216e898d](https://github.com/matteraggi/conjure-oxide/commit/d86099ace807279655c512e8433ecd04216e898d)
 
 ## RustDoc coverage for `conjure-cp`
 
@@ -58,7 +58,7 @@ Commit: [798218423b0a395137786b0ac94515461653e64f](https://github.com/matteraggi
 | crates/conjure-cp-core/src/parse/mod.rs | ❌ 0% *(0/1)* | ❌ 0% *(0/1)* |
 | crates/conjure-cp-core/src/parse/parse_model.rs | ❌ 0% *(0/1)* | ❌ 0% *(0/1)* |
 | crates/conjure-cp-core/src/solver/adaptors/minion/mod.rs | ❌ 0% *(0/1)* | ❌ 0% *(0/1)* |
-| crates/conjure-cp-core/src/solver/adaptors/ortools-cpsat/mod.rs | ❌ 0% *(0/4)* | ❌ 0% *(0/4)* |
+| crates/conjure-cp-core/src/solver/adaptors/ortools-cpsat/mod.rs | ❌ 0% *(0/5)* | ❌ 0% *(0/5)* |
 | crates/conjure-cp-core/src/solver/adaptors/rustsat/mod.rs | ❌ 0% *(0/1)* | ❌ 0% *(0/1)* |
 | crates/conjure-cp-core/src/solver/adaptors/smt/mod.rs | ❌ 0% *(0/1)* | ❌ 0% *(0/1)* |
 | crates/conjure-cp-core/src/stats/mod.rs | ❌ 0% *(0/7)* | ❌ 0% *(0/7)* |
