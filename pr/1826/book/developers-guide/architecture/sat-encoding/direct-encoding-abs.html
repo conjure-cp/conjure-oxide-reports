@@ -37,7 +37,7 @@
             const path_to_root = "../../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../../searchindex-c5617636.js";
+            window.path_to_searchindex_js = "../../../searchindex-6fbbe558.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../../toc-d3b06a23.js"></script>
@@ -183,17 +183,17 @@
 <p>The Direct Encoding Absolute Value rule encodes the absolute value operation on a direct-encoded integer into another direct-encoded integer.</p>
 <h3 id="key-characteristics"><a class="header" href="#key-characteristics">Key Characteristics</a></h3>
 <ul>
-<li><strong>Input</strong>: One <code>SATInt</code> value with direct encoding (one-hot representation)</li>
-<li><strong>Output</strong>: A single <code>SATInt</code> with direct encoding representing its absolute value</li>
-<li><strong>Algorithm</strong>: Bucketing strategy that groups input bits by their absolute value</li>
-<li><strong>Clause Growth</strong>: Linear in domain size (minimal overhead)</li>
+<li><strong>Input</strong>: One <code>SATInt</code> value with direct encoding (one-hot representation).</li>
+<li><strong>Output</strong>: A single <code>SATInt</code> with direct encoding representing its absolute value.</li>
+<li><strong>Algorithm</strong>: Bucketing strategy that groups input bits by their absolute value.</li>
+<li><strong>Clause Growth</strong>: Linear in domain size (minimal overhead).</li>
 </ul>
 <h2 id="bucketing-by-absolute-value"><a class="header" href="#bucketing-by-absolute-value">Bucketing by Absolute Value</a></h2>
 <p>Instead of explicitly computing absolute value through arithmetic, this rule uses a <strong>bucketing strategy</strong> that groups input bits by the absolute value they produce:</p>
 <ol>
-<li><strong>Create buckets</strong> - one for each possible output value</li>
-<li><strong>Populate buckets</strong> - for each input value i, place its bit into the bucket corresponding to |i|</li>
-<li><strong>Generate output bits</strong> - for each bucket, the output bit is the OR of all bits in that bucket</li>
+<li><strong>Create buckets</strong> - one for each possible output value.</li>
+<li><strong>Populate buckets</strong> - for each input value i, place its bit into the bucket corresponding to |i|.</li>
+<li><strong>Generate output bits</strong> - for each bucket, the output bit is the OR of all bits in that bucket.</li>
 </ol>
 <p>This leverages the one-hot property: exactly one input bit is true, so exactly one bucket will have a true bit.</p>
 <h3 id="algorithm-details"><a class="header" href="#algorithm-details">Algorithm Details</a></h3>
@@ -225,22 +225,22 @@ for bucket in buckets {
 <li>
 <p><strong>Range includes 0</strong> (e.g., <code>[-3, 5]</code>):</p>
 <ul>
-<li>Minimum output: 0 (from |0|)</li>
-<li>Maximum output: 5 (from |-3| or |5|, whichever is larger)</li>
+<li>Minimum output: 0 (from |0|).</li>
+<li>Maximum output: 5 (from |-3| or |5|, whichever is larger).</li>
 </ul>
 </li>
 <li>
 <p><strong>Range doesn’t include 0</strong> (e.g., <code>[2, 8]</code>):</p>
 <ul>
-<li>Minimum output: 2 (from |2|)</li>
-<li>Maximum output: 8 (from |8|)</li>
+<li>Minimum output: 2 (from |2|).</li>
+<li>Maximum output: 8 (from |8|).</li>
 </ul>
 </li>
 <li>
 <p><strong>Negative range</strong> (e.g., <code>[-8, -2]</code>):</p>
 <ul>
-<li>Minimum output: 2 (from |-2|)</li>
-<li>Maximum output: 8 (from |-8|)</li>
+<li>Minimum output: 2 (from |-2|).</li>
+<li>Maximum output: 8 (from |-8|).</li>
 </ul>
 </li>
 </ol>
@@ -256,29 +256,36 @@ for bucket in buckets {
 <span class="boring">}</span></code></pre>
 <p>The optimization <strong>skips Tseytin OR for single-element buckets</strong>, reducing auxiliary variables and clauses:</p>
 <ul>
-<li>Empty bucket: Returns constant <code>false</code> (no clauses)</li>
-<li>Single element: Returns the element directly (no auxiliary variable)</li>
-<li>Multiple elements: Uses <code>tseytin_or</code> to create the disjunction</li>
+<li>Empty bucket: Returns constant <code>false</code> (no clauses).</li>
+<li>Single element: Returns the element directly (no auxiliary variable).</li>
+<li>Multiple elements: Uses <code>tseytin_or</code> to create the disjunction.</li>
 </ul>
 <p>This is efficient because buckets typically have 0, 1, or 2 elements:</p>
 <ul>
-<li>Buckets with 0 elements: Arise when the output range is sparse</li>
-<li>Buckets with 1 element: When only one input value maps to that output</li>
-<li>Buckets with 2 elements: When exactly two input values have the same absolute value (e.g., <code>-5</code> and <code>5</code>)</li>
+<li>Buckets with 0 elements: Arise when the output range is sparse.</li>
+<li>Buckets with 1 element: When only one input value maps to that output.</li>
+<li>Buckets with 2 elements: When exactly two input values have the same absolute value (e.g., <code>-5</code> and <code>5</code>).</li>
 </ul>
 <h2 id="example-absolute-value-of-signed-integer"><a class="header" href="#example-absolute-value-of-signed-integer">Example: Absolute Value of Signed Integer</a></h2>
 <p>Given:</p>
 <ul>
-<li>Input: <code>X ∈ {-3, -2, -1, 0, 1, 2, 3}</code> (direct encoded as 7 one-hot bits)</li>
-<li>Output: <code>|X| ∈ {0, 1, 2, 3}</code> (direct encoded as 4 one-hot bits)</li>
+<li>Input: <code>X ∈ {-3, -2, -1, 0, 1, 2, 3}</code> (direct encoded as 7 one-hot bits).</li>
+<li>Output: <code>|X| ∈ {0, 1, 2, 3}</code> (direct encoded as 4 one-hot bits).</li>
 </ul>
 <p>Bucket formation:</p>
-<p>| Output Value | Input Bits that Map Here |
-|—|—| —|
-| 0 | <code>X₀</code> (from |0| = 0) |
-| 1 | <code>X₋₁</code>, <code>X₁</code> (from |-1| = 1 and |1| = 1) |
-| 2 | <code>X₋₂</code>, <code>X₂</code> (from |-2| = 2 and |2| = 2) |
-| 3 | <code>X₋₃</code>, <code>X₃</code> (from |-3| = 3 and |3| = 3) |</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Output Value</th><th>Input Bits that Map Here</th></tr>
+</thead>
+<tbody>
+<tr><td>0</td><td><code>X₀</code> (from</td></tr>
+<tr><td>1</td><td><code>X₋₁</code>, <code>X₁</code> (from</td></tr>
+<tr><td>2</td><td><code>X₋₂</code>, <code>X₂</code> (from</td></tr>
+<tr><td>3</td><td><code>X₋₃</code>, <code>X₃</code> (from</td></tr>
+</tbody>
+</table>
+</div>
 <p>Output bit generation:</p>
 <pre><code class="language-text">|X|₀ = X₀                              // Single element, no OR
 |X|₁ = X₋₁ OR X₁                       // Two elements, one Tseytin OR
@@ -287,8 +294,8 @@ for bucket in buckets {
 </code></pre>
 <p>Clause count: 3 Tseytin ORs × 3 clauses each = 9 clauses total</p>
 <h2 id="complexity-analysis"><a class="header" href="#complexity-analysis">Complexity Analysis</a></h2>
-<p><strong>Time Complexity</strong>: O(n) where n is the input range size</p>
-<p><strong>Space Complexity</strong>: O(n) for output bits and auxiliary variables</p>
+<p><strong>Time Complexity</strong>: O(n) where n is the input range size.</p>
+<p><strong>Space Complexity</strong>: O(n) for output bits and auxiliary variables.</p>
 
                     </main>
 
