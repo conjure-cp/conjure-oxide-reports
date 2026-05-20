@@ -37,7 +37,7 @@
             const path_to_root = "../../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../../searchindex-8498ff00.js";
+            window.path_to_searchindex_js = "../../../searchindex-da0468b9.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../../toc-e8157c2d.js"></script>
@@ -419,74 +419,80 @@
      Answer 1: set-intersect: Horizontal rule for set intersection
                [q5 = q4 | q5 &lt;- A intersect B] ~~&gt; [q5 = q4 | q5 &lt;- A, q5 in B]
 </code></pre>
-<h2 id="set-union-describes-a-new-set"><a class="header" href="#set-union-describes-a-new-set">Set-union (describes a new set)</a></h2>
-<p>rule for set union. defines that an element is in the union of two sets when it is in at least one of the sets. similar structure as comprehension literal rule, only used within generators or conditions</p>
+<h2 id="union_set-describes-a-new-set"><a class="header" href="#union_set-describes-a-new-set">union_set (describes a new set)</a></h2>
+<pre><code>[ return_expr | i &lt;- A union B, qualifiers...] -&gt; flatten([[ return_expr | i &lt;- A, qualifiers...], [ return_expr | i &lt;- B, !(i in A), qualifiers...]; int(1..2)])
+</code></pre>
+<p>rule for set union. defines that an element is in the union of two sets when it is in at least one of the sets.</p>
 <ol>
-<li>attempts to match generator to pattern and expression: pattern “<em>quantified variable</em> &lt;-” and expression with a modifier operator (if present) applied to a set/multiset/relation “s”</li>
-<li>attempts to match s to “x union y”</li>
-<li>checks x is a set, multiset, function, or relation</li>
-<li>creates abstract matrix containing two comprehensions:</li>
+<li>attempts to match expression generator that generates from a union expression</li>
+<li>creates two comprehensions, one that generates elements from the first set and one that generates elements from the second set, with an additional condition to prevent double counting</li>
+<li>both comprehensions are combined in a matrix and put into a flatten expression</li>
 </ol>
 <ul>
-<li>both comprehensions have body from original comprehension</li>
-<li>both comprehensions have a generator with same pattern on same quantified variable.</li>
-<li>expressions in generators consist of same modifier operator (if present) applied to only set x and only set y respectively</li>
-<li>for set y, the additional condition “i not in x” is added to prevent double counting (relevant for sums)</li>
+<li>both comprehensions have same return expression and other qualifiers from original comprehension</li>
 </ul>
 <h3 id="code-6"><a class="header" href="#code-6">Code:</a></h3>
-<pre><code class="language-haskell">     theRule (Comprehension body gensOrConds) = do
-         (gocBefore, (pat, iPat, expr), gocAfter) &lt;- matchFirst gensOrConds $ \ goc -&gt; case goc of
-             Generator (GenInExpr pat@(Single iPat) expr) -&gt; return (pat, iPat, matchDef opToSet expr)
-             _ -&gt; na "rule_Union"
-         (mkModifier, s)    &lt;- match opModifier expr
-         (x, y)             &lt;- match opUnion s
-         tx                 &lt;- typeOf x
-         case tx of
-             TypeSet{}      -&gt; return ()
-             TypeMSet{}     -&gt; return ()
-             TypeFunction{} -&gt; return ()
-             TypeRelation{} -&gt; return ()
-             _              -&gt; failDoc "type incompatibility in union operator"
-         let i = Reference iPat Nothing
-         return
-             ( "Horizontal rule for set union"
-             , return $ make opFlatten $ AbstractLiteral $ AbsLitMatrix
-                 (DomainInt TagInt [RangeBounded 1 2])
-                 [ Comprehension body
-                     $  gocBefore
-                     ++ [ Generator (GenInExpr pat (mkModifier x)) ]
-                     ++ gocAfter
-                 , Comprehension body
-                     $  gocBefore
-                     ++ [ Generator (GenInExpr pat (mkModifier y))
-                        , Condition [essence| !(&amp;i in &amp;x) |]
-                        ]
-                     ++ gocAfter
-                 ]
-             )
-</code></pre>
-<h3 id="example-1"><a class="header" href="#example-1">Example:</a></h3>
-<ul>
-<li>set-union rule appears within model C = A union B, after applying set-equals, set-subsetEq, set-in</li>
-<li>q4 is quantified in a former step, it is an element in C (Context #3)</li>
-<li>see Context #1, q5 is quantified by or() - existence quantifier, translates to “there exists a q5 in A union B such that q5 equals q4”</li>
-<li>translates “[q5 = q4 | q5 &lt;- A union B]” to return the matrix “flatten([[q5 = q4 | q5 &lt;- A], [q5 = q4 | q5 &lt;- B, !(q5 in A)]; int(1..2)])”</li>
-<li>“q5 = q4” is the body of the comprehension, the pattern “q5 &lt;-” is applied to both A and B in the respective entries of the matrix</li>
-<li>additional condition “!(q5 in A)” for the second comprehension, to prevent double counting
-<ul>
-<li>i.e. check that the body “q5 = q4”, applies to at least one member (q5) in A or in B.</li>
-</ul>
-</li>
-</ul>
-<pre><code>Picking the first option: Question 1: [q5 = q4 | q5 &lt;- A union B]
-                               Context #1: or([q5 = q4 | q5 &lt;- A union B])
-                               Context #3: and([or([q5 = q4 | q5 &lt;- A union B]) | q4 : int(0..6), C_Occurrence[q4]])
-     Answer 1: set-union: Horizontal rule for set union
-               [q5 = q4 | q5 &lt;- A union B]
-               ~~&gt;
-               flatten([[q5 = q4 | q5 &lt;- A], [q5 = q4 | q5 &lt;- B, !(q5 in A)];
-                            int(1..2)])
-</code></pre>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn union_set(expr: &amp;Expr, _: &amp;SymbolTable) -&gt; ApplicationResult {
+    match expr {
+        Expr::Comprehension(_, comp) =&gt; {
+            // find if any of the generators are generating from expressions
+            for qualifier in &amp;comp.qualifiers {
+                if let ComprehensionQualifier::ExpressionGenerator { ptr } = qualifier {
+                    let gen_decl = ptr.clone();
+
+                    // match on expression being of form A union B
+                    let Some((a, b)) = (match ptr.as_quantified_expr() {
+                        Some(expr_guard) =&gt; match &amp;*expr_guard {
+                            Expr::Union(_, a, b) =&gt; Some((a.clone(), b.clone())),
+                            _ =&gt; None,
+                        },
+                        None =&gt; None,
+                    }) else {
+                        continue;
+                    };
+
+                    // [ return_expr | i &lt;- A, guards...] part
+                    let (comprehension1, _) = replace_expression_generator_source(
+                        comp.as_ref(),
+                        &amp;gen_decl,
+                        a.clone().into(),
+                    );
+
+                    // [ return_expr | i &lt;- B, !(i in A), guards...] part
+                    let (mut comprehension2, b_ptr) =
+                        replace_expression_generator_source(comp.as_ref(), &amp;gen_decl, b.into());
+
+                    // add the condition !(i in A)
+                    comprehension2
+                        .qualifiers
+                        .push(ComprehensionQualifier::Condition(Expr::Not(
+                            Metadata::new(),
+                            Moo::new(Expr::In(
+                                Metadata::new(),
+                                Moo::new(Expr::Atomic(Metadata::new(), Atom::new_ref(b_ptr))),
+                                a,
+                            )),
+                        )));
+
+                    return Ok(Reduction::pure(Expr::Flatten(
+                        Metadata::new(),
+                        None,
+                        Moo::new(into_matrix_expr!(vec![
+                            Expr::Comprehension(Metadata::new(), comprehension1.into()),
+                            Expr::Comprehension(Metadata::new(), comprehension2.into())
+                        ])),
+                    )));
+                }
+            }
+
+            Err(RuleNotApplicable)
+        }
+        _ =&gt; Err(RuleNotApplicable),
+    }
+}
+<span class="boring">}</span></code></pre>
 <h2 id="set-difference-describes-a-new-set"><a class="header" href="#set-difference-describes-a-new-set">Set-difference (describes a new set)</a></h2>
 <p>rule for set difference. defines that an element is in the difference of two sets when it is in the former but not in the latter. similar structure as comprehension literal rule, only used within generators or conditions</p>
 <ol>
@@ -521,7 +527,7 @@
                      ++ gocAfter
              )
 </code></pre>
-<h3 id="example-2"><a class="header" href="#example-2">Example:</a></h3>
+<h3 id="example-1"><a class="header" href="#example-1">Example:</a></h3>
 <ul>
 <li>set-difference rule appears within model C = A - B, after applying set-equals, set-subsetEq, set-in</li>
 <li>q4 is quantified in a former step, it is an element in C (Context #3)</li>
@@ -560,7 +566,7 @@
                   return [essence| exists &amp;iPat in &amp;s . &amp;i = &amp;x |]
              )
 </code></pre>
-<h3 id="example-3"><a class="header" href="#example-3">Example:</a></h3>
+<h3 id="example-2"><a class="header" href="#example-2">Example:</a></h3>
 <ul>
 <li>here we are checking for membership of q4 in B union C</li>
 <li>q4 is a quantified variable in larger context</li>
@@ -597,7 +603,7 @@
                          return [essence| sum &amp;iPat in &amp;s . 1 |]
              )
 </code></pre>
-<h3 id="example-4"><a class="header" href="#example-4">Example:</a></h3>
+<h3 id="example-3"><a class="header" href="#example-3">Example:</a></h3>
 <ul>
 <li>set-card rule appears within model |A| = |B|</li>
 <li>here q3 is the quantified variable called “iPat” above</li>
