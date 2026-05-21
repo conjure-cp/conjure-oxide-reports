@@ -38,7 +38,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-da0468b9.js";
+            window.path_to_searchindex_js = "searchindex-e8785abb.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-e8157c2d.js"></script>
@@ -3878,53 +3878,66 @@ Picking the first option: Question 1: [or([A_Occurrence[q5] /\ B_Occurrence[q5] 
     }
 }
 <span class="boring">}</span></code></pre>
-<h2 id="set-difference-describes-a-new-set"><a class="header" href="#set-difference-describes-a-new-set">Set-difference (describes a new set)</a></h2>
-<p>rule for set difference. defines that an element is in the difference of two sets when it is in the former but not in the latter. similar structure as comprehension literal rule, only used within generators or conditions</p>
+<h2 id="difference_set-describes-a-new-set"><a class="header" href="#difference_set-describes-a-new-set">difference_set (describes a new set)</a></h2>
+<pre><code>[ return_expr | i &lt;- A - B, qualifiers...] -&gt; [ return_expr | i &lt;- A, !(i in B), qualifiers...]
+</code></pre>
+<p>rule for set difference. defines that an element is in the difference of two sets when it is in the former but not in the latter.</p>
 <ol>
-<li>attempts to match generator to pattern and expression: pattern “<em>quantified variable</em> &lt;-” and expression with a modifier operator (if present) applied to a set/multiset/relation “s”</li>
-<li>attempts to match s to “x - y”</li>
-<li>checks x is a set, multiset, function, or relation</li>
-<li>returns comprehension with same body as original, same gocBefore, gocAfter. Generator is replaced by original generator applied only to x, with additional condition “i not in y”</li>
+<li>attempts to match expression generator that generates from a difference expression “x - y”</li>
+<li>replace the generator’s expression with the first set “x”</li>
+<li>adds the condition that the relevant quantified variable must not be in the second set “y</li>
 </ol>
 <h3 id="code-7"><a class="header" href="#code-7">Code:</a></h3>
-<pre><code class="language-haskell">     theRule (Comprehension body gensOrConds) = do
-         (gocBefore, (pat, iPat, expr), gocAfter) &lt;- matchFirst gensOrConds $ \ goc -&gt; case goc of
-             Generator (GenInExpr pat@(Single iPat) expr) -&gt; return (pat, iPat, expr)
-             _ -&gt; na "rule_Difference"
-         (mkModifier, s)    &lt;- match opModifier expr
-         (x, y)             &lt;- match opMinus s
-         tx                 &lt;- typeOf x
-         case tx of
-             TypeSet{}      -&gt; return ()
-             TypeMSet{}     -&gt; return ()
-             TypeFunction{} -&gt; return ()
-             TypeRelation{} -&gt; return ()
-             _              -&gt; failDoc "type incompatibility in difference operator"
-         let i = Reference iPat Nothing
-         return
-             ( "Horizontal rule for set difference"
-             , return $
-                 Comprehension body
-                     $  gocBefore
-                     ++ [ Generator (GenInExpr pat (mkModifier x))
-                        , Condition [essence| !(&amp;i in &amp;y) |]
-                        ]
-                     ++ gocAfter
-             )
-</code></pre>
-<h3 id="example-1-2"><a class="header" href="#example-1-2">Example:</a></h3>
-<ul>
-<li>set-difference rule appears within model C = A - B, after applying set-equals, set-subsetEq, set-in</li>
-<li>q4 is quantified in a former step, it is an element in C (Context #3)</li>
-<li>see Context #1, q5 is quantified by or() - existence quantifier, translates to “there exists a q5 in A - B such that q5 equals q4”</li>
-<li>translates “q5 &lt;- A - B” to “q5 &lt;- A, !(q5 in B)”</li>
-</ul>
-<pre><code>Picking the first option: Question 1: [q5 = q4 | q5 &lt;- A - B]
-                               Context #1: or([q5 = q4 | q5 &lt;- A - B])
-                               Context #3: and([or([q5 = q4 | q5 &lt;- A - B]) | q4 : int(0..6), C_Occurrence[q4]])
-     Answer 1: set-difference: Horizontal rule for set difference
-               [q5 = q4 | q5 &lt;- A - B] ~~&gt; [q5 = q4 | q5 &lt;- A, !(q5 in B)]
-</code></pre>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn difference_set(expr: &amp;Expr, _: &amp;SymbolTable) -&gt; ApplicationResult {
+    match expr {
+        Expr::Comprehension(_, comp) =&gt; {
+            // find if any of the generators are generating from expressions
+            for qualifier in &amp;comp.qualifiers {
+                if let ComprehensionQualifier::ExpressionGenerator { ptr } = qualifier {
+                    let gen_decl = ptr.clone();
+
+                    // match on expression being of form A - B
+                    let Some((a, b)) = (match ptr.as_quantified_expr() {
+                        Some(expr_guard) =&gt; match &amp;*expr_guard {
+                            Expr::Minus(_, a, b) =&gt; Some((a.clone(), b.clone())),
+                            _ =&gt; None,
+                        },
+                        None =&gt; None,
+                    }) else {
+                        continue;
+                    };
+
+                    // [ return_expr | i &lt;- A, !(i in B), guards...]
+                    let (mut comprehension, a_ptr) =
+                        replace_expression_generator_source(comp.as_ref(), &amp;gen_decl, a.into());
+
+                    // add the condition !(i in B)
+                    comprehension
+                        .qualifiers
+                        .push(ComprehensionQualifier::Condition(Expr::Not(
+                            Metadata::new(),
+                            Moo::new(Expr::In(
+                                Metadata::new(),
+                                Moo::new(Expr::Atomic(Metadata::new(), Atom::new_ref(a_ptr))),
+                                b,
+                            )),
+                        )));
+
+                    return Ok(Reduction::pure(Expr::Comprehension(
+                        Metadata::new(),
+                        comprehension.into(),
+                    )));
+                }
+            }
+
+            Err(RuleNotApplicable)
+        }
+        _ =&gt; Err(RuleNotApplicable),
+    }
+}
+<span class="boring">}</span></code></pre>
 <h2 id="set-in-boolean"><a class="header" href="#set-in-boolean">Set-in (boolean)</a></h2>
 <p>rule for set membership, checks whether something is an element of a set</p>
 <ol>
@@ -3951,7 +3964,7 @@ Picking the first option: Question 1: [or([A_Occurrence[q5] /\ B_Occurrence[q5] 
                   return [essence| exists &amp;iPat in &amp;s . &amp;i = &amp;x |]
              )
 </code></pre>
-<h3 id="example-2-1"><a class="header" href="#example-2-1">Example:</a></h3>
+<h3 id="example-1-2"><a class="header" href="#example-1-2">Example:</a></h3>
 <ul>
 <li>here we are checking for membership of q4 in B union C</li>
 <li>q4 is a quantified variable in larger context</li>
@@ -3988,7 +4001,7 @@ Picking the first option: Question 1: [or([A_Occurrence[q5] /\ B_Occurrence[q5] 
                          return [essence| sum &amp;iPat in &amp;s . 1 |]
              )
 </code></pre>
-<h3 id="example-3-1"><a class="header" href="#example-3-1">Example:</a></h3>
+<h3 id="example-2-1"><a class="header" href="#example-2-1">Example:</a></h3>
 <ul>
 <li>set-card rule appears within model |A| = |B|</li>
 <li>here q3 is the quantified variable called “iPat” above</li>
