@@ -16,8 +16,8 @@
         <link rel="icon" href="favicon-de23e50b.svg">
         <link rel="shortcut icon" href="favicon-8114d1fc.png">
         <link rel="stylesheet" href="css/variables-8adf115d.css">
-        <link rel="stylesheet" href="css/general-2459343d.css">
-        <link rel="stylesheet" href="css/chrome-ae938929.css">
+        <link rel="stylesheet" href="css/general-0392ca55.css">
+        <link rel="stylesheet" href="css/chrome-fc474251.css">
         <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
 
         <!-- Fonts -->
@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-72ef2f11.js";
+            window.path_to_searchindex_js = "searchindex-5e7b8a83.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-2344e88a.js"></script>
+        <script src="toc-e8157c2d.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -4409,12 +4409,55 @@ This guide outlines the process of creating support for those types to the AST. 
 <li>For the legacy parser this involves adding to <code>parse_model.rs</code> to parse the JSON output of Conjure’s parser.</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
+<h1 id="domains"><a class="header" href="#domains">Domains</a></h1>
+<h2 id="what-are-domains-and-types"><a class="header" href="#what-are-domains-and-types">What are Domains and Types</a></h2>
+<p>A <strong>Domain</strong> is the discrete and finite set of values that a variable or expression can take. A <strong>Type</strong> is a more general description about some collection. The simplest domains are <strong>Concrete</strong> domains: <code>empty</code>, <code>boolean</code>, <code>int(min..max)</code>. <strong>Abstract</strong> domains use some high-level types (such as a <code>Set</code>, <code>Matrix</code>, etc) to instantiate a domain where the objects of the domain contain more objects. These objects are called <strong>Literals</strong>; a literal is <em>one</em> specific value taken from a domain.</p>
+<p>In the original language description, found in the <a href="https://conjure.readthedocs.io/en/latest/essence.html">Conjure Docs</a></p>
+<pre><code>Domain := "bool"
+        | "int" list(Range, ",", "()")
+        | "int" "(" Expression ")"
+        | Name list(Range, ",", "()") # the Name refers to an enumerated type
+        | Name                        # the Name refers to an unnamed type
+        | "tuple" list(Domain, ",", "()")
+        | "record" list(NameDomain, ",", "{}")
+        | "variant" list(NameDomain, ",", "{}")
+        | "matrix indexed by" list(Domain, ",", "[]") "of" Domain
+        | "set" list(Attribute, ",", "()") "of" Domain
+        | "mset" list(Attribute, ",", "()") "of" Domain
+        | "function" list(Attribute, ",", "()") Domain "--&gt;" Domain
+        | "sequence" list(Attribute, ",", "()") "of" Domain
+        | "relation" list(Attribute, ",", "()") "of" list(Domain, "*", "()")
+        | "partition" list(Attribute, ",", "()") "from" Domain
+
+Range := Expression
+       | Expression ".."
+       | ".." Expression
+       | Expression ".." Expression
+
+Attribute := Name
+           | Name Expression
+
+NameDomain := Name ":" Domain
+</code></pre>
+<h2 id="ground-and-unresolved"><a class="header" href="#ground-and-unresolved">Ground and Unresolved</a></h2>
+<p>Looking at <code>conjure-cp-core::ast::domains</code>, there is a <code>Domain</code> Enum, with variants <code>Ground</code> and <code>Unresolved</code>.</p>
+<ul>
+<li>An <code>Unresolved</code> domain is a domain whose bounds are tied to an expression that has not been evaluated. For example <code>x: int(1..(2+1))</code> and <code>x: int(1..n)</code> are both unresolved.</li>
+<li>A <code>Ground</code> domain is a domain entirely composed of literals. For example: <code>int(2..5)</code>, <code>set (maxSize 2) of int(1..3)</code>.</li>
+</ul>
+<h2 id="attributes"><a class="header" href="#attributes">Attributes</a></h2>
+<p>Abstract domains tend to also have attributes defined on them, which often restricts the possible values of the domain.</p>
+<blockquote>
+<p>When defining a Set type, it may have attributes and an inner domain. For example, the domain <code>set (size 2) of int(1..3)</code> could have valid values like <code>{1,2}</code>, <code>{1,3}</code>, <code>{2,3}</code>. The ‘inner’ domain is <code>int(1..3)</code>, from which the values that make up the set are pulled.</p>
+</blockquote>
+<p>The most common attribute is cardinality (which restricts the range objects in an object), but they are type-specific and there is a large variety.</p>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="functions"><a class="header" href="#functions">Functions</a></h1>
 <h2 id="what-are-functions"><a class="header" href="#what-are-functions">What Are Functions</a></h2>
 <p>A function is a binary relation on two sets, from elements of a domain to elements of a codomain.</p>
 <p>Functions have attributes and two domains for the domain and codomain of its results. They are defined for both <code>GroundDomain</code> and <code>UnresolvedDomain</code> as <code>Function(FuncAttr, Moo&lt;GroundDomain&gt;, Moo&lt;GroundDomain&gt;)</code>.</p>
 <p>The result of a function is a list of tuples defined by the mappings. As such the <code>AbstractLiteral</code> for functions is defined <code>Function(Vec&lt;(T, T)&gt;)</code>. This AbstractLiteral type means that functions can also be represented explicitly.</p>
-<h2 id="attributes"><a class="header" href="#attributes">Attributes</a></h2>
+<h2 id="attributes-1"><a class="header" href="#attributes-1">Attributes</a></h2>
 <p>Functions contain three types of attributes: size, partiality and jectivity.</p>
 <p>Size attributes determine how many mappings the function is true for. Size attributes are converted to a <code>Range&lt;A&gt;</code> type in Conjure-Oxide. This size can be defined as:</p>
 <ul>
@@ -4447,11 +4490,22 @@ Jectivity is also stored as an Enum inside Conjure-Oxide.</p>
 <h2 id="what-are-multisets"><a class="header" href="#what-are-multisets">What Are Multisets</a></h2>
 <p>A multiset is a datatype for storing a set of objects where objects can occur more than once, but the ordering of objects does not matter.
 Multisets have attributes and a single domain. A multiset can be defined for both <code>GroundDomain</code> and <code>UnresolvedDomain</code>.</p>
-<h2 id="attributes-1"><a class="header" href="#attributes-1">Attributes</a></h2>
-<p>Three <strong>cardinality</strong> attributes; <code>size</code>, <code>minSize</code>, <code>maxSize</code>.
-Two <strong>occurrence</strong> attributes; <code>minOccur</code>, <code>maxOccur</code>.</p>
+<h2 id="attributes-2"><a class="header" href="#attributes-2">Attributes</a></h2>
+<ul>
+<li>A <strong>cardinality</strong> attribute, as a range; <code>size</code>, <code>minSize</code>, <code>maxSize</code>.</li>
+<li>An <strong>occurrence</strong> attribute, as a range; <code>minOccur</code>, <code>maxOccur</code>.</li>
+</ul>
 <p>In the original conjure implementation, a multiset was <em>infinite</em> without <code>size</code>, <code>maxSize</code>, or <code>maxOccur</code>.
 In the new conjure-oxide implementation, a variable’s domain is <em>ground</em> if it is fully-bounded (i.e. has a <code>minSize</code> and <code>maxSize</code>).</p>
+<pre><code>$ Valid
+find foo: multiset (maxSize 5, minOccur 2) of int(1..10)
+find bar: multiset (size 3) of int(1..4)
+
+
+$ Invalid
+find fizz: multiset of int(1..10)               $ there must be a upper-bounded size attribute
+find buzz: multiset (minSize 3) of int(1..10)   $ this is a lower bound, there is no upper bound on the size attribute
+</code></pre>
 <h2 id="operators-1"><a class="header" href="#operators-1">Operators</a></h2>
 <p>There are four operators which are defined on functions. These are represented as <code>Expressions</code> in Conjure-Oxide.</p>
 <ul>
@@ -4460,13 +4514,16 @@ In the new conjure-oxide implementation, a variable’s domain is <em>ground</em
 <li><code>min(m)</code> - largest element in ordered multiset <code>m</code></li>
 <li><code>freq(m,e)</code> - counts occurrences of element <code>e</code> in multiset <code>m</code></li>
 </ul>
+<blockquote>
+<p>As of 29th April 2026, <code>Min</code> and <code>Max</code> have been added as Expressions, but <code>Hist</code> and <code>Freq</code> have not. There is no support for rewriting rules or solving.</p>
+</blockquote>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="relations"><a class="header" href="#relations">Relations</a></h1>
 <h2 id="what-are-relations"><a class="header" href="#what-are-relations">What Are Relations</a></h2>
 <p>A relation is effectively a set of tuples. The internal tuples can be of any arity and can have different internal domains, as long as every tuple in the relation has the same arity and domains. If a relation is binary we can also add additional attributes to define properties of the relation.</p>
 <p>Relations have attributes and a list of domains for inside the tuples. They are defined for both <code>GroundDomain</code> and <code>UnresolvedDomain</code> as <code>Relation(RelAttr, Vec&lt;GroundDomain&gt;)</code>.</p>
 <p>The result of a relation is a list of tuples. As such the <code>AbstractLiteral</code> for relations is defined <code>Relation(Vec&lt;Vec&lt;T&gt;&gt;)</code>. This AbstractLiteral type means that relations can also be represented explicitly.</p>
-<h2 id="attributes-2"><a class="header" href="#attributes-2">Attributes</a></h2>
+<h2 id="attributes-3"><a class="header" href="#attributes-3">Attributes</a></h2>
 <p>Relations contain two types of attributes: size and binary attributes.</p>
 <p>Size attributes determine how many tuples are in the relation. Size attributes are converted to a <code>Range&lt;A&gt;</code> type in Conjure-Oxide. This size can be defined as:</p>
 <ul>
@@ -4505,7 +4562,7 @@ For example: <code>r(_,1,_)</code> converts r from a 3-component relation to a 2
 <h1 id="partitions"><a class="header" href="#partitions">Partitions</a></h1>
 <h2 id="what-are-partitions"><a class="header" href="#what-are-partitions">What are Partitions</a></h2>
 <p>A partition is a datatype that splits some domain into parts. A good example of a partition in use is in the <a href="https://www.csplib.org/Problems/prob010/models/SocialGolfersProblem.essence.html">Social Golfers</a> problem (CSPLib.org, problem #10).</p>
-<h2 id="attributes-3"><a class="header" href="#attributes-3">Attributes</a></h2>
+<h2 id="attributes-4"><a class="header" href="#attributes-4">Attributes</a></h2>
 <ul>
 <li>Number of Parts (as a range): <code>numParts</code>, <code>minNumParts</code>, <code>maxNumParts</code></li>
 <li>Cardinality of each Part (as a range): <code>partSize</code>, <code>minPartSize</code>, <code>maxPartSize</code></li>
@@ -4555,16 +4612,32 @@ $                                       &gt; there is a minPartSize of 2, and on
 <h1 id="sequences"><a class="header" href="#sequences">Sequences</a></h1>
 <h2 id="what-are-sequences"><a class="header" href="#what-are-sequences">What Are Sequences</a></h2>
 <p>A sequence is a datatype for storing a series of values, where values can occur multiple times and ordering is preserved. It differs from a <a href="https://github.com/conjure-cp/conjure-oxide/wiki/">matrix</a>, in that it can have defined attributes; i.e. you can define a sequence to have varying lengths, and to restrict what values it can draw from it’s inner domain.</p>
-<h2 id="attributes-4"><a class="header" href="#attributes-4">Attributes</a></h2>
-<p>Three <strong>cardinality</strong> attributes; <code>size</code>, <code>minSize</code>, <code>maxSize</code>.
-Three <strong>jectivity</strong> attributes; <code>injective</code>, <code>surjective</code>, <code>bijective</code>.</p>
+<h2 id="attributes-5"><a class="header" href="#attributes-5">Attributes</a></h2>
+<ul>
+<li>A <strong>cardinality</strong> attribute, as a range; <code>size</code>, <code>minSize</code>, <code>maxSize</code>.</li>
+<li>A <strong>jectivity</strong> attribute, with three options; <code>injective</code>, <code>surjective</code>, <code>bijective</code>.</li>
+</ul>
 <p>Sequences <em>must</em> have either a <code>size</code> or <code>maxSize</code> cardinality attribute.</p>
+<p>The cardinality attribute is used with some value (i.e. <code>size 4</code>), whereas the jectivity attribute is used by itself.
+For example;</p>
+<pre><code>$ Valid
+find foo: sequence of int(1..5)
+find bar: sequence (size 5, surjective) of int(1..5)
+find fizz: sequence (minSize 2, maxSize 7, injective) of int(1..10)
+find buzz: sequence (bijective) of int(1..5)
+
+$ Syntactically Invalid
+find biff: sequence (minSize 3, size 4) of int(2..7) $ Cardinality attribute cannot be single and not single
+</code></pre>
 <h2 id="operators-5"><a class="header" href="#operators-5">Operators</a></h2>
 <p>There are two operators which are defined on sequences. These are represented as <code>Expressions</code> in Conjure-Oxide.</p>
 <ul>
 <li><code>subsequence</code>: does the sequence <code>s</code> appear in the same order in <code>t</code> (e.g. <code>s=1,2,3</code> and <code>t=1,3</code> are subsequences)</li>
 <li><code>substring</code>: does the sequence <code>s</code> appear in the same order <em>and</em> contiguously in <code>t</code> (e.g. <code>s=1,2</code> is a substring of <code>t=1,2,3</code> )</li>
 </ul>
+<blockquote>
+<p>As of writing in April 2026, there is no support for rewriting rules or solving.</p>
+</blockquote>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="testing-2"><a class="header" href="#testing-2">Testing</a></h1>
 <h2 id="types-of-tests"><a class="header" href="#types-of-tests">Types of Tests</a></h2>
@@ -5112,11 +5185,11 @@ and should not affect how the solver crates are written. See <a href="#solver-ad
 
         <script src="elasticlunr-ef4e11c1.min.js"></script>
         <script src="mark-09e88c2c.min.js"></script>
-        <script src="searcher-c2a407aa.js"></script>
+        <script src="searcher-09f2665d.js"></script>
 
         <script src="clipboard-1626706a.min.js"></script>
         <script src="highlight-abc7f01d.js"></script>
-        <script src="book-a0b12cfe.js"></script>
+        <script src="book-c22b7243.js"></script>
 
         <!-- Custom JS scripts -->
 
