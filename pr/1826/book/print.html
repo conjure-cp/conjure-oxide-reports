@@ -38,7 +38,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-6fbbe558.js";
+            window.path_to_searchindex_js = "searchindex-c2f7f307.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-d3b06a23.js"></script>
@@ -3358,7 +3358,7 @@ $<code>x \in [a, b]</code>$ The new range is $<code> -x \in [-b, -a]</code>$. So
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="implementation-details-and-design-motivations"><a class="header" href="#implementation-details-and-design-motivations">Implementation Details and Design Motivations</a></h1>
 <h2 id="overview-8"><a class="header" href="#overview-8">Overview</a></h2>
-<p>This section documents specific SAT encoding rule implementations, focusing on their unique design decisions and algorithmic approaches. Unlike the general <a href="#creating-transformation-rules-1">Creating Transformation Rules</a> guide which covers the common structure and best practices for all rules, this section provides <strong>in-depth analysis of individual rules</strong> where implementation details significantly differ or warrant deeper explanation.</p>
+<p>This section documents specific SAT encoding rule implementations, focussing on their unique design decisions and algorithmic approaches. Unlike the general <a href="#creating-transformation-rules-1">Creating Transformation Rules</a> guide which covers the common structure and best practices for all rules, this section provides <strong>in-depth analysis of individual rules</strong> where implementation details significantly differ or warrant deeper explanation.</p>
 <h2 id="why-separate-documentation"><a class="header" href="#why-separate-documentation">Why Separate Documentation?</a></h2>
 <p>While the general transformation rules guide provides a standard template applicable to most rules, certain implementations merit dedicated documentation because they:</p>
 <ol>
@@ -3384,7 +3384,8 @@ $<code>x \in [a, b]</code>$ The new range is $<code> -x \in [-b, -a]</code>$. So
 <p>Direct encoding summation uses a <strong>disjunctive normal form</strong> approach that leverages the one-hot property of direct encoding.</p>
 <h3 id="core-idea"><a class="header" href="#core-idea">Core Idea</a></h3>
 <p>For each possible output value k, the output bit is <strong>true if and only if</strong> there exists <strong>any pair of input values</strong> i and j that sum to k:</p>
-<p>output[k] = OR over all i + j = k of (input[i] AND input[j])</p>
+<pre><code class="language-code">output[k] = OR over all i + j = k of (input[i] AND input[j])
+</code></pre>
 <p>This is computed as a series of pairwise additions, where each iteration combines an accumulator with one additional input operand.</p>
 <h3 id="algorithm-steps"><a class="header" href="#algorithm-steps">Algorithm Steps</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -3398,7 +3399,7 @@ for each additional operand:
                 if i + j == k:
                     output[k] = output[k] OR (accum[i] AND operand[j])
 <span class="boring">}</span></code></pre>
-<h2 id="operand-normalization"><a class="header" href="#operand-normalization">Operand Normalization</a></h2>
+<h2 id="operand-normalisation"><a class="header" href="#operand-normalisation">Operand Normalisation</a></h2>
 <p>Before summation, all input operands are <strong>normalized to a common range</strong> using <code>validate_direct_int_operands</code>:</p>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -3430,7 +3431,18 @@ for each additional operand:
 sum_expr = tseytin_or(&amp;vec![sum_expr, and_ab], &amp;mut new_clauses, &amp;mut new_symbols);
 <span class="boring">}</span></code></pre>
 <p>Each <code>tseytin_and</code> and <code>tseytin_or</code> creates new CNF clauses and auxiliary variables, converting the DNF structure into CNF form required by SAT solvers.</p>
-<h2 id="key-design-decisions"><a class="header" href="#key-design-decisions">Key Design Decisions</a></h2>
+<h2 id="example-summing-two-direct-encoded-integers"><a class="header" href="#example-summing-two-direct-encoded-integers">Example: Summing Two Direct-Encoded Integers</a></h2>
+<p>Given:</p>
+<ul>
+<li><code>A ∈ {1, 2}</code> encoded as <code>[A₁, A₂]</code> (one-hot)</li>
+<li><code>B ∈ {1, 2}</code> encoded as <code>[B₁, B₂]</code> (one-hot)</li>
+</ul>
+<p>Possible sums: <code>{2, 3, 4}</code>, so output has 3 bits <code>[Out₂, Out₃, Out₄]</code></p>
+<pre><code class="language-text">Out₂ = (A₁ AND B₁)                    // only 1+1=2
+Out₃ = (A₁ AND B₂) OR (A₂ AND B₁)     // 1+2=3 or 2+1=3
+Out₄ = (A₂ AND B₂)                    // only 2+2=4
+</code></pre>
+<p>Each OR and AND is converted to CNF via Tseytin transformation, adding auxiliary variables and clauses.</p>
 <h2 id="edge-case-empty-sum"><a class="header" href="#edge-case-empty-sum">Edge Case: Empty Sum</a></h2>
 <p>When the sum list is empty (degenerate case), the result is the constant <code>0</code>:</p>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -3444,18 +3456,6 @@ sum_expr = tseytin_or(&amp;vec![sum_expr, and_ab], &amp;mut new_clauses, &amp;mu
     )));
 }
 <span class="boring">}</span></code></pre>
-<h2 id="example-summing-two-direct-encoded-integers"><a class="header" href="#example-summing-two-direct-encoded-integers">Example: Summing Two Direct-Encoded Integers</a></h2>
-<p>Given:</p>
-<ul>
-<li><code>A ∈ {1, 2}</code> encoded as <code>[A₁, A₂]</code> (one-hot)</li>
-<li><code>B ∈ {1, 2}</code> encoded as <code>[B₁, B₂]</code> (one-hot)</li>
-</ul>
-<p>Possible sums: <code>{2, 3, 4}</code>, so output has 3 bits <code>[Out₂, Out₃, Out₄]</code></p>
-<pre><code class="language-text">Out₂ = (A₁ AND B₁)                    // only 1+1=2
-Out₃ = (A₁ AND B₂) OR (A₂ AND B₁)     // 1+2=3 or 2+1=3
-Out₄ = (A₂ AND B₂)                    // only 2+2=4
-</code></pre>
-<p>Each OR and AND is converted to CNF via Tseytin transformation, adding auxiliary variables and clauses.</p>
 <h2 id="complexity-analysis"><a class="header" href="#complexity-analysis">Complexity Analysis</a></h2>
 <p><strong>Time Complexity</strong>: O(n · m²) where n is the number of operands and m is the range size</p>
 <p><strong>Space Complexity</strong>: O(n · m) for bit vectors, plus auxiliary variables from Tseytin transformations</p>
@@ -3545,7 +3545,7 @@ if negate {
 }
 <span class="boring">}</span></code></pre>
 <p>This approach reuses the core <code>&lt;</code> logic, reducing code duplication and maintaining consistency.</p>
-<h2 id="operand-normalization-1"><a class="header" href="#operand-normalization-1">Operand Normalization</a></h2>
+<h2 id="operand-normalization"><a class="header" href="#operand-normalization">Operand Normalization</a></h2>
 <p>Before comparison, operands are <strong>normalized to a common range</strong> using <code>validate_order_int_operands</code>:</p>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -3582,7 +3582,7 @@ result = tseytin_or(&amp;vec![result, current_term], clauses, symbols);
 <li><code>tseytin_and</code> adds three clauses encoding y implies x1 and x2.</li>
 <li><code>tseytin_or</code> adds three clauses encoding y is implied by x1 or x2.</li>
 </ul>
-<h2 id="key-design-decisions-1"><a class="header" href="#key-design-decisions-1">Key Design Decisions</a></h2>
+<h2 id="key-design-decisions"><a class="header" href="#key-design-decisions">Key Design Decisions</a></h2>
 <h3 id="why-normalize-operands"><a class="header" href="#why-normalize-operands">Why Normalize Operands?</a></h3>
 <p>Normalization ensures zip iteration is safe:</p>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
@@ -3680,7 +3680,7 @@ for bucket in buckets {
 </ul>
 </li>
 <li>
-<p><strong>Range doesn’t include 0</strong> (e.g., <code>[2, 8]</code>):</p>
+<p><strong>Positive Range</strong> (e.g., <code>[2, 8]</code>):</p>
 <ul>
 <li>Minimum output: 2 (from |2|).</li>
 <li>Maximum output: 8 (from |8|).</li>
@@ -3704,7 +3704,7 @@ for bucket in buckets {
     _ =&gt; tseytin_or(&amp;bucket, &amp;mut new_clauses, &amp;mut new_symbols),
 };
 <span class="boring">}</span></code></pre>
-<p>The optimization <strong>skips Tseytin OR for single-element buckets</strong>, reducing auxiliary variables and clauses:</p>
+<p>The optimisation <strong>skips Tseytin OR for single-element buckets</strong>, reducing auxiliary variables and clauses:</p>
 <ul>
 <li>Empty bucket: Returns constant <code>false</code> (no clauses).</li>
 <li>Single element: Returns the element directly (no auxiliary variable).</li>
