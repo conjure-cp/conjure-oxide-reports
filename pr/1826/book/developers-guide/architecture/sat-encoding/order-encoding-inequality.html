@@ -37,10 +37,10 @@
             const path_to_root = "../../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../../searchindex-c2f7f307.js";
+            window.path_to_searchindex_js = "../../../searchindex-3ac092b1.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../../toc-d3b06a23.js"></script>
+        <script src="../../../toc-3a9aeb1e.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -181,165 +181,17 @@
 <pre><code class="language-text">SATInt(a) &lt;/&gt;/&lt;=/&gt;= SATInt(b) ~&gt; Bool
 </code></pre>
 <p>The Order Encoding Inequality rule encodes comparison operations (<code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, <code>&gt;=</code>) between two order-encoded integers into boolean CNF expressions. Order encoding represents an integer using a <strong>prefix-true bit vector</strong> where position i is true if the integer’s value is &gt;= i.</p>
-<h3 id="key-characteristics"><a class="header" href="#key-characteristics">Key Characteristics</a></h3>
+<p>This page keeps only the rule shape. The generic techniques are described in <a href="./implementation-details-overview.html">SAT Rule Implementation Patterns</a>, and the current code lives in <code>crates/conjure-cp-rules/src/sat/order_int_ops.rs</code> (<code>validate_order_int_operands</code>, <code>sat_order_lt</code>, <code>ineq_sat_order</code>).</p>
+<h2 id="what-this-rule-does"><a class="header" href="#what-this-rule-does">What this rule does</a></h2>
 <ul>
-<li><strong>Input</strong>: Two <code>SATInt</code> values with order encoding (prefix-true representation).</li>
-<li><strong>Output</strong>: A boolean CNF expression.</li>
-<li><strong>Algorithm</strong>: Prefix-OR based comparison.</li>
-<li><strong>Efficiency</strong>: Linear in bit-vector size (no quadratic term like direct encoding).</li>
+<li>Normalises both operands to a shared range before comparing them.</li>
+<li>Uses <code>&lt;</code> as the primitive comparison.</li>
+<li>Rewrites <code>&gt;</code>, <code>&lt;=</code>, and <code>&gt;=</code> by swapping operands and optionally negating the result.</li>
+<li>Builds the comparison with a prefix scan over <code>not lhs_i AND rhs_i</code> terms.</li>
 </ul>
-<h2 id="prefix-or-comparison"><a class="header" href="#prefix-or-comparison">Prefix-OR Comparison</a></h2>
-<p>Order encoding’s prefix-true property enables a comparison based on prefix logic:</p>
-<p>For x &lt; y, exactly when there exists a position i where:</p>
-<ul>
-<li>x becomes false at position i (meaning x &lt; i).</li>
-<li>AND y is true at position i (meaning y &gt;= i).</li>
-</ul>
-<p>In plain terms:</p>
-<ul>
-<li>x &lt; y if and only if there exists an i such that (not x_i and y_i).</li>
-</ul>
-<h3 id="algorithm-details"><a class="header" href="#algorithm-details">Algorithm Details</a></h3>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>fn sat_order_lt(
-    a_bits: Vec&lt;Expr&gt;,
-    b_bits: Vec&lt;Expr&gt;,
-    clauses: &amp;mut Vec&lt;CnfClause&gt;,
-    symbols: &amp;mut SymbolTable,
-) -&gt; Expr {
-    let mut result = false_expr();  // Start with false
-    
-    for (a_i, b_i) in a_bits.iter().zip(b_bits.iter()) {
-        // (NOT a_i AND b_i)
-        let not_a_i = tseytin_not(a_i.clone(), clauses, symbols);
-        let current_term = tseytin_and(&amp;vec![not_a_i, b_i.clone()], clauses, symbols);
-        
-        // Accumulate: result = result OR current_term
-        result = tseytin_or(&amp;vec![result, current_term], clauses, symbols);
-    }
-    result
-}
-<span class="boring">}</span></code></pre>
-<h3 id="why-this-works-for-order-encoding"><a class="header" href="#why-this-works-for-order-encoding">Why This Works for Order Encoding</a></h3>
-<p>In order encoding:</p>
-<ul>
-<li>Bit i is true if and only if the value is &gt;= i.</li>
-<li>When <code>a_i</code> is false and <code>b_i</code> is true: we found a position where a &lt; b.</li>
-<li>We OR all such positions because <strong>any single position proves the inequality</strong>.</li>
-</ul>
-<h2 id="handling-multiple-comparison-operators"><a class="header" href="#handling-multiple-comparison-operators">Handling Multiple Comparison Operators</a></h2>
-<p>The rule handles all four comparison operators by:</p>
-<ol>
-<li>
-<p><strong>Normalizing to <code>&lt;</code></strong> - transforming other operators to use <code>&lt;</code> logic:</p>
-<ul>
-<li>a &gt; b → <code>sat_order_lt(b, a)</code></li>
-<li>a &lt;= b → <code>NOT sat_order_lt(b, a)</code></li>
-<li>a &gt;= b → <code>NOT sat_order_lt(a, b)</code></li>
-</ul>
-</li>
-<li>
-<p><strong>Conditionally negating</strong> the result:</p>
-</li>
-</ol>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>let (lhs, rhs, negate) = match expr {
-    Expr::Lt(_, x, y) =&gt; (x, y, false),
-    Expr::Gt(_, x, y) =&gt; (y, x, false),
-    Expr::Leq(_, x, y) =&gt; (y, x, true),    // NOT (B &lt; A)
-    Expr::Geq(_, x, y) =&gt; (x, y, true),    // NOT (A &lt; B)
-    _ =&gt; return Err(RuleNotApplicable),
-};
-
-let mut output = sat_order_lt(lhs_bits, rhs_bits, ...);
-
-if negate {
-    output = tseytin_not(output, ...);
-}
-<span class="boring">}</span></code></pre>
-<p>This approach reuses the core <code>&lt;</code> logic, reducing code duplication and maintaining consistency.</p>
-<h2 id="operand-normalization"><a class="header" href="#operand-normalization">Operand Normalization</a></h2>
-<p>Before comparison, operands are <strong>normalized to a common range</strong> using <code>validate_order_int_operands</code>:</p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>let (binding, _, _) = validate_order_int_operands(
-    vec![lhs.as_ref().clone(), rhs.as_ref().clone()]
-)?;
-let [lhs_bits, rhs_bits] = binding.as_slice() else {
-    return Err(RuleNotApplicable);
-};
-<span class="boring">}</span></code></pre>
-<p>Normalization:</p>
-<ul>
-<li>Identifies the global minimum and maximum across both operands.</li>
-<li><strong>Pads with leading <code>true</code> bits</strong> for positions below an operand’s minimum (since those positions are definitely true).</li>
-<li><strong>Pads with trailing <code>false</code> bits</strong> for positions above an operand’s maximum (since those positions are definitely false).</li>
-</ul>
-<p><strong>Example</strong>: Comparing integers with ranges <code>[1, 3]</code> and <code>[2, 5]</code>.</p>
-<ul>
-<li>Common range: <code>[1, 5]</code>.</li>
-<li>First operand: <code>[true, original_bits, false]</code> (values &lt; 1 are implicitly &gt;= 1).</li>
-<li>Second operand: <code>[false, original_bits]</code> (values &lt; 2 are not &gt;= 1).</li>
-</ul>
-<h2 id="cnf-clause-generation"><a class="header" href="#cnf-clause-generation">CNF Clause Generation</a></h2>
-<p>The prefix-OR logic is built using Tseytin transformations:</p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>let not_a_i = tseytin_not(a_i.clone(), clauses, symbols);
-let current_term = tseytin_and(&amp;vec![not_a_i, b_i.clone()], clauses, symbols);
-result = tseytin_or(&amp;vec![result, current_term], clauses, symbols);
-<span class="boring">}</span></code></pre>
-<p>Each operation creates auxiliary variables and CNF clauses:</p>
-<ul>
-<li><code>tseytin_not</code> adds one clause: x implies not y, and not y implies x.</li>
-<li><code>tseytin_and</code> adds three clauses encoding y implies x1 and x2.</li>
-<li><code>tseytin_or</code> adds three clauses encoding y is implied by x1 or x2.</li>
-</ul>
-<h2 id="key-design-decisions"><a class="header" href="#key-design-decisions">Key Design Decisions</a></h2>
-<h3 id="why-normalize-operands"><a class="header" href="#why-normalize-operands">Why Normalize Operands?</a></h3>
-<p>Normalization ensures zip iteration is safe:</p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>for (a_i, b_i) in a_bits.iter().zip(b_bits.iter()) { ... }
-<span class="boring">}</span></code></pre>
-<p>Without matching ranges, zip would terminate at the shorter vector, missing critical comparison positions.</p>
-<h2 id="example-comparing-two-order-encoded-integers"><a class="header" href="#example-comparing-two-order-encoded-integers">Example: Comparing Two Order-Encoded Integers</a></h2>
-<p>Given:</p>
-<ul>
-<li>
-<p><code>A ∈ {2, 3, 4}</code> order encoded as <code>[A₂, A₃, A₄]</code> where bit i represents &gt;= i</p>
-<ul>
-<li>Value 2: <code>[true, false, false]</code> (2 ≥ 2, but not 2 ≥ 3)</li>
-<li>Value 3: <code>[true, true, false]</code> (3 ≥ 2 and 3 ≥ 3)</li>
-<li>Value 4: <code>[true, true, true]</code> (4 ≥ 2, 3, 4)</li>
-</ul>
-</li>
-<li>
-<p><code>B ∈ {1, 3, 4}</code> order encoded as <code>[B₁, B₂, B₃, B₄]</code></p>
-<ul>
-<li>Value 1: <code>[true, false, false, false]</code></li>
-<li>Value 3: <code>[true, true, true, false]</code></li>
-<li>Value 4: <code>[true, true, true, true]</code></li>
-</ul>
-</li>
-</ul>
-<p>Computing A &lt; B requires normalized ranges [1, 4]:</p>
-<pre><code class="language-text">A normalized: [true, A₂, A₃, A₄]    (A₁ is implicitly true).
-B normalized: [B₁, B₂, B₃, B₄]     (no change needed).
-
-A &lt; B if and only if:
-    (NOT A₁ AND B₁) OR
-    (NOT A₂ AND B₂) OR
-    (NOT A₃ AND B₃) OR
-    (NOT A₄ AND B₄).
-</code></pre>
-<p>Each OR and AND is converted to CNF via Tseytin, totalling approximately 12 clauses.</p>
-<h2 id="complexity-analysis"><a class="header" href="#complexity-analysis">Complexity Analysis</a></h2>
-<p><strong>Time Complexity</strong>: O(n) where n is the maximum bit-vector size.</p>
-<p><strong>Space Complexity</strong>: O(n) auxiliary variables from O(n) Tseytin operations.</p>
-<p><strong>Clause Count</strong>: Approximately 3n CNF clauses for one comparison.</p>
+<h2 id="prefix-comparison"><a class="header" href="#prefix-comparison">Prefix comparison</a></h2>
+<p>Order encoding’s prefix-true property enables a comparison based on prefix logic. For <code>x &lt; y</code>, we look for the first position where <code>x</code> becomes false and <code>y</code> is still true.</p>
+<p>That idea becomes a small Tseytin chain: negate the left bit, AND it with the right bit, then OR the result into the accumulator.</p>
 
                     </main>
 

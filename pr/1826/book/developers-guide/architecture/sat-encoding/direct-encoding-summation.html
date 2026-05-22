@@ -37,10 +37,10 @@
             const path_to_root = "../../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../../searchindex-c2f7f307.js";
+            window.path_to_searchindex_js = "../../../searchindex-3ac092b1.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../../toc-d3b06a23.js"></script>
+        <script src="../../../toc-3a9aeb1e.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -181,99 +181,20 @@
 <pre><code class="language-text">Sum(SATInt(a), SATInt(b), ...) ~&gt; SATInt(c)
 </code></pre>
 <p>The Direct Encoding Summation rule encodes the summation of multiple direct-encoded integers into a single direct-encoded integer.</p>
-<h3 id="key-characteristics"><a class="header" href="#key-characteristics">Key Characteristics</a></h3>
+<p>This page stays intentionally short. The reusable technique is described in <a href="./implementation-details-overview.html">SAT Rule Implementation Patterns</a>, and the current source of truth is <code>crates/conjure-cp-rules/src/sat/direct_int_ops.rs</code> (<code>add_sat_direct</code>).</p>
+<h2 id="what-this-rule-does"><a class="header" href="#what-this-rule-does">What this rule does</a></h2>
 <ul>
-<li><strong>Input</strong>: One or more <code>SATInt</code> values with direct encoding.</li>
-<li><strong>Output</strong>: A single <code>SATInt</code> with direct encoding representing their sum.</li>
-<li><strong>Algorithm</strong>: Pairwise summation using disjunctive normal form (DNF).</li>
-<li><strong>Clause Growth</strong>: Polynomial in bit-vector sizes and domain ranges.</li>
+<li>Normalises all operands to a shared value range.</li>
+<li>Builds the sum pairwise, using <code>tseytin_and</code> for each value pair and <code>tseytin_or</code> to accumulate matching terms.</li>
+<li>Propagates the resulting range after every addition step.</li>
+<li>Handles the empty-input case by returning the constant zero.</li>
 </ul>
-<h2 id="pairwise-summation-with-dnf"><a class="header" href="#pairwise-summation-with-dnf">Pairwise Summation with DNF</a></h2>
-<p>Direct encoding summation uses a <strong>disjunctive normal form</strong> approach that leverages the one-hot property of direct encoding.</p>
-<h3 id="core-idea"><a class="header" href="#core-idea">Core Idea</a></h3>
-<p>For each possible output value k, the output bit is <strong>true if and only if</strong> there exists <strong>any pair of input values</strong> i and j that sum to k:</p>
-<pre><code class="language-code">output[k] = OR over all i + j = k of (input[i] AND input[j])
-</code></pre>
-<p>This is computed as a series of pairwise additions, where each iteration combines an accumulator with one additional input operand.</p>
-<h3 id="algorithm-steps"><a class="header" href="#algorithm-steps">Algorithm Steps</a></h3>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>// Pseudocode structure
-for each additional operand:
-    for each possible output value k:
-        output[k] = false
-        for each possible accumulator value i:
-            for each possible operand value j:
-                if i + j == k:
-                    output[k] = output[k] OR (accum[i] AND operand[j])
-<span class="boring">}</span></code></pre>
-<h2 id="operand-normalisation"><a class="header" href="#operand-normalisation">Operand Normalisation</a></h2>
-<p>Before summation, all input operands are <strong>normalized to a common range</strong> using <code>validate_direct_int_operands</code>:</p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>let (mut operands, common_min, common_max) =
-    validate_direct_int_operands(exprs)?;
-<span class="boring">}</span></code></pre>
-<p>This normalization:</p>
-<ul>
-<li>Identifies the global minimum and maximum across all operands.</li>
-<li><strong>Pads each operand</strong> with leading and trailing <code>false</code> bits to match this range.</li>
-<li>Ensures consistency when calculating AND operations between operands.</li>
-</ul>
-<p><strong>Example</strong>: Summing integers with ranges <code>[1, 3]</code> and <code>[2, 5]</code>.</p>
-<ul>
-<li>Common range becomes <code>[1, 5]</code>.</li>
-<li>First operand padded: <code>[true, original_bits, false]</code> (where false extends the range to 5).</li>
-<li>Second operand padded: <code>[false, original_bits]</code> (where false extends the range to 1).</li>
-</ul>
-<h2 id="domain-propagation"><a class="header" href="#domain-propagation">Domain Propagation</a></h2>
-<p>The range of the output is determined by the possible lower and upper sums.</p>
-<p>Lower bound = accumulator lower bound + right operand lower bound.</p>
-<p>Upper bound = accumulator upper bound + right operand upper bound.</p>
-<p>After each pairwise addition iteration, the accumulator’s range is updated to reflect the new possible values.</p>
-<h2 id="cnf-clause-generation"><a class="header" href="#cnf-clause-generation">CNF Clause Generation</a></h2>
-<p>The OR and AND operations between bits are implemented using <strong>Tseytin transformations</strong>:</p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>let and_ab = tseytin_and(&amp;vec![a, b], &amp;mut new_clauses, &amp;mut new_symbols);
-sum_expr = tseytin_or(&amp;vec![sum_expr, and_ab], &amp;mut new_clauses, &amp;mut new_symbols);
-<span class="boring">}</span></code></pre>
-<p>Each <code>tseytin_and</code> and <code>tseytin_or</code> creates new CNF clauses and auxiliary variables, converting the DNF structure into CNF form required by SAT solvers.</p>
-<h2 id="example-summing-two-direct-encoded-integers"><a class="header" href="#example-summing-two-direct-encoded-integers">Example: Summing Two Direct-Encoded Integers</a></h2>
-<p>Given:</p>
-<ul>
-<li><code>A ∈ {1, 2}</code> encoded as <code>[A₁, A₂]</code> (one-hot)</li>
-<li><code>B ∈ {1, 2}</code> encoded as <code>[B₁, B₂]</code> (one-hot)</li>
-</ul>
-<p>Possible sums: <code>{2, 3, 4}</code>, so output has 3 bits <code>[Out₂, Out₃, Out₄]</code></p>
-<pre><code class="language-text">Out₂ = (A₁ AND B₁)                    // only 1+1=2
-Out₃ = (A₁ AND B₂) OR (A₂ AND B₁)     // 1+2=3 or 2+1=3
-Out₄ = (A₂ AND B₂)                    // only 2+2=4
-</code></pre>
-<p>Each OR and AND is converted to CNF via Tseytin transformation, adding auxiliary variables and clauses.</p>
-<h2 id="edge-case-empty-sum"><a class="header" href="#edge-case-empty-sum">Edge Case: Empty Sum</a></h2>
-<p>When the sum list is empty (degenerate case), the result is the constant <code>0</code>:</p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>if exprs.is_empty() {
-    return Ok(Reduction::pure(Expr::SATInt(
-        Metadata::new(),
-        SATIntEncoding::Direct,
-        Moo::new(into_matrix_expr!(vec![/* true bit for value 0 */])),
-        (0, 0),
-    )));
-}
-<span class="boring">}</span></code></pre>
-<h2 id="complexity-analysis"><a class="header" href="#complexity-analysis">Complexity Analysis</a></h2>
-<p><strong>Time Complexity</strong>: O(n · m²) where n is the number of operands and m is the range size</p>
-<p><strong>Space Complexity</strong>: O(n · m) for bit vectors, plus auxiliary variables from Tseytin transformations</p>
-<p>For large domains or many operands, clause growth can be significant.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../../developers-guide/architecture/sat-encoding/implementation-details-overview.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../../developers-guide/architecture/sat-encoding/sat-generic-patterns.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
@@ -287,7 +208,7 @@ Out₄ = (A₂ AND B₂)                    // only 2+2=4
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../../developers-guide/architecture/sat-encoding/implementation-details-overview.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../../developers-guide/architecture/sat-encoding/sat-generic-patterns.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
