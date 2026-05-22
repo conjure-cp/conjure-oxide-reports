@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Logging - Conjure Oxide</title>
+        <title>Syntactic Errors - Conjure Oxide</title>
 
 
         <!-- Custom HTML head -->
@@ -12,20 +12,20 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="../../favicon-de23e50b.svg">
-        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
-        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
-        <link rel="stylesheet" href="../../css/general-0392ca55.css">
-        <link rel="stylesheet" href="../../css/chrome-fc474251.css">
-        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+        <link rel="icon" href="../../../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../../../css/general-0392ca55.css">
+        <link rel="stylesheet" href="../../../../css/chrome-fc474251.css">
+        <link rel="stylesheet" href="../../../../css/print-9e4910d8.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+        <link rel="stylesheet" href="../../../../fonts/fonts-9644e21d.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
-        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
-        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../../../ayu-highlight-3fdfc3ac.css">
 
         <!-- Custom theme stylesheets -->
 
@@ -34,13 +34,13 @@
 
         <!-- Provide site root and default themes to javascript -->
         <script>
-            const path_to_root = "../../";
+            const path_to_root = "../../../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../searchindex-595412bf.js";
+            window.path_to_searchindex_js = "../../../../searchindex-595412bf.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-01363ef7.js"></script>
+        <script src="../../../../toc-01363ef7.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -107,7 +107,7 @@
             <!-- populated by js -->
             <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
             <noscript>
-                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+                <iframe class="sidebar-iframe-outer" src="../../../../toc.html"></iframe>
             </noscript>
             <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -142,7 +142,7 @@
                     <h1 class="menu-title">Conjure Oxide</h1>
 
                     <div class="right-buttons">
-                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                        <a href="../../../../print.html" title="Print this book" aria-label="Print this book">
                             <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
                         </a>
 
@@ -176,69 +176,179 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="logging"><a class="header" href="#logging">Logging</a></h1>
-<p><strong>This document is a work in progress - for a full list of logging options,
-see Conjure Oxide’s <code>--help</code> output.</strong></p>
-<h2 id="to-stderr"><a class="header" href="#to-stderr">To <code>stderr</code></a></h2>
-<p>Using <code>--verbose</code>, and the <code>RUST_LOG</code> environment variable, you can control the
-contents, and formatting of, Conjure Oxide’s <code>stderr</code> output:</p>
+                        <h1 id="syntactic-errors-detection"><a class="header" href="#syntactic-errors-detection">Syntactic Errors Detection</a></h1>
+<h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
+<p>Syntactic errors produce an invalid <strong>Concrete Syntax Tree (CST)</strong> from the Tree-sitter parser (<a href="https://tree-sitter.github.io/tree-sitter/">Tree-sitter</a>) when parsing Essence code. A CST produced from erroneous input may contain:</p>
 <ul>
 <li>
-<p><strong><code>--verbose</code></strong> changes the formatting of the logs for improved readability,
-including printing source locations and line numbers for log events. It also
-enables the printing of the log levels <code>INFO</code> and above.</p>
+<p><strong><code>ERROR</code> nodes</strong><br>Inserted when the parser cannot match part of the input to the Essence <a href="https://github.com/conjure-cp/conjure-oxide/blob/main/crates/tree-sitter-essence/grammar.js">grammar</a>.</p>
 </li>
 <li>
-<p>The <strong><code>RUST_LOG</code></strong> environment variable can be used to customise the
-log levels that are printed depending on the module . For more
-information, see:
-<a href="https://docs.rs/env_logger/latest/env_logger/#enabling-logging">https://docs.rs/env_logger/latest/env_logger/#enabling-logging</a>.</p>
+<p><strong><code>MISSING</code> nodes</strong><br>Inserted when the parser expects a token that is not present in the source.</p>
 </li>
 </ul>
-<h3 id="example-logging-rule-applications"><a class="header" href="#example-logging-rule-applications">Example: Logging Rule Applications</a></h3>
-<p>Different log levels provide different information about the rules applied to
-the model:</p>
+<p>If syntactic errors are present, semantic errors are not checked during parsing in <a href="https://github.com/conjure-cp/conjure-oxide/blob/main/crates/conjure-cp-essence-parser/src/parser/parse_model.rs"><code>parse_model</code></a>.</p>
+<h2 id="implementation-syntax_errorsrs"><a class="header" href="#implementation-syntax_errorsrs">Implementation (<a href="https://github.com/conjure-cp/conjure-oxide/blob/main/crates/conjure-cp-essence-parser/src/parser/syntax_errors.rs">syntax_errors.rs</a>)</a></h2>
+<pre><code class="language-bash">crates/conjure-cp-essence-parser/src/parser
+└─ syntax-errors.rs
+</code></pre>
+<h4 id="pub-fn-detect_syntactic_errors-source-strtree-tree_sittertree-errors-mut-vecrecoverableparseerror"><a class="header" href="#pub-fn-detect_syntactic_errors-source-strtree-tree_sittertree-errors-mut-vecrecoverableparseerror"><code>pub fn detect_syntactic_errors (source: &amp;str,tree: &amp;tree_sitter::Tree, errors: &amp;mut Vec&lt;RecoverableParseError&gt;,)</code></a></h4>
+<p>Invoked in <a href="https://github.com/conjure-cp/conjure-oxide/blob/main/crates/conjure-cp-essence-parser/src/parser/parse_model.rs"><code>parse_model</code></a>.</p>
+<p>This function runs when the CST root node indicates an error is present. It traverses the CST, identifies and classifies syntactic errors, and appends them to the <code>errors</code> vector. Each reported issue is a <a href="https://github.com/conjure-cp/conjure-oxide/blob/main/crates/conjure-cp-essence-parser/src/errors.rs"><code>RecoverableParseError</code></a>.</p>
+<p>Traversal uses <code>WalkDFS::with_retract</code>, which is built on Tree-sitter’s <a href="https://docs.rs/tree-sitter/latest/tree_sitter/struct.TreeCursor.html"><code>TreeCursor</code></a> and an optional “retract” mode. Tree-sitter can nest errors: when a node is marked erroneous, its descendants may also be marked as errors. This can result in multiple messages for what is, effectively, a single syntax issue. Enabling retract avoids this by skipping the children of error nodes (including missing token) and collecting only top-level errors, ensuring a single diagnostic is produced per underlying error.</p>
+<h3 id="missing-token"><a class="header" href="#missing-token">Missing Token</a></h3>
+<p><strong>Detection</strong><br>Tree-sitter does not always insert a ‘MISSING’ node into the CST when a token is missing from a grammar rule. To handle this robustly, missing tokens are detected using a structural check: a node whose start position equals its end position (a zero-length range) is treated as a missing token.</p>
+<h4 id="fn-classify_missing_tokennode-node-source-str---recoverableparseerror"><a class="header" href="#fn-classify_missing_tokennode-node-source-str---recoverableparseerror"><code>fn classify_missing_token(node: Node, source: &amp;str) -&gt; RecoverableParseError</code></a></h4>
+<p>Creates a <code>RecoverableParseError</code> for a missing token, using a context-aware message and a diagnostic range.</p>
+<p><strong>Range selection</strong><br>The function constructs a <code>tree_sitter::Range</code> from the node’s byte offsets and row/column points, then refines it with <code>clamp_range_before_line_comment(&amp;mut range, source)</code>. This prevents the reported span from extending into a trailing line comment.</p>
+<p><strong>Message construction</strong><br>The message is chosen based on the missing node’s syntactic context:</p>
 <ul>
 <li>
-<p><code>INFO</code> provides information on the rules that were applied to the model.</p>
+<p>If the missing node appears within a <code>letting_variable_declaration</code>, the message is specialized to:<br><em><strong>“Missing Expression or Domain”</strong></em>.</p>
 </li>
 <li>
-<p><code>TRACE</code> additionally prints the rules that were attempted and why they were
-not applicable.</p>
+<p>Otherwise, the message has the form:<br><em><strong>“Missing <code>&lt;token&gt;</code>”</strong></em>, where <code>&lt;token&gt;</code> is derived from <code>user_friendly_token_name(node.kind(), false)</code>. This helper turns internal grammar token names into user-facing text by removing underscores, substituting certain keywords with more natural wording, and adding appropriate articles.</p>
 </li>
 </ul>
-<p>To see TRACE logs in a pretty format (mainly useful for
-debugging):</p>
-<pre><code class="language-sh">$ RUST_LOG=trace conjure-oxide solve --verbose &lt;model&gt;
-</code></pre>
-<p>Or, using cargo:</p>
-<pre><code class="language-sh">$ RUST_LOG=trace cargo run -- solve --verbose &lt;model&gt;
-</code></pre>
-<h3 id="example-tracing-sat-solver-rules"><a class="header" href="#example-tracing-sat-solver-rules">Example: Tracing SAT Solver Rules</a></h3>
-<p>When working with the SAT solver, you can trace the complete transformation pipeline:</p>
-<pre><code class="language-bash">RUST_LOG=TRACE cargo run -- solve --solver sat my_problem.essence --verbose
-</code></pre>
-<p>This will show:</p>
+<h3 id="unexpected-token"><a class="header" href="#unexpected-token">Unexpected Token</a></h3>
+<p>Unexpected tokens occur when tree-sitter fails to recognise input according to the grammar rule it is currently applying. These tokens may be valid grammar elements appearing in an unexpected context, or symbols not recognised by the grammar at all.</p>
+<p><strong>Detection</strong><br>An <code>ERROR</code> node is encountered in the CST.</p>
+<h4 id="fn-classify_unexpected_token_errornode-node-source_code-str---recoverableparseerror"><a class="header" href="#fn-classify_unexpected_token_errornode-node-source_code-str---recoverableparseerror"><code>fn classify_unexpected_token_error(node: Node, source_code: &amp;str) -&gt; RecoverableParseError</code></a></h4>
+<p><strong>Range selection</strong><br>The node’s byte offsets are clamped to the source length to avoid out-of-bounds ranges, then adjusted with <code>clamp_range_before_line_comment(&amp;mut range, source)</code>.</p>
+<p><strong>Message construction</strong><br>If a parent node is available (i.e., the unexpected token occurs within another construct), the message is <em><strong>“Unexpected <code>&lt;token&gt;</code> inside <code>&lt;expression&gt;</code>”</strong></em>, where <code>&lt;expression&gt;</code> is derived via <code>user_friendly_token_name</code> to produce a human-readable label. Otherwise, the message is <em><strong>“Unexpected <code>&lt;token&gt;</code>”</strong></em>.</p>
+<p>The token text is extracted from <code>source_code</code> using the computed byte range. Extraction is performed on raw bytes and decoded with <code>String::from_utf8_lossy</code> to avoid panics when Tree-sitter’s byte offsets do not align with UTF-8 character boundaries (for example, when Unicode characters are present).</p>
+<h3 id="malformed-top-level-statement"><a class="header" href="#malformed-top-level-statement">Malformed Top Level Statement</a></h3>
+<p>Malformed-line errors are detected when Tree-sitter produces an <code>ERROR</code> node whose shape indicates that the parser could not sensibly apply any grammar rule to the input at that point. In this situation, Tree-sitter may attempt recovery by trying alternative rules that appear to be the “best fit”. As a result, the resulting <code>ERROR</code> node can have ranges that are not reliable for diagnostics.</p>
+<p><strong>Detection</strong><br>During CST traversal, each <code>ERROR</code> node is checked with <code>is_malformed_line_error(&amp;node, source)</code>. When it returns <code>true</code>, the line containing the error (<code>node.start_position().row</code>) is treated as malformed and a dedicated malformed-line diagnostic is emitted.</p>
+<p>To avoid reporting duplicate diagnostics, the implementation tracks which line numbers have already been reported in <code>malformed_lines_reported: HashSet&lt;usize&gt;</code>. If a later <code>ERROR</code> node occurs on a line already in the set, it is skipped, ensuring at most one malformed-line message per line.</p>
+<p><strong>Malformed line checks (<code>is_malformed_line_error</code>)</strong></p>
 <ul>
-<li>Integer-to-boolean conversions</li>
-<li>Operation transformations</li>
-<li>Tseytin transformations</li>
-<li>All rules that were tried and applied</li>
+<li>
+<p>If any ancestor node kind matches<br><code>find_statement</code>, <code>given_statement</code>, <code>letting_statement</code>, <code>dominance_relation</code>, <code>bool_expr</code>, <code>comparison_expr</code>, <code>arithmetic_expr</code>, or <code>atom</code>, the error is <strong>not</strong> considered a malformed-line error, returns false.</p>
+</li>
+<li>
+<p><strong>Position-based / range check</strong>:</p>
+<ul>
+<li>the error node starts at or before the first non-whitespace character on its line, or</li>
+<li>the node’s span is out of range for the source (<code>error_node_out_of_range</code>).</li>
 </ul>
-<p>For more detailed testing output (including JSON traces and rewritten models), run specific tests:</p>
-<pre><code class="language-bash">cargo test &lt;test_name&gt;
+</li>
+<li>
+<p><strong>Constraint-continuation exclusions</strong></p>
+<p>Even if the position/range check suggests “malformed”, the function suppresses the malformed-line classification when:</p>
+<ul>
+<li>the line is indented (<code>first_non_whitespace &gt; 0</code>) <strong>and</strong></li>
+<li>the line appears to be a constraint continuation (<code>is_constraint_continuation(source, row)</code>).</li>
+</ul>
+</li>
+</ul>
+<p><strong>Range selection</strong><br>The range of the error is deliberately constrained to the bounds of the entire line (from column <code>0</code> to the line’s final character). This is done because, when no rule can apply, Tree-sitter’s recovery heuristics can produce an <code>ERROR</code> node whose byte range is misleading or extends beyond what should be highlighted. This produces a more accurate error underlining than relying on the <code>ERROR</code> node’s raw span.</p>
+<p><strong>Message construction (<code>generate_malformed_line_message</code>)</strong><br>The malformed-line message is built by taking the trimmed text of the offending line, removing anything after a <code>$</code> line comment marker, escaping any double quotes, and then classifying the line based on its first (and sometimes second) word. The final diagnostic is emitted as: <strong><code>Expected &lt;expected&gt;, but got '&lt;line&gt;'</code></strong>.</p>
+<p><strong>Malformed line categories</strong><br>Based on the line’s opening tokens, the function reports one of the following expected statement types:</p>
+<ul>
+<li>Starts with <code>find</code> → expects <strong>a find declaration statement</strong></li>
+<li>Starts with <code>letting</code> → expects <strong>a letting declaration statement</strong></li>
+<li>Starts with <code>given</code> → expects <strong>a given declaration statement</strong></li>
+<li>Starts with <code>where</code> → expects <strong>an instantiation condition</strong></li>
+<li>Starts with <code>minimising</code> or <code>maximising</code> → expects <strong>an objective statement</strong></li>
+<li>Starts with <code>such that</code> → expects <strong>a constraint statement</strong></li>
+<li>Starts with <code>such</code> (but not followed by <code>that</code>) → expects <strong>a valid top-level statement</strong></li>
+<li>Any other opening token → expects <strong>a valid top-level statement</strong></li>
+</ul>
+<h2 id="how-to-test"><a class="header" href="#how-to-test">How To Test</a></h2>
+<pre><code class="language-bash">cargo test -p conjure-cp-essence-parser --test malformed_top_level
+cargo test -p conjure-cp-essence-parser --test missing_token
+cargo test -p conjure-cp-essence-parser --test unexpected_token
+cargo test -p tests-integration --test roundtrip_tests tests_roundtrip_invalid_syntax
 </code></pre>
-<p>This generates <code>.json</code> and <code>.txt</code> files containing rule traces, parsed Essence, solutions, and the rewritten model.</p>
+<h2 id="examples"><a class="header" href="#examples">Examples</a></h2>
+<h3 id="example-missing-closing-bracket"><a class="header" href="#example-missing-closing-bracket">Example: Missing Closing Bracket</a></h3>
+<p><strong>Input</strong></p>
+<pre><code class="language-text">find x: int(1..2
+</code></pre>
+<p><strong>Error Message</strong></p>
+<pre><code class="language-text">  |
+1 | find x: int(1..2
+  |                 ^
+Missing )
+</code></pre>
+<h3 id="example-missing-variable"><a class="header" href="#example-missing-variable">Example: Missing Variable</a></h3>
+<p><strong>Input</strong></p>
+<pre><code class="language-text">find: bool
+</code></pre>
+<p><strong>Error Message</strong></p>
+<pre><code class="language-text">  |
+1 | find: bool
+  |     ^
+Missing Variable List
+
+</code></pre>
+<h3 id="example-missing-expressiondomain"><a class="header" href="#example-missing-expressiondomain">Example: Missing Expression/Domain</a></h3>
+<p><strong>Input</strong></p>
+<pre><code class="language-text">letting x be
+</code></pre>
+<p><strong>Error Message</strong></p>
+<pre><code class="language-text">  |
+1 | letting x be
+  |             ^
+Missing Expression or Domain
+
+</code></pre>
+<h3 id="example-unexpected-x"><a class="header" href="#example-unexpected-x">Example: Unexpected x</a></h3>
+<p><strong>Input</strong></p>
+<pre><code class="language-text">find x: int(1..3x)
+</code></pre>
+<p><strong>Error Message</strong></p>
+<pre><code class="language-text">  |
+1 | find x: int(1..3x)
+  |                 ^
+Unexpected x inside an Integer Domain
+</code></pre>
+<h3 id="example-unexpected-"><a class="header" href="#example-unexpected-">Example: Unexpected &amp;</a></h3>
+<p><strong>Input</strong></p>
+<pre><code class="language-text">find x: matrix indexed by [int, &amp;] of int
+</code></pre>
+<p><strong>Error Message</strong></p>
+<pre><code class="language-text">  |
+1 | find x: matrix indexed by [int, &amp;] of int
+  |                                 ^
+Unexpected &amp; inside a Matrix Domain
+</code></pre>
+<h3 id="example-malformed-letting-statement"><a class="header" href="#example-malformed-letting-statement">Example: Malformed letting statement</a></h3>
+<p><strong>Input</strong></p>
+<pre><code class="language-text">letting s be {:}
+find a : int(1)
+</code></pre>
+<p><strong>Diagnostic</strong></p>
+<pre><code class="language-text">  |
+1 | letting s be {:}
+  | ^
+Expected a letting declaration statement, but got 'letting s be {:}'
+</code></pre>
+<h3 id="example-malformed-constraint-statement"><a class="header" href="#example-malformed-constraint-statement">Example: Malformed constraint statement</a></h3>
+<p><strong>Input</strong></p>
+<pre><code class="language-text">letting A be 3
+
+find b: int(1..20)
+
+such that ? b &lt; A
+</code></pre>
+<p><strong>Diagnostic</strong></p>
+<pre><code class="language-text">  |
+5 | such that ? b &lt; A
+  | ^
+Expected a constraint statement, but got 'such that ? b &lt; A'
+</code></pre>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../users-guide/quick-start.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../../../developers-guide/architecture/essence-parser/error-detection/semantic-errors.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../contributors-guide/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../../../developers-guide/architecture/essence-parser/protrace-module.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -248,11 +358,11 @@ debugging):</p>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../users-guide/quick-start.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../../../developers-guide/architecture/essence-parser/error-detection/semantic-errors.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../contributors-guide/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../../../developers-guide/architecture/essence-parser/protrace-module.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>
@@ -272,13 +382,13 @@ debugging):</p>
         </script>
 
 
-        <script src="../../elasticlunr-ef4e11c1.min.js"></script>
-        <script src="../../mark-09e88c2c.min.js"></script>
-        <script src="../../searcher-09f2665d.js"></script>
+        <script src="../../../../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../../../../mark-09e88c2c.min.js"></script>
+        <script src="../../../../searcher-09f2665d.js"></script>
 
-        <script src="../../clipboard-1626706a.min.js"></script>
-        <script src="../../highlight-abc7f01d.js"></script>
-        <script src="../../book-c22b7243.js"></script>
+        <script src="../../../../clipboard-1626706a.min.js"></script>
+        <script src="../../../../highlight-abc7f01d.js"></script>
+        <script src="../../../../book-c22b7243.js"></script>
 
         <!-- Custom JS scripts -->
 

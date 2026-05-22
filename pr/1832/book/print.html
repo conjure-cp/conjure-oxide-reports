@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-5e7b8a83.js";
+            window.path_to_searchindex_js = "searchindex-595412bf.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-e8157c2d.js"></script>
+        <script src="toc-01363ef7.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -1793,7 +1793,173 @@ let op_type = &amp;source_code[op.start_byte()..op.end_byte()];
                 )),
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="overview-2"><a class="header" href="#overview-2">Overview</a></h1>
+<h1 id="semantic-errors"><a class="header" href="#semantic-errors">Semantic Errors</a></h1>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="syntactic-errors-detection"><a class="header" href="#syntactic-errors-detection">Syntactic Errors Detection</a></h1>
+<h2 id="overview-2"><a class="header" href="#overview-2">Overview</a></h2>
+<p>Syntactic errors produce an invalid <strong>Concrete Syntax Tree (CST)</strong> from the Tree-sitter parser (<a href="https://tree-sitter.github.io/tree-sitter/">Tree-sitter</a>) when parsing Essence code. A CST produced from erroneous input may contain:</p>
+<ul>
+<li>
+<p><strong><code>ERROR</code> nodes</strong><br>Inserted when the parser cannot match part of the input to the Essence <a href="https://github.com/conjure-cp/conjure-oxide/blob/main/crates/tree-sitter-essence/grammar.js">grammar</a>.</p>
+</li>
+<li>
+<p><strong><code>MISSING</code> nodes</strong><br>Inserted when the parser expects a token that is not present in the source.</p>
+</li>
+</ul>
+<p>If syntactic errors are present, semantic errors are not checked during parsing in <a href="https://github.com/conjure-cp/conjure-oxide/blob/main/crates/conjure-cp-essence-parser/src/parser/parse_model.rs"><code>parse_model</code></a>.</p>
+<h2 id="implementation-syntax_errorsrs"><a class="header" href="#implementation-syntax_errorsrs">Implementation (<a href="https://github.com/conjure-cp/conjure-oxide/blob/main/crates/conjure-cp-essence-parser/src/parser/syntax_errors.rs">syntax_errors.rs</a>)</a></h2>
+<pre><code class="language-bash">crates/conjure-cp-essence-parser/src/parser
+└─ syntax-errors.rs
+</code></pre>
+<h4 id="pub-fn-detect_syntactic_errors-source-strtree-tree_sittertree-errors-mut-vecrecoverableparseerror"><a class="header" href="#pub-fn-detect_syntactic_errors-source-strtree-tree_sittertree-errors-mut-vecrecoverableparseerror"><code>pub fn detect_syntactic_errors (source: &amp;str,tree: &amp;tree_sitter::Tree, errors: &amp;mut Vec&lt;RecoverableParseError&gt;,)</code></a></h4>
+<p>Invoked in <a href="https://github.com/conjure-cp/conjure-oxide/blob/main/crates/conjure-cp-essence-parser/src/parser/parse_model.rs"><code>parse_model</code></a>.</p>
+<p>This function runs when the CST root node indicates an error is present. It traverses the CST, identifies and classifies syntactic errors, and appends them to the <code>errors</code> vector. Each reported issue is a <a href="https://github.com/conjure-cp/conjure-oxide/blob/main/crates/conjure-cp-essence-parser/src/errors.rs"><code>RecoverableParseError</code></a>.</p>
+<p>Traversal uses <code>WalkDFS::with_retract</code>, which is built on Tree-sitter’s <a href="https://docs.rs/tree-sitter/latest/tree_sitter/struct.TreeCursor.html"><code>TreeCursor</code></a> and an optional “retract” mode. Tree-sitter can nest errors: when a node is marked erroneous, its descendants may also be marked as errors. This can result in multiple messages for what is, effectively, a single syntax issue. Enabling retract avoids this by skipping the children of error nodes (including missing token) and collecting only top-level errors, ensuring a single diagnostic is produced per underlying error.</p>
+<h3 id="missing-token"><a class="header" href="#missing-token">Missing Token</a></h3>
+<p><strong>Detection</strong><br>Tree-sitter does not always insert a ‘MISSING’ node into the CST when a token is missing from a grammar rule. To handle this robustly, missing tokens are detected using a structural check: a node whose start position equals its end position (a zero-length range) is treated as a missing token.</p>
+<h4 id="fn-classify_missing_tokennode-node-source-str---recoverableparseerror"><a class="header" href="#fn-classify_missing_tokennode-node-source-str---recoverableparseerror"><code>fn classify_missing_token(node: Node, source: &amp;str) -&gt; RecoverableParseError</code></a></h4>
+<p>Creates a <code>RecoverableParseError</code> for a missing token, using a context-aware message and a diagnostic range.</p>
+<p><strong>Range selection</strong><br>The function constructs a <code>tree_sitter::Range</code> from the node’s byte offsets and row/column points, then refines it with <code>clamp_range_before_line_comment(&amp;mut range, source)</code>. This prevents the reported span from extending into a trailing line comment.</p>
+<p><strong>Message construction</strong><br>The message is chosen based on the missing node’s syntactic context:</p>
+<ul>
+<li>
+<p>If the missing node appears within a <code>letting_variable_declaration</code>, the message is specialized to:<br><em><strong>“Missing Expression or Domain”</strong></em>.</p>
+</li>
+<li>
+<p>Otherwise, the message has the form:<br><em><strong>“Missing <code>&lt;token&gt;</code>”</strong></em>, where <code>&lt;token&gt;</code> is derived from <code>user_friendly_token_name(node.kind(), false)</code>. This helper turns internal grammar token names into user-facing text by removing underscores, substituting certain keywords with more natural wording, and adding appropriate articles.</p>
+</li>
+</ul>
+<h3 id="unexpected-token"><a class="header" href="#unexpected-token">Unexpected Token</a></h3>
+<p>Unexpected tokens occur when tree-sitter fails to recognise input according to the grammar rule it is currently applying. These tokens may be valid grammar elements appearing in an unexpected context, or symbols not recognised by the grammar at all.</p>
+<p><strong>Detection</strong><br>An <code>ERROR</code> node is encountered in the CST.</p>
+<h4 id="fn-classify_unexpected_token_errornode-node-source_code-str---recoverableparseerror"><a class="header" href="#fn-classify_unexpected_token_errornode-node-source_code-str---recoverableparseerror"><code>fn classify_unexpected_token_error(node: Node, source_code: &amp;str) -&gt; RecoverableParseError</code></a></h4>
+<p><strong>Range selection</strong><br>The node’s byte offsets are clamped to the source length to avoid out-of-bounds ranges, then adjusted with <code>clamp_range_before_line_comment(&amp;mut range, source)</code>.</p>
+<p><strong>Message construction</strong><br>If a parent node is available (i.e., the unexpected token occurs within another construct), the message is <em><strong>“Unexpected <code>&lt;token&gt;</code> inside <code>&lt;expression&gt;</code>”</strong></em>, where <code>&lt;expression&gt;</code> is derived via <code>user_friendly_token_name</code> to produce a human-readable label. Otherwise, the message is <em><strong>“Unexpected <code>&lt;token&gt;</code>”</strong></em>.</p>
+<p>The token text is extracted from <code>source_code</code> using the computed byte range. Extraction is performed on raw bytes and decoded with <code>String::from_utf8_lossy</code> to avoid panics when Tree-sitter’s byte offsets do not align with UTF-8 character boundaries (for example, when Unicode characters are present).</p>
+<h3 id="malformed-top-level-statement"><a class="header" href="#malformed-top-level-statement">Malformed Top Level Statement</a></h3>
+<p>Malformed-line errors are detected when Tree-sitter produces an <code>ERROR</code> node whose shape indicates that the parser could not sensibly apply any grammar rule to the input at that point. In this situation, Tree-sitter may attempt recovery by trying alternative rules that appear to be the “best fit”. As a result, the resulting <code>ERROR</code> node can have ranges that are not reliable for diagnostics.</p>
+<p><strong>Detection</strong><br>During CST traversal, each <code>ERROR</code> node is checked with <code>is_malformed_line_error(&amp;node, source)</code>. When it returns <code>true</code>, the line containing the error (<code>node.start_position().row</code>) is treated as malformed and a dedicated malformed-line diagnostic is emitted.</p>
+<p>To avoid reporting duplicate diagnostics, the implementation tracks which line numbers have already been reported in <code>malformed_lines_reported: HashSet&lt;usize&gt;</code>. If a later <code>ERROR</code> node occurs on a line already in the set, it is skipped, ensuring at most one malformed-line message per line.</p>
+<p><strong>Malformed line checks (<code>is_malformed_line_error</code>)</strong></p>
+<ul>
+<li>
+<p>If any ancestor node kind matches<br><code>find_statement</code>, <code>given_statement</code>, <code>letting_statement</code>, <code>dominance_relation</code>, <code>bool_expr</code>, <code>comparison_expr</code>, <code>arithmetic_expr</code>, or <code>atom</code>, the error is <strong>not</strong> considered a malformed-line error, returns false.</p>
+</li>
+<li>
+<p><strong>Position-based / range check</strong>:</p>
+<ul>
+<li>the error node starts at or before the first non-whitespace character on its line, or</li>
+<li>the node’s span is out of range for the source (<code>error_node_out_of_range</code>).</li>
+</ul>
+</li>
+<li>
+<p><strong>Constraint-continuation exclusions</strong></p>
+<p>Even if the position/range check suggests “malformed”, the function suppresses the malformed-line classification when:</p>
+<ul>
+<li>the line is indented (<code>first_non_whitespace &gt; 0</code>) <strong>and</strong></li>
+<li>the line appears to be a constraint continuation (<code>is_constraint_continuation(source, row)</code>).</li>
+</ul>
+</li>
+</ul>
+<p><strong>Range selection</strong><br>The range of the error is deliberately constrained to the bounds of the entire line (from column <code>0</code> to the line’s final character). This is done because, when no rule can apply, Tree-sitter’s recovery heuristics can produce an <code>ERROR</code> node whose byte range is misleading or extends beyond what should be highlighted. This produces a more accurate error underlining than relying on the <code>ERROR</code> node’s raw span.</p>
+<p><strong>Message construction (<code>generate_malformed_line_message</code>)</strong><br>The malformed-line message is built by taking the trimmed text of the offending line, removing anything after a <code>$</code> line comment marker, escaping any double quotes, and then classifying the line based on its first (and sometimes second) word. The final diagnostic is emitted as: <strong><code>Expected &lt;expected&gt;, but got '&lt;line&gt;'</code></strong>.</p>
+<p><strong>Malformed line categories</strong><br>Based on the line’s opening tokens, the function reports one of the following expected statement types:</p>
+<ul>
+<li>Starts with <code>find</code> → expects <strong>a find declaration statement</strong></li>
+<li>Starts with <code>letting</code> → expects <strong>a letting declaration statement</strong></li>
+<li>Starts with <code>given</code> → expects <strong>a given declaration statement</strong></li>
+<li>Starts with <code>where</code> → expects <strong>an instantiation condition</strong></li>
+<li>Starts with <code>minimising</code> or <code>maximising</code> → expects <strong>an objective statement</strong></li>
+<li>Starts with <code>such that</code> → expects <strong>a constraint statement</strong></li>
+<li>Starts with <code>such</code> (but not followed by <code>that</code>) → expects <strong>a valid top-level statement</strong></li>
+<li>Any other opening token → expects <strong>a valid top-level statement</strong></li>
+</ul>
+<h2 id="how-to-test"><a class="header" href="#how-to-test">How To Test</a></h2>
+<pre><code class="language-bash">cargo test -p conjure-cp-essence-parser --test malformed_top_level
+cargo test -p conjure-cp-essence-parser --test missing_token
+cargo test -p conjure-cp-essence-parser --test unexpected_token
+cargo test -p tests-integration --test roundtrip_tests tests_roundtrip_invalid_syntax
+</code></pre>
+<h2 id="examples-1"><a class="header" href="#examples-1">Examples</a></h2>
+<h3 id="example-missing-closing-bracket"><a class="header" href="#example-missing-closing-bracket">Example: Missing Closing Bracket</a></h3>
+<p><strong>Input</strong></p>
+<pre><code class="language-text">find x: int(1..2
+</code></pre>
+<p><strong>Error Message</strong></p>
+<pre><code class="language-text">  |
+1 | find x: int(1..2
+  |                 ^
+Missing )
+</code></pre>
+<h3 id="example-missing-variable"><a class="header" href="#example-missing-variable">Example: Missing Variable</a></h3>
+<p><strong>Input</strong></p>
+<pre><code class="language-text">find: bool
+</code></pre>
+<p><strong>Error Message</strong></p>
+<pre><code class="language-text">  |
+1 | find: bool
+  |     ^
+Missing Variable List
+
+</code></pre>
+<h3 id="example-missing-expressiondomain"><a class="header" href="#example-missing-expressiondomain">Example: Missing Expression/Domain</a></h3>
+<p><strong>Input</strong></p>
+<pre><code class="language-text">letting x be
+</code></pre>
+<p><strong>Error Message</strong></p>
+<pre><code class="language-text">  |
+1 | letting x be
+  |             ^
+Missing Expression or Domain
+
+</code></pre>
+<h3 id="example-unexpected-x"><a class="header" href="#example-unexpected-x">Example: Unexpected x</a></h3>
+<p><strong>Input</strong></p>
+<pre><code class="language-text">find x: int(1..3x)
+</code></pre>
+<p><strong>Error Message</strong></p>
+<pre><code class="language-text">  |
+1 | find x: int(1..3x)
+  |                 ^
+Unexpected x inside an Integer Domain
+</code></pre>
+<h3 id="example-unexpected-"><a class="header" href="#example-unexpected-">Example: Unexpected &amp;</a></h3>
+<p><strong>Input</strong></p>
+<pre><code class="language-text">find x: matrix indexed by [int, &amp;] of int
+</code></pre>
+<p><strong>Error Message</strong></p>
+<pre><code class="language-text">  |
+1 | find x: matrix indexed by [int, &amp;] of int
+  |                                 ^
+Unexpected &amp; inside a Matrix Domain
+</code></pre>
+<h3 id="example-malformed-letting-statement"><a class="header" href="#example-malformed-letting-statement">Example: Malformed letting statement</a></h3>
+<p><strong>Input</strong></p>
+<pre><code class="language-text">letting s be {:}
+find a : int(1)
+</code></pre>
+<p><strong>Diagnostic</strong></p>
+<pre><code class="language-text">  |
+1 | letting s be {:}
+  | ^
+Expected a letting declaration statement, but got 'letting s be {:}'
+</code></pre>
+<h3 id="example-malformed-constraint-statement"><a class="header" href="#example-malformed-constraint-statement">Example: Malformed constraint statement</a></h3>
+<p><strong>Input</strong></p>
+<pre><code class="language-text">letting A be 3
+
+find b: int(1..20)
+
+such that ? b &lt; A
+</code></pre>
+<p><strong>Diagnostic</strong></p>
+<pre><code class="language-text">  |
+5 | such that ? b &lt; A
+  | ^
+Expected a constraint statement, but got 'such that ? b &lt; A'
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="overview-3"><a class="header" href="#overview-3">Overview</a></h1>
 <p>ProTrace is a tracing module created to trace rule applications on expressions when an Essence file is parsed and rewritten by Conjure Oxide. The purpose of the module is to visualise the rules applied on the expressions, and simplify the identification of errors for debugging. The module supports multiple output formats such as <strong>JSON</strong> or <strong>human</strong> readable, along with different verbosity levels to show only what the user would like to see.</p>
 <h3 id="verbosity-level"><a class="header" href="#verbosity-level">Verbosity Level</a></h3>
 <p>The different verbosity levels include:</p>
@@ -2446,7 +2612,7 @@ The left graph is a probability density function for the run time. It says that 
 <li>Benchmark meta applications</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="overview-3"><a class="header" href="#overview-3">Overview</a></h1>
+<h1 id="overview-4"><a class="header" href="#overview-4">Overview</a></h1>
 <p>The Language Server Protocol (LSP) for Essence is designed to provide error detection and syntax highlighting for the Essence language. It consists of a server component and a diagnostics API. When fully implemented, the server will receive document change events from clients (e.g., VS Code), call the diagnostics API to detect syntactic and semantic errors, and publish these diagnostics back to the client for. The diagnostics API provides error detection and document symbol information for syntax highlighting. Its main purpose is to improve the user experience when formulating the problems in Essence.</p>
 <h1 id="structure"><a class="header" href="#structure">Structure</a></h1>
 <p>The LSP architecture follows a client-server model where the client (editor extension) and server (language server) communicate asynchronously via JSON-RPC 2.0 protocol. The server runs as a separate process, and exchanges messages over standard I/O streams. More on that in <a href="#lsp-documentation">LSP structure docs</a>.</p>
@@ -2454,7 +2620,7 @@ The left graph is a probability density function for the run time. It says that 
 <p><img src="developers-guide/architecture/lsp/lsp-structure.svg" alt="LSP Structure Diagram"></p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="diagnostics-api-for-lsp-server"><a class="header" href="#diagnostics-api-for-lsp-server">Diagnostics API for LSP Server</a></h1>
-<h2 id="overview-4"><a class="header" href="#overview-4">Overview</a></h2>
+<h2 id="overview-5"><a class="header" href="#overview-5">Overview</a></h2>
 <p>The Diagnostics API provides tree-sitter and parser–based diagnostics for Essence source files (for error underlining, syntax highlighting, and hover info). It also exposes general LSP-compatible data structures for consumption by editors and tools. Currently, the main functionality of the Diagnostics API is to parse Essence source code and report syntactic errors found by walking the CST (using tree-sitter) and report semantic errors by attempting a semantic parse and reporting parser errors. It serialises diagnostics exposing a <code>get_diagnostics()</code> function, which returns both semantic and syntactic errors as a <code>Vec</code> of <code>Diagnostic</code>s.</p>
 <h2 id="structure-1"><a class="header" href="#structure-1">Structure</a></h2>
 <pre><code class="language-bash">crates/conjure-cp-essence-parser/src/diagnostics/
@@ -2530,116 +2696,6 @@ cargo test -p conjure-cp-essence-parser --test unexpected_token
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="syntax-errors"><a class="header" href="#syntax-errors">Syntax Errors</a></h1>
-<p>(Will produce an invalid CST)</p>
-<h3 id="1-missing-token-eg-variable-domain-expression"><a class="header" href="#1-missing-token-eg-variable-domain-expression">1. Missing Token (e.g variable, Domain, Expression)</a></h3>
-<p>Description: expected token is absent
-Detection: Empty node or a missing child node. (MISSING node is inserted)
-Example: missing variable name</p>
-<pre><code class="language-text">find: bool
-</code></pre>
-<p>Example: missing Expression</p>
-<pre><code class="language-text">letting x be 
-</code></pre>
-<h3 id="2-missing-keyword"><a class="header" href="#2-missing-keyword">2. Missing Keyword</a></h3>
-<p>Description: a token appears where a different token/keyword is expected
-Detection: ERROR node containing all the tokens where that failed to match the grammar</p>
-<p>Example: missing colon, <code>int</code> is unexpected (here <code>x</code> and <code>int</code> will be children of the ERROR node)</p>
-<pre><code class="language-text">find x int
-</code></pre>
-<h3 id="3-unexpected-token"><a class="header" href="#3-unexpected-token">3. Unexpected Token</a></h3>
-<p>Description: a token appearing after a valid construct is complete
-Detection: ERROR node containing the extra token (ERROR node will likely be the last child of a valid construct)
-Example: second <code>)</code> is extra</p>
-<pre><code class="language-text">find x: int(1..2))
-</code></pre>
-<h3 id="4-invalid-token"><a class="header" href="#4-invalid-token">4. Invalid Token</a></h3>
-<p>Description: token is malformed or not part of the grammar
-Detection: look for an ERROR node with the invalid token
-Example: <code>@int</code> is not a valid token (ERROR node with <code>@</code>)</p>
-<pre><code class="language-text">find x: @int
-</code></pre>
-<p>Conjure does not identify <code>int</code> at all, just says “Skipped token”, “Missing Domain”
-Tree-Sitter in conjure-oxide sees <code>int</code> as a valid token but has an ERROR node with <code>@</code> before.
-So in Conjure the same error as Missing Token but might make sense to separate due to different CST structures.</p>
-<h3 id="5-unclosed-delimiter"><a class="header" href="#5-unclosed-delimiter">5. Unclosed Delimiter</a></h3>
-<p>Description: unmatched or missing closing bracket, parenthesis, brace
-Detection: MISSING node “)”
-Example: missing <code>)</code></p>
-<pre><code class="language-text">find x: int(1..2
-</code></pre>
-<p>Conjure allows it but since out grammar enforces it Tree-Sitter produces an error.</p>
-<h3 id="6-unsupported-statements"><a class="header" href="#6-unsupported-statements">6. Unsupported Statements</a></h3>
-<p>Description: statement not recognised by Essence grammar
-Detection: ERROR node with the unrecognised statement
-Example:</p>
-<pre><code class="language-text">find x: int(1..5)
-print x 
-</code></pre>
-<p>Conjure doesn’t recognise <code>print x</code> as a separate invalid statement.</p>
-<h3 id="7-general-syntax-error"><a class="header" href="#7-general-syntax-error">7. General Syntax Error</a></h3>
-<p>All the other cases that cause an ERROR node in the CST tree.</p>
-<h1 id="semantic-errors"><a class="header" href="#semantic-errors">Semantic Errors</a></h1>
-<p>(Will produce a valid CST and AST, now can only detected at runtime, e.g type checking)</p>
-<h3 id="1-keywords-as-identifiers"><a class="header" href="#1-keywords-as-identifiers">1. Keywords as Identifiers</a></h3>
-<p>Description: token’s name is not allowed<br>Detection: compare the variable names against the set of keywords
-Example: Keyword “bool” used as a variable name</p>
-<pre><code class="language-text">find bool: bool
-</code></pre>
-<pre><code class="language-text">find x: letting
-</code></pre>
-<p>Conjure doesn’t allow it but Tree-Sitter does so we will have to check as part of semantic checks.</p>
-<h3 id="2-omitted-declaration"><a class="header" href="#2-omitted-declaration">2. Omitted Declaration</a></h3>
-<p>Description: variable not declared
-Detection: save the declared variables and check if the ones used in expressions are in the declared set
-Example: x was not declared before</p>
-<pre><code class="language-text">find y: int (1..4)
-such that x = 5
-</code></pre>
-<h3 id="3-invalid-domain"><a class="header" href="#3-invalid-domain">3. Invalid Domain</a></h3>
-<p>Description: logically or mathematically invalid bounds/domain + infinite domain</p>
-<p>Example: a bigger value before smaller</p>
-<pre><code class="language-text">find x: int(10..5)
-</code></pre>
-<p>Conjure doesn’t flag as error just says no solutions found.</p>
-<p>Example: infinite domain</p>
-<pre><code class="language-text">find x: int(1..) 
-</code></pre>
-<p>Might want to restrict infinite domain with the grammar so it could be a syntax error.</p>
-<h3 id="4-type-mismatch"><a class="header" href="#4-type-mismatch">4. Type Mismatch</a></h3>
-<p>Description: attempt to do an operation on illegal types</p>
-<p>Example: cannot add integer and boolean</p>
-<pre><code class="language-text">letting y be true 
-find x: int (5..10)
-such that 5 + y = 6
-</code></pre>
-<h3 id="5-unsafe-division"><a class="header" href="#5-unsafe-division">5. Unsafe division</a></h3>
-<p>Description: cannot divide/modulo by zero</p>
-<p>Example: cannot divide by zero</p>
-<pre><code class="language-text">find x: int(5..10)
-such that x/0 = 3
-</code></pre>
-<p>Conjure allows, proceeds to run the solver but just outputs no solutions. We should disallow.</p>
-<h3 id="6-invalid-indexing-in-tuples-and-matrices"><a class="header" href="#6-invalid-indexing-in-tuples-and-matrices">6. Invalid indexing in tuples and matrices</a></h3>
-<p>Description: Tuples and matrices are indexed from . Negative, zero or index out of bounds is invalid</p>
-<p>Example: s tuple index of out bounds</p>
-<pre><code class="language-text">letting s be tuple(0,1,1,0)
-letting t be tuple(0,0,0,1)
-find a : bool such that a = (s[5] = t[1]) $ true
-</code></pre>
-<h1 id="possible-semantic-errors-per-statement-type"><a class="header" href="#possible-semantic-errors-per-statement-type">Possible semantic errors per statement type</a></h1>
-<p>(All syntactic errors are relevant for each)</p>
-<h2 id="declarations"><a class="header" href="#declarations">Declarations</a></h2>
-<h3 id="find-statement"><a class="header" href="#find-statement">Find Statement</a></h3>
-<p>(Declaring decision variables)</p>
-<p>Format: <em>“find”</em> <strong>Name</strong> <em>“:”</em> <strong>Domain</strong></p>
-<p>Semantic Errors: Keyword as Token, Invalid Domain</p>
-<h3 id="letting-statement"><a class="header" href="#letting-statement">Letting Statement</a></h3>
-<p>(Declaring aliases)</p>
-<p>Formats: <em>“letting”</em> <strong>Name</strong> <em>“be”</em> <strong>Expression</strong> | <em>“letting”</em> <strong>Name</strong> <em>“be”</em> <em>“domain”</em> <strong>Domain</strong></p>
-<p>Semantic Errors: All except Omitted Declaration</p>
-<h3 id="constraints-1"><a class="header" href="#constraints-1">Constraints</a></h3>
-<p>Format: <em>“such that”</em> list(<strong>Expression</strong>, <em>“,”</em>)</p>
-<p>Semantic Errors: All except for Invalid Domain</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <p><strong>CST</strong> - Concrete Syntax Tree. Generated by the tree-sitter parser when parsing an essence file.</p>
 <p><strong>AST</strong> - Abstract Syntax Tree. Generated when the CST is parsed and Model struct is created.</p>
@@ -2694,7 +2750,7 @@ print x
 <p>Cases that cause an error in the CST but did not fall into any of the previous categories.</p>
 <h1 id="semantic-errors-1"><a class="header" href="#semantic-errors-1">Semantic Errors</a></h1>
 <p>These errors concern the logical context of an expression rather than its surface-level formatting. As a result, the expression may conform to the grammar and produce a valid CST, but still fail to parse into a valid AST. Such errors are detected during the phase that converts the CST into a <code>Model</code> struct.</p>
-<h2 id="1-keywords-as-identifiers-1"><a class="header" href="#1-keywords-as-identifiers-1">1. Keywords as Identifiers</a></h2>
+<h2 id="1-keywords-as-identifiers"><a class="header" href="#1-keywords-as-identifiers">1. Keywords as Identifiers</a></h2>
 <h3 id="description-3"><a class="header" href="#description-3">Description</a></h3>
 <p>Using grammar keywords (e.g <code>find</code>, <code>bool</code>) as a variable name.</p>
 <h3 id="detection-3"><a class="header" href="#detection-3">Detection</a></h3>
@@ -2705,7 +2761,7 @@ print x
 <h3 id="example-2-keyword-letting-used-as-an-identifier"><a class="header" href="#example-2-keyword-letting-used-as-an-identifier">Example 2: Keyword <code>letting</code> used as an identifier</a></h3>
 <pre><code class="language-text">find letting,b,c: int(1..3)
 </code></pre>
-<h2 id="2-omitted-declaration-1"><a class="header" href="#2-omitted-declaration-1">2. Omitted Declaration</a></h2>
+<h2 id="2-omitted-declaration"><a class="header" href="#2-omitted-declaration">2. Omitted Declaration</a></h2>
 <h3 id="description-4"><a class="header" href="#description-4">Description</a></h3>
 <p>Variable used but not declared.</p>
 <h3 id="detection-4"><a class="header" href="#detection-4">Detection</a></h3>
@@ -2714,14 +2770,14 @@ print x
 <pre><code class="language-text">find y: int (1..4)
 such that x = 5
 </code></pre>
-<h2 id="3-invalid-domain-1"><a class="header" href="#3-invalid-domain-1">3. Invalid Domain</a></h2>
+<h2 id="3-invalid-domain"><a class="header" href="#3-invalid-domain">3. Invalid Domain</a></h2>
 <p>(not yet supported)</p>
 <h3 id="description-5"><a class="header" href="#description-5">Description</a></h3>
 <p>Logically or mathematically invalid bounds.</p>
 <h3 id="example-a-bigger-value-before-smaller"><a class="header" href="#example-a-bigger-value-before-smaller">Example: a bigger value before smaller</a></h3>
 <pre><code class="language-text">find x: int(10..5)
 </code></pre>
-<h2 id="4-type-mismatch-1"><a class="header" href="#4-type-mismatch-1">4. Type Mismatch</a></h2>
+<h2 id="4-type-mismatch"><a class="header" href="#4-type-mismatch">4. Type Mismatch</a></h2>
 <h3 id="description-6"><a class="header" href="#description-6">Description</a></h3>
 <p>Attempt to do an operation on illegal types.</p>
 <h3 id="detection-5"><a class="header" href="#detection-5">Detection</a></h3>
@@ -2731,7 +2787,7 @@ such that x = 5
 find x: int (5..10)
 such that 5 + y = 6
 </code></pre>
-<h2 id="5-unsafe-division-1"><a class="header" href="#5-unsafe-division-1">5. Unsafe division</a></h2>
+<h2 id="5-unsafe-division"><a class="header" href="#5-unsafe-division">5. Unsafe division</a></h2>
 <p>(not yet implemented)</p>
 <h3 id="description-7"><a class="header" href="#description-7">Description</a></h3>
 <p>Attempt to divide/modulo by zero.</p>
@@ -2751,7 +2807,7 @@ find a : bool such that a = (s[5] = t[1]) $ true
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="semantic-errors-detection"><a class="header" href="#semantic-errors-detection">Semantic Errors Detection</a></h1>
-<h2 id="overview-5"><a class="header" href="#overview-5">Overview</a></h2>
+<h2 id="overview-6"><a class="header" href="#overview-6">Overview</a></h2>
 <p>Semantic errors are not picked up by the tree-sitter parser and result in a valid CST but an invalid AST. They are detected at the stage of parsing the CST into a Rust <a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_core/ast/struct.Model.html"><code>Model</code> object</a> representing the Essence problem. The errors generated from the <a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_cp_essence_parser/parser/index.html">Essence parser</a> are extracted and reported via <a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_cp_essence_parser/diagnostics/diagnostics_api/index.html">Diagnostics API</a>.</p>
 <p>The semantic errors detected include type errors, omitted declarations, invalid indexing and using keywords as identifiers.</p>
 <h2 id="implementation-1"><a class="header" href="#implementation-1">Implementation</a></h2>
@@ -2772,12 +2828,12 @@ find a : bool such that a = (s[5] = t[1]) $ true
 <span class="boring">}</span></code></pre>
 <p><code>fn keyword_as_identifier(root: tree_sitter::Node, src: &amp;str) -&gt; Result&lt;(), EssenceParseError&gt;</code></p>
 <p>Called at the end of <code>parse_model_with_context</code>. Performs this validation by traversing the CST using DFS. Starting from the root node, it iterates over all child nodes and inspects nodes of kind <code>variable</code>, <code>identifier</code>, or <code>parameter</code>. For each such node, the corresponding source text is extracted and compared against a predefined list of reserved Essence keywords. If a match is found, the function reports an <code>EssenceParseError</code> with a source range derived from the CST node and an error message.</p>
-<h2 id="how-to-test"><a class="header" href="#how-to-test">How To Test</a></h2>
+<h2 id="how-to-test-1"><a class="header" href="#how-to-test-1">How To Test</a></h2>
 <pre><code class="language-bash">cargo test -p conjure-cp-essence-parser --test semantic_test
 cargo test -p conjure-cp-essence-parser --test keyword_as_ident
 
 </code></pre>
-<h2 id="examples-1"><a class="header" href="#examples-1">Examples</a></h2>
+<h2 id="examples-2"><a class="header" href="#examples-2">Examples</a></h2>
 <h3 id="example-keyword-find-as-an-identifier"><a class="header" href="#example-keyword-find-as-an-identifier">Example: Keyword <code>find</code> as an identifier</a></h3>
 <p><strong>Input</strong></p>
 <pre><code class="language-text">find find,b,c: int(1..3)
@@ -2810,8 +2866,8 @@ Message: Semantic Error: Undefined variable: 'y'
 Source: "semantic error detection"
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="syntactic-errors-detection"><a class="header" href="#syntactic-errors-detection">Syntactic Errors Detection</a></h1>
-<h2 id="overview-6"><a class="header" href="#overview-6">Overview</a></h2>
+<h1 id="syntactic-errors-detection-1"><a class="header" href="#syntactic-errors-detection-1">Syntactic Errors Detection</a></h1>
+<h2 id="overview-7"><a class="header" href="#overview-7">Overview</a></h2>
 <p>Syntactic errors result in an invalid <strong>Concrete Syntax Tree (CST)</strong> generated by the tree-sitter parser (<a href="https://tree-sitter.github.io/tree-sitter/">Tree-sitter</a>) when parsing Essence code. An invalid CST may contain:</p>
 <ul>
 <li>
@@ -2852,12 +2908,12 @@ ranges are calculated using Tree-sitter’s <code>Node.start_position()</code> a
 <p><strong>Parent is another token node</strong>: unexpected tokens occur inside a construct, indicating that the rule was only partially matched.</p>
 </li>
 </ul>
-<h2 id="how-to-test-1"><a class="header" href="#how-to-test-1">How To Test</a></h2>
+<h2 id="how-to-test-2"><a class="header" href="#how-to-test-2">How To Test</a></h2>
 <pre><code class="language-bash">cargo test -p conjure-cp-essence-parser --test malformed_top_level
 cargo test -p conjure-cp-essence-parser --test missing_token
 cargo test -p conjure-cp-essence-parser --test unexpected_token
 </code></pre>
-<h2 id="examples-2"><a class="header" href="#examples-2">Examples</a></h2>
+<h2 id="examples-3"><a class="header" href="#examples-3">Examples</a></h2>
 <h3 id="example-missing-right-hand-operand"><a class="header" href="#example-missing-right-hand-operand">Example: Missing Right-Hand Operand</a></h3>
 <p><strong>Input</strong></p>
 <pre><code class="language-text">find x: int
@@ -2922,7 +2978,7 @@ Source: syntactic-error-detector
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="lsp-documentation"><a class="header" href="#lsp-documentation">LSP Documentation</a></h1>
-<h2 id="overview-7"><a class="header" href="#overview-7">Overview</a></h2>
+<h2 id="overview-8"><a class="header" href="#overview-8">Overview</a></h2>
 <p>This is the overview documentation for the Language Server which is developed for use by Conjure Oxide. This is developed following the <a href="https://microsoft.github.io/language-server-protocol/">Language Server Protocol</a> developed by Microsoft Visual Studio Code, and implemented following VSCode guidelines. This means that functionality cannot be guaranteed on other IDE, though this does not mean it will/cannot work. The Language Server and Client provide the basis through which a fully functional Essence extension will be produced. The server and client run as separate processes primarily because this minimises performance cost.</p>
 <p>At present this addresses the client and server, with abstraction over lower level functions called by the server.</p>
 <h2 id="current-functionality-goals"><a class="header" href="#current-functionality-goals">Current Functionality Goals</a></h2>
@@ -4122,7 +4178,7 @@ created: 16-02-24
 <blockquote>
 <p>NOTE: Once the rewrite engine API is finalised, we should possibly make a separate page for it.</p>
 </blockquote>
-<h1 id="overview-8"><a class="header" href="#overview-8">Overview</a></h1>
+<h1 id="overview-9"><a class="header" href="#overview-9">Overview</a></h1>
 <p>Conjure uses Essence, a high-level DSL for constraints modelling, and converts it into a solver-specific representation of the problem.
 To do that, we parse the Essence file into an AST, then use a rule engine to walk the expression tree and rewrite constraints into a format that is accepted by the solver before passing the AST to a solver adapter.</p>
 <p>The high-level process is as follows:</p>
@@ -4644,7 +4700,7 @@ find biff: sequence (minSize 3, size 4) of int(2..7) $ Cardinality attribute can
 <p>Conjure-Oxide currently has four forms of tests:</p>
 <ul>
 <li>Integration tests</li>
-<li><a href="#overview-10">Custom tests</a></li>
+<li><a href="#overview-11">Custom tests</a></li>
 <li><a href="#roundtrip-testing">Roundtrip tests</a></li>
 <li>A small number of unit tests</li>
 </ul>
@@ -4791,7 +4847,7 @@ In the future, it may also be worth examining the possibility and likelihood of 
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="roundtrip-testing"><a class="header" href="#roundtrip-testing">Roundtrip Testing</a></h1>
-<h2 id="overview-9"><a class="header" href="#overview-9">Overview</a></h2>
+<h2 id="overview-10"><a class="header" href="#overview-10">Overview</a></h2>
 <p>Roundtrip tests check that parsing is valid and that there is no unexpected behaviour during a full roundtrip of an Essence file.
 Roundtrip tests do not consider rewriting or solving.</p>
 <h2 id="full-test-structure"><a class="header" href="#full-test-structure">Full Test Structure</a></h2>
@@ -4818,7 +4874,7 @@ Both parsers will be used by default for each test unless specified and will use
 Any directories within here than contain a singular <code>.essence</code> or <code>.eprime</code> file will be treated as a test.
 After creating the Essence or Essence’ file for your test you should run the test suite with <code>ACCEPT=true</code> to generate the expected files.</p>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="overview-10"><a class="header" href="#overview-10">Overview</a></h1>
+<h1 id="overview-11"><a class="header" href="#overview-11">Overview</a></h1>
 <p>Custom tests were created as a solution to the problem that integration tests do not allow for testing of error messages, which automatically return from the integration test method and therefore cannot be analyzed. The custom tests, however, work for both erroneous and non-erroneous code. Each test contains an input, a <code>run.sh</code> file to execute the test, and an expected standard output/error (or both) to compare against. Conjure Oxide is set up to automatically create and execute a test for each test folder in the <code>tests/custom </code>directory when <code>cargo test</code> is run, so to add a test case all one must do is add a folder in the directory which contains the necessary components.</p>
 <h1 id="how-to-add-a-test-case"><a class="header" href="#how-to-add-a-test-case">How to add a test case</a></h1>
 <p>Adding a test case is simple. First add a folder with the test case name to the <code>tests/custom</code> directory. Tests can be organized within folders in the directory–only folders with a <code>run.sh</code> file will be treated as a test case. Within the test folder, add these components:</p>
@@ -4853,7 +4909,7 @@ fn {test_name}() -&gt; Result&lt;(), Box&lt;dyn Error&gt;&gt; {{
 <h3 id="function-coverage"><a class="header" href="#function-coverage">Function Coverage</a></h3>
 <p>Function coverage gives the percentage of <em>compiler</em> functions that were run during testing.</p>
 <p>A simple function with no <a href="https://doc.rust-lang.org/reference/procedural-macros.html">procedural macros</a> will count as <em>one</em> function. However, a function can be extended (e.g. with <code>#[derive(Debug)]</code>) which when compiled appear as extra <a href="https://llvm.org/">LLVM</a> functions. This extra implementation is counted as <em>another</em> function by the coverage report, which means even though you see a single function signature, the report says there are multiple functions. There is no need to test implementations generated by <code>#[derive(..)]</code> since those implementations are not written by us.</p>
-<h2 id="how-to-test-2"><a class="header" href="#how-to-test-2">How to Test</a></h2>
+<h2 id="how-to-test-3"><a class="header" href="#how-to-test-3">How to Test</a></h2>
 <p>There are two ways of interrogating code coverage:</p>
 <ul>
 <li>Push your commits to the remote, and look at the PR</li>
@@ -4866,7 +4922,7 @@ fn {test_name}() -&gt; Result&lt;(), Box&lt;dyn Error&gt;&gt; {{
 <p>TL;DR - leave the repo in at least as good a condition as you found it.
 Make sure whenever you commit something, that you add sufficient tests for it such that the coverage isn’t worse than before. This is very easy to forget!</p>
 <h3 id="search-and-destroy"><a class="header" href="#search-and-destroy">Search and Destroy</a></h3>
-<p>Use the <a href="#how-to-test-2">coverage script</a> to find which files are badly covered, and add tests for them.</p>
+<p>Use the <a href="#how-to-test-3">coverage script</a> to find which files are badly covered, and add tests for them.</p>
 <h2 id="quirks-and-implications"><a class="header" href="#quirks-and-implications">Quirks and Implications</a></h2>
 <h3 id="cloning-instead-of-forking-the-repository"><a class="header" href="#cloning-instead-of-forking-the-repository">Cloning (instead of Forking) the Repository</a></h3>
 <p>For the most up to date testing advice, look at the <a href="https://github.com/conjure-cp/conjure-oxide/blob/main/CONTRIBUTING.md">contributing guide</a>. As of December 2025, we primarily work by cloning the main repository instead of working in our own forks. To prevent remote code execution, GitHub prevents a GH Action from running code on a fork. This means that our Action for reporting test coverage whenever you push your commits only works if your upstream branch is in the main repository (and not your own fork of it).</p>
@@ -4879,7 +4935,7 @@ created: 19-09-24
 <!-- TODO edit more -->
 <!-- syntax highlighting -->
 <h1 id="semantics-of-rewriting-expressions-with-sideeffects"><a class="header" href="#semantics-of-rewriting-expressions-with-sideeffects">Semantics of Rewriting Expressions with Side‐Effects</a></h1>
-<h2 id="overview-11"><a class="header" href="#overview-11">Overview</a></h2>
+<h2 id="overview-12"><a class="header" href="#overview-12">Overview</a></h2>
 <hr>
 <p>When rewriting expressions, a rule may occasionally introduce new variables and constraints. For example, a rule which handles the <code>Min</code> expression may introduce a new variable <code>aux</code> which represents the minimum value itself, and introduce constraints <code>aux &lt;= x</code> for each <code>x</code> in the original <code>Min</code> expression. Conjure and Conjure Oxide provide similar methods of achieving these “side-effects”.</p>
 <h2 id="reductions"><a class="header" href="#reductions">Reductions</a></h2>
