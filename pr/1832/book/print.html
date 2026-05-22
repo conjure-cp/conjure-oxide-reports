@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-fbccd070.js";
+            window.path_to_searchindex_js = "searchindex-12deefcc.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-9f424d62.js"></script>
+        <script src="toc-4a28c1cb.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -2610,7 +2610,36 @@ The left graph is a probability density function for the run time. It says that 
 <li>Benchmark meta applications</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="overview-4"><a class="header" href="#overview-4">Overview</a></h1>
+<h1 id="error-detection"><a href="#error-detection" class="header">Error Detection</a></h1>
+<h2 id="overview-4"><a class="header" href="#overview-4">Overview</a></h2>
+<p>Errors found during parsing are converted into <code>Diagnostics</code> via the <a href="https://github.com/conjure-cp/conjure-oxide/blob/main/docs/src/developers-guide/architecture/lsp/diagnostics-api.md">Diagnostic API</a> and then used for error underlining in the LSP.</p>
+<h2 id="what-the-parser-produces"><a class="header" href="#what-the-parser-produces">What the parser produces</a></h2>
+<p><code>parse_essence_with_context_and_map</code> (in <a href="https://github.com/conjure-cp/conjure-oxide/blob/main/crates/conjure-cp-essence-parser/src/parser/parse_model.rs"><code>parse_model.rs</code></a>) is the shared entrypoint used by both the tree-sitter parser and the LSP.</p>
+<p>It takes an <code>errors: &amp;mut Vec&lt;RecoverableParseError&gt;</code> and:</p>
+<ul>
+<li>Builds a <a href="https://github.com/conjure-cp/conjure-oxide/blob/main/crates/conjure-cp-essence-parser/src/diagnostics/source_map.rs"><code>SourceMap</code></a>, even if errors are present.</li>
+<li>Records <strong>syntactic errors</strong> first (via Tree-sitter + <code>detect_syntactic_errors</code>).</li>
+<li>Records <strong>semantic errors</strong> during the AST walk (only if no syntax errors were found; semantic error detection is suppressed when the CST contains syntax errors to avoid cascades).</li>
+<li>Returns <code>Ok((None, source_map))</code> if any recoverable errors were recorded; otherwise returns <code>Ok((Some(model), source_map))</code>.</li>
+</ul>
+<h2 id="how-those-errors-become-diagnostics"><a class="header" href="#how-those-errors-become-diagnostics">How those errors become diagnostics</a></h2>
+<p>In <a href="https://github.com/conjure-cp/conjure-oxide/blob/main/crates/conjure-cp-essence-parser/src/diagnostics/error_detection/collect_errors.rs"><code>collect_errors.rs</code></a>, <code>error_to_diagnostic</code> converts a <code>RecoverableParseError</code> into a <code>Diagnostic</code> struct:</p>
+<ul>
+<li><code>RecoverableParseError.range</code> -&gt; <code>Diagnostic.range</code> (Tree-sitter row/column → LSP-style line/character)</li>
+<li><code>RecoverableParseError.msg</code> -&gt; <code>Diagnostic.message</code></li>
+<li><code>Diagnostic.severity</code> is currently always <code>Error</code></li>
+</ul>
+<p>The function, <code>detect_errors(source, cst)</code> calls <code>parse_essence_with_context_and_map</code> and returns <code>Vec&lt;Diagnostic&gt;</code> using <code>error_to_diagnostic</code>.</p>
+<h2 id="how-the-lsp-publishes-diagnostics"><a class="header" href="#how-the-lsp-publishes-diagnostics">How the LSP publishes diagnostics</a></h2>
+<p>The LSP (<code>crates/conjure-cp-lsp</code>) parses documents on <code>didOpen</code> and <code>didChange</code> in <code>src/handlers/sync_event.rs</code>:</p>
+<ol>
+<li>The LSP maintains a per-document cache containing the latest text, CST, AST (when available), <code>SourceMap</code>, and <strong>the <code>Vec&lt;RecoverableParseError&gt;</code></strong> produced by parsing.</li>
+<li>On open/change it calls <code>parse_essence_with_context_and_map(...)</code> and stores the returned <code>errors</code> in the cache.</li>
+<li><code>publish_diagnostics</code> converts each cached <code>RecoverableParseError</code> to a parser <code>Diagnostic</code> using <code>error_to_diagnostic</code>.</li>
+<li><code>convert_diagnostics</code> maps the parser <code>Diagnostic</code> to <code>tower_lsp::lsp_types::Diagnostic</code> and calls <code>client.publish_diagnostics(...)</code>.</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="overview-5"><a class="header" href="#overview-5">Overview</a></h1>
 <p>The Language Server Protocol (LSP) for Essence is designed to provide error detection and syntax highlighting for the Essence language. It consists of a server component and a diagnostics API. When fully implemented, the server will receive document change events from clients (e.g., VS Code), call the diagnostics API to detect syntactic and semantic errors, and publish these diagnostics back to the client for. The diagnostics API provides error detection and document symbol information for syntax highlighting. Its main purpose is to improve the user experience when formulating the problems in Essence.</p>
 <h1 id="structure"><a class="header" href="#structure">Structure</a></h1>
 <p>The LSP architecture follows a client-server model where the client (editor extension) and server (language server) communicate asynchronously via JSON-RPC 2.0 protocol. The server runs as a separate process, and exchanges messages over standard I/O streams. More on that in <a href="#lsp-documentation">LSP structure docs</a>.</p>
@@ -2618,7 +2647,7 @@ The left graph is a probability density function for the run time. It says that 
 <p><img src="developers-guide/architecture/lsp/lsp-structure.svg" alt="LSP Structure Diagram"></p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="diagnostics-api-for-lsp-server"><a class="header" href="#diagnostics-api-for-lsp-server">Diagnostics API for LSP Server</a></h1>
-<h2 id="overview-5"><a class="header" href="#overview-5">Overview</a></h2>
+<h2 id="overview-6"><a class="header" href="#overview-6">Overview</a></h2>
 <p>The Diagnostics API provides tree-sitter and parser–based diagnostics for Essence source files (for error underlining, syntax highlighting, and hover info). It also exposes general LSP-compatible data structures for consumption by editors and tools. Currently, the main functionality of the Diagnostics API is to parse Essence source code and report syntactic errors found by walking the CST (using tree-sitter) and report semantic errors by attempting a semantic parse and reporting parser errors. It serialises diagnostics exposing a <code>get_diagnostics()</code> function, which returns both semantic and syntactic errors as a <code>Vec</code> of <code>Diagnostic</code>s.</p>
 <h2 id="structure-1"><a class="header" href="#structure-1">Structure</a></h2>
 <pre><code class="language-bash">crates/conjure-cp-essence-parser/src/diagnostics/
@@ -2694,7 +2723,7 @@ cargo test -p conjure-cp-essence-parser --test unexpected_token
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="lsp-documentation"><a class="header" href="#lsp-documentation">LSP Documentation</a></h1>
-<h2 id="overview-6"><a class="header" href="#overview-6">Overview</a></h2>
+<h2 id="overview-7"><a class="header" href="#overview-7">Overview</a></h2>
 <p>This is the overview documentation for the Language Server which is developed for use by Conjure Oxide. This is developed following the <a href="https://microsoft.github.io/language-server-protocol/">Language Server Protocol</a> developed by Microsoft Visual Studio Code, and implemented following VSCode guidelines. This means that functionality cannot be guaranteed on other IDE, though this does not mean it will/cannot work. The Language Server and Client provide the basis through which a fully functional Essence extension will be produced. The server and client run as separate processes primarily because this minimises performance cost.</p>
 <p>At present this addresses the client and server, with abstraction over lower level functions called by the server.</p>
 <h2 id="current-functionality-goals"><a class="header" href="#current-functionality-goals">Current Functionality Goals</a></h2>
@@ -3894,7 +3923,7 @@ created: 16-02-24
 <blockquote>
 <p>NOTE: Once the rewrite engine API is finalised, we should possibly make a separate page for it.</p>
 </blockquote>
-<h1 id="overview-7"><a class="header" href="#overview-7">Overview</a></h1>
+<h1 id="overview-8"><a class="header" href="#overview-8">Overview</a></h1>
 <p>Conjure uses Essence, a high-level DSL for constraints modelling, and converts it into a solver-specific representation of the problem.
 To do that, we parse the Essence file into an AST, then use a rule engine to walk the expression tree and rewrite constraints into a format that is accepted by the solver before passing the AST to a solver adapter.</p>
 <p>The high-level process is as follows:</p>
@@ -4416,7 +4445,7 @@ find biff: sequence (minSize 3, size 4) of int(2..7) $ Cardinality attribute can
 <p>Conjure-Oxide currently has four forms of tests:</p>
 <ul>
 <li>Integration tests</li>
-<li><a href="#overview-9">Custom tests</a></li>
+<li><a href="#overview-10">Custom tests</a></li>
 <li><a href="#roundtrip-testing">Roundtrip tests</a></li>
 <li>A small number of unit tests</li>
 </ul>
@@ -4563,7 +4592,7 @@ In the future, it may also be worth examining the possibility and likelihood of 
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="roundtrip-testing"><a class="header" href="#roundtrip-testing">Roundtrip Testing</a></h1>
-<h2 id="overview-8"><a class="header" href="#overview-8">Overview</a></h2>
+<h2 id="overview-9"><a class="header" href="#overview-9">Overview</a></h2>
 <p>Roundtrip tests check that parsing is valid and that there is no unexpected behaviour during a full roundtrip of an Essence file.
 Roundtrip tests do not consider rewriting or solving.</p>
 <h2 id="full-test-structure"><a class="header" href="#full-test-structure">Full Test Structure</a></h2>
@@ -4590,7 +4619,7 @@ Both parsers will be used by default for each test unless specified and will use
 Any directories within here than contain a singular <code>.essence</code> or <code>.eprime</code> file will be treated as a test.
 After creating the Essence or Essence’ file for your test you should run the test suite with <code>ACCEPT=true</code> to generate the expected files.</p>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="overview-9"><a class="header" href="#overview-9">Overview</a></h1>
+<h1 id="overview-10"><a class="header" href="#overview-10">Overview</a></h1>
 <p>Custom tests were created as a solution to the problem that integration tests do not allow for testing of error messages, which automatically return from the integration test method and therefore cannot be analyzed. The custom tests, however, work for both erroneous and non-erroneous code. Each test contains an input, a <code>run.sh</code> file to execute the test, and an expected standard output/error (or both) to compare against. Conjure Oxide is set up to automatically create and execute a test for each test folder in the <code>tests/custom </code>directory when <code>cargo test</code> is run, so to add a test case all one must do is add a folder in the directory which contains the necessary components.</p>
 <h1 id="how-to-add-a-test-case"><a class="header" href="#how-to-add-a-test-case">How to add a test case</a></h1>
 <p>Adding a test case is simple. First add a folder with the test case name to the <code>tests/custom</code> directory. Tests can be organized within folders in the directory–only folders with a <code>run.sh</code> file will be treated as a test case. Within the test folder, add these components:</p>
@@ -4651,7 +4680,7 @@ created: 19-09-24
 <!-- TODO edit more -->
 <!-- syntax highlighting -->
 <h1 id="semantics-of-rewriting-expressions-with-sideeffects"><a class="header" href="#semantics-of-rewriting-expressions-with-sideeffects">Semantics of Rewriting Expressions with Side‐Effects</a></h1>
-<h2 id="overview-10"><a class="header" href="#overview-10">Overview</a></h2>
+<h2 id="overview-11"><a class="header" href="#overview-11">Overview</a></h2>
 <hr>
 <p>When rewriting expressions, a rule may occasionally introduce new variables and constraints. For example, a rule which handles the <code>Min</code> expression may introduce a new variable <code>aux</code> which represents the minimum value itself, and introduce constraints <code>aux &lt;= x</code> for each <code>x</code> in the original <code>Min</code> expression. Conjure and Conjure Oxide provide similar methods of achieving these “side-effects”.</p>
 <h2 id="reductions"><a class="header" href="#reductions">Reductions</a></h2>
