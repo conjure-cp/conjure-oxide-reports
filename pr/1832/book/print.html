@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-7b258e1c.js";
+            window.path_to_searchindex_js = "searchindex-ac4f111a.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-4a28c1cb.js"></script>
+        <script src="toc-c0f7b285.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -1970,7 +1970,161 @@ such that ? b &lt; A
 Expected a constraint statement, but got 'such that ? b &lt; A'
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="overview-3"><a class="header" href="#overview-3">Overview</a></h1>
+<h1 id="semantic-error-detection"><a class="header" href="#semantic-error-detection">Semantic Error Detection</a></h1>
+<h2 id="overview-3"><a class="header" href="#overview-3">Overview</a></h2>
+<p>The parser does not run a separate “semantic pass” but rather semantic error checking is integrated directly into the normal parse traversal, often with if/then blocks. This is because these errors are not detectable from the CST alone and require the partially-built model for context.</p>
+<p>When a semantic error is found, it is added to the shared <code>errors</code> vector in <code>ParseContext</code>. The parser then either returns <code>Ok(None)</code> for that branch or keeps scanning sibling items if the error is local to one element. In practice, branch-level expression errors stop that subtree, while statement-level parsers can often continue so they can report more recoverable errors in the same input.</p>
+<p>Most parser helpers return <code>Result&lt;Option&lt;T&gt;, FatalParseError&gt;</code>.</p>
+<ul>
+<li><code>Err(FatalParseError)</code> means stop everything.</li>
+<li><code>Ok(Some(value))</code> means this branch parsed successfully.</li>
+<li><code>Ok(None)</code> means recoverable failure in this branch.</li>
+</ul>
+<h2 id="example-duplicate-variable-declarations"><a class="header" href="#example-duplicate-variable-declarations">Example: Duplicate Variable Declarations</a></h2>
+<p>Duplicate declaration checks are a good example of semantic detection during traversal.</p>
+<p>Example erroneous input:</p>
+<pre><code class="language-Essence">find x, x : int
+</code></pre>
+<ul>
+<li>
+<p>In find/given declaration parsing, each identifier is parsed and collected in a <code>vars</code> vector:</p>
+<pre><code class="language-Rust">let variable_name = &amp;ctx.source_code[start..end];
+let name = Name::user(variable_name);
+</code></pre>
+</li>
+<li>
+<p>If the identifier already exists in the <code>vars</code> vector (Ex. <code>find x, x : int</code>), an error is returned:</p>
+<pre><code class="language-Rust">if vars.contains_key(&amp;name) {
+    ctx.errors.push(RecoverableParseError::new(
+        format!(
+            "Variable '{}' is already declared in this {} statement",
+            variable_name,
+            match symbol_kind {
+                SymbolKind::FindVar =&gt; "find",
+                SymbolKind::GivenVar =&gt; "given",
+                _ =&gt; "declaration",
+            }
+        ),
+        Some(variable.range()),
+    ));
+    // don't return here, as we can still add the other variables to the symbol table
+    continue;
+}
+</code></pre>
+</li>
+<li>
+<p>A similar check exists for identifiers declared in previous statements. If a variable with the same name already exists in the <code>SymbolTable</code>, an error is returned, including the line number of the previous declaration.</p>
+</li>
+<li>
+<p>Once the domain is parsed, all identifiers in the <code>vars</code> vector are added to the   <code>SymbolTable</code> of the model with the domain</p>
+</li>
+</ul>
+<h2 id="type-checking"><a class="header" href="#type-checking">Type Checking</a></h2>
+<p>Type checking uses two context values stored in <code>ParseContext</code>:</p>
+<ul>
+<li><code>typechecking_context</code>: the expected type of the current expression node itself.</li>
+<li><code>inner_typechecking_context</code>: the expected type of elements inside a collection-like expression (for elements of a set/matrix/tuple/comprehension return value).</li>
+</ul>
+<p>If a mismatch is found, a recoverable type error is recorded and that branch returns <code>Ok(None)</code>.</p>
+<h3 id="when-contexts-are-set"><a class="header" href="#when-contexts-are-set">When Contexts Are Set</a></h3>
+<p>Type checking only occurs during expression parsing. For each top-level constraint, the parser sets <code>typechecking_context = Boolean</code> before parsing the constraint expression.</p>
+<p>Inside expression parsing:</p>
+<ul>
+<li>Boolean-expression entry sets outer context to <code>Boolean</code>.</li>
+<li>Arithmetic-expression entry sets outer context to <code>Arithmetic</code>.</li>
+<li>Comparison parsing sets context based on comparison kind (ex. <code>Arithmetic</code> for <code>&lt;</code>, <code>&gt;</code>, etc., <code>Set</code> for set comparisons, etc.).</li>
+<li>List-combining operators such as <code>sum(...)</code> / <code>and(...)</code> set outer context to <code>SetOrMatrix</code> and inner context to <code>Arithmetic</code> or <code>Boolean</code> (respectively)</li>
+<li>Various special cases are implemented (ex. The type for equality expressions is inferred from the first operand and enforced on the second)</li>
+</ul>
+<p>For example, while parsing the aggregate expression <code>min([a,b])</code>, the outer context would be set to <code>SetOrMatrix</code>, because the child expression must be a set of a matrix. However, the elements of the collection (<code>a</code> and <code>b</code>) must be arithmetic because of the <code>min</code> operator. Therefore, the inner context is set to <code>Arithmetic</code>.</p>
+<h3 id="when-contexts-are-checked"><a class="header" href="#when-contexts-are-checked">When Contexts Are Checked</a></h3>
+<p>Checks occur in multiple places:</p>
+<ul>
+<li>Expression dispatch checks obvious category mismatches (for example arithmetic expression where boolean is expected).</li>
+<li>Variable parsing checks declared variable domain (from <code>SymbolTable</code>) against current outer context.</li>
+<li>Constant parsing checks literal kind against current outer context.</li>
+<li>Abstract literal parsing checks the container kind itself (<code>set</code>, <code>matrix</code>, <code>tuple</code>, <code>record</code>) against outer context. Before parsing the inner elements, the inner context is promoted to the outer/main context.</li>
+</ul>
+<h3 id="type-checking-examples"><a class="header" href="#type-checking-examples">Type Checking Examples</a></h3>
+<p>Erroneous input (<code>bool_in_arith_list.essence</code>):</p>
+<pre><code class="language-Essence">find b: bool
+find x: int(1..10)
+such that sum([1, 2, b, 4]) = x
+</code></pre>
+<p>The type checking error is detected as follows:</p>
+<ul>
+<li>Variables <code>b</code> and <code>x</code> are added to the <code>SymbolTable</code> with their respective domains without error</li>
+<li>Before parsing the constraint <code>sum([1, 2, b, 4]) = x</code>, the context is <code>Boolean</code> because it is the top level constraint. This is a comparison expression (boolean), so there is no error.
+<ul>
+<li>While parsing <code>sum([1, 2, b, 4])</code>, the outer context is set to <code>SetOrMatrix</code> because it is an aggregate expression. The inner context is set to <code>Arithmetic</code> because the operator is <code>sum</code>.
+<ul>
+<li><code>[1, 2, b, 4]</code> is a matrix so there is no error.</li>
+<li>While parsing each element, the outer context is now <code>Arithmetic</code> (former inner context).
+<ul>
+<li><code>1</code> and <code>2</code> are both integers so no error</li>
+<li><code>b</code> is looked up in the <code>SymbolTable</code> and the domain is <code>bool</code> so an error is added</li>
+<li><code>4</code> is an integer so no error</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>The right operand <code>x</code>’s domain in the <code>SymbolTable</code> is <code>int(1..10)</code> so there is no error</li>
+</ul>
+</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="overview-4"><a class="header" href="#overview-4">Overview</a></h1>
+<p>This page describes how error detection currently works in the <code>conjure-cp-essence-parser</code> crate at a high level.</p>
+<p>The parser separates parser-internal failures from user-input problems, and it also separates syntax-level issues from semantic issues.</p>
+<h1 id="error-types"><a class="header" href="#error-types">Error Types</a></h1>
+<p>The parser uses two main error categories: <code>FatalParseError</code> and <code>RecoverableParseError</code>.</p>
+<h2 id="fatal-errors"><a class="header" href="#fatal-errors">Fatal Errors</a></h2>
+<p>Fatal errors represent parser/runtime failures where something has gone wrong in parser infrastructure or integration code, rather than in the Essence model itself.</p>
+<p>Examples include failing to build a valid tree-sitter parse tree or hitting an internal parser error path. Fatal errors also include ‘not implemented’ errors. When a fatal error occurs, parsing stops and only the fatal error is returned.</p>
+<h2 id="recoverable-errors"><a class="header" href="#recoverable-errors">Recoverable Errors</a></h2>
+<p>Recoverable errors represent issues with the user input model (for example invalid syntax or semantic/type/declaration problems) where the parser can continue collecting more diagnostics. When a recoverable error is detected, it is added to the errors vector, the parser skips the rest of the erroneous branch of the parse tree, and continues parsing the rest of the input for any more errors. All recoverable errors are returned and no model is returned.</p>
+<p>Each recoverable error stores a message and source range metadata. After all recoverable errors are found, they are enriched with file/source context for printable output.</p>
+<h2 id="packaging-and-return-parseerrorcollection"><a class="header" href="#packaging-and-return-parseerrorcollection">Packaging and Return: ParseErrorCollection</a></h2>
+<p><code>ParseErrorCollection</code> is the wrapper used to return parse failures.</p>
+<ul>
+<li><code>ParseErrorCollection::Fatal(...)</code> wraps one fatal error.</li>
+<li><code>ParseErrorCollection::Multiple { errors: ... }</code> wraps many recoverable errors.</li>
+</ul>
+<p>This wrapper abstracts the nature of the error(s) from the caller of the parser crate, which can simply print out the error without knowing if it is fatal or a collection of recoverable errors.</p>
+<h1 id="syntactic-vs-semantic-errors"><a class="header" href="#syntactic-vs-semantic-errors">Syntactic vs Semantic Errors</a></h1>
+<h2 id="syntactic-errors"><a class="header" href="#syntactic-errors">Syntactic Errors</a></h2>
+<p>Syntactic errors are grammar-level failures: the source does not match grammar rules and tree-sitter recovery produces <code>ERROR</code> or <code>MISSING</code> nodes in the CST.</p>
+<p>These are detected first by checking whether the root node has an error,which checks the entire tree. If a syntactic error exists, the CST is passed to a <code>detect_syntactic_errors</code> function which adds all syntactic errors to the errors vector. If syntactic errors exist, no semantic errors will be added to the vector (but parsing of the CST still continues for LSP source map purposes).</p>
+<h2 id="semantic-errors"><a class="header" href="#semantic-errors">Semantic Errors</a></h2>
+<p>Semantic errors are logically invalid constructs that may still parse into a valid CST (for example declaration/type/context errors).</p>
+<p>These are detected during parser traversal/conversion while building model structures.</p>
+<h1 id="detection-flow-parse_modelrs"><a class="header" href="#detection-flow-parse_modelrs">Detection Flow (parse_model.rs)</a></h1>
+<p>At a high level in <code>parse_essence_with_context_and_map</code>:</p>
+<ol>
+<li>Build or reuse a tree-sitter parse tree.</li>
+<li>Check <code>tree.root_node().has_error()</code>.</li>
+<li>If syntax errors exist, call <code>detect_syntactic_errors(...)</code>.
+<ul>
+<li>Semantic error reporting is then suppressed for that pass, so semantic errors are not returned when syntax errors already exist.</li>
+<li>Parser traversal still proceeds to build the source-map</li>
+</ul>
+</li>
+<li>If no syntax errors exist, build a model and populate it as the parser traverses the CST</li>
+<li>If a semantic error is detected, add it to the recoverable errors vector
+<ul>
+<li>Traversal and model building continues with the aim of finding any more semantic errors (but the model won’t be returned)</li>
+</ul>
+</li>
+<li>Final return is either:
+<ul>
+<li>fatal error, or</li>
+<li>recoverable error package, or</li>
+<li>successful model.</li>
+</ul>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="overview-5"><a class="header" href="#overview-5">Overview</a></h1>
 <p>ProTrace is a tracing module created to trace rule applications on expressions when an Essence file is parsed and rewritten by Conjure Oxide. The purpose of the module is to visualise the rules applied on the expressions, and simplify the identification of errors for debugging. The module supports multiple output formats such as <strong>JSON</strong> or <strong>human</strong> readable, along with different verbosity levels to show only what the user would like to see.</p>
 <h3 id="verbosity-level"><a class="header" href="#verbosity-level">Verbosity Level</a></h3>
 <p>The different verbosity levels include:</p>
@@ -2624,7 +2778,7 @@ The left graph is a probability density function for the run time. It says that 
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="error-detection"><a href="#error-detection" class="header">Error Detection</a></h1>
-<h2 id="overview-4"><a class="header" href="#overview-4">Overview</a></h2>
+<h2 id="overview-6"><a class="header" href="#overview-6">Overview</a></h2>
 <p>Errors found during parsing are converted into <code>Diagnostics</code> via the <a href="https://github.com/conjure-cp/conjure-oxide/blob/main/docs/src/developers-guide/architecture/lsp/diagnostics-api.md">Diagnostic API</a> and then used for error underlining in the LSP.</p>
 <h2 id="what-the-parser-produces"><a class="header" href="#what-the-parser-produces">What the parser produces</a></h2>
 <p><code>parse_essence_with_context_and_map</code> (in <a href="https://github.com/conjure-cp/conjure-oxide/blob/main/crates/conjure-cp-essence-parser/src/parser/parse_model.rs"><code>parse_model.rs</code></a>) is the shared entrypoint used by both the tree-sitter parser and the LSP.</p>
@@ -2652,7 +2806,7 @@ The left graph is a probability density function for the run time. It says that 
 <li><code>convert_diagnostics</code> maps the parser <code>Diagnostic</code> to <code>tower_lsp::lsp_types::Diagnostic</code> and calls <code>client.publish_diagnostics(...)</code>.</li>
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="overview-5"><a class="header" href="#overview-5">Overview</a></h1>
+<h1 id="overview-7"><a class="header" href="#overview-7">Overview</a></h1>
 <p>The Language Server Protocol (LSP) for Essence is designed to provide error detection and syntax highlighting for the Essence language. It consists of a server component and a diagnostics API. When fully implemented, the server will receive document change events from clients (e.g., VS Code), call the diagnostics API to detect syntactic and semantic errors, and publish these diagnostics back to the client for. The diagnostics API provides error detection and document symbol information for syntax highlighting. Its main purpose is to improve the user experience when formulating the problems in Essence.</p>
 <h1 id="structure"><a class="header" href="#structure">Structure</a></h1>
 <p>The LSP architecture follows a client-server model where the client (editor extension) and server (language server) communicate asynchronously via JSON-RPC 2.0 protocol. The server runs as a separate process, and exchanges messages over standard I/O streams. More on that in <a href="#lsp-documentation">LSP structure docs</a>.</p>
@@ -2660,7 +2814,7 @@ The left graph is a probability density function for the run time. It says that 
 <p><img src="developers-guide/architecture/lsp/lsp-structure.svg" alt="LSP Structure Diagram"></p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="diagnostics-api-for-lsp-server"><a class="header" href="#diagnostics-api-for-lsp-server">Diagnostics API for LSP Server</a></h1>
-<h2 id="overview-6"><a class="header" href="#overview-6">Overview</a></h2>
+<h2 id="overview-8"><a class="header" href="#overview-8">Overview</a></h2>
 <p>The Diagnostics API provides tree-sitter and parser–based diagnostics for Essence source files (for error underlining, syntax highlighting, and hover info). It also exposes general LSP-compatible data structures for consumption by editors and tools. Currently, the main functionality of the Diagnostics API is to parse Essence source code and report syntactic errors found by walking the CST (using tree-sitter) and report semantic errors by attempting a semantic parse and reporting parser errors. It serialises diagnostics exposing a <code>get_diagnostics()</code> function, which returns both semantic and syntactic errors as a <code>Vec</code> of <code>Diagnostic</code>s.</p>
 <h2 id="structure-1"><a class="header" href="#structure-1">Structure</a></h2>
 <pre><code class="language-bash">crates/conjure-cp-essence-parser/src/diagnostics/
@@ -2736,7 +2890,7 @@ cargo test -p conjure-cp-essence-parser --test unexpected_token
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="lsp-documentation"><a class="header" href="#lsp-documentation">LSP Documentation</a></h1>
-<h2 id="overview-7"><a class="header" href="#overview-7">Overview</a></h2>
+<h2 id="overview-9"><a class="header" href="#overview-9">Overview</a></h2>
 <p>This is the overview documentation for the Language Server which is developed for use by Conjure Oxide. This is developed following the <a href="https://microsoft.github.io/language-server-protocol/">Language Server Protocol</a> developed by Microsoft Visual Studio Code, and implemented following VSCode guidelines. This means that functionality cannot be guaranteed on other IDE, though this does not mean it will/cannot work. The Language Server and Client provide the basis through which a fully functional Essence extension will be produced. The server and client run as separate processes primarily because this minimises performance cost.</p>
 <p>At present this addresses the client and server, with abstraction over lower level functions called by the server.</p>
 <h2 id="current-functionality-goals"><a class="header" href="#current-functionality-goals">Current Functionality Goals</a></h2>
@@ -3936,7 +4090,7 @@ created: 16-02-24
 <blockquote>
 <p>NOTE: Once the rewrite engine API is finalised, we should possibly make a separate page for it.</p>
 </blockquote>
-<h1 id="overview-8"><a class="header" href="#overview-8">Overview</a></h1>
+<h1 id="overview-10"><a class="header" href="#overview-10">Overview</a></h1>
 <p>Conjure uses Essence, a high-level DSL for constraints modelling, and converts it into a solver-specific representation of the problem.
 To do that, we parse the Essence file into an AST, then use a rule engine to walk the expression tree and rewrite constraints into a format that is accepted by the solver before passing the AST to a solver adapter.</p>
 <p>The high-level process is as follows:</p>
@@ -4458,7 +4612,7 @@ find biff: sequence (minSize 3, size 4) of int(2..7) $ Cardinality attribute can
 <p>Conjure-Oxide currently has four forms of tests:</p>
 <ul>
 <li>Integration tests</li>
-<li><a href="#overview-10">Custom tests</a></li>
+<li><a href="#overview-12">Custom tests</a></li>
 <li><a href="#roundtrip-testing">Roundtrip tests</a></li>
 <li>A small number of unit tests</li>
 </ul>
@@ -4605,7 +4759,7 @@ In the future, it may also be worth examining the possibility and likelihood of 
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="roundtrip-testing"><a class="header" href="#roundtrip-testing">Roundtrip Testing</a></h1>
-<h2 id="overview-9"><a class="header" href="#overview-9">Overview</a></h2>
+<h2 id="overview-11"><a class="header" href="#overview-11">Overview</a></h2>
 <p>Roundtrip tests check that parsing is valid and that there is no unexpected behaviour during a full roundtrip of an Essence file.
 Roundtrip tests do not consider rewriting or solving.</p>
 <h2 id="full-test-structure"><a class="header" href="#full-test-structure">Full Test Structure</a></h2>
@@ -4632,7 +4786,7 @@ Both parsers will be used by default for each test unless specified and will use
 Any directories within here than contain a singular <code>.essence</code> or <code>.eprime</code> file will be treated as a test.
 After creating the Essence or Essence’ file for your test you should run the test suite with <code>ACCEPT=true</code> to generate the expected files.</p>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="overview-10"><a class="header" href="#overview-10">Overview</a></h1>
+<h1 id="overview-12"><a class="header" href="#overview-12">Overview</a></h1>
 <p>Custom tests were created as a solution to the problem that integration tests do not allow for testing of error messages, which automatically return from the integration test method and therefore cannot be analyzed. The custom tests, however, work for both erroneous and non-erroneous code. Each test contains an input, a <code>run.sh</code> file to execute the test, and an expected standard output/error (or both) to compare against. Conjure Oxide is set up to automatically create and execute a test for each test folder in the <code>tests/custom </code>directory when <code>cargo test</code> is run, so to add a test case all one must do is add a folder in the directory which contains the necessary components.</p>
 <h1 id="how-to-add-a-test-case"><a class="header" href="#how-to-add-a-test-case">How to add a test case</a></h1>
 <p>Adding a test case is simple. First add a folder with the test case name to the <code>tests/custom</code> directory. Tests can be organized within folders in the directory–only folders with a <code>run.sh</code> file will be treated as a test case. Within the test folder, add these components:</p>
@@ -4693,7 +4847,7 @@ created: 19-09-24
 <!-- TODO edit more -->
 <!-- syntax highlighting -->
 <h1 id="semantics-of-rewriting-expressions-with-sideeffects"><a class="header" href="#semantics-of-rewriting-expressions-with-sideeffects">Semantics of Rewriting Expressions with Side‐Effects</a></h1>
-<h2 id="overview-11"><a class="header" href="#overview-11">Overview</a></h2>
+<h2 id="overview-13"><a class="header" href="#overview-13">Overview</a></h2>
 <hr>
 <p>When rewriting expressions, a rule may occasionally introduce new variables and constraints. For example, a rule which handles the <code>Min</code> expression may introduce a new variable <code>aux</code> which represents the minimum value itself, and introduce constraints <code>aux &lt;= x</code> for each <code>x</code> in the original <code>Min</code> expression. Conjure and Conjure Oxide provide similar methods of achieving these “side-effects”.</p>
 <h2 id="reductions"><a class="header" href="#reductions">Reductions</a></h2>
