@@ -38,7 +38,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-c0977a0c.js";
+            window.path_to_searchindex_js = "searchindex-dcec4a60.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-c0f7b285.js"></script>
@@ -1876,14 +1876,14 @@ let op_type = &amp;source_code[op.start_byte()..op.end_byte()];
 <p><strong>Message construction (<code>generate_malformed_line_message</code>)</strong><br>The malformed-line message is built by taking the trimmed text of the offending line, removing anything after a <code>$</code> line comment marker, escaping any double quotes, and then classifying the line based on its first (and sometimes second) word. The final diagnostic is emitted as: <strong><code>Expected &lt;expected&gt;, but got '&lt;line&gt;'</code></strong>.</p>
 <p><strong>Malformed line categories</strong><br>Based on the line’s opening tokens, the function reports one of the following expected statement types:</p>
 <ul>
-<li>Starts with <code>find</code> → expects <strong>a find declaration statement</strong></li>
-<li>Starts with <code>letting</code> → expects <strong>a letting declaration statement</strong></li>
-<li>Starts with <code>given</code> → expects <strong>a given declaration statement</strong></li>
-<li>Starts with <code>where</code> → expects <strong>an instantiation condition</strong></li>
+<li>Starts with <code>find</code> -&gt; expects <strong>a find declaration statement</strong></li>
+<li>Starts with <code>letting</code> -&gt; expects <strong>a letting declaration statement</strong></li>
+<li>Starts with <code>given</code> -&gt; expects <strong>a given declaration statement</strong></li>
+<li>Starts with <code>where</code> -&gt; expects <strong>an instantiation condition</strong></li>
 <li>Starts with <code>minimising</code> or <code>maximising</code> → expects <strong>an objective statement</strong></li>
-<li>Starts with <code>such that</code> → expects <strong>a constraint statement</strong></li>
-<li>Starts with <code>such</code> (but not followed by <code>that</code>) → expects <strong>a valid top-level statement</strong></li>
-<li>Any other opening token → expects <strong>a valid top-level statement</strong></li>
+<li>Starts with <code>such that</code> -&gt; expects <strong>a constraint statement</strong></li>
+<li>Starts with <code>such</code> (but not followed by <code>that</code>) -&gt; expects <strong>a valid top-level statement</strong></li>
+<li>Any other opening token -&gt; expects <strong>a valid top-level statement</strong></li>
 </ul>
 <h2 id="how-to-test"><a class="header" href="#how-to-test">How To Test</a></h2>
 <pre><code class="language-bash">cargo test -p conjure-cp-essence-parser --test malformed_top_level
@@ -1892,6 +1892,7 @@ cargo test -p conjure-cp-essence-parser --test unexpected_token
 cargo test -p tests-integration --test roundtrip_tests tests_roundtrip_invalid_syntax
 </code></pre>
 <h2 id="examples-1"><a class="header" href="#examples-1">Examples</a></h2>
+<p>All test cases can be found in the <a href="https://github.com/conjure-cp/conjure-oxide/tree/main/tests-integration/tests/roundtrip/invalid/syntax">roundtrip/invalid/syntax test directory</a></p>
 <h3 id="example-missing-closing-bracket"><a class="header" href="#example-missing-closing-bracket">Example: Missing Closing Bracket</a></h3>
 <p><strong>Input</strong></p>
 <pre><code class="language-text">find x: int(1..2
