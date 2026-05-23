@@ -38,7 +38,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-12deefcc.js";
+            window.path_to_searchindex_js = "searchindex-75c5ec15.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-4a28c1cb.js"></script>
@@ -1717,9 +1717,9 @@ public void fnReturnsError(a,b) {
 <h1 id="tree-sitter-grammar"><a class="header" href="#tree-sitter-grammar">Tree Sitter Grammar</a></h1>
 <p><a href="https://tree-sitter.github.io/tree-sitter/">Tree-sitter</a> is a parsing library that creates concrete syntax trees from programs in various languages. It contains many languages already, but Essence is unfortunately not one of them. Therefore, this crate contains a JavaScript grammar for Essence, which tree-sitter uses to create a parser. The parser is not specific to Conjure Oxide as the grammar merely describes the general Essence language, but it is used in Conjure Oxide and currently covers only parts of the Essence language that Conjure Oxide deals with and has tests written for. Therefore, it is not extensive and relatively simple in structure.</p>
 <h2 id="general-structure"><a class="header" href="#general-structure">General Structure</a></h2>
-<p>At the top level, there can be either find statements, letting statements, and constraint statements. Find statements consist of the keyword <code>find</code>, one or more variables, and then a domain of either type boolean or integer. Letting statements have the keyword <code>letting</code>, one or more variables, and an expression or domain to assign to those variables. Constraints contain the keyword <code>such that</code> and one or more logical or numerical expressions which include variables and constants.</p>
+<p>At the top level, there can be either find statements, letting statements, given statements, and constraint statements. There are alsolanguage declarations/comments, which are treated as metadata/extras rather than model constraints. Find statements consist of the keyword <code>find</code>, one or more variables, and then a domain of either type boolean or integer. Letting statements have the keyword <code>letting</code>, one or more variables, and an expression or domain to assign to those variables. Given statements contain the <code>given</code> keyword followed by  known input parameters and their domains. Constraints contain the keyword <code>such that</code> and one or more logical or numerical expressions which include variables and constants.</p>
 <h2 id="expression-hierarchy"><a class="header" href="#expression-hierarchy">Expression Hierarchy</a></h2>
-<p>Expressions in the grammar are broken down into boolean expressions, comparison expressions, and arithmetic expressions. This separation helps enforce semantic constraints inherent to the language. For example, expressions like <code>x + 3 = y</code> are allowed because an arithmetic expression is permitted on either side of a comparison, but chained comparisons like <code>x = y = 3</code> are disallowed, since a comparison expression cannot itself contain another comparison expression as an operand. This also helps ensure the top-most expression in a constraint evaluates to a boolean (so <code>such that x + 3</code> wouldn’t be valid). There are also <code>atom</code> expressions such as constants, identifiers, and structured values (tuples, matrices, or slices), which are allowed as operands to most expressions since they might be booleans. This does mean, however, that a constraint like <code>such that y</code> would be valid even though <code>y</code> might be an integer. Quantifier expressions are also separated into boolean and arithmetic quantifiers for this reason (so <code>such that allDif{[a, b]}</code> is valid but <code>such that min{[a,b]}</code> isn’t).</p>
+<p>Expressions in the grammar are broken down into boolean expressions, comparison expressions, arithmetic expressions, and atoms. Atoms are the base expression layer (for example constants, identifiers, and structured values such as tuples, matrices, records, comprehensions, and indexing/slicing), and they are reused as operands by the higher-level expression families. This separation helps enforce semantic constraints inherent to the language. For example, expressions like <code>x + 3 = y</code> are allowed because an arithmetic expression is permitted on either side of a comparison, but chained comparisons like <code>x = y = 3</code> are disallowed, since a comparison expression cannot itself contain another comparison expression as an operand. This also helps ensure the top-most expression in a constraint evaluates to a boolean (so <code>such that x + 3</code> wouldn’t be valid). There are also <code>atom</code> expressions such as constants, identifiers, and structured values (tuples, matrices, or slices), which are allowed as operands to most expressions since they might be booleans. This does mean, however, that a constraint like <code>such that y</code> would be valid even though <code>y</code> might be an integer. Quantifier expressions are also separated into boolean and arithmetic quantifiers for this reason (so <code>such that allDif{[a, b]}</code> is valid but <code>such that min{[a,b]}</code> isn’t).</p>
 <p>The precedence levels throughout the grammar are based on the Essence prime operator precedence table found in Appendix B of the <a href="https://arxiv.org/pdf/2201.03472">Savile Row Manual</a>. This is important to ensure that nested or complicated expressions such as <code>(2*x) + (3*y) = 12</code> are parsed in the correct order, as this will determine the structure of the Expression object in the Model.</p>
 <h2 id="generated-tree-sitter-files-in-git"><a class="header" href="#generated-tree-sitter-files-in-git">Generated Tree-sitter files in git</a></h2>
 <p>The files generated by <code>tree-sitter generate</code> (<code>parser.c</code>, <code>node-types.json</code>, and <code>parser.json</code>) are in <code>crates/tree-sitter-essence/src</code> directory and are intentionally committed to the repository each time they are updated (any time a change is made to the grammar).</p>
@@ -1745,6 +1745,8 @@ public void fnReturnsError(a,b) {
 <h2 id="general-structure-and-utils"><a class="header" href="#general-structure-and-utils">General Structure and utils</a></h2>
 <p>The top level nodes (children of the root node), are either extras (comments or language labels), find statements, letting statements, or constraints. Find and letting statements provide info that is added to the SymbolTable while constraints are added to the Expression.</p>
 <p>In general, <code>kind()</code> is used to determine which rule a node represents and the corresponding function or logic is then applied to that node. Child nodes are found using their field names or indexes and the <code>named_children()</code> function is used to iterate over the named child nodes of a node. The function <code>child_expr</code> returns the Expression parsed from the first named child of the given node.</p>
+<h3 id="parsecontext"><a class="header" href="#parsecontext">ParseContext</a></h3>
+<p>The parser now uses a <code>ParseContext</code> struct to pass shared state through parsing functions. It stores the source code, root node, symbol information, collected recoverable errors, source map/declaration span data, and typechecking context values. This keeps parsing helpers consistent and avoids threading many separate parameters through each function.</p>
 <h3 id="extracting-from-the-source-code-identifiers-and-constants"><a class="header" href="#extracting-from-the-source-code-identifiers-and-constants">Extracting from the source code (identifiers and constants)</a></h3>
 <p>The tree-sitter nodes have a start and end byte indicating where the node corresponds to in the source code. For variable identifiers, constants, and operators, these bytes are necessary to extract the actual values from the source code.</p>
 <p>For example, the following code appears in the <code>parse_find_statement</code> function and is used to extract the specific variable name from the source code, which is represented simply by a tree-sitter node (named <code>variable</code> in this case).</p>
@@ -1760,7 +1762,7 @@ let op_type = &amp;source_code[op.start_byte()..op.end_byte()];
 <h2 id="find-and-letting-statements"><a class="header" href="#find-and-letting-statements">Find and Letting Statements</a></h2>
 <p>Find and letting statements are parsed relatively intuitively. For find statements, the list of variables is iterated over and each is added to a hash map as the key. Then, the domain is parsed and added as the value for each variable it applies to. Once all variables and domains are parsed, the hash map is returned and the caller function iterates over it and adds each pair to the <code>SymbolTable</code>. For letting statements, a new <code>SymbolTable</code> is created. The variables are again iterated over and added to the table. Letting statements can either specify a domain or an expression for the variables so the type of node is checked and either parsed as an expression or domain before being added to the table. The <code>SymbolTable</code> is returned and the caller function adds it to the existing <code>SymbolTable</code> of the <code>Model</code>.</p>
 <h2 id="constraints"><a class="header" href="#constraints">Constraints</a></h2>
-<p>Adding constraints to the overall constraints <code>Expression</code> requires nesting <code>Expression</code> objects in a consistent and clear manner. Each constraint is parsed using the <code>parse_expression</code> function, which returns an <code>Expression</code> object, and is then added to the model using the <code>add_constraints</code> function. The <code>parse_expression</code> function takes a node as a parameter and is recursive. It matches the node to its ‘kind’, recursively parses the children of the node, then returns an <code>Expression</code> object that correctly packages up the expressions returned from the parsing of the children nodes.</p>
+<p>Adding constraints to the overall constraints <code>Expression</code> requires nesting <code>Expression</code> objects in a consistent and clear manner. Each constraint is parsed using <code>parse_expression</code>, which is the main entry point, and is then added to the model. <code>parse_expression</code> dispatches by node kind to more specific parsing functions (for example <code>parse_comparison_expression</code>, <code>parse_boolean_expression</code>, <code>parse_arithmetic_expression</code>, and <code>parse_atom</code>). Recursion still happens through these functions, but when a child node kind is already known (for example an atom child), the parser can directly call the more specific function instead of always routing through the generic entry path.</p>
 <p>This structure allows for easy addition of more complex constraints as the grammar evolves. As more rules are added to the grammar, the corresponding code block must be added to the match statement in the <code>parse_expression</code> function.</p>
 <h3 id="example-1"><a class="header" href="#example-1">Example</a></h3>
 <p>The constraint <code>x = 3</code> would be represented by a <code>comparison_expr</code> node, which is defined in the grammar as:</p>
@@ -1770,26 +1772,37 @@ let op_type = &amp;source_code[op.start_byte()..op.end_byte()];
       field("right", choice($.boolean_expr, $.arithmetic_expr))
     ))),
 </code></pre>
-<p>In the parse_expression function, the left expression is parsed using the <code>child_expr</code> function. The returned Expression would represent the variable <code>x</code> and be saved as <code>expr1</code>. The operator is extracted from the source code and saved as <code>op_type</code>. The right expression node is then found using its field name ‘right’ and parsed. The returned Expression would represent the integer <code>3</code> and be saved as <code>expr2</code>.</p>
-<pre><code class="language-Rust">let expr1 = child_expr(constraint, source_code, root)?;
-            let op = constraint.child_by_field_name("operator").ok_or(format!(
-                "Missing operator in expression {}",
-                constraint.kind()
-            ))?;
-            let op_type = &amp;source_code[op.start_byte()..op.end_byte()];
-            let expr2_node = constraint.child_by_field_name("right").ok_or(format!(
-                "Missing second operand in expression {}",
-                constraint.kind()
-            ))?;
-            let expr2 = parse_expression(expr2_node, source_code, root)?;
+<p>In <code>parse_expression</code>, this node is first dispatched to <code>parse_comparison_expression</code> and then <code>parse_binary_expression</code> because of its kind. From there, the operator is extracted from the source code, and the left and right child expressions are parsed:</p>
+<pre><code class="language-Rust">    let Some(op_node) = field!(recover, ctx, node, "operator") else {
+        return Ok(None);
+    };
+    let op_str = &amp;ctx.source_code[op_node.start_byte()..op_node.end_byte()];
 
-            match op_type {...}
+    ...
+
+    // parse left operand
+    let Some(left_node) = field!(recover, ctx, node, "left") else {
+        return Ok(None);
+    };
+    let Some(left) = parse_expression(ctx, left_node)? else {
+        return Ok(None);
+    };
+
+    ...
+
+    // parse right operand
+    let Some(right_node) = field!(recover, ctx, node, "right") else {
+        return Ok(None);
+    };
+    let Some(right) = parse_expression(ctx, right_node)? else {
+        return Ok(None);
+    };
 </code></pre>
 <p>Depending on the operator type (in this case <code>=</code>), the left and right expressions are added to an Expression of the relevant type (in this case <code>Eq</code>), which is returned.</p>
 <pre><code class="language-Rust">"=" =&gt; Ok(Expression::Eq(
                     Metadata::new(),
-                    Box::new(expr1),
-                    Box::new(expr2),
+                    Box::new(left),
+                    Box::new(right),
                 )),
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
