@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-3ac092b1.js";
+            window.path_to_searchindex_js = "searchindex-42e6224f.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-3a9aeb1e.js"></script>
+        <script src="toc-d2428e6a.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -3401,7 +3401,7 @@ $<code>x \in [a, b]</code>$ The new range is $<code> -x \in [-b, -a]</code>$. So
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="order-encoding-inequality"><a class="header" href="#order-encoding-inequality">Order Encoding Inequality</a></h1>
 <h2 id="overview-10"><a class="header" href="#overview-10">Overview</a></h2>
-<pre><code class="language-text">SATInt(a) &lt;/&gt;/&lt;=/&gt;= SATInt(b) ~&gt; Bool
+<pre><code class="language-text">SATInt(a) &lt; / &gt; / &lt;= / &gt;= SATInt(b) ~&gt; Bool
 </code></pre>
 <p>The Order Encoding Inequality rule encodes comparison operations (<code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, <code>&gt;=</code>) between two order-encoded integers into boolean CNF expressions. Order encoding represents an integer using a <strong>prefix-true bit vector</strong> where position i is true if the integer’s value is &gt;= i.</p>
 <p>This page keeps only the rule shape. The generic techniques are described in <a href="#sat-rule-implementation-patterns">SAT Rule Implementation Patterns</a>, and the current code lives in <code>crates/conjure-cp-rules/src/sat/order_int_ops.rs</code> (<code>validate_order_int_operands</code>, <code>sat_order_lt</code>, <code>ineq_sat_order</code>).</p>
@@ -3416,8 +3416,34 @@ $<code>x \in [a, b]</code>$ The new range is $<code> -x \in [-b, -a]</code>$. So
 <p>Order encoding’s prefix-true property enables a comparison based on prefix logic. For <code>x &lt; y</code>, we look for the first position where <code>x</code> becomes false and <code>y</code> is still true.</p>
 <p>That idea becomes a small Tseytin chain: negate the left bit, AND it with the right bit, then OR the result into the accumulator.</p>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="direct-encoding-absolute-value"><a class="header" href="#direct-encoding-absolute-value">Direct Encoding Absolute Value</a></h1>
+<h1 id="order-encoding-division"><a class="header" href="#order-encoding-division">Order Encoding Division</a></h1>
 <h2 id="overview-11"><a class="header" href="#overview-11">Overview</a></h2>
+<pre><code class="language-text">SafeDiv(SATInt(a), SATInt(b)) ~&gt; SATInt(c)
+</code></pre>
+<p>This rule closely mirrors the <a href="#direct-encoding-division">Direct Encoding Division</a> by relying on a 2D lookup table strategy, but it requires some additional manipulations.</p>
+<p>The generic techniques are described in <a href="#sat-rule-implementation-patterns">SAT Rule Implementation Patterns</a>, and the current implementation lives in <code>crates/conjure-cp-rules/src/sat/order_int_ops.rs</code> (<code>safediv_sat_order</code>).</p>
+<h2 id="whats-new-compared-to-direct-encoding"><a class="header" href="#whats-new-compared-to-direct-encoding">What’s new compared to Direct Encoding?</a></h2>
+<p>Because order encoding represents values using a cascade of <code>true</code> bits (<code>N &gt;= i</code>), we cannot isolate a specific value simply by checking one bit. We must ensure the boundary between <code>true</code> and <code>false</code> happens exactly where the integer value would be.</p>
+<p>This changes two main parts of the lookup table strategy:</p>
+<ol>
+<li>
+<p><strong>Identifying exact input values:</strong>
+To identify if a numerator exactly equals <code>i</code>, we must assert <code>(N &gt;= i) AND NOT (N &gt;= i+1)</code>. When converted to CNF via De Morgan’s laws for the implication condition (i.e. <code>NOT condition OR consequence</code>), the base condition for <code>numerator = i</code> and <code>denominator = j</code> becomes a chain of <code>OR</code>s:
+<code>NOT (N_i) OR (N_{i+1}) OR NOT (D_j) OR (D_{j+1})</code>.</p>
+</li>
+<li>
+<p><strong>Building the output:</strong>
+When the division results in a quotient <code>k</code>, we must create a valid order-encoded bit-vector for <code>k</code>. Instead of turning on just one bit, we add a rule for every bit <code>m</code> in the output:</p>
+<ul>
+<li>Any bit <code>m</code> up to <code>k</code> is forced to <code>true</code>.</li>
+<li>Any bit <code>m</code> larger than <code>k</code> is forced to <code>false</code>.
+g</li>
+</ul>
+</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="direct-encoding-absolute-value"><a class="header" href="#direct-encoding-absolute-value">Direct Encoding Absolute Value</a></h1>
+<h2 id="overview-12"><a class="header" href="#overview-12">Overview</a></h2>
 <pre><code class="language-text">|SATInt(a)| ~&gt; SATInt(b)
 </code></pre>
 <p>The Direct Encoding Absolute Value rule encodes the absolute value operation on a direct-encoded integer into another direct-encoded integer.</p>
@@ -3438,6 +3464,29 @@ $<code>x \in [a, b]</code>$ The new range is $<code> -x \in [-b, -a]</code>$. So
 </ol>
 <p>Because direct encoding is one-hot, exactly one input bit is true, which means exactly one bucket wins.</p>
 <p>The code is the best place to check the exact bucket construction and the special-case handling for single-element buckets.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="direct-encoding-division"><a class="header" href="#direct-encoding-division">Direct Encoding Division</a></h1>
+<h2 id="overview-13"><a class="header" href="#overview-13">Overview</a></h2>
+<pre><code class="language-text">SafeDiv(SATInt(a), SATInt(b)) ~&gt; SATInt(c)
+</code></pre>
+<p>The Direct Encoding Division rule encodes the integer division (specifically <code>SafeDiv</code>, where division by zero yields zero) of two direct-encoded integers into a new direct-encoded integer.</p>
+<p>The generic techniques are described in <a href="#sat-rule-implementation-patterns">SAT Rule Implementation Patterns</a>, and the exact current implementation lives in <code>crates/conjure-cp-rules/src/sat/direct_int_ops.rs</code> (<code>safediv_sat_direct</code>).</p>
+<h2 id="what-this-rule-does-3"><a class="header" href="#what-this-rule-does-3">What this rule does</a></h2>
+<ul>
+<li>Calculates the exact minimum and maximum possible quotient values to tightly bound the output domain.</li>
+<li>Generates a new direct-encoded integer for the quotient with one boolean variable per possible value.</li>
+<li>Builds a 2D lookup table of clauses mapping <code>numerator_i AND denominator_j</code> to the corresponding <code>quotient_k</code>.</li>
+<li>Enforces that the output is a valid direct encoding by adding at-most-one constraints across all output bits.</li>
+</ul>
+<h2 id="lookup-table-strategy"><a class="header" href="#lookup-table-strategy">Lookup table strategy</a></h2>
+<p>Instead of mimicking a hardware division circuit, this rule relies on a <strong>lookup table strategy</strong> leveraging the one-hot property of direct encoding:</p>
+<ol>
+<li><strong>Calculate domain bounds</strong> - compute the smallest and largest possible quotient (<code>quot_min</code>, <code>quot_max</code>) across all combinations of the numerator and denominator bounds.</li>
+<li><strong>Allocate output bits</strong> - create one new boolean variable for every value in <code>[quot_min, quot_max]</code>.</li>
+<li><strong>Map inputs to outputs</strong> - for every possible numerator value <code>i</code> and denominator value <code>j</code>, calculate <code>k = floor_div(i, j)</code> (or <code>0</code> if <code>j == 0</code>). Then, add a CNF clause stating that if <code>numerator = i</code> and <code>denominator = j</code>, then <code>quotient = k</code>. This is encoded directly as <code>NOT n_i OR NOT d_j OR q_k</code>.</li>
+<li><strong>Constrain output</strong> - ensure the output quotient does not take more than one value simultaneously by adding pairwise exclusion clauses (at-most-one constraints) across all <code>q_k</code> bits.</li>
+</ol>
+<p>This exploits the fact that exactly one numerator bit and exactly one denominator bit will be true, driving exactly one quotient bit to be true.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <p>Vertical rules for Occurrence, which are applied once all possible horizontal rules have been applied at a given stage. Followed by an example of rewriting a model in Occurrence representation, using both horizontal and vertical rules.</p>
 <ul>
@@ -4205,7 +4254,7 @@ created: 16-02-24
 <blockquote>
 <p>NOTE: Once the rewrite engine API is finalised, we should possibly make a separate page for it.</p>
 </blockquote>
-<h1 id="overview-12"><a class="header" href="#overview-12">Overview</a></h1>
+<h1 id="overview-14"><a class="header" href="#overview-14">Overview</a></h1>
 <p>Conjure uses Essence, a high-level DSL for constraints modelling, and converts it into a solver-specific representation of the problem.
 To do that, we parse the Essence file into an AST, then use a rule engine to walk the expression tree and rewrite constraints into a format that is accepted by the solver before passing the AST to a solver adapter.</p>
 <p>The high-level process is as follows:</p>
@@ -4727,7 +4776,7 @@ find biff: sequence (minSize 3, size 4) of int(2..7) $ Cardinality attribute can
 <p>Conjure-Oxide currently has four forms of tests:</p>
 <ul>
 <li>Integration tests</li>
-<li><a href="#overview-14">Custom tests</a></li>
+<li><a href="#overview-16">Custom tests</a></li>
 <li><a href="#roundtrip-testing">Roundtrip tests</a></li>
 <li>A small number of unit tests</li>
 </ul>
@@ -4874,7 +4923,7 @@ In the future, it may also be worth examining the possibility and likelihood of 
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="roundtrip-testing"><a class="header" href="#roundtrip-testing">Roundtrip Testing</a></h1>
-<h2 id="overview-13"><a class="header" href="#overview-13">Overview</a></h2>
+<h2 id="overview-15"><a class="header" href="#overview-15">Overview</a></h2>
 <p>Roundtrip tests check that parsing is valid and that there is no unexpected behaviour during a full roundtrip of an Essence file.
 Roundtrip tests do not consider rewriting or solving.</p>
 <h2 id="full-test-structure"><a class="header" href="#full-test-structure">Full Test Structure</a></h2>
@@ -4901,7 +4950,7 @@ Both parsers will be used by default for each test unless specified and will use
 Any directories within here than contain a singular <code>.essence</code> or <code>.eprime</code> file will be treated as a test.
 After creating the Essence or Essence’ file for your test you should run the test suite with <code>ACCEPT=true</code> to generate the expected files.</p>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="overview-14"><a class="header" href="#overview-14">Overview</a></h1>
+<h1 id="overview-16"><a class="header" href="#overview-16">Overview</a></h1>
 <p>Custom tests were created as a solution to the problem that integration tests do not allow for testing of error messages, which automatically return from the integration test method and therefore cannot be analyzed. The custom tests, however, work for both erroneous and non-erroneous code. Each test contains an input, a <code>run.sh</code> file to execute the test, and an expected standard output/error (or both) to compare against. Conjure Oxide is set up to automatically create and execute a test for each test folder in the <code>tests/custom </code>directory when <code>cargo test</code> is run, so to add a test case all one must do is add a folder in the directory which contains the necessary components.</p>
 <h1 id="how-to-add-a-test-case"><a class="header" href="#how-to-add-a-test-case">How to add a test case</a></h1>
 <p>Adding a test case is simple. First add a folder with the test case name to the <code>tests/custom</code> directory. Tests can be organized within folders in the directory–only folders with a <code>run.sh</code> file will be treated as a test case. Within the test folder, add these components:</p>
@@ -4962,7 +5011,7 @@ created: 19-09-24
 <!-- TODO edit more -->
 <!-- syntax highlighting -->
 <h1 id="semantics-of-rewriting-expressions-with-sideeffects"><a class="header" href="#semantics-of-rewriting-expressions-with-sideeffects">Semantics of Rewriting Expressions with Side‐Effects</a></h1>
-<h2 id="overview-15"><a class="header" href="#overview-15">Overview</a></h2>
+<h2 id="overview-17"><a class="header" href="#overview-17">Overview</a></h2>
 <hr>
 <p>When rewriting expressions, a rule may occasionally introduce new variables and constraints. For example, a rule which handles the <code>Min</code> expression may introduce a new variable <code>aux</code> which represents the minimum value itself, and introduce constraints <code>aux &lt;= x</code> for each <code>x</code> in the original <code>Min</code> expression. Conjure and Conjure Oxide provide similar methods of achieving these “side-effects”.</p>
 <h2 id="reductions"><a class="header" href="#reductions">Reductions</a></h2>

@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>SAT Rule Implementation Patterns - Conjure Oxide</title>
+        <title>Order Encoding Division - Conjure Oxide</title>
 
 
         <!-- Custom HTML head -->
@@ -176,44 +176,41 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="sat-rule-implementation-patterns"><a class="header" href="#sat-rule-implementation-patterns">SAT Rule Implementation Patterns</a></h1>
+                        <h1 id="order-encoding-division"><a class="header" href="#order-encoding-division">Order Encoding Division</a></h1>
 <h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
-<p>Most SAT rules in conjure-oxide follow the same small set of implementation patterns. The details change from rule to rule, but the structure is usually the same: validate the input, normalise the operands, build a compact Boolean construction, convert it to CNF with Tseytin helpers, and propagate the output domain if the result is an integer.</p>
-<p>This page collects the reusable techniques so the rule-specific pages can stay short. If you want the exact current implementation, treat the code as the source of truth and use the links below.</p>
-<h2 id="generic-techniques"><a class="header" href="#generic-techniques">Generic techniques</a></h2>
+<pre><code class="language-text">SafeDiv(SATInt(a), SATInt(b)) ~&gt; SATInt(c)
+</code></pre>
+<p>This rule closely mirrors the <a href="./direct-encoding-division.html">Direct Encoding Division</a> by relying on a 2D lookup table strategy, but it requires some additional manipulations.</p>
+<p>The generic techniques are described in <a href="./sat-generic-patterns.html">SAT Rule Implementation Patterns</a>, and the current implementation lives in <code>crates/conjure-cp-rules/src/sat/order_int_ops.rs</code> (<code>safediv_sat_order</code>).</p>
+<h2 id="whats-new-compared-to-direct-encoding"><a class="header" href="#whats-new-compared-to-direct-encoding">What’s new compared to Direct Encoding?</a></h2>
+<p>Because order encoding represents values using a cascade of <code>true</code> bits (<code>N &gt;= i</code>), we cannot isolate a specific value simply by checking one bit. We must ensure the boundary between <code>true</code> and <code>false</code> happens exactly where the integer value would be.</p>
+<p>This changes two main parts of the lookup table strategy:</p>
 <ol>
-<li><strong>Normalise operands first</strong> - most integer rules pad bit-vectors to a shared range so later zips or index lookups are safe.</li>
-<li><strong>Exploit the encoding shape</strong> - direct encoding prefers bucketed OR/AND logic over arithmetic; order encoding prefers prefix comparisons; logarithmic encoding leans on bitwise circuits.</li>
-<li><strong>Short-circuit degenerate cases</strong> - empty sums, empty buckets, and single-element buckets can usually return a constant or a direct input bit without extra clauses.</li>
-<li><strong>Use Tseytin helpers for Boolean structure</strong> - once the high-level rule is identified, the actual CNF comes from <code>tseytin_and</code>, <code>tseytin_or</code>, <code>tseytin_not</code>, <code>tseytin_xor</code>, and friends.</li>
-<li><strong>Propagate the domain</strong> - integer outputs must update their range so later rules know the actual value interval.</li>
+<li>
+<p><strong>Identifying exact input values:</strong>
+To identify if a numerator exactly equals <code>i</code>, we must assert <code>(N &gt;= i) AND NOT (N &gt;= i+1)</code>. When converted to CNF via De Morgan’s laws for the implication condition (i.e. <code>NOT condition OR consequence</code>), the base condition for <code>numerator = i</code> and <code>denominator = j</code> becomes a chain of <code>OR</code>s:
+<code>NOT (N_i) OR (N_{i+1}) OR NOT (D_j) OR (D_{j+1})</code>.</p>
+</li>
+<li>
+<p><strong>Building the output:</strong>
+When the division results in a quotient <code>k</code>, we must create a valid order-encoded bit-vector for <code>k</code>. Instead of turning on just one bit, we add a rule for every bit <code>m</code> in the output:</p>
+<ul>
+<li>Any bit <code>m</code> up to <code>k</code> is forced to <code>true</code>.</li>
+<li>Any bit <code>m</code> larger than <code>k</code> is forced to <code>false</code>.
+g</li>
+</ul>
+</li>
 </ol>
-<h2 id="current-rule-patterns"><a class="header" href="#current-rule-patterns">Current rule patterns</a></h2>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>Rule</th><th>Shared pattern</th><th>Current code</th></tr>
-</thead>
-<tbody>
-<tr><td>Direct encoding summation</td><td>Common-range normalisation + pairwise DNF-style accumulation</td><td><code>crates/conjure-cp-rules/src/sat/direct_int_ops.rs</code> (<code>add_sat_direct</code>)</td></tr>
-<tr><td>Direct encoding absolute value</td><td>Bucket by |value|, then OR each bucket</td><td><code>crates/conjure-cp-rules/src/sat/direct_int_ops.rs</code> (<code>abs_value_sat_direct</code>)</td></tr>
-<tr><td>Order encoding inequality</td><td>Prefix comparison using the first position where <code>lhs</code> is false and <code>rhs</code> is true</td><td><code>crates/conjure-cp-rules/src/sat/order_int_ops.rs</code> (<code>validate_order_int_operands</code>, <code>sat_order_lt</code>, <code>ineq_sat_order</code>)</td></tr>
-</tbody>
-</table>
-</div>
-<h2 id="rule-pages"><a class="header" href="#rule-pages">Rule pages</a></h2>
-<p>The rule-specific pages are intentionally brief. They give the shape of the rule, point to the implementation, and leave the exact clause-by-clause details to the code.</p>
-<p>If you are changing a rule, read the current implementation first and then update the page only if the high-level pattern changes.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../../developers-guide/architecture/sat-encoding/booleans.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../../developers-guide/architecture/sat-encoding/order-encoding-inequality.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../../developers-guide/architecture/sat-encoding/direct-encoding-summation.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../../developers-guide/architecture/sat-encoding/direct-encoding-abs.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -223,11 +220,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../../developers-guide/architecture/sat-encoding/booleans.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../../developers-guide/architecture/sat-encoding/order-encoding-inequality.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../../developers-guide/architecture/sat-encoding/direct-encoding-summation.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../../developers-guide/architecture/sat-encoding/direct-encoding-abs.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>
