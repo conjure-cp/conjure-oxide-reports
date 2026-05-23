@@ -38,7 +38,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-2d66b0e4.js";
+            window.path_to_searchindex_js = "searchindex-c0977a0c.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-c0f7b285.js"></script>
@@ -1980,6 +1980,7 @@ Expected a constraint statement, but got 'such that ? b &lt; A'
 <li><code>Ok(Some(value))</code> means this branch parsed successfully.</li>
 <li><code>Ok(None)</code> means recoverable failure in this branch.</li>
 </ul>
+<p>The <a href="https://github.com/conjure-cp/conjure-oxide/tree/main/tests-integration/tests/roundtrip/invalid/semantic">roundtrip/invalid/semantic test directory</a> contains various semantic error cases and their expected outputs.</p>
 <h2 id="example-duplicate-variable-declarations"><a class="header" href="#example-duplicate-variable-declarations">Example: Duplicate Variable Declarations</a></h2>
 <p>Duplicate declaration checks are a good example of semantic detection during traversal.</p>
 <p>Example erroneous input:</p>
@@ -2019,6 +2020,8 @@ let name = Name::user(variable_name);
 <p>Once the domain is parsed, all identifiers in the <code>vars</code> vector are added to the   <code>SymbolTable</code> of the model with the domain</p>
 </li>
 </ul>
+<p>Error produced:
+<code>    tests/roundtrip/invalid/semantic/duplicate_var_declaration/01/duplicate_var_declaration_01.essence:1:9:     |     1 | find x, x : int     |         ^     Variable 'x' is already declared in this find statement    </code></p>
 <h2 id="type-checking"><a class="header" href="#type-checking">Type Checking</a></h2>
 <p>Type checking uses two context values stored in <code>ParseContext</code>:</p>
 <ul>
@@ -2072,6 +2075,8 @@ such that sum([1, 2, b, 4]) = x
 </ul>
 </li>
 </ul>
+<p>Error produced:
+<code>    tests/roundtrip/invalid/semantic/typecheck/bool_in_arith_list/bool_in_arith_list.essence:3:22:     |     3 | such that sum([1, 2, b, 4]) = x     |                      ^     Type error: b         Expected: int         Got: bool    </code></p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="overview-4"><a class="header" href="#overview-4">Overview</a></h1>
 <p>This page describes how error detection currently works in the <code>conjure-cp-essence-parser</code> crate at a high level.</p>
