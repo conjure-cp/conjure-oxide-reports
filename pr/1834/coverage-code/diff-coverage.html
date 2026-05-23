@@ -113,7 +113,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
             <tr>
                 <td>crates/conjure-cp-essence-parser/src/parser/letting.rs</td>
                 <td>33.3%</td>
-                <td>50-52,54</td>
+                <td>50-53</td>
             </tr>
         </table>
         <div class="src-snippet">
@@ -130,20 +130,18 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <span class="normal">54</span>
 <span class="normal">55</span>
 <span class="normal">56</span>
-<span class="normal">57</span>
-<span class="normal">58</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-46" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-46"></a><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="n">variable</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">named_children</span><span class="p">(</span><span class="o">&amp;</span><span class="n">variable_list</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="normal">57</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-46" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-46"></a><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="n">variable</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">named_children</span><span class="p">(</span><span class="o">&amp;</span><span class="n">variable_list</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-47" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-47"></a><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="n">variable_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ctx</span><span class="p">.</span><span class="n">source_code</span><span class="p">[</span><span class="n">variable</span><span class="p">.</span><span class="n">start_byte</span><span class="p">()</span><span class="o">..</span><span class="n">variable</span><span class="p">.</span><span class="n">end_byte</span><span class="p">()];</span>
 <a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-48" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-48"></a>
 <a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-49" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-49"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="n">is_keyword_identifier</span><span class="p">(</span><span class="n">variable_name</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-50" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-50"></a><span class="hll"><span class="w">                </span><span class="n">ctx</span><span class="p">.</span><span class="n">errors</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">RecoverableParseError</span><span class="p">::</span><span class="n">new</span><span class="p">(</span>
 </span><a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-51" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-51"></a><span class="hll"><span class="w">                    </span><span class="fm">format!</span><span class="p">(</span><span class="s">&quot;Keyword &#39;{variable_name}&#39; used as identifier&quot;</span><span class="p">),</span>
 </span><a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-52" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-52"></a><span class="hll"><span class="w">                    </span><span class="nb">Some</span><span class="p">(</span><span class="n">variable</span><span class="p">.</span><span class="n">range</span><span class="p">()),</span>
-</span><a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-53" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-53"></a><span class="w">                </span><span class="p">));</span>
-<a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-54" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-54"></a><span class="hll"><span class="w">                </span><span class="k">continue</span><span class="p">;</span>
-</span><a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-55" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-55"></a><span class="w">            </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-53" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-53"></a><span class="hll"><span class="w">                </span><span class="p">));</span>
+</span><a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-54" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-54"></a><span class="w">                </span><span class="c1">// still add variable to symbol table to avoid follow-up errors</span>
+<a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-55" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-55"></a><span class="w">            </span><span class="p">}</span>
 <a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-56" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-56"></a>
 <a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-57" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-57"></a><span class="w">            </span><span class="c1">// Check for duplicate within the same statement</span>
-<a id="crates/conjure-cp-essence-parser/src/parser/letting.rs-58" name="crates/conjure-cp-essence-parser/src/parser/letting.rs-58"></a><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="n">temp_symbols</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="n">variable_name</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 </pre></div></td></tr></table></div>
 
             </div>
