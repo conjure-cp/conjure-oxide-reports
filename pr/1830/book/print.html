@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-ef21e9a5.js";
+            window.path_to_searchindex_js = "searchindex-eb106979.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-fc28513c.js"></script>
+        <script src="toc-e8157c2d.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -2529,143 +2529,6 @@ cargo test -p conjure-cp-essence-parser --test missing_token
 cargo test -p conjure-cp-essence-parser --test unexpected_token
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="source-map"><a class="header" href="#source-map">Source Map</a></h1>
-<p>The source map connects locations in an Essence source file to metadata discovered while parsing that file.</p>
-<h2 id="overview-5"><a class="header" href="#overview-5">Overview</a></h2>
-<p>The LSP uses the source map for position-based editor features:</p>
-<ul>
-<li>hover information (e.g., description of the keword at that position)</li>
-<li>declaration site and reference metadata
-<ul>
-<li>i.e., if we’re referencing an already declared variable, we want to know where in the file it was declared (to then have the ability to visit the definition), and what type it is (to be able to highlight different types of variables differently throughout the code).</li>
-</ul>
-</li>
-<li>semantic token generation (more in semantic_tokens.md)
-<ul>
-<li>used for semantic highlighting</li>
-</ul>
-</li>
-<li>keeping hover and highlighting available even when the full AST cannot be built (more in recoverable_parsing.md)</li>
-</ul>
-<p>The source map is built during CST-to-AST parsing in <code>parse_essence_with_context_and_map</code>, to retrieve the relevant semantic information: symbol table entries, declaration sites, domains, expression types, documentation keys, and symbol kinds.</p>
-<h2 id="implementation-locations"><a class="header" href="#implementation-locations">Implementation Locations</a></h2>
-<p>Source map is implemented in:</p>
-<pre><code class="language-bash">crates/conjure-cp-essence-parser/src/diagnostics/
-└─ source_map.rs
-</code></pre>
-<p>Parser modules that populate source map spans include:</p>
-<pre><code class="language-text">crates/conjure-cp-essence-parser/src/parser/
-├─ find.rs
-├─ letting.rs
-├─ domain.rs
-├─ atom.rs
-└─ expression.rs
-</code></pre>
-<h2 id="data-structures"><a class="header" href="#data-structures">Data Structures</a></h2>
-<p><code>SourceMap</code> owns all spans and keeps a range index for lookup by byte offset:</p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>pub struct SourceMap {
-    pub spans: Vec&lt;SourceSpan&gt;,            // stores records
-    pub by_byte: RangeMap&lt;usize, SpanId&gt;,  // maps ranges to spanID (index into spans)
-<span class="boring">}</span></code></pre>
-<p>}</p>
-<p>Each span records both byte offsets and Tree-sitter points:</p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>pub struct SourceSpan {
-    pub start_byte: usize,
-    pub end_byte: usize,
-    pub start_point: Position,
-    pub end_point: Position,
-    pub hover_info: Option&lt;HoverInfo&gt;,
-}
-<span class="boring">}</span></code></pre>
-<p><code>HoverInfo</code> stores the editor-facing metadata attached to a span:</p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>pub struct HoverInfo {
-    pub description: String,       // on-hover text
-    pub doc_key: Option&lt;String&gt;,   // optional key into Conjure's docs/bits documentation
-    pub kind: Option&lt;SymbolKind&gt;,  // optional semantic category, such as 'Find'
-    pub ty: Option&lt;String&gt;,        // optional type/domain string, for example 'int(1..3)'
-    pub decl_span: Option&lt;SpanId&gt;, // optional SpanId pointing back to the declaration span
-}
-<span class="boring">}</span></code></pre>
-<h2 id="populating-the-map"><a class="header" href="#populating-the-map">Populating The Map</a></h2>
-<p>Parser code usually adds spans with:</p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>span_with_hover(node, source, map, hover_info)
-<span class="boring">}</span></code></pre>
-<p>This wraps <code>alloc_span(...)</code>, records the node range, stores the hover metadata, and inserts the byte range into the <code>RangeMap</code>.</p>
-<p>For documentation-backed hovers, parser code can use:</p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>ctx.add_span_and_doc_hover(node, doc_key, kind, ty, decl_span)
-<span class="boring">}</span></code></pre>
-<p>That stores a normalised <code>doc_key</code> in <code>HoverInfo</code>. The LSP only fetches the full documentation text when the user actually hovers that span.</p>
-<p>Examples of current source map population:</p>
-<ul>
-<li><code>find.rs</code> adds spans for <code>find</code>/<code>given</code> keywords and declaration variables.</li>
-<li><code>letting.rs</code> adds spans for <code>letting</code> declarations.</li>
-<li><code>domain.rs</code> adds spans for domain keywords and domain operators.</li>
-<li><code>atom.rs</code> adds spans for variable references and constants.</li>
-<li><code>expression.rs</code> adds spans for operators and function-like expressions.</li>
-</ul>
-<p>For variable references, the parser looks up the declaration in the current symbol table and uses that declaration kind to set the semantic kind. This is why later occurrences of a <code>find</code> variable can be highlighted as <code>FindVar</code>, not just as a generic identifier.</p>
-<h2 id="parser-integration"><a class="header" href="#parser-integration">Parser Integration</a></h2>
-<p>The parse entry point is:</p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>parse_essence_with_context_and_map(
-    src,
-    context,
-    errors,
-    tree,
-) -&gt; Result&lt;(Option&lt;Model&gt;, SourceMap), FatalParseError&gt;
-<span class="boring">}</span></code></pre>
-<p>The <code>SourceMap</code> is returned even when parse errors occur. This is intentional: editor features should still work for the parts of the file that were parsed successfully, even if another part of the file has a syntax or semantic error.</p>
-<h2 id="recoverable-parsing"><a class="header" href="#recoverable-parsing">Recoverable Parsing</a></h2>
-<p>When the CST contains Tree-sitter errors, the parser:</p>
-<ul>
-<li>records syntactic diagnostics with <code>detect_syntactic_errors(...)</code></li>
-<li>suppresses following semantic errors to avoid noise and duplicate error flagging</li>
-<li>still walks the CST where possible</li>
-<li>still builds source map spans for valid subtrees</li>
-<li>returns <code>Ok((None, source_map))</code> if recoverable errors exist</li>
-</ul>
-<p>Fatal parser errors still exist for cases where parsing cannot safely continue at all.</p>
-<h2 id="lsp-cache-integration"><a class="header" href="#lsp-cache-integration">LSP Cache Integration</a></h2>
-<p>The LSP stores the source map in its per-document cache:</p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>pub struct CacheCont {
-    pub sourcemap: Option&lt;SourceMap&gt;,  // here
-    pub ast: Option&lt;Model&gt;,
-    pub errors: Vec&lt;RecoverableParseError&gt;,
-    pub cst: Option&lt;Tree&gt;,
-    pub contents: String,
-    pub version: i32,
-}
-<span class="boring">}</span></code></pre>
-<h2 id="accessing-the-source-map"><a class="header" href="#accessing-the-source-map">Accessing the Source Map</a></h2>
-<p>The source map lookup is:</p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>source_map.hover_info_at_byte(hover_byte)
-<span class="boring">}</span></code></pre>
-<p>This resolves a byte offset to a <code>SpanId</code> through <code>by_byte</code>, then returns the hover metadata attached to that span.</p>
-<h2 id="byte-offsets-and-lsp-positions"><a class="header" href="#byte-offsets-and-lsp-positions">Byte Offsets And LSP Positions</a></h2>
-<p>Tree-sitter nodes use byte offsets and byte columns. Rust string slicing also uses byte offsets. The source map therefore uses bytes as its canonical internal representation.</p>
-<p>LSP positions use line plus UTF-16 character offsets. Any LSP request must be converted before querying the map:</p>
-<pre><code class="language-text">LSP Position -&gt; byte offset -&gt; SourceMap lookup
-</code></pre>
-<p>Semantic token responses need the reverse shape:</p>
-<pre><code class="language-text">SourceMap byte range -&gt; LSP UTF-16 line/column/length
-</code></pre>
-<p>This distinction matters for non-ASCII text. Byte length and LSP character length are not the same.</p>
-<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="syntax-errors"><a class="header" href="#syntax-errors">Syntax Errors</a></h1>
 <p>(Will produce an invalid CST)</p>
 <h3 id="1-missing-token-eg-variable-domain-expression"><a class="header" href="#1-missing-token-eg-variable-domain-expression">1. Missing Token (e.g variable, Domain, Expression)</a></h3>
@@ -2888,7 +2751,7 @@ find a : bool such that a = (s[5] = t[1]) $ true
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="semantic-errors-detection"><a class="header" href="#semantic-errors-detection">Semantic Errors Detection</a></h1>
-<h2 id="overview-6"><a class="header" href="#overview-6">Overview</a></h2>
+<h2 id="overview-5"><a class="header" href="#overview-5">Overview</a></h2>
 <p>Semantic errors are not picked up by the tree-sitter parser and result in a valid CST but an invalid AST. They are detected at the stage of parsing the CST into a Rust <a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_core/ast/struct.Model.html"><code>Model</code> object</a> representing the Essence problem. The errors generated from the <a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_cp_essence_parser/parser/index.html">Essence parser</a> are extracted and reported via <a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_cp_essence_parser/diagnostics/diagnostics_api/index.html">Diagnostics API</a>.</p>
 <p>The semantic errors detected include type errors, omitted declarations, invalid indexing and using keywords as identifiers.</p>
 <h2 id="implementation-1"><a class="header" href="#implementation-1">Implementation</a></h2>
@@ -2948,7 +2811,7 @@ Source: "semantic error detection"
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="syntactic-errors-detection"><a class="header" href="#syntactic-errors-detection">Syntactic Errors Detection</a></h1>
-<h2 id="overview-7"><a class="header" href="#overview-7">Overview</a></h2>
+<h2 id="overview-6"><a class="header" href="#overview-6">Overview</a></h2>
 <p>Syntactic errors result in an invalid <strong>Concrete Syntax Tree (CST)</strong> generated by the tree-sitter parser (<a href="https://tree-sitter.github.io/tree-sitter/">Tree-sitter</a>) when parsing Essence code. An invalid CST may contain:</p>
 <ul>
 <li>
@@ -3059,7 +2922,7 @@ Source: syntactic-error-detector
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="lsp-documentation"><a class="header" href="#lsp-documentation">LSP Documentation</a></h1>
-<h2 id="overview-8"><a class="header" href="#overview-8">Overview</a></h2>
+<h2 id="overview-7"><a class="header" href="#overview-7">Overview</a></h2>
 <p>This is the overview documentation for the Language Server which is developed for use by Conjure Oxide. This is developed following the <a href="https://microsoft.github.io/language-server-protocol/">Language Server Protocol</a> developed by Microsoft Visual Studio Code, and implemented following VSCode guidelines. This means that functionality cannot be guaranteed on other IDE, though this does not mean it will/cannot work. The Language Server and Client provide the basis through which a fully functional Essence extension will be produced. The server and client run as separate processes primarily because this minimises performance cost.</p>
 <p>At present this addresses the client and server, with abstraction over lower level functions called by the server.</p>
 <h2 id="current-functionality-goals"><a class="header" href="#current-functionality-goals">Current Functionality Goals</a></h2>
@@ -4259,7 +4122,7 @@ created: 16-02-24
 <blockquote>
 <p>NOTE: Once the rewrite engine API is finalised, we should possibly make a separate page for it.</p>
 </blockquote>
-<h1 id="overview-9"><a class="header" href="#overview-9">Overview</a></h1>
+<h1 id="overview-8"><a class="header" href="#overview-8">Overview</a></h1>
 <p>Conjure uses Essence, a high-level DSL for constraints modelling, and converts it into a solver-specific representation of the problem.
 To do that, we parse the Essence file into an AST, then use a rule engine to walk the expression tree and rewrite constraints into a format that is accepted by the solver before passing the AST to a solver adapter.</p>
 <p>The high-level process is as follows:</p>
@@ -4781,7 +4644,7 @@ find biff: sequence (minSize 3, size 4) of int(2..7) $ Cardinality attribute can
 <p>Conjure-Oxide currently has four forms of tests:</p>
 <ul>
 <li>Integration tests</li>
-<li><a href="#overview-11">Custom tests</a></li>
+<li><a href="#overview-10">Custom tests</a></li>
 <li><a href="#roundtrip-testing">Roundtrip tests</a></li>
 <li>A small number of unit tests</li>
 </ul>
@@ -4928,7 +4791,7 @@ In the future, it may also be worth examining the possibility and likelihood of 
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="roundtrip-testing"><a class="header" href="#roundtrip-testing">Roundtrip Testing</a></h1>
-<h2 id="overview-10"><a class="header" href="#overview-10">Overview</a></h2>
+<h2 id="overview-9"><a class="header" href="#overview-9">Overview</a></h2>
 <p>Roundtrip tests check that parsing is valid and that there is no unexpected behaviour during a full roundtrip of an Essence file.
 Roundtrip tests do not consider rewriting or solving.</p>
 <h2 id="full-test-structure"><a class="header" href="#full-test-structure">Full Test Structure</a></h2>
@@ -4955,7 +4818,7 @@ Both parsers will be used by default for each test unless specified and will use
 Any directories within here than contain a singular <code>.essence</code> or <code>.eprime</code> file will be treated as a test.
 After creating the Essence or Essence’ file for your test you should run the test suite with <code>ACCEPT=true</code> to generate the expected files.</p>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="overview-11"><a class="header" href="#overview-11">Overview</a></h1>
+<h1 id="overview-10"><a class="header" href="#overview-10">Overview</a></h1>
 <p>Custom tests were created as a solution to the problem that integration tests do not allow for testing of error messages, which automatically return from the integration test method and therefore cannot be analyzed. The custom tests, however, work for both erroneous and non-erroneous code. Each test contains an input, a <code>run.sh</code> file to execute the test, and an expected standard output/error (or both) to compare against. Conjure Oxide is set up to automatically create and execute a test for each test folder in the <code>tests/custom </code>directory when <code>cargo test</code> is run, so to add a test case all one must do is add a folder in the directory which contains the necessary components.</p>
 <h1 id="how-to-add-a-test-case"><a class="header" href="#how-to-add-a-test-case">How to add a test case</a></h1>
 <p>Adding a test case is simple. First add a folder with the test case name to the <code>tests/custom</code> directory. Tests can be organized within folders in the directory–only folders with a <code>run.sh</code> file will be treated as a test case. Within the test folder, add these components:</p>
@@ -5016,7 +4879,7 @@ created: 19-09-24
 <!-- TODO edit more -->
 <!-- syntax highlighting -->
 <h1 id="semantics-of-rewriting-expressions-with-sideeffects"><a class="header" href="#semantics-of-rewriting-expressions-with-sideeffects">Semantics of Rewriting Expressions with Side‐Effects</a></h1>
-<h2 id="overview-12"><a class="header" href="#overview-12">Overview</a></h2>
+<h2 id="overview-11"><a class="header" href="#overview-11">Overview</a></h2>
 <hr>
 <p>When rewriting expressions, a rule may occasionally introduce new variables and constraints. For example, a rule which handles the <code>Min</code> expression may introduce a new variable <code>aux</code> which represents the minimum value itself, and introduce constraints <code>aux &lt;= x</code> for each <code>x</code> in the original <code>Min</code> expression. Conjure and Conjure Oxide provide similar methods of achieving these “side-effects”.</p>
 <h2 id="reductions"><a class="header" href="#reductions">Reductions</a></h2>
