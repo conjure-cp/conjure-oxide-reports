@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-93c0dbb6.js";
+            window.path_to_searchindex_js = "searchindex-7a6aae95.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-31357f05.js"></script>
+        <script src="toc-2bb27c1a.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -3444,11 +3444,53 @@ $$</p>
 <li><strong>Logic:</strong> Calculate a global min/max across all operands. Pad Direct-encoded integers with <code>false</code> bits and Order-encoded integers with <code>true</code> (prefix) or <code>false</code> (postfix) bits to ensure all bit-vectors have the same length and align to the same values.</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="direct-encoding-sat-summation"><a class="header" href="#direct-encoding-sat-summation">Direct Encoding SAT Summation</a></h1>
+<h1 id="direct-encoding-absolute-value"><a class="header" href="#direct-encoding-absolute-value">Direct Encoding Absolute Value</a></h1>
 <h2 id="overview-9"><a class="header" href="#overview-9">Overview</a></h2>
-<pre><code class="language-text">Sum(SATInt(a), SATInt(b), ...) ~&gt; SATInt(c)
+<pre><code class="language-text">|SATInt(a)| ~&gt; SATInt(b)
 </code></pre>
 <h2 id="what-this-rule-does"><a class="header" href="#what-this-rule-does">What this rule does</a></h2>
+<ul>
+<li>Groups the one-hot input bits into buckets by <code>|value|</code>.</li>
+<li>Produces one output bit per bucket.</li>
+<li>Returns the bucket contents directly when there is only one possible contributor, which avoids unnecessary Tseytin clauses.</li>
+<li>Uses <code>false</code> for empty buckets.</li>
+</ul>
+<h2 id="bucketing-by-absolute-value"><a class="header" href="#bucketing-by-absolute-value">Bucketing by absolute value</a></h2>
+<p>Instead of explicitly computing absolute value through arithmetic, this rule uses a <strong>bucketing strategy</strong>:</p>
+<ol>
+<li>Create one bucket for each possible output value.</li>
+<li>Place every input bit into the bucket for its absolute value.</li>
+<li>Emit one output bit per bucket, using OR only when a bucket has multiple contributors.</li>
+</ol>
+<p>Because direct encoding is one-hot, exactly one input bit is true, which means exactly one bucket wins.</p>
+<p>The code is the best place to check the exact bucket construction and the special-case handling for single-element buckets.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="direct-encoding-division"><a class="header" href="#direct-encoding-division">Direct Encoding Division</a></h1>
+<h2 id="overview-10"><a class="header" href="#overview-10">Overview</a></h2>
+<pre><code class="language-text">SafeDiv(SATInt(a), SATInt(b)) ~&gt; SATInt(c)
+</code></pre>
+<h2 id="what-this-rule-does-1"><a class="header" href="#what-this-rule-does-1">What this rule does</a></h2>
+<ul>
+<li>Calculates the exact minimum and maximum possible quotient values to tightly bound the output domain.</li>
+<li>Generates a new direct-encoded integer for the quotient with one boolean variable per possible value.</li>
+<li>Builds a 2D lookup table of clauses mapping <code>numerator_i AND denominator_j</code> to the corresponding <code>quotient_k</code>.</li>
+<li>Enforces that the output is a valid direct encoding by adding at-most-one constraints across all output bits.</li>
+</ul>
+<h2 id="lookup-table-strategy"><a class="header" href="#lookup-table-strategy">Lookup table strategy</a></h2>
+<p>Instead of mimicking a hardware division circuit, this rule relies on a <strong>lookup table strategy</strong> leveraging the one-hot property of direct encoding:</p>
+<ol>
+<li><strong>Calculate domain bounds</strong> - compute the smallest and largest possible quotient (<code>quot_min</code>, <code>quot_max</code>) across all combinations of the numerator and denominator bounds.</li>
+<li><strong>Allocate output bits</strong> - create one new boolean variable for every value in <code>[quot_min, quot_max]</code>.</li>
+<li><strong>Map inputs to outputs</strong> - for every possible numerator value <code>i</code> and denominator value <code>j</code>, calculate <code>k = floor_div(i, j)</code> (or <code>0</code> if <code>j == 0</code>). Then, add a CNF clause stating that if <code>numerator = i</code> and <code>denominator = j</code>, then <code>quotient = k</code>. This is encoded directly as <code>NOT n_i OR NOT d_j OR q_k</code>.</li>
+<li><strong>Constrain output</strong> - ensure the output quotient does not take more than one value simultaneously by adding pairwise exclusion clauses (at-most-one constraints) across all <code>q_k</code> bits.</li>
+</ol>
+<p>This exploits the fact that exactly one numerator bit and exactly one denominator bit will be true, driving exactly one quotient bit to be true.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="direct-encoding-sat-summation"><a class="header" href="#direct-encoding-sat-summation">Direct Encoding SAT Summation</a></h1>
+<h2 id="overview-11"><a class="header" href="#overview-11">Overview</a></h2>
+<pre><code class="language-text">Sum(SATInt(a), SATInt(b), ...) ~&gt; SATInt(c)
+</code></pre>
+<h2 id="what-this-rule-does-2"><a class="header" href="#what-this-rule-does-2">What this rule does</a></h2>
 <ul>
 <li>Normalises all operands to a shared value range.</li>
 <li>Builds the sum pairwise, using <code>tseytin_and</code> for each value pair and <code>tseytin_or</code> to accumulate matching terms.</li>
@@ -3456,23 +3498,220 @@ $$</p>
 <li>Handles the empty-input case by returning the constant zero.</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="order-encoding-inequality"><a class="header" href="#order-encoding-inequality">Order Encoding Inequality</a></h1>
-<h2 id="overview-10"><a class="header" href="#overview-10">Overview</a></h2>
-<pre><code class="language-text">SATInt(a) &lt; / &gt; / &lt;= / &gt;= SATInt(b) ~&gt; Bool
+<h1 id="direct-encoding-toint"><a class="header" href="#direct-encoding-toint">Direct Encoding toInt</a></h1>
+<h2 id="overview-12"><a class="header" href="#overview-12">Overview</a></h2>
+<pre><code class="language-text">toInt(bool) ~&gt; SATInt
 </code></pre>
-<h2 id="what-this-rule-does-1"><a class="header" href="#what-this-rule-does-1">What this rule does</a></h2>
+<h2 id="method"><a class="header" href="#method">Method</a></h2>
 <ul>
-<li>Normalises both operands to a shared range before comparing them.</li>
-<li>Uses <code>&lt;</code> as the primitive comparison.</li>
-<li>Rewrites <code>&gt;</code>, <code>&lt;=</code>, and <code>&gt;=</code> by swapping operands and optionally negating the result.</li>
-<li>Builds the comparison with a prefix scan over <code>not lhs_i AND rhs_i</code> terms.</li>
+<li>Given a Boolean condition P, we want to set <code>r0</code> true when the condition does not hold: $r_0 \leftrightarrow ¬P$; and set <code>r1</code> true when condition P does hold: $r_1 \leftrightarrow P$.</li>
+<li>Each of these biconditionals are encoded as two clauses: one for each direction of the biconditional.</li>
+<li>We return a new CNF reduction with the vector <code>[r_0, r_1]</code> encoded as a direct SATInt.</li>
 </ul>
-<h2 id="prefix-comparison"><a class="header" href="#prefix-comparison">Prefix comparison</a></h2>
-<p>Order encoding’s prefix-true property enables a comparison based on prefix logic. For <code>x &lt; y</code>, we look for the first position where <code>x</code> becomes false and <code>y</code> is still true.</p>
-<p>That idea becomes a small Tseytin chain: negate the left bit, AND it with the right bit, then OR the result into the accumulator.</p>
+<h2 id="example-3"><a class="header" href="#example-3">Example</a></h2>
+<p>Consider the following problem -</p>
+<pre><code class="language-essence">find x, y : int(0..3)
+such that x = toInt(y=2)
+</code></pre>
+<p>The solutions produced are:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">x</th><th style="text-align: left">y</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left">0</td><td style="text-align: left">0</td></tr>
+<tr><td style="text-align: left">0</td><td style="text-align: left">1</td></tr>
+<tr><td style="text-align: left">1</td><td style="text-align: left">2</td></tr>
+<tr><td style="text-align: left">0</td><td style="text-align: left">3</td></tr>
+</tbody>
+</table>
+</div>
+<p><code>x=1</code> only when the condition <code>y=2</code> holds, and <code>x=0</code> otherwise.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="log-encoding-absolute-value"><a class="header" href="#log-encoding-absolute-value">Log Encoding Absolute Value</a></h1>
+<h2 id="overview-13"><a class="header" href="#overview-13">Overview</a></h2>
+<pre><code class="language-text">|SATInt(a)| -&gt; SATInt(b)
+</code></pre>
+<h2 id="rule-method"><a class="header" href="#rule-method">Rule Method</a></h2>
+<ul>
+<li>Create a negated copy of the input</li>
+<li>Select between the original and negated input using the input’s sign bit to select</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="log-encoding-comparison-inequalities"><a class="header" href="#log-encoding-comparison-inequalities">Log Encoding Comparison inequalities</a></h1>
+<h2 id="overview-14"><a class="header" href="#overview-14">Overview</a></h2>
+<pre><code class="language-text">SATInt(a) &lt; SATInt(b) ~&gt; Bool
+SATInt(a) &lt;= SATInt(b) ~&gt; Bool
+SATInt(a) &gt; SATInt(b) ~&gt; Bool
+SATInt(a) &gt;= SATInt(b) ~&gt; Bool
+</code></pre>
+<h2 id="rule-method-1"><a class="header" href="#rule-method-1">Rule Method</a></h2>
+<ul>
+<li>Convert both operands to a canonical form by making both operands the same bit-wdith (using zero padding)</li>
+<li>Apply the comparison logic</li>
+</ul>
+<h3 id="comparison-logic"><a class="header" href="#comparison-logic">Comparison Logic</a></h3>
+<p>For two bitvectors that have been made the same length:</p>
+<p>$$
+\begin{align}
+A = [a_1, a_2, \dots, a_{n}],\
+B = [b_1, b_2, \dots, b_{n}]
+\end{align}
+$$</p>
+<p>$A &lt; B$ is equivalent to $B &gt; A$ so we only need to encode $&gt;$ and $\geq$, and the equivalent expression for $&lt;$ and $\leq$ can be generated by swapping the order of the operands. There is only a slight difference between the expressions for $&gt;$ (strict) and $\geq$ (not strict) and that is also factored in:</p>
+<p><strong>Shorthands</strong></p>
+<p>$$
+\begin{align}
+(x &gt; y) \equiv x \land \neg y \
+(x \geq y) \equiv y \Rightarrow x
+\end{align}
+$$</p>
+<p><strong>Initial Case</strong></p>
+<p>$$
+\begin{align}
+T_1 &amp;=
+\begin{cases}
+a_1 &gt; b_1 &amp; \text{(strict)}  \
+a_1 \geq b_1 &amp; \text{(non-strict)}
+\end{cases} \
+\end{align}
+$$</p>
+<p><strong>Iteration</strong></p>
+<p>$$
+\begin{align}
+T_2 &amp;= (a_2 &gt; b_2) \lor ((a_2 \Leftrightarrow b_2) \land T_1) \
+T_3 &amp;= (a_3 &gt; b_3) \lor ((a_3 \Leftrightarrow b_3) \land T_2) \
+\vdots \
+T_{n-1} &amp;= (a_{n-1} &gt; b_{n-1}) \lor ((a_{n-1} \Leftrightarrow b_{n-1}) \land T_{n-2}) \
+\end{align}
+$$</p>
+<p><strong>Final expression</strong></p>
+<p>$$
+\begin{align}
+(A &gt; B),\ (A \geq B) \quad \equiv \quad \boldsymbol{(b_{n} &gt; a_{n}) \lor ((a_{n} \Leftrightarrow b_{n}) \land T_{n})}
+\end{align}
+$$</p>
+<p>Note that in the final expression, $(a_i &gt; b_i)$ is swapped for $(b_i &gt; a_i)$ - this is because the sign bit should be treated inversely.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="log-encoding-division--modulo"><a class="header" href="#log-encoding-division--modulo">Log Encoding Division &amp; Modulo</a></h1>
+<h2 id="overview-15"><a class="header" href="#overview-15">Overview</a></h2>
+<pre><code class="language-text">SafeDiv(SATInt(a), SATInt(b)) ~&gt; SATInt(c)
+SafeMod(SATInt(a), SATInt(b)) ~&gt; SATInt(c)
+</code></pre>
+<p>Division and modulo are strongly linked, for log encodings the Restoring Division Algorithm (https://en.wikipedia.org/wiki/Division_algorithm#Restoring_division) is used, performing this algorithm gives you the quotient and remainder which can be used for division and modulo respectively. One very important thing to bear in mind is that there are multiple competing standards for how negatives should be handled. So when implementing these rules, it is important to ensure that you implement the correct standard for conjure:</p>
+<p><strong>Summary</strong></p>
+<p>$$
+\begin{align}
+3 &amp;/\, 2 &amp;= 1 \
+-3 &amp;/\, 2 &amp;= -2 \
+3 &amp;/\, -2 &amp;= -2 \
+-3 &amp;/\, -2 &amp;= 1 \
+\end{align}
+$$</p>
+<p>$$
+\begin{align}
+3 \,&amp;\%\, 2 &amp;= 1 \
+3 \,&amp;\%\, -2 &amp;= -1 \
+-3 \,&amp;\%\, 2 &amp;= 1\
+-3 \,&amp;\%\, -2 &amp;= -1
+\end{align}
+$$</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="log-encoding-equality-and-inequality"><a class="header" href="#log-encoding-equality-and-inequality">Log Encoding Equality and Inequality</a></h1>
+<h2 id="overview-16"><a class="header" href="#overview-16">Overview</a></h2>
+<pre><code class="language-text">SATInt(a) = SATInt(b) ~&gt; Bool
+SATInt(a) != SATInt(b) ~&gt; Bool
+</code></pre>
+<h2 id="rule-method-2"><a class="header" href="#rule-method-2">Rule Method</a></h2>
+<ul>
+<li>Convert both operands to a canonical form by making both operands the same bit-wdith (using zero padding)</li>
+<li>Form a boolean expression by iterating over both bitvectors</li>
+</ul>
+<h3 id="comparison-logic-1"><a class="header" href="#comparison-logic-1">Comparison Logic</a></h3>
+<p>For two bitvectors that have been made the same length:</p>
+<p>$$
+\begin{align}
+A = [a_1, a_2, \dots, a_{n}],\
+B = [b_1, b_2, \dots, b_{n}]
+\end{align}
+$$</p>
+<p>We can use the following expressions to encode equality/inequality:</p>
+<p><strong>Equality</strong></p>
+<p>$$
+\begin{align}
+(A = B) \quad \equiv \quad \boxed{(a_1 \Leftrightarrow b_1) \land (a_2 \Leftrightarrow b_2) \land \dots \land (a_n \Leftrightarrow b_n)} \\
+\end{align}
+$$</p>
+<p><strong>Inequality</strong></p>
+<p>$$
+\begin{align}
+(A \neq B) \quad \equiv \quad \boxed{(a_1 \oplus b_1) \lor (a_2 \oplus b_2) \lor \dots \lor (a_n \oplus b_n)}
+\end{align}
+$$</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="log-encoding-multiplication"><a class="header" href="#log-encoding-multiplication">Log Encoding Multiplication</a></h1>
+<h2 id="overview-17"><a class="header" href="#overview-17">Overview</a></h2>
+<pre><code class="language-text">Poduct(SATInt(a), SATInt(b), ...) ~&gt; SATInt(c)
+</code></pre>
+<h2 id="rule-method-3"><a class="header" href="#rule-method-3">Rule Method</a></h2>
+<ul>
+<li>Determine the output range</li>
+<li>Pad all operands to match the output bitwidth to prevent overflow</li>
+<li>Split the expression into a series of 2-nary products</li>
+<li>Use shift-add binary multiplication for each product</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="log-encoding-negation"><a class="header" href="#log-encoding-negation">Log Encoding Negation</a></h1>
+<h2 id="overview-18"><a class="header" href="#overview-18">Overview</a></h2>
+<pre><code class="language-text">-SATInt(a) ~&gt; SATInt(b)
+</code></pre>
+<p>Negating a 2s complement integer is very simple by design, negative a log integer just means inverting all bits and adding 1.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="log-encoding-summation"><a class="header" href="#log-encoding-summation">Log Encoding Summation</a></h1>
+<h2 id="overview-19"><a class="header" href="#overview-19">Overview</a></h2>
+<pre><code class="language-text">Sum(SATInt(a), SATInt(b), ...) ~&gt; SATInt(c)
+</code></pre>
+<h2 id="rule-method-4"><a class="header" href="#rule-method-4">Rule Method</a></h2>
+<ul>
+<li>Determine the output range</li>
+<li>Pad all operands to match the output bitwidth to prevent overflow</li>
+<li>Split the expression into a series of 2-nary summations</li>
+<li>Use an binary adder circuit to perform each summation</li>
+</ul>
+<h3 id="2-nary-summation-logic"><a class="header" href="#2-nary-summation-logic">2-nary Summation Logic</a></h3>
+<p>For two bitvectors that have been made the same length:</p>
+<p>$$
+\begin{align}
+A = [a_1, a_2, \dots, a_{n}],\
+B = [b_1, b_2, \dots, b_{n}]
+\end{align}
+$$</p>
+<p>Specifying the output</p>
+<p>$$
+S = A + B = [s_1, s_2, \dots, s_{n}]
+$$</p>
+<p><strong>Carry</strong></p>
+<p>$$
+\begin{align}
+c_1 &amp;= a_1 \land b_1 \
+c_2 &amp;= (a_2 \land b_2) \lor ((a_2 \oplus b_2) \land c_1) \
+\vdots \
+c_{n-1} &amp;= (a_{n-1} \land b_{n-1}) \lor ((a_{n-1} \oplus b_{n-1}) \land c_{n-2})
+\end{align}
+$$</p>
+<p><strong>Sum</strong></p>
+<p>$$
+\begin{align}
+s_1 &amp;\equiv \boxed{a_1 \oplus b_1} \
+s_2 &amp;\equiv \boxed{a_2 \oplus b_2 \oplus c_1} \
+\vdots \
+s_{n} &amp;\equiv \boxed{a_{n} \oplus b_{n} \oplus c_{n-1}}
+\end{align}
+$$</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="order-encoding-division"><a class="header" href="#order-encoding-division">Order Encoding Division</a></h1>
-<h2 id="overview-11"><a class="header" href="#overview-11">Overview</a></h2>
+<h2 id="overview-20"><a class="header" href="#overview-20">Overview</a></h2>
 <p>Ongoing work in <a href="https://github.com/conjure-cp/conjure-oxide/pull/1775/changes#diff-9bedf2e9d7c33b08fce00ef157ab3f72197bd811e0f482045aaa3efe7aaf4441R243-R358">#1775</a></p>
 <pre><code class="language-text">SafeDiv(SATInt(a), SATInt(b)) ~&gt; SATInt(c)
 </code></pre>
@@ -3495,11 +3734,59 @@ When the division results in a quotient <code>k</code>, we must create a valid o
 </li>
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
+<h1 id="order-encoding-equality-and-inequality"><a class="header" href="#order-encoding-equality-and-inequality">Order Encoding Equality and Inequality</a></h1>
+<h2 id="overview-21"><a class="header" href="#overview-21">Overview</a></h2>
+<pre><code class="language-text">SATInt(a) = SATInt(b) ~&gt; Bool
+SATInt(a) != SATInt(b) ~&gt; Bool
+</code></pre>
+<h2 id="rule-method-5"><a class="header" href="#rule-method-5">Rule Method</a></h2>
+<ul>
+<li>Ensure both operands are in order encoding and have the same number of bits.</li>
+<li>Form a boolean expression by iterating over both bitvectors and asserting that corresponding bits are equivalent.</li>
+<li>For inequality, calculate the equality and negate the result.</li>
+</ul>
+<h3 id="comparison-logic-2"><a class="header" href="#comparison-logic-2">Comparison Logic</a></h3>
+<p>For two bitvectors $A$ and $B$ representing the order encoding of two integers:</p>
+<p>$$
+\begin{align}
+A = [a_1, a_2, \dots, a_{n}],\
+B = [b_1, b_2, \dots, b_{n}]
+\end{align}
+$$</p>
+<p>We can use the following expressions to encode equality/inequality:</p>
+<p><strong>Equality</strong></p>
+<p>$$
+\begin{align}
+(A = B) \quad \equiv \quad \boxed{(a_1 \Leftrightarrow b_1) \land (a_2 \Leftrightarrow b_2) \land \dots \land (a_n \Leftrightarrow b_n)} \\
+\end{align}
+$$</p>
+<p><strong>Inequality</strong></p>
+<p>$$
+\begin{align}
+(A \neq B) \quad \equiv \quad \boxed{\neg(A = B)}
+\end{align}
+$$</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="order-encoding-inequality"><a class="header" href="#order-encoding-inequality">Order Encoding Inequality</a></h1>
+<h2 id="overview-22"><a class="header" href="#overview-22">Overview</a></h2>
+<pre><code class="language-text">SATInt(a) &lt; / &gt; / &lt;= / &gt;= SATInt(b) ~&gt; Bool
+</code></pre>
+<h2 id="what-this-rule-does-3"><a class="header" href="#what-this-rule-does-3">What this rule does</a></h2>
+<ul>
+<li>Normalises both operands to a shared range before comparing them.</li>
+<li>Uses <code>&lt;</code> as the primitive comparison.</li>
+<li>Rewrites <code>&gt;</code>, <code>&lt;=</code>, and <code>&gt;=</code> by swapping operands and optionally negating the result.</li>
+<li>Builds the comparison with a prefix scan over <code>not lhs_i AND rhs_i</code> terms.</li>
+</ul>
+<h2 id="prefix-comparison"><a class="header" href="#prefix-comparison">Prefix comparison</a></h2>
+<p>Order encoding’s prefix-true property enables a comparison based on prefix logic. For <code>x &lt; y</code>, we look for the first position where <code>x</code> becomes false and <code>y</code> is still true.</p>
+<p>That idea becomes a small Tseytin chain: negate the left bit, AND it with the right bit, then OR the result into the accumulator.</p>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="order-encoding-negation"><a class="header" href="#order-encoding-negation">Order Encoding Negation</a></h1>
-<h2 id="overview-12"><a class="header" href="#overview-12">Overview</a></h2>
+<h2 id="overview-23"><a class="header" href="#overview-23">Overview</a></h2>
 <pre><code class="language-text">-SATInt(a) ~&gt; SATInt(b)
 </code></pre>
-<h2 id="rule-method"><a class="header" href="#rule-method">Rule Method</a></h2>
+<h2 id="rule-method-6"><a class="header" href="#rule-method-6">Rule Method</a></h2>
 <ul>
 <li>Computes the new domain for the resultant value (the old min and old max both get negated).</li>
 <li>Creates a new output bitvector initially containing a single <code>true</code> bit (add padding to the front).</li>
@@ -3512,7 +3799,7 @@ When the division results in a quotient <code>k</code>, we must create a valid o
 <li>But order encoding wants $a \geq b$, so we convert the above to $(x \leq k) \leftrightarrow ¬(x \geq k+1)$.</li>
 <li>The $+1$ creates an out-of-range index, so we need to account for this by inserting a <code>false</code> (which is then negated to <code>true</code>).</li>
 </ul>
-<h2 id="example-3"><a class="header" href="#example-3">Example</a></h2>
+<h2 id="example-4"><a class="header" href="#example-4">Example</a></h2>
 <p>Consider the following example which illustrates what this rule does with a given input.</p>
 <p>Say we have domain <code>D = [-3..2]</code>, and <code>x = 1</code>, so we want to find <code>y = -x = -1</code>. We start with <code>[1, 1, 1, 1, 1, 0]</code>.</p>
 <p>We take the negation of the domain <code>D</code> to get the new domain <code>D' = [-2..3]</code>, and our target bitvector for <code>y</code> is <code>[1, 1, 0, 0, 0, 0]</code>.</p>
@@ -3523,47 +3810,17 @@ When the division results in a quotient <code>k</code>, we must create a valid o
 </ol>
 <p>We now have an order representation for <code>-1</code> as desired.</p>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="direct-encoding-absolute-value"><a class="header" href="#direct-encoding-absolute-value">Direct Encoding Absolute Value</a></h1>
-<h2 id="overview-13"><a class="header" href="#overview-13">Overview</a></h2>
-<pre><code class="language-text">|SATInt(a)| ~&gt; SATInt(b)
+<h1 id="order-encoding-toint"><a class="header" href="#order-encoding-toint">Order Encoding toInt</a></h1>
+<h2 id="overview-24"><a class="header" href="#overview-24">Overview</a></h2>
+<pre><code class="language-text">toInt(bool) ~&gt; SATInt
 </code></pre>
-<h2 id="what-this-rule-does-2"><a class="header" href="#what-this-rule-does-2">What this rule does</a></h2>
+<h2 id="method-1"><a class="header" href="#method-1">Method</a></h2>
 <ul>
-<li>Groups the one-hot input bits into buckets by <code>|value|</code>.</li>
-<li>Produces one output bit per bucket.</li>
-<li>Returns the bucket contents directly when there is only one possible contributor, which avoids unnecessary Tseytin clauses.</li>
-<li>Uses <code>false</code> for empty buckets.</li>
+<li>This rule follows the same method as seen in the direct encoding version.</li>
+<li>However, because are using order encoding uses thresholds (where $r_i$ means $value \geq i$), we can say that for $r_0$, $value \geq 0$ will always be true, thus can set $r_0$ to true directly.</li>
+<li>We encode the biconditional $r_1 \leftrightarrow P$ as in the direct encoding version.</li>
 </ul>
-<h2 id="bucketing-by-absolute-value"><a class="header" href="#bucketing-by-absolute-value">Bucketing by absolute value</a></h2>
-<p>Instead of explicitly computing absolute value through arithmetic, this rule uses a <strong>bucketing strategy</strong>:</p>
-<ol>
-<li>Create one bucket for each possible output value.</li>
-<li>Place every input bit into the bucket for its absolute value.</li>
-<li>Emit one output bit per bucket, using OR only when a bucket has multiple contributors.</li>
-</ol>
-<p>Because direct encoding is one-hot, exactly one input bit is true, which means exactly one bucket wins.</p>
-<p>The code is the best place to check the exact bucket construction and the special-case handling for single-element buckets.</p>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="direct-encoding-division"><a class="header" href="#direct-encoding-division">Direct Encoding Division</a></h1>
-<h2 id="overview-14"><a class="header" href="#overview-14">Overview</a></h2>
-<pre><code class="language-text">SafeDiv(SATInt(a), SATInt(b)) ~&gt; SATInt(c)
-</code></pre>
-<h2 id="what-this-rule-does-3"><a class="header" href="#what-this-rule-does-3">What this rule does</a></h2>
-<ul>
-<li>Calculates the exact minimum and maximum possible quotient values to tightly bound the output domain.</li>
-<li>Generates a new direct-encoded integer for the quotient with one boolean variable per possible value.</li>
-<li>Builds a 2D lookup table of clauses mapping <code>numerator_i AND denominator_j</code> to the corresponding <code>quotient_k</code>.</li>
-<li>Enforces that the output is a valid direct encoding by adding at-most-one constraints across all output bits.</li>
-</ul>
-<h2 id="lookup-table-strategy"><a class="header" href="#lookup-table-strategy">Lookup table strategy</a></h2>
-<p>Instead of mimicking a hardware division circuit, this rule relies on a <strong>lookup table strategy</strong> leveraging the one-hot property of direct encoding:</p>
-<ol>
-<li><strong>Calculate domain bounds</strong> - compute the smallest and largest possible quotient (<code>quot_min</code>, <code>quot_max</code>) across all combinations of the numerator and denominator bounds.</li>
-<li><strong>Allocate output bits</strong> - create one new boolean variable for every value in <code>[quot_min, quot_max]</code>.</li>
-<li><strong>Map inputs to outputs</strong> - for every possible numerator value <code>i</code> and denominator value <code>j</code>, calculate <code>k = floor_div(i, j)</code> (or <code>0</code> if <code>j == 0</code>). Then, add a CNF clause stating that if <code>numerator = i</code> and <code>denominator = j</code>, then <code>quotient = k</code>. This is encoded directly as <code>NOT n_i OR NOT d_j OR q_k</code>.</li>
-<li><strong>Constrain output</strong> - ensure the output quotient does not take more than one value simultaneously by adding pairwise exclusion clauses (at-most-one constraints) across all <code>q_k</code> bits.</li>
-</ol>
-<p>This exploits the fact that exactly one numerator bit and exactly one denominator bit will be true, driving exactly one quotient bit to be true.</p>
+<p>An example of this rule can also be found in the direct encoding page on this rule.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <p>Vertical rules for Occurrence, which are applied once all possible horizontal rules have been applied at a given stage. Followed by an example of rewriting a model in Occurrence representation, using both horizontal and vertical rules.</p>
 <ul>
@@ -3607,7 +3864,7 @@ When the division results in a quotient <code>k</code>, we must create a valid o
             )
     theRule _ = na "rule_Comprehension"
 </code></pre>
-<h3 id="example-4"><a class="header" href="#example-4">Example:</a></h3>
+<h3 id="example-5"><a class="header" href="#example-5">Example:</a></h3>
 <ul>
 <li>here the quantified variable is q3, the set is A, the domain of the matrix is int(0..6). the GenInExpr “q3 &lt;- A” is rewritten using the domain and the Occurrence matrix.</li>
 <li>the larger context is an and() comprehension representing the statement “for all q3 in A: q3 in B”, where “for all q3 in A” comes from the GenInExpr (see <a href="https://github.com/conjure-cp/conjure-oxide/wiki/Conjure-Horizontal-Set-Rules#notes">Horizontal Rules - Notes</a>)</li>
@@ -3839,7 +4096,7 @@ and([C_Occurrence[q4] -&gt; or([A_Occurrence[q5] ∧ B_Occurrence[q5] ∧ q5 = q
                       ++ gocAfter
              )
 </code></pre>
-<h3 id="example-5"><a class="header" href="#example-5">Example:</a></h3>
+<h3 id="example-6"><a class="header" href="#example-6">Example:</a></h3>
 <ul>
 <li>set-comprehension-literal rule appears within model: “letting A be {1,5,3}, find B : set of int(0..6), such that B subsetEq A”</li>
 <li>here the body of the comprehension is “q3 = q2”, the gensOrConds is the single Generator “q3 &lt;- {1,3,5}”</li>
@@ -4024,7 +4281,7 @@ This means the body of the and() comprehension must apply to all members (q3) of
              )
      theRule _ = na "rule_SupsetEq"
 </code></pre>
-<h3 id="example-6"><a class="header" href="#example-6">Example:</a></h3>
+<h3 id="example-6-1"><a class="header" href="#example-6-1">Example:</a></h3>
 <pre><code>Picking the first option: Question 1: A supsetEq B
      Answer 1: set-subsetEq: Horizontal rule for set supsetEq
                A supsetEq B ~~&gt; B subsetEq A
@@ -4331,7 +4588,7 @@ created: 16-02-24
 <blockquote>
 <p>NOTE: Once the rewrite engine API is finalised, we should possibly make a separate page for it.</p>
 </blockquote>
-<h1 id="overview-15"><a class="header" href="#overview-15">Overview</a></h1>
+<h1 id="overview-25"><a class="header" href="#overview-25">Overview</a></h1>
 <p>Conjure uses Essence, a high-level DSL for constraints modelling, and converts it into a solver-specific representation of the problem.
 To do that, we parse the Essence file into an AST, then use a rule engine to walk the expression tree and rewrite constraints into a format that is accepted by the solver before passing the AST to a solver adapter.</p>
 <p>The high-level process is as follows:</p>
@@ -4853,7 +5110,7 @@ find biff: sequence (minSize 3, size 4) of int(2..7) $ Cardinality attribute can
 <p>Conjure-Oxide currently has four forms of tests:</p>
 <ul>
 <li>Integration tests</li>
-<li><a href="#overview-17">Custom tests</a></li>
+<li><a href="#overview-27">Custom tests</a></li>
 <li><a href="#roundtrip-testing">Roundtrip tests</a></li>
 <li>A small number of unit tests</li>
 </ul>
@@ -5000,7 +5257,7 @@ In the future, it may also be worth examining the possibility and likelihood of 
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="roundtrip-testing"><a class="header" href="#roundtrip-testing">Roundtrip Testing</a></h1>
-<h2 id="overview-16"><a class="header" href="#overview-16">Overview</a></h2>
+<h2 id="overview-26"><a class="header" href="#overview-26">Overview</a></h2>
 <p>Roundtrip tests check that parsing is valid and that there is no unexpected behaviour during a full roundtrip of an Essence file.
 Roundtrip tests do not consider rewriting or solving.</p>
 <h2 id="full-test-structure"><a class="header" href="#full-test-structure">Full Test Structure</a></h2>
@@ -5027,7 +5284,7 @@ Both parsers will be used by default for each test unless specified and will use
 Any directories within here than contain a singular <code>.essence</code> or <code>.eprime</code> file will be treated as a test.
 After creating the Essence or Essence’ file for your test you should run the test suite with <code>ACCEPT=true</code> to generate the expected files.</p>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="overview-17"><a class="header" href="#overview-17">Overview</a></h1>
+<h1 id="overview-27"><a class="header" href="#overview-27">Overview</a></h1>
 <p>Custom tests were created as a solution to the problem that integration tests do not allow for testing of error messages, which automatically return from the integration test method and therefore cannot be analyzed. The custom tests, however, work for both erroneous and non-erroneous code. Each test contains an input, a <code>run.sh</code> file to execute the test, and an expected standard output/error (or both) to compare against. Conjure Oxide is set up to automatically create and execute a test for each test folder in the <code>tests/custom </code>directory when <code>cargo test</code> is run, so to add a test case all one must do is add a folder in the directory which contains the necessary components.</p>
 <h1 id="how-to-add-a-test-case"><a class="header" href="#how-to-add-a-test-case">How to add a test case</a></h1>
 <p>Adding a test case is simple. First add a folder with the test case name to the <code>tests/custom</code> directory. Tests can be organized within folders in the directory–only folders with a <code>run.sh</code> file will be treated as a test case. Within the test folder, add these components:</p>
@@ -5092,7 +5349,7 @@ created: 19-09-24
 <!-- TODO edit more -->
 <!-- syntax highlighting -->
 <h1 id="semantics-of-rewriting-expressions-with-sideeffects"><a class="header" href="#semantics-of-rewriting-expressions-with-sideeffects">Semantics of Rewriting Expressions with Side‐Effects</a></h1>
-<h2 id="overview-18"><a class="header" href="#overview-18">Overview</a></h2>
+<h2 id="overview-28"><a class="header" href="#overview-28">Overview</a></h2>
 <hr>
 <p>When rewriting expressions, a rule may occasionally introduce new variables and constraints. For example, a rule which handles the <code>Min</code> expression may introduce a new variable <code>aux</code> which represents the minimum value itself, and introduce constraints <code>aux &lt;= x</code> for each <code>x</code> in the original <code>Min</code> expression. Conjure and Conjure Oxide provide similar methods of achieving these “side-effects”.</p>
 <h2 id="reductions"><a class="header" href="#reductions">Reductions</a></h2>
