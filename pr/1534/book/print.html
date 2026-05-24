@@ -38,7 +38,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-cc8a7953.js";
+            window.path_to_searchindex_js = "searchindex-d5a56f24.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-2bd48c42.js"></script>
@@ -4643,8 +4643,8 @@ find biff: sequence (minSize 3, size 4) of int(2..7) $ Cardinality attribute can
 <h2 id="types-of-tests"><a class="header" href="#types-of-tests">Types of Tests</a></h2>
 <p>Conjure-Oxide currently has four forms of internal tests:</p>
 <ul>
-<li>Integration tests</li>
-<li><a href="#overview-10">Custom tests</a></li>
+<li><a href="#integration-testing">Integration tests</a></li>
+<li><a href="#overview-11">Custom tests</a></li>
 <li><a href="#roundtrip-testing">Roundtrip tests</a></li>
 <li>A small number of unit tests</li>
 </ul>
@@ -4792,9 +4792,78 @@ In the future, it may also be worth examining the possibility and likelihood of 
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="integration-testing"><a class="header" href="#integration-testing">Integration Testing</a></h1>
+<h2 id="overview-9"><a class="header" href="#overview-9">Overview</a></h2>
+<p>The Integration Test setup takes one essence file and checks that every step of solving works correctly by comparing the output of each step with files that contain previously prepared ‘outputs’, which have been verified for correctness. It checks the parsed output, the application of rules in the rule engine and the solutions, thus verifying each of the steps of the solution process.</p>
+<p>New Integration Tests should be added when:</p>
+<ul>
+<li>Additions are made to the AST</li>
+<li>More solver support is added</li>
+<li>New solving features are added in the form of transformation rules</li>
+<li>New representations are added</li>
+</ul>
+<p>And in any other cases where outcome-oriented changes are introduced. Ideally, all behaviour should be tested via integration tests, in order to ensure that breaking changes introduced later do not accidentally remove or break features<sup class="footnote-reference" id="fr-1-1-3"><a href="#footnote-1-3">1</a></sup>.</p>
+<h2 id="adding-integration-tests"><a class="header" href="#adding-integration-tests">Adding Integration Tests</a></h2>
+<p>Integration test live at the following path within the conjure-oxide repository: <code>conjure-oxide/tests-integration/integration</code>. Any essence file in this test directory, or any of it’s subdirectories is treated as the input for a separate integration test. While it is not strictly necessary, by convention we never put two essence files in the same directory. This allows us to then (also by convention) use <code>input.essence</code> as the name of all input files. The name of an Integration test is a trunctation of its path, relative to the <code>integration</code> directory.</p>
+<p>To add an integration test, create a new subdirectory and give it an appropriate name. Then write a valid essence file (ideally, granular enough to only test one new feature) in that same directory. Then, create a file named <code>config.toml</code> in the same directory as the input file. The name of the config file is <em>not</em> convention alone, and your test may not work if it has some other name. In <code>config.toml</code>, select all of the options which should be tested for the essence file which you are writing this test for. Configuring is covered in greater detail in its own section below.</p>
+<p>To automatically generate all of the necessary testing metadata, run the following command:</p>
+<pre><code class="language-bash">ACCEPT=true cargo test &lt;your-directory-name&gt; 
+</code></pre>
+<p>The environment variable <code>ACCEPT</code> is particularly important: when <code>ACCEPT</code> is set, the integration system will first attempt to solve the model using each of the configurations. It will compare the generated solution against conjure, and if the solutions are the same, it will generate and save test metadata for each configuration.</p>
+<h2 id="configuring-integration-tests"><a class="header" href="#configuring-integration-tests">Configuring Integration Tests</a></h2>
+<p>By convention, the <code>config.toml</code> file for a test looks something like this:</p>
+<pre><code class="language-toml">parser = [
+    "tree-sitter",
+    "via-conjure",
+]
+
+rewriter = [
+    "naive",
+    "morph",
+]
+
+comprehension-expander = [
+    # "native",
+    # "via-solver",
+    "via-solver-ac",
+]
+
+solver = [
+    "minion",
+    "sat-log",
+    "sat-direct",
+    "sat-order",
+    # "smt-bv-arrays-nodiscrete",
+    # "smt-bv-arrays",
+    # "smt-bv-atomic-nodiscrete",
+    # "smt-bv-atomic",
+    # "smt-lia-arrays-nodiscrete",
+    # "smt-lia-arrays",
+    # "smt-lia-atomic-nodiscrete",
+    # "smt-lia-atomic",
+]
+expected-time = 10
+</code></pre>
+<p>The config file has the following fields, each of which contains a list of the ‘active’ or ‘enabled’ configuration options. All possible options supported by conjure-oxide are written in the file:</p>
+<ul>
+<li><code>parser</code>: defines which parsers</li>
+<li><code>rewriter</code>: defines which rewriters to use</li>
+<li><code>comprehension-expander</code>: defines how to expand comprehensions</li>
+<li><code>solver</code>: defines which solvers to use</li>
+<li><code>expected-time</code>: defines in seconds how long a solution is expected to take.</li>
+</ul>
+<p>The integration tester tries all possible combinations of the options enabled in the <code>config.toml</code> file.</p>
+<p>Also by convention, we comment out configurations which are supported by conjure-oxide but do not work for the current solver. For instance, SAT solver does not support Matrices of Integers, so any tests that have matrices of integers will have all sat-solver options as comments.</p>
+<p>As support is added, we go through tests and change the comments to code incrementally. We then regenerate the test metadata for the new tests. To generate a large number of tests at the same time, use the <code>test-accept</code> MakeFile target.</p>
+<hr>
+<hr>
+<ol class="footnote-definition">
+<li id="footnote-1-3">
+<p>Early on in the development of the SAT compilation system, the SAT team briefly turned off all testing of SAT Solver features, which led to changes being merged which had not been tested on existing SAT functionality. This created a dangerous situation, where certain features were merged without being tested on a large part of the codebase. Now, we avoid this by ensuring that <a href="#code-coverage-2">code coverage</a> is not dropping unexpectedly in new Pull Requests using a CI/CD workflow. <a href="#fr-1-1-3">↩</a></p>
+</li>
+</ol>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="roundtrip-testing"><a class="header" href="#roundtrip-testing">Roundtrip Testing</a></h1>
-<h2 id="overview-9"><a class="header" href="#overview-9">Overview</a></h2>
+<h2 id="overview-10"><a class="header" href="#overview-10">Overview</a></h2>
 <p>Roundtrip tests check that parsing is valid and that there is no unexpected behaviour during a full roundtrip of an Essence file.
 Roundtrip tests do not consider rewriting or solving.</p>
 <h2 id="full-test-structure"><a class="header" href="#full-test-structure">Full Test Structure</a></h2>
@@ -4821,7 +4890,7 @@ Both parsers will be used by default for each test unless specified and will use
 Any directories within here than contain a singular <code>.essence</code> or <code>.eprime</code> file will be treated as a test.
 After creating the Essence or Essence’ file for your test you should run the test suite with <code>ACCEPT=true</code> to generate the expected files.</p>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="overview-10"><a class="header" href="#overview-10">Overview</a></h1>
+<h1 id="overview-11"><a class="header" href="#overview-11">Overview</a></h1>
 <p>Custom tests were created as a solution to the problem that integration tests do not allow for testing of error messages, which automatically return from the integration test method and therefore cannot be analyzed. The custom tests, however, work for both erroneous and non-erroneous code. Each test contains an input, a <code>run.sh</code> file to execute the test, and an expected standard output/error (or both) to compare against. Conjure Oxide is set up to automatically create and execute a test for each test folder in the <code>tests/custom </code>directory when <code>cargo test</code> is run, so to add a test case all one must do is add a folder in the directory which contains the necessary components.</p>
 <h1 id="how-to-add-a-test-case"><a class="header" href="#how-to-add-a-test-case">How to add a test case</a></h1>
 <p>Adding a test case is simple. First add a folder with the test case name to the <code>tests/custom</code> directory. Tests can be organized within folders in the directory–only folders with a <code>run.sh</code> file will be treated as a test case. Within the test folder, add these components:</p>
@@ -4991,12 +5060,12 @@ python -m pip install uv pandas textual ty
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="underlying-testing-infrastructure"><a class="header" href="#underlying-testing-infrastructure">Underlying Testing Infrastructure</a></h1>
-<h2 id="overview-11"><a class="header" href="#overview-11">Overview</a></h2>
+<h2 id="overview-12"><a class="header" href="#overview-12">Overview</a></h2>
 <p>This section contains a technical description of the testing infrastructure used by the Conjure Oxide Project to run all of the tests which have been described so far. It is useful for developers who intend to rework this system, add to it, or even replace it entirely.</p>
 <p>The Testing Infrastructure currently used by conjure oxide is built using the Rust Testing Harness[todo: add ref to docs]. The harness provides a lot of very useful functionality - for instance, it natively supports integration tests, compiles and formats tests nicely and prints outputs in a readable fashion.</p>
 <p>However, the harness also introduces certain limitation that one must work within when adding new tests to the rust-based testing harness. As such, it is also important to understand how to use, work with (and in certain cases, chafe against) the harness before attempting to add new testing functionality or rework old testing functionality.</p>
 <h2 id="rust-testing-harness"><a class="header" href="#rust-testing-harness">Rust Testing Harness</a></h2>
-<p>The <code>cargo</code> CLI tool contains several rust utilities<sup class="footnote-reference" id="fr-1-1-3"><a href="#footnote-1-3">1</a></sup>, which are used to interact with the Rust Testing Harness. The harness on its own is a fully usable testing system that provides support for unit tests and integration tests. It also has the benefit of being able to implement custom functionality using a build script. This means that features can be added to the harness<sup class="footnote-reference" id="fr-2-1-3"><a href="#footnote-2-3">2</a></sup>, without having to provide a custom entry point<sup class="footnote-reference" id="fr-3-1-3"><a href="#footnote-3-3">3</a></sup>.</p>
+<p>The <code>cargo</code> CLI tool contains several rust utilities<sup class="footnote-reference" id="fr-1-1-4"><a href="#footnote-1-4">1</a></sup>, which are used to interact with the Rust Testing Harness. The harness on its own is a fully usable testing system that provides support for unit tests and integration tests. It also has the benefit of being able to implement custom functionality using a build script. This means that features can be added to the harness<sup class="footnote-reference" id="fr-2-1-3"><a href="#footnote-2-3">2</a></sup>, without having to provide a custom entry point<sup class="footnote-reference" id="fr-3-1-3"><a href="#footnote-3-3">3</a></sup>.</p>
 <p>Integration tests in Rust are run using <code>cargo test</code>. When <code>cargo test</code> is run, the tests in each package are run, unless a specific package is specified with the <code>-p | --package</code> flag. This then leads to a number of tests that can be run either all together or one-at-time. For large projects like Conjure Oxide, this allows for continuous integration.</p>
 <h2 id="the-conjure-oxide-testing-setup"><a class="header" href="#the-conjure-oxide-testing-setup">The Conjure Oxide Testing Setup</a></h2>
 <p>Conjure Oxide uses a middle-ground testing setup, which is necessary because the project contains multiple packages, which are used as internal APIs in conjure oxide. One of the packages that is maintained internally is the <code>tests-integration</code> package, used for testing the libraries that are used by the <code>conjure-oxide</code> tool. The package uses the <code>conjure-oxide</code> tool as a dependency, and uses it the complicated tests that we have seen so far in the book.</p>
@@ -5026,8 +5095,8 @@ python -m pip install uv pandas textual ty
 <hr>
 <hr>
 <ol class="footnote-definition">
-<li id="footnote-1-3">
-<p>Check out the Rust Book’s documentation. <a href="#fr-1-1-3">↩</a></p>
+<li id="footnote-1-4">
+<p>Check out the Rust Book’s documentation. <a href="#fr-1-1-4">↩</a></p>
 </li>
 <li id="footnote-2-3">
 <p>Primarily, this added functionality uses integration testing, which uses the external interface of the crate. Check out the page in Rust Book here. <a href="#fr-2-1-3">↩</a></p>
@@ -5051,7 +5120,7 @@ created: 19-09-24
 <!-- TODO edit more -->
 <!-- syntax highlighting -->
 <h1 id="semantics-of-rewriting-expressions-with-sideeffects"><a class="header" href="#semantics-of-rewriting-expressions-with-sideeffects">Semantics of Rewriting Expressions with Side‐Effects</a></h1>
-<h2 id="overview-12"><a class="header" href="#overview-12">Overview</a></h2>
+<h2 id="overview-13"><a class="header" href="#overview-13">Overview</a></h2>
 <hr>
 <p>When rewriting expressions, a rule may occasionally introduce new variables and constraints. For example, a rule which handles the <code>Min</code> expression may introduce a new variable <code>aux</code> which represents the minimum value itself, and introduce constraints <code>aux &lt;= x</code> for each <code>x</code> in the original <code>Min</code> expression. Conjure and Conjure Oxide provide similar methods of achieving these “side-effects”.</p>
 <h2 id="reductions"><a class="header" href="#reductions">Reductions</a></h2>

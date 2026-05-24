@@ -37,7 +37,7 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../searchindex-cc8a7953.js";
+            window.path_to_searchindex_js = "../../searchindex-d5a56f24.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-2bd48c42.js"></script>
@@ -177,6 +177,75 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="integration-testing"><a class="header" href="#integration-testing">Integration Testing</a></h1>
+<h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
+<p>The Integration Test setup takes one essence file and checks that every step of solving works correctly by comparing the output of each step with files that contain previously prepared ‘outputs’, which have been verified for correctness. It checks the parsed output, the application of rules in the rule engine and the solutions, thus verifying each of the steps of the solution process.</p>
+<p>New Integration Tests should be added when:</p>
+<ul>
+<li>Additions are made to the AST</li>
+<li>More solver support is added</li>
+<li>New solving features are added in the form of transformation rules</li>
+<li>New representations are added</li>
+</ul>
+<p>And in any other cases where outcome-oriented changes are introduced. Ideally, all behaviour should be tested via integration tests, in order to ensure that breaking changes introduced later do not accidentally remove or break features<sup class="footnote-reference" id="fr-1-1"><a href="#footnote-1">1</a></sup>.</p>
+<h2 id="adding-integration-tests"><a class="header" href="#adding-integration-tests">Adding Integration Tests</a></h2>
+<p>Integration test live at the following path within the conjure-oxide repository: <code>conjure-oxide/tests-integration/integration</code>. Any essence file in this test directory, or any of it’s subdirectories is treated as the input for a separate integration test. While it is not strictly necessary, by convention we never put two essence files in the same directory. This allows us to then (also by convention) use <code>input.essence</code> as the name of all input files. The name of an Integration test is a trunctation of its path, relative to the <code>integration</code> directory.</p>
+<p>To add an integration test, create a new subdirectory and give it an appropriate name. Then write a valid essence file (ideally, granular enough to only test one new feature) in that same directory. Then, create a file named <code>config.toml</code> in the same directory as the input file. The name of the config file is <em>not</em> convention alone, and your test may not work if it has some other name. In <code>config.toml</code>, select all of the options which should be tested for the essence file which you are writing this test for. Configuring is covered in greater detail in its own section below.</p>
+<p>To automatically generate all of the necessary testing metadata, run the following command:</p>
+<pre><code class="language-bash">ACCEPT=true cargo test &lt;your-directory-name&gt; 
+</code></pre>
+<p>The environment variable <code>ACCEPT</code> is particularly important: when <code>ACCEPT</code> is set, the integration system will first attempt to solve the model using each of the configurations. It will compare the generated solution against conjure, and if the solutions are the same, it will generate and save test metadata for each configuration.</p>
+<h2 id="configuring-integration-tests"><a class="header" href="#configuring-integration-tests">Configuring Integration Tests</a></h2>
+<p>By convention, the <code>config.toml</code> file for a test looks something like this:</p>
+<pre><code class="language-toml">parser = [
+    "tree-sitter",
+    "via-conjure",
+]
+
+rewriter = [
+    "naive",
+    "morph",
+]
+
+comprehension-expander = [
+    # "native",
+    # "via-solver",
+    "via-solver-ac",
+]
+
+solver = [
+    "minion",
+    "sat-log",
+    "sat-direct",
+    "sat-order",
+    # "smt-bv-arrays-nodiscrete",
+    # "smt-bv-arrays",
+    # "smt-bv-atomic-nodiscrete",
+    # "smt-bv-atomic",
+    # "smt-lia-arrays-nodiscrete",
+    # "smt-lia-arrays",
+    # "smt-lia-atomic-nodiscrete",
+    # "smt-lia-atomic",
+]
+expected-time = 10
+</code></pre>
+<p>The config file has the following fields, each of which contains a list of the ‘active’ or ‘enabled’ configuration options. All possible options supported by conjure-oxide are written in the file:</p>
+<ul>
+<li><code>parser</code>: defines which parsers</li>
+<li><code>rewriter</code>: defines which rewriters to use</li>
+<li><code>comprehension-expander</code>: defines how to expand comprehensions</li>
+<li><code>solver</code>: defines which solvers to use</li>
+<li><code>expected-time</code>: defines in seconds how long a solution is expected to take.</li>
+</ul>
+<p>The integration tester tries all possible combinations of the options enabled in the <code>config.toml</code> file.</p>
+<p>Also by convention, we comment out configurations which are supported by conjure-oxide but do not work for the current solver. For instance, SAT solver does not support Matrices of Integers, so any tests that have matrices of integers will have all sat-solver options as comments.</p>
+<p>As support is added, we go through tests and change the comments to code incrementally. We then regenerate the test metadata for the new tests. To generate a large number of tests at the same time, use the <code>test-accept</code> MakeFile target.</p>
+<hr>
+<hr>
+<ol class="footnote-definition">
+<li id="footnote-1">
+<p>Early on in the development of the SAT compilation system, the SAT team briefly turned off all testing of SAT Solver features, which led to changes being merged which had not been tested on existing SAT functionality. This created a dangerous situation, where certain features were merged without being tested on a large part of the codebase. Now, we avoid this by ensuring that <a href="code-coverage.html">code coverage</a> is not dropping unexpectedly in new Pull Requests using a CI/CD workflow. <a href="#fr-1-1">↩</a></p>
+</li>
+</ol>
 
                     </main>
 
