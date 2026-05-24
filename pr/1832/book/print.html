@@ -38,7 +38,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-22a529e9.js";
+            window.path_to_searchindex_js = "searchindex-a90038fe.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-c0f7b285.js"></script>
@@ -2821,32 +2821,27 @@ The left graph is a probability density function for the run time. It says that 
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="diagnostics-api-for-lsp-server"><a class="header" href="#diagnostics-api-for-lsp-server">Diagnostics API for LSP Server</a></h1>
 <h2 id="overview-8"><a class="header" href="#overview-8">Overview</a></h2>
-<p>The Diagnostics API provides tree-sitter and parser–based diagnostics for Essence source files (for error underlining, syntax highlighting, and hover info). It also exposes general LSP-compatible data structures for consumption by editors and tools. Currently, the main functionality of the Diagnostics API is to parse Essence source code and report syntactic errors found by walking the CST (using tree-sitter) and report semantic errors by attempting a semantic parse and reporting parser errors. It serialises diagnostics exposing a <code>get_diagnostics()</code> function, which returns both semantic and syntactic errors as a <code>Vec</code> of <code>Diagnostic</code>s.</p>
+<p>The Diagnostics API provides tree-sitter and parser–based diagnostics for Essence source files (for error underlining, syntax highlighting, and hover info). It also exposes general LSP-compatible data structures for consumption by editors and tools. Currently, the main functionality of the Diagnostics API is to parse Essence source code and report syntactic errors found by walking the CST (using tree-sitter), and report semantic errors by attempting a semantic parse and reporting parser errors. It serialises diagnostics exposing a <code>get_diagnostics()</code> function.</p>
 <h2 id="structure-1"><a class="header" href="#structure-1">Structure</a></h2>
 <pre><code class="language-bash">crates/conjure-cp-essence-parser/src/diagnostics/
 ├─ mod.rs
 ├─ diagnostics_api.rs             # public LSP-facing structs and `get_diagnostics(source)` aggregator
 └─ error_detection/
   ├─ mod.rs
-  ├─ semantic_errors.rs         # AST-based semantic detection: maps parse errors to Diagnostics
-  └─ syntactic_errors.rs        # tree-sitter traversal: maps erronous parse tree patterns to Diagnostics
+  └─ collect_errors.rs            # parser-error collection and conversion to Diagnostics
 </code></pre>
+<p>Syntactic tree traversal for diagnostics is implemented in <code>crates/conjure-cp-essence-parser/src/parser/syntax_errors.rs</code>.</p>
 <h3 id="key-functions"><a class="header" href="#key-functions">Key Functions</a></h3>
 <ul>
 <li>
-<p><code>get_diagnostics(source: &amp;str) -&gt; Vec&lt;Diagnostic)</code> serves as the main entrypoint. It aggregates <code>detect_semantic_errors(source)</code> and <code>detect_syntactic_errors(source)</code> into a single diagnostics vector, returning a combined, deduplicated-by-call vector of <code>Diagnostic</code>s. That’s the function you would call for error detection and underlining.</p>
+<p><code>get_diagnostics(source: &amp;str, cst: &amp;Tree) -&gt; Vec&lt;Diagnostic&gt;</code> serves as the main entrypoint. That’s the function you would call for error detection and underlining. It uses <code>collect_errors</code> to call <code>parse_essence_with_context_and_map</code>. The parser runs syntactic error detection when the CST is erroneous, and otherwise collects semantic/parser errors during parsing. All collected errors are aggregated into a single vector of <code>Diagnostic</code>s.</p>
 </li>
 <li>
-<p><code>detect_syntactic_errors(source: &amp;str) -&gt; Vec&lt;Diagnostic)</code> Parses with tree-sitter and walks the CST using DFS with early retract on error/missing/zero-length nodes to avoid duplicates. More information on that in error detection docs.</p>
+<p><code>detect_syntactic_errors(source: &amp;str, tree: &amp;Tree, errors: &amp;mut Vec&lt;RecoverableParseError&gt;)</code> is called by the parser when there are errors in the CST. It walks the CST using DFS with early retract on error/missing/zero-length nodes to avoid duplicates. More information on that in <a href="#overview-4">error detection docs</a>.</p>
 </li>
 <li>
-<p><code>detect_semantic_errors(source: &amp;str) -&gt; Vec&lt;Diagnostic)</code> Runs <code>parse_essence_with_context</code> and, on <code>Err(EssenceParseError)</code>, maps the error into a <code>Diagnostic</code> using <code>error_to_diagnostic</code>. More information on that in error detection docs.</p>
-</li>
-<li>
-<p>Helpers (for debugging and/or testing):</p>
+<p>Helpers (for testing):</p>
 <ul>
-<li><code>print_all_error_nodes(source: &amp;str)</code>: prints all tree-sitter error/missing nodes with spans.</li>
-<li><code>print_diagnostics(diags: &amp;[Diagnostic])</code>: pretty-prints diagnostics.</li>
 <li><code>check_diagnostic(...)</code>: asserts diagnostic fields in tests.</li>
 </ul>
 </li>
@@ -2860,22 +2855,25 @@ The left graph is a probability density function for the run time. It says that 
 <li><code>range</code>: <code>Range</code></li>
 <li><code>severity</code>: <code>Severity</code></li>
 <li><code>message</code>: human-readable description / error message</li>
-<li><code>source</code>: static string identifying which part of the API the diagnostic comes from (e.g., <code>syntactic-error-detector</code>)</li>
+<li><code>source</code>: static string identifying which part of the API the diagnostic comes from (currently <code>semantic error detection</code>)</li>
 </ul>
 </li>
 </ul>
 <p>Example of serialized diagnostic:</p>
 <pre><code class="language-json">{
- "range": {"start": {"line": 0, "character": 0}, "end": {"line": 0, "character": 5}},
- "severity": 1,
- "message": "some error message.",
- "source": "syntactic-error-detector"
+  "range": {
+    "start": { "line": 0, "character": 0 },
+    "end": { "line": 0, "character": 5 }
+  },
+  "severity": 1,
+  "message": "some error message.",
+  "source": "semantic error detection"
 }
 </code></pre>
 <ul>
 <li><code>SymbolKind</code> and <code>DocumentSymbol</code>:
 <ul>
-<li>Intended for document highlighting; currently enumerates a few kinds (e.g., <code>Integer</code>, <code>Decimal</code>, <code>Function</code>, <code>Letting</code>, <code>Find</code>). To be extended in the near future.</li>
+<li>Intended for document highlighting; currently enumerates: <code>Integer</code>, <code>Decimal</code>, <code>Function</code>, <code>Letting</code>, <code>Find</code>, <code>Variable</code>, <code>Constant</code>, <code>Domain</code>, <code>FindVar</code>, <code>LettingVar</code>, <code>Given</code>, <code>GivenVar</code>.</li>
 <li><code>DocumentSymbol { name, detail?, kind, range, children? }</code>
 <code>DocumentSymbol</code> and <code>SymbolKind</code> exist to support semantic highlighting; As of now, these are scaffolded and will be extended across the Essence grammar later on.</li>
 </ul>
@@ -2886,11 +2884,11 @@ The left graph is a probability density function for the run time. It says that 
 <h3 id="testing"><a class="header" href="#testing">Testing</a></h3>
 <p>API-specific tests are located in <code>crates/conjure-cp-essence-parser/tests</code> and can be run via</p>
 <pre><code class="language-bash"># to run all tests
-cargo test -p conjure-cp-essence-parser --test
+cargo test -p conjure-cp-essence-parser
 
 # to run with a specific test target
 cargo test -p conjure-cp-essence-parser --test semantic_test
-cargo test -p conjure-cp-essence-parser --test keywords_as_ident
+cargo test -p conjure-cp-essence-parser --test keyword_as_ident
 cargo test -p conjure-cp-essence-parser --test missing_token
 cargo test -p conjure-cp-essence-parser --test unexpected_token
 </code></pre>
