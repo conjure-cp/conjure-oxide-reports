@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Booleans - Conjure Oxide</title>
+        <title>Min/Max - Conjure Oxide</title>
 
 
         <!-- Custom HTML head -->
@@ -37,10 +37,10 @@
             const path_to_root = "../../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../../searchindex-9d049cad.js";
+            window.path_to_searchindex_js = "../../../searchindex-93c0dbb6.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../../toc-4d400779.js"></script>
+        <script src="../../../toc-31357f05.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -176,23 +176,30 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h2 id="sat-booleans"><a class="header" href="#sat-booleans">SAT Booleans</a></h2>
-<p>The most basic form of a constraint is a boolean expression. SAT solvers work with boolean variables, but require input in Conjunctive Normal Form (which will be referred to as CNF). This means that any boolean expression must be converted to a series of clauses composed entirely of atoms (true/false values or variables). Here’s an example:</p>
-<p>Original Expression:</p>
-<p>$$((A \land B) \to (C \lor \lnot D)) \land E$$</p>
-<p>In CNF:</p>
-<p>$$(\lnot A \lor \lnot B \lor C \lor \lnot D) \land (E)$$</p>
-<p>The simplest approach to this conversion is by repeatedly applying rules (De Morgan’s, double negation, distributivity, etc) until the expression is in CNF. This works well for smaller expressions but slows down massively when dealing with larger expressions (like the once generated when dealing with integers). To solve this, we use Tseytin transformations (see <a href="https://en.wikipedia.org/wiki/Tseytin_transformation">https://en.wikipedia.org/wiki/Tseytin_transformation</a>) - these transformations allow us to convert an operation straight into CNF by introducing new auxiliary variables. This method makes rule applications significantly faster but with the downside of producing longer CNF with more variables to solve to give to the solver. Modern SAT solvers, however, are very efficient and this extra performance cost is negligible compared to the time saved in conversion.</p>
+                        <h2 id="minmax-constraints-for-direct-and-order-encoding"><a class="header" href="#minmax-constraints-for-direct-and-order-encoding">Min/Max Constraints for Direct and Order Encoding</a></h2>
+<p>The Min and Max constraints are implemented in Savile Row’s Style:</p>
+<p>“For min(V ) = z we have V [1] = z ∨ V [2] = z . . . and z ≤ V [1] ∧ z ≤ V [2] . . .. Max is similar to min with ≤ replaced by ≥. The constraint element(V, x) = z becomes ∀i : (x ̸= i ∨ V [i] = z).” [Cite]</p>
+<p>In slightly more human language, To say that z is the minimum of some vector ‘v’ is really just saying that  z is both:</p>
+<ul>
+<li>less than or equal each value in the vector</li>
+<li>a member of v - that is, it must be equal to one or more elements in v.</li>
+</ul>
+<p>This works nicely because both of these conditions map nicely into disjunctions, and they can be put inside a conjunction. These characteristics of the encoding ensure that all solvers that support Integers. Since support has been established for integer representations and inequality relations is SAT, it can also be solved using SAT solvers.</p>
+<p>Maximum can be decomposed into a very similar format: the maximum element of some vector v must be :</p>
+<ul>
+<li>A member of v</li>
+<li>greater than or equal to all elements in v</li>
+</ul>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../../developers-guide/architecture/sat-encoding/creating-transformation-rules.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../../developers-guide/architecture/adaptors/adaptor.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../../developers-guide/architecture/sat-encoding/sat-generic-patterns.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../../developers-guide/architecture/adaptors/sat-encoding/overview.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -202,11 +209,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../../developers-guide/architecture/sat-encoding/creating-transformation-rules.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../../developers-guide/architecture/adaptors/adaptor.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../../developers-guide/architecture/sat-encoding/sat-generic-patterns.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../../developers-guide/architecture/adaptors/sat-encoding/overview.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>
