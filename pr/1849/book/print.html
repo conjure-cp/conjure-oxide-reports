@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-5e7b8a83.js";
+            window.path_to_searchindex_js = "searchindex-afa416a1.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-e8157c2d.js"></script>
+        <script src="toc-548d65c1.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -4845,6 +4845,56 @@ fn {test_name}() -&gt; Result&lt;(), Box&lt;dyn Error&gt;&gt; {{
 </code></pre>
 <p>The <code>custom_test</code> function takes the test directory as a parameter. It inherits the current <code>PATH</code> and runs the commands from the <code>run.sh</code> file, saving the produced output. It then overwrites the expected output and error if accept was set to true and compares the actual and expected outputs/errors if not. If either does not match, the expected and actual output are printed and the test fails. Otherwise, the test passes.</p>
 <div style="break-before: page; page-break-before: always;"></div>
+<h1 id="fuzz-testing"><a class="header" href="#fuzz-testing">Fuzz testing</a></h1>
+<h2 id="overview-11"><a class="header" href="#overview-11">Overview</a></h2>
+<p>Fuzz testing is an automated test generation suite that generates new Essence input based on a given set of Essence input files, using the built in <a href="https://rust-fuzz.github.io/book/cargo-fuzz.html"><code>cargo-fuzz</code> library</a> of Rust that invokes <code>libFuzzer</code>. The goal of fuzz testing is to improve robustness and safety of functions to ensure that edge cases and crash inducing inputs are discovered.</p>
+<h2 id="structure-2"><a class="header" href="#structure-2">Structure</a></h2>
+<pre><code class="language-bash">fuzz/
+├─ artifacts/                   # stores all crash reports from tests
+├─ corpus/                      # stores the input files for testing
+└─ targets/                     # target functions to be fuzz tested
+  └─ fuzz_detect_errors.rs
+</code></pre>
+<h2 id="how-it-works"><a class="header" href="#how-it-works">How it works</a></h2>
+<p>The fuzzer takes the seed files copied to the <code>corpus/</code> directory and manipulates them by inserting, erasing, or shuffling the bytes of the Essence files, then use them as inputs for the fuzz targets containing the functions to be tested in the <code>fuzz_targets/</code> directory. If the modified input caused a panic from the fuzz target, the input will be stored into <code>/artifact</code>, which can be minimised to the smallest reproducer using the <code>tmin</code> command in cargo fuzz. If the modified input contains new coverage, it will be stored back into the internal corpus to be used in future tests.</p>
+<img src="developers-guide/testing/fuzz-testing.png" width="300px">
+<h2 id="usage"><a class="header" href="#usage">Usage</a></h2>
+<ol>
+<li>Create directory for test corpus file</li>
+</ol>
+<pre><code class="language-bash">mkdir fuzz/corpus/{test_name}
+</code></pre>
+<ol start="2">
+<li>Copy Essence files from codebase to corpus before running fuzz tester</li>
+</ol>
+<pre><code class="language-bash">find . -name "*.essence" -type f -exec cp {} fuzz/corpus/{test_name}/ \;
+</code></pre>
+<p>Or you can create your own Essence seed files.</p>
+<ol start="3">
+<li>Run <code>cargo fuzz run {testname}</code>, for example:</li>
+</ol>
+<pre><code class="language-bash">cargo fuzz run detect_errors -- -max_len=4096 -max_total_time=3600
+</code></pre>
+<p>NOTE: The fuzzer will run indefinitely without flags unless:</p>
+<ul>
+<li>a crash was reported</li>
+<li>stopped manually using Ctrl + C</li>
+</ul>
+<p>To make the fuzzer stop manually, use the following limits:</p>
+<ul>
+<li>Total iterations: <code>-runs=N</code></li>
+<li>Time (seconds): <code>-max_total_time=N</code></li>
+<li>Maximum input length: <code>-max_len=N</code></li>
+</ul>
+<p>The error test cases can be minimised using <code>tmin</code> to find the source of the error. The corpus can also be minimised using <code>cmin</code> to retain only the minimal files that cover all code paths. Example:</p>
+<pre><code class="language-bash">cargo fuzz tmin {test_name} fuzz/artifacts/{test_name}/crash-{crashID}
+</code></pre>
+<p>See the <a href="https://rust-fuzz.github.io/book/cargo-fuzz.html"><code>cargo-fuzz</code> library</a> for more information.</p>
+<h2 id="how-to-add-tests"><a class="header" href="#how-to-add-tests">How to add tests</a></h2>
+<p>To add a new test, create a new file in the <code>/fuzz_targets</code> directory and create a fuzz target function in the file (see <code>fuzz_detect_errors.rs</code> for reference). Add a new <code>[[bin]]</code> in <code>Cargo.toml</code> and add the test name and path for the fuzz target so that it can be called using <code>cargo fuzz run</code>.</p>
+<h2 id="future-improvements"><a class="header" href="#future-improvements">Future improvements</a></h2>
+<p>The current fuzzer is not grammar aware, hence it could be extended to use <code>tree-sitter</code> grammar to generate Essence based input files to test for correctness.</p>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="code-coverage-2"><a class="header" href="#code-coverage-2">Code Coverage</a></h1>
 <h2 id="introduction-2"><a class="header" href="#introduction-2">Introduction</a></h2>
 <p>Code coverage is a test which shows how much of the codebase gets automatically tested. There are two main metrics - <strong>Function</strong> and <strong>Line</strong> - both given as percentage points. We use Rust’s testing function which comes with cargo, and <a href="https://github.com/mozilla/grcov">GRCov</a> to generate the reports.</p>
@@ -4879,7 +4929,7 @@ created: 19-09-24
 <!-- TODO edit more -->
 <!-- syntax highlighting -->
 <h1 id="semantics-of-rewriting-expressions-with-sideeffects"><a class="header" href="#semantics-of-rewriting-expressions-with-sideeffects">Semantics of Rewriting Expressions with Side‐Effects</a></h1>
-<h2 id="overview-11"><a class="header" href="#overview-11">Overview</a></h2>
+<h2 id="overview-12"><a class="header" href="#overview-12">Overview</a></h2>
 <hr>
 <p>When rewriting expressions, a rule may occasionally introduce new variables and constraints. For example, a rule which handles the <code>Min</code> expression may introduce a new variable <code>aux</code> which represents the minimum value itself, and introduce constraints <code>aux &lt;= x</code> for each <code>x</code> in the original <code>Min</code> expression. Conjure and Conjure Oxide provide similar methods of achieving these “side-effects”.</p>
 <h2 id="reductions"><a class="header" href="#reductions">Reductions</a></h2>
