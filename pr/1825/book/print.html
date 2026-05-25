@@ -38,7 +38,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-9958eedb.js";
+            window.path_to_searchindex_js = "searchindex-f912c89f.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-e8157c2d.js"></script>
@@ -3966,43 +3966,6 @@ Picking the first option: Question 1: [or([A_Occurrence[q5] /\ B_Occurrence[q5] 
                   return [essence| exists &amp;iPat in &amp;s . &amp;i = &amp;x |]
              )
 </code></pre>
-<h2 id="set-card-int"><a class="header" href="#set-card-int">Set-card (int)</a></h2>
-<p>rule for set cardinality, counts number of elements in a set</p>
-<ol>
-<li>identifies pattern: |s|</li>
-<li>checks s is a set</li>
-<li>if it exists, returns the set’s domain’s size attribute</li>
-<li>otherwise introduces quantified variable “iPat” to iterate through set, incrementing the sum for each new element, returns sum.</li>
-</ol>
-<h3 id="code-9"><a class="header" href="#code-9">Code:</a></h3>
-<pre><code class="language-haskell">rule_Card = "set-card" `namedRule` theRule where
-     theRule p = do
-         s         &lt;- match opTwoBars p
-         case s of
-             Domain{} -&gt; na "rule_Card"
-             _        -&gt; return ()
-         TypeSet{} &lt;- typeOf s
-         return
-             ( "Horizontal rule for set cardinality."
-             , do
-                 mdom &lt;- runMaybeT $ domainOf s
-                 case mdom of
-                     Just (DomainSet _ (SetAttr (SizeAttr_Size n)) _) -&gt; return n
-                     _ -&gt; do
-                         (iPat, _) &lt;- quantifiedVar
-                         return [essence| sum &amp;iPat in &amp;s . 1 |]
-             )
-</code></pre>
-<h3 id="example-3"><a class="header" href="#example-3">Example:</a></h3>
-<ul>
-<li>set-card rule appears within model |A| = |B|</li>
-<li>here q3 is the quantified variable called “iPat” above</li>
-</ul>
-<pre><code>Picking the first option: Question 1: |A|
-                               Context #1: |A| = |B|
-     Answer 1: set-card: Horizontal rule for set cardinality.
-               |A| ~~&gt; sum([1 | q3 &lt;- A])
-</code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <blockquote>
 <p>NOTE: Once the rewrite engine API is finalized, we should possibly make a separate page for it</p>
@@ -4068,7 +4031,7 @@ When this macro is invoked, it creates a static <code>Rule</code> object and add
 <p>Currently, the <code>register_rule</code> macro has the following syntax:</p>
 <pre><code>#[register_rule(("&lt;RuleSet name&gt;", &lt;Rule priority within the ruleset&gt;))]
 </code></pre>
-<h3 id="example-4"><a class="header" href="#example-4">Example</a></h3>
+<h3 id="example-3"><a class="header" href="#example-3">Example</a></h3>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>use conjure_core::ast::Expression;
