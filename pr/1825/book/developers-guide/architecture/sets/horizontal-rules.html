@@ -37,7 +37,7 @@
             const path_to_root = "../../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../../searchindex-e8785abb.js";
+            window.path_to_searchindex_js = "../../../searchindex-8907ebd4.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../../toc-e8157c2d.js"></script>
@@ -176,7 +176,8 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <p>Introductory notes on the use of “&lt;-” in generators, and the logic behind and() and or() comprehensions. Followed by horizontal set rules. These are representation-independent rules in conjure-oxide that are used to rewrite models.</p>
+                        <p>This page is a collection explaining how the horizontal set rules are implemented in conjure-oxide. Since not all of these rules are implemented, sections of this documentation contain their haskell equivalents that were used in conjure.</p>
+<p>Introductory notes on the use of “&lt;-” in generators, and the logic behind and() and or() comprehensions. Followed by horizontal set rules. These are representation-independent rules in conjure-oxide that are used to rewrite models.</p>
 <h1 id="notes"><a class="header" href="#notes">Notes:</a></h1>
 <ul>
 <li>
@@ -369,7 +370,14 @@
 }
 <span class="boring">}</span></code></pre>
 <h2 id="set-intersect-describes-a-new-set"><a class="header" href="#set-intersect-describes-a-new-set">Set-intersect (describes a new set)</a></h2>
-<p>rule for set intersection. defines that an element is in the intersection of two sets when it is in both sets. similar structure as comprehension literal rule, only used within generators or conditions</p>
+<pre><code>[return_expr| A intersect B, ... ] ~~&gt; [return_expr| i in A, i &lt;- B, ...] 
+</code></pre>
+<p>Rule for set intersection, restricts elements to those that are in the intersection of both sets, ie. those elements present in both sets. The rust version of this rule for conjure-oxide is currently a draft-pr (#1203). The rust version function by:</p>
+<ol>
+<li>matches on the pattern “a intersect b”</li>
+<li>creates a new comprehension that contains any additional qualifiers but replaces the pattern with the appropriate generators and conditions</li>
+</ol>
+<p>The version of this rule implemented in conjure was written in Haskell and can be seen below.</p>
 <ol>
 <li>attempts to match generator to pattern and expression: pattern “<em>quantified variable</em> &lt;-” and expression with a modifier operator (if present) applied to a set/multiset/relation “s”</li>
 <li>attempts to match s to “x intersect y”</li>
@@ -405,19 +413,6 @@
                         ]
                      ++ gocAfter
              )
-</code></pre>
-<h3 id="example"><a class="header" href="#example">Example:</a></h3>
-<ul>
-<li>set-intersect rule appears within model C = A intersect B, after applying set-equals, set-subsetEq, set-in</li>
-<li>q4 is quantified in a former step, it is an element in C</li>
-<li>see Context #1, q5 is quantified by or() - existence quantifier, translates to “there exists a q5 in A intersect B such that q5 equals q4”</li>
-<li>translates “q5 &lt;- A intersect B” to “q5 &lt;- A, q5 in B”, i.e. body of or() comprehension must apply to at least one member (q5) of A, with the additional condition that q5 must be in B.</li>
-</ul>
-<pre><code>Picking the first option: Question 1: [q5 = q4 | q5 &lt;- A intersect B]
-                               Context #1: or([q5 = q4 | q5 &lt;- A intersect B])
-                               ...
-     Answer 1: set-intersect: Horizontal rule for set intersection
-               [q5 = q4 | q5 &lt;- A intersect B] ~~&gt; [q5 = q4 | q5 &lt;- A, q5 in B]
 </code></pre>
 <h2 id="union_set-describes-a-new-set"><a class="header" href="#union_set-describes-a-new-set">union_set (describes a new set)</a></h2>
 <pre><code>[ return_expr | i &lt;- A union B, qualifiers...] -&gt; flatten([[ return_expr | i &lt;- A, qualifiers...], [ return_expr | i &lt;- B, !(i in A), qualifiers...]; int(1..2)])
@@ -554,7 +549,14 @@
 }
 <span class="boring">}</span></code></pre>
 <h2 id="set-in-boolean"><a class="header" href="#set-in-boolean">Set-in (boolean)</a></h2>
-<p>rule for set membership, checks whether something is an element of a set</p>
+<p>A in B ~~&gt; or([ a = i | i &lt;- b ])</p>
+<p>rule for set membership, checks whether something is an element of a set. Conjure-oxide’s implementation of this rule is currently in a draft pr (#1203).  It functions by:</p>
+<ol>
+<li>matching on the pattern “x in s”</li>
+<li>checking they are sets</li>
+<li>creating and joining a new comprehension that r</li>
+</ol>
+<p>Until this rule is implemented on the main branch, this is an example of how the previous rule functioned in conjure.</p>
 <ol>
 <li>identifies pattern: “x in s”</li>
 <li>checks s is a set</li>
@@ -578,16 +580,6 @@
                   (iPat, i) &lt;- quantifiedVar
                   return [essence| exists &amp;iPat in &amp;s . &amp;i = &amp;x |]
              )
-</code></pre>
-<h3 id="example-1"><a class="header" href="#example-1">Example:</a></h3>
-<ul>
-<li>here we are checking for membership of q4 in B union C</li>
-<li>q4 is a quantified variable in larger context</li>
-<li>q5 is the quantified variable introduced by the set-in rule.</li>
-</ul>
-<pre><code>Picking the first option: Question 1: q4 in B union C
-     Answer 1: set-in: Horizontal rule for set-in.
-               q4 in B union C ~~&gt; or([q5 = q4 | q5 &lt;- B union C])
 </code></pre>
 <h2 id="set-card-int"><a class="header" href="#set-card-int">Set-card (int)</a></h2>
 <p>rule for set cardinality, counts number of elements in a set</p>
@@ -616,7 +608,7 @@
                          return [essence| sum &amp;iPat in &amp;s . 1 |]
              )
 </code></pre>
-<h3 id="example-2"><a class="header" href="#example-2">Example:</a></h3>
+<h3 id="example"><a class="header" href="#example">Example:</a></h3>
 <ul>
 <li>set-card rule appears within model |A| = |B|</li>
 <li>here q3 is the quantified variable called “iPat” above</li>
