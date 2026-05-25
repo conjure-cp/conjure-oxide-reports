@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../searchindex-c1d1492d.js";
+            window.path_to_searchindex_js = "../../searchindex-4675097a.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-26bbda0c.js"></script>
+        <script src="../../toc-14dc3034.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -176,7 +176,46 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="integration-testing"><a class="header" href="#integration-testing">Integration Testing</a></h1>
+                        <h1 id="integration-tests"><a class="header" href="#integration-tests">Integration Tests</a></h1>
+<p>Integration tests are located under <code>tests-integration/tests/integration</code>.</p>
+<p>Each test contains:</p>
+<ul>
+<li>An Essence model.</li>
+<li>A JSON file containing all the expected solutions to the model.</li>
+<li>JSON dumps of the original model AST and model AST after rewriting.</li>
+<li>The expected and actual rule traces.</li>
+</ul>
+<p>The tests run Conjure-oxide with that Essence file as input. Conjure-oxide first rewrites the model into Essence’, then runs it through a solver (Minion by default; some solvers use SAT or SMT instead) and collects the solution.</p>
+<p>Each test checks that:</p>
+<ul>
+<li>The produced solutions match the expected ones.</li>
+<li>The rewritten model matches the expected AST.</li>
+<li>The rule trace matches (optional).</li>
+</ul>
+<p>Test configuration (e.g. which solver to use) is set in a <code>config.toml</code> file in each test directory. If it is not present, the default Minion solver will be used.</p>
+<p>The source code of the testing harness is (mostly) in <code>tests-integration/tests/integration_tests.rs</code>.</p>
+<h2 id="running-integration-tests"><a class="header" href="#running-integration-tests">Running Integration Tests</a></h2>
+<p>Run the full test suite with:</p>
+<pre><code class="language-bash">cargo test
+</code></pre>
+<h2 id="updating-expected-outputs-with-accepttrue"><a class="header" href="#updating-expected-outputs-with-accepttrue">Updating Expected Outputs with <code>ACCEPT=true</code></a></h2>
+<p>If you expect the rewritten AST to change (e.g. after a refactor), or are creating a new test, run:</p>
+<pre><code class="language-bash">ACCEPT=true cargo test
+</code></pre>
+<p>Instead of comparing against the existing output files, the harness will:</p>
+<ol>
+<li>Run old Conjure on the same input.</li>
+<li>Run the new <code>conjure-oxide</code> implementation.</li>
+<li>Compare the solutions. If they match, overwrite the stored AST and solution files with the new output.</li>
+</ol>
+<p>This allows expected outputs to be updated while still guarding correctness by validating against old Conjure.</p>
+<h2 id="running-specific-tests"><a class="header" href="#running-specific-tests">Running Specific Tests</a></h2>
+<p>They are run through the ‘conjure-oxide solve’ command followed by a filename, like the following:</p>
+<pre><code class="language-bash">conjure-oxide solve input_file.essence
+</code></pre>
+<p>There are example Essence models and their expected solutions under <code>tests-integration/tests/integration</code>.</p>
+<h3 id="essence-files"><a class="header" href="#essence-files">Essence Files</a></h3>
+<p>Essence is the modelling language. The tests verify that a high level problem specification correctly produces the expected result after being translated to Essence’ and solved.</p>
 
                     </main>
 
