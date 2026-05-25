@@ -38,7 +38,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-6988f1ba.js";
+            window.path_to_searchindex_js = "searchindex-f124063e.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-e837d771.js"></script>
@@ -1739,7 +1739,7 @@ public void fnReturnsError(a,b) {
 <pre><code class="language-Rust">pub fn parse_essence_file_native(
     path: &amp;str,
     context: Arc&lt;RwLock&lt;Context&lt;'static&gt;&gt;&gt;,
-) -&gt; Result&lt;Model, EssenceParseError&gt; {...}
+) -&gt; Result&lt;Model, Box&lt;ParseErrorCollection&gt;&gt; {...}
 </code></pre>
 <p>Within that function, the source code is read from the input and the tree-sitter grammar is used to parse that code and produce a parse tree. From there, a Model object is created and the <code>SymbolTable</code> and <code>Expression</code> fields are populated by traversing and extracting information from the parse tree.</p>
 <h2 id="general-structure-and-utils"><a class="header" href="#general-structure-and-utils">General Structure and utils</a></h2>
@@ -1767,7 +1767,7 @@ let op_type = &amp;source_code[op.start_byte()..op.end_byte()];
 <h3 id="example-1"><a class="header" href="#example-1">Example</a></h3>
 <p>The constraint <code>x = 3</code> would be represented by a <code>comparison_expr</code> node, which is defined in the grammar as:</p>
 <pre><code class="language-Javascript">comparison_expr: $ =&gt; prec(0, prec.left(seq(
-      field("left", choice($.boolean_expr, $.arithmetic_expr)), 
+      field("left", choice($.boolean_expr, $.arithmetic_expr)),
       field("operator", $.comparative_op),
       field("right", choice($.boolean_expr, $.arithmetic_expr))
     ))),
