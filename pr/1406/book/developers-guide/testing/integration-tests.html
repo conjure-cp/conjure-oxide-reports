@@ -37,7 +37,7 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../searchindex-4675097a.js";
+            window.path_to_searchindex_js = "../../searchindex-4eccdf61.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-14dc3034.js"></script>
@@ -198,6 +198,19 @@
 <p>Run the full test suite with:</p>
 <pre><code class="language-bash">cargo test
 </code></pre>
+<h2 id="running-specific-tests"><a class="header" href="#running-specific-tests">Running Specific Tests</a></h2>
+<p>They are run through the ‘conjure-oxide solve’ command followed by a filename, like the following:</p>
+<pre><code class="language-bash">conjure-oxide solve input_file.essence
+</code></pre>
+<p>There are example Essence models and their expected solutions under <code>tests-integration/tests/integration</code>.</p>
+<h3 id="essence-files"><a class="header" href="#essence-files">Essence Files</a></h3>
+<p>Essence is the modelling language. The tests verify that a high level problem specification correctly produces the expected result after being translated to Essence’ and solved.</p>
+<h3 id="running-without-smt-support"><a class="header" href="#running-without-smt-support">Running without SMT support</a></h3>
+<p>All z3/SMT-related code is behind the <code>smt</code> feature flag, which is enabled by default. Disabling it compiles out all SMT code and rules, which speeds up local development by skipping the slow <code>z3-sys</code> rebuild.
+Integration tests that use SMT will still appear in the suite but will be explicitly skipped.</p>
+<p>To run without SMT support:</p>
+<pre><code class="language-bash">cargo test --workspace --no-default-features
+</code></pre>
 <h2 id="updating-expected-outputs-with-accepttrue"><a class="header" href="#updating-expected-outputs-with-accepttrue">Updating Expected Outputs with <code>ACCEPT=true</code></a></h2>
 <p>If you expect the rewritten AST to change (e.g. after a refactor), or are creating a new test, run:</p>
 <pre><code class="language-bash">ACCEPT=true cargo test
@@ -209,13 +222,6 @@
 <li>Compare the solutions. If they match, overwrite the stored AST and solution files with the new output.</li>
 </ol>
 <p>This allows expected outputs to be updated while still guarding correctness by validating against old Conjure.</p>
-<h2 id="running-specific-tests"><a class="header" href="#running-specific-tests">Running Specific Tests</a></h2>
-<p>They are run through the ‘conjure-oxide solve’ command followed by a filename, like the following:</p>
-<pre><code class="language-bash">conjure-oxide solve input_file.essence
-</code></pre>
-<p>There are example Essence models and their expected solutions under <code>tests-integration/tests/integration</code>.</p>
-<h3 id="essence-files"><a class="header" href="#essence-files">Essence Files</a></h3>
-<p>Essence is the modelling language. The tests verify that a high level problem specification correctly produces the expected result after being translated to Essence’ and solved.</p>
 
                     </main>
 
