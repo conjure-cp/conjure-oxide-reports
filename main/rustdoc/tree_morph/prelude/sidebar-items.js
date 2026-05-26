@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"macro":["rule_fns"],"struct":["Update"]};
+window.SIDEBAR_ITEMS = {"macro":[["rule_fns",1]],"struct":["Update"]};

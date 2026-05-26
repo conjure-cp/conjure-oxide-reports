@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"macro":["child","field","named_child"],"mod":["diagnostics","errors","parser","parser_legacy"]};
+window.SIDEBAR_ITEMS = {"macro":[["child",1],["field",1],["named_child",1]],"mod":["diagnostics","errors","parser","parser_legacy"]};
