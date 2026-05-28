@@ -2,6 +2,7 @@
 
 **conjure-cp:** 0% with examples, 25% documented -- 0/1/4
 **conjure-cp-cli:** 0% with examples, 35% documented -- 0/48/137
+**conjure-cp-cli-fuzz:** 0% with examples, 0% documented -- 0/0/1
 **conjure-cp-core:** 3% with examples, 48% documented -- 23/333/690
 **conjure-cp-enum-compatibility-macro:** 33% with examples, 100% documented -- 1/3/3
 **conjure-cp-essence-macros:** 67% with examples, 67% documented -- 2/2/3
@@ -15,7 +16,7 @@
 **tree-sitter-essence:** 33% with examples, 100% documented -- 1/3/3
 
 PR: [#1743](https://github.com/conjure-cp/conjure-oxide/pull/1743)
-Commit: [d51b94bd273e48b470604262826dd1ce72a8942d](https://github.com/conjure-cp/conjure-oxide/commit/d51b94bd273e48b470604262826dd1ce72a8942d)
+Commit: [bb27c1b21652ac00eb744ff3adf9e384702add21](https://github.com/conjure-cp/conjure-oxide/commit/bb27c1b21652ac00eb744ff3adf9e384702add21)
 
 ## RustDoc coverage for `conjure-cp`
 
@@ -42,6 +43,12 @@ Commit: [d51b94bd273e48b470604262826dd1ce72a8942d](https://github.com/conjure-cp
 | crates/conjure-cp-cli/src/cli.rs | ❌ 55% *(27/49)* | ❌ 0% *(0/49)* |
 | crates/conjure-cp-cli/src/utils/json.rs | ❌ 67% *(2/3)* | ❌ 0% *(0/3)* |
 | crates/conjure-cp-cli/src/print_info_schema.rs | ✅ 100% *(2/2)* | ❌ 0% *(0/2)* |
+
+## RustDoc coverage for `conjure-cp-cli-fuzz`
+
+| File | Percentage Documented | Percentage with examples |
+|----|----|----|
+| fuzz/fuzz_targets/fuzz_detect_errors.rs | ❌ 0% *(0/1)* | ❌ 0% *(0/1)* |
 
 ## RustDoc coverage for `conjure-cp-core`
 
