@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["keyword_as_identifier"]};
+window.SIDEBAR_ITEMS = {"fn":["is_keyword_identifier"]};
