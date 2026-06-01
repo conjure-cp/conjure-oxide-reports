@@ -16,8 +16,8 @@
         <link rel="icon" href="favicon-de23e50b.svg">
         <link rel="shortcut icon" href="favicon-8114d1fc.png">
         <link rel="stylesheet" href="css/variables-8adf115d.css">
-        <link rel="stylesheet" href="css/general-0392ca55.css">
-        <link rel="stylesheet" href="css/chrome-fc474251.css">
+        <link rel="stylesheet" href="css/general-2459343d.css">
+        <link rel="stylesheet" href="css/chrome-ae938929.css">
         <link rel="stylesheet" href="css/print-9e4910d8.css" media="print">
 
         <!-- Fonts -->
@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-366f0e93.js";
+            window.path_to_searchindex_js = "searchindex-acd455f7.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-e0474c1b.js"></script>
+        <script src="toc-da3493fc.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -256,16 +256,16 @@ Making” Vertically Integrated Project module. For more information on the VIP,
 <li>
 <p>A class-level model (i.e. description of a problem) may have some parameters. To get from a class-level model to an instance model, we provide concrete values for all the parameters.</p>
 <p>The following describes a problem class:</p>
-<pre><code>given N: int
+<pre><code class="language-essence">given N : int
 find x
 such that x &lt; N
 </code></pre>
 <p>The following are instances of that class:</p>
-<pre><code>letting N be 3
+<pre><code class="language-essence">letting N be 3
 find x
 such that x &lt; N
 </code></pre>
-<pre><code>letting N be 42
+<pre><code class="language-essence">letting N be 42
 find x
 such that x &lt; N
 </code></pre>
@@ -307,16 +307,16 @@ This <a href="https://git-scm.com/cheat-sheet">Git Cheat Sheet</a> also contains
 <h3 id="building"><a class="header" href="#building">Building</a></h3>
 <ol>
 <li>Clone the repository:
-<pre><code>git clone https://github.com/conjure-cp/conjure-oxide.git
+<pre><code class="language-bash">git clone https://github.com/conjure-cp/conjure-oxide.git
 cd conjure-oxide
 </code></pre>
 </li>
 <li>Run the install command to install <code>conjure-oxide</code> (this may take some time):
-<pre><code>cargo install --path crates/conjure-cp-cli
+<pre><code class="language-bash">cargo install --path crates/conjure-cp-cli
 </code></pre>
 </li>
 <li>Verify <code>conjure-oxide</code> is installed and working by running a command:
-<pre><code>conjure-oxide --help
+<pre><code class="language-bash">conjure-oxide --help
 </code></pre>
 </li>
 </ol>
@@ -336,13 +336,13 @@ cd conjure-oxide
 </li>
 <li>Extract the archive using your preferred method.</li>
 <li>Open a terminal in the extracted directory and run a test command:
-<pre><code>./conjure-oxide --help
+<pre><code class="language-bash">./conjure-oxide --help
 </code></pre>
 </li>
 </ol>
 <ul>
 <li>If you are on macOS, you may run into a problem with binaries being blocked from running. If this is the case, run the following command in the extracted directory:
-<pre><code>xattr -dr com.apple.quarantine .
+<pre><code class="language-zsh">xattr -dr com.apple.quarantine .
 </code></pre>
 </li>
 <li>If you would like these commands to be available everywhere on your system, copy the binaries into a directory which is in your PATH.</li>
@@ -1207,6 +1207,9 @@ Although we don’t use it yet, we can get doc coverage information as JSON. Thi
 <ul>
 <li>A <em>workflow</em> contains multiple independently ran <em>tasks</em>. Each task runs a series of <em>steps</em>. Steps can call predefined <em>actions</em>, or run shell commands.</li>
 </ul>
+<h2 id="i-want-to-skip-ci-tests"><a class="header" href="#i-want-to-skip-ci-tests">I want to skip CI tests</a></h2>
+<p>Adding <code>[skip ci]</code> to a commit message prevents CI tests from being triggered for that commit.</p>
+<p>This is useful when pushing unfinished work, for example, to document what isn’t working yet or to ask for help on a draft.</p>
 <h2 id="i-want-to-have-a-step-output-multilined--complex-text"><a class="header" href="#i-want-to-have-a-step-output-multilined--complex-text">I want to have a step output multilined / complex text</a></h2>
 <pre><code class="language-yml">- name: Calculate PR doc coverage
   id: prddoc
@@ -2538,28 +2541,28 @@ cargo test -p conjure-cp-essence-parser --test unexpected_token
 <p>Description: expected token is absent
 Detection: Empty node or a missing child node. (MISSING node is inserted)
 Example: missing variable name</p>
-<pre><code class="language-text">find: bool
+<pre><code class="language-essence">find : bool
 </code></pre>
 <p>Example: missing Expression</p>
-<pre><code class="language-text">letting x be 
+<pre><code class="language-essence">letting x be 
 </code></pre>
 <h3 id="2-missing-keyword"><a class="header" href="#2-missing-keyword">2. Missing Keyword</a></h3>
 <p>Description: a token appears where a different token/keyword is expected
 Detection: ERROR node containing all the tokens where that failed to match the grammar</p>
 <p>Example: missing colon, <code>int</code> is unexpected (here <code>x</code> and <code>int</code> will be children of the ERROR node)</p>
-<pre><code class="language-text">find x int
+<pre><code class="language-essence">find x int
 </code></pre>
 <h3 id="3-unexpected-token"><a class="header" href="#3-unexpected-token">3. Unexpected Token</a></h3>
 <p>Description: a token appearing after a valid construct is complete
 Detection: ERROR node containing the extra token (ERROR node will likely be the last child of a valid construct)
 Example: second <code>)</code> is extra</p>
-<pre><code class="language-text">find x: int(1..2))
+<pre><code class="language-essence">find x : int(1..2))
 </code></pre>
 <h3 id="4-invalid-token"><a class="header" href="#4-invalid-token">4. Invalid Token</a></h3>
 <p>Description: token is malformed or not part of the grammar
 Detection: look for an ERROR node with the invalid token
 Example: <code>@int</code> is not a valid token (ERROR node with <code>@</code>)</p>
-<pre><code class="language-text">find x: @int
+<pre><code class="language-essence">find x : @int
 </code></pre>
 <p>Conjure does not identify <code>int</code> at all, just says “Skipped token”, “Missing Domain”
 Tree-Sitter in conjure-oxide sees <code>int</code> as a valid token but has an ERROR node with <code>@</code> before.
@@ -2568,14 +2571,14 @@ So in Conjure the same error as Missing Token but might make sense to separate d
 <p>Description: unmatched or missing closing bracket, parenthesis, brace
 Detection: MISSING node “)”
 Example: missing <code>)</code></p>
-<pre><code class="language-text">find x: int(1..2
+<pre><code class="language-essence">find x : int(1..2
 </code></pre>
 <p>Conjure allows it but since out grammar enforces it Tree-Sitter produces an error.</p>
 <h3 id="6-unsupported-statements"><a class="header" href="#6-unsupported-statements">6. Unsupported Statements</a></h3>
 <p>Description: statement not recognised by Essence grammar
 Detection: ERROR node with the unrecognised statement
 Example:</p>
-<pre><code class="language-text">find x: int(1..5)
+<pre><code class="language-essence">find x : int(1..5)
 print x 
 </code></pre>
 <p>Conjure doesn’t recognise <code>print x</code> as a separate invalid statement.</p>
@@ -2586,46 +2589,46 @@ print x
 <h3 id="1-keywords-as-identifiers"><a class="header" href="#1-keywords-as-identifiers">1. Keywords as Identifiers</a></h3>
 <p>Description: token’s name is not allowed<br>Detection: compare the variable names against the set of keywords
 Example: Keyword “bool” used as a variable name</p>
-<pre><code class="language-text">find bool: bool
+<pre><code class="language-essence">find bool : bool
 </code></pre>
-<pre><code class="language-text">find x: letting
+<pre><code class="language-essence">find x : letting
 </code></pre>
 <p>Conjure doesn’t allow it but Tree-Sitter does so we will have to check as part of semantic checks.</p>
 <h3 id="2-omitted-declaration"><a class="header" href="#2-omitted-declaration">2. Omitted Declaration</a></h3>
 <p>Description: variable not declared
 Detection: save the declared variables and check if the ones used in expressions are in the declared set
 Example: x was not declared before</p>
-<pre><code class="language-text">find y: int (1..4)
+<pre><code class="language-essence">find y : int (1..4)
 such that x = 5
 </code></pre>
 <h3 id="3-invalid-domain"><a class="header" href="#3-invalid-domain">3. Invalid Domain</a></h3>
 <p>Description: logically or mathematically invalid bounds/domain + infinite domain</p>
 <p>Example: a bigger value before smaller</p>
-<pre><code class="language-text">find x: int(10..5)
+<pre><code class="language-essence">find x : int(10..5)
 </code></pre>
 <p>Conjure doesn’t flag as error just says no solutions found.</p>
 <p>Example: infinite domain</p>
-<pre><code class="language-text">find x: int(1..) 
+<pre><code class="language-essence">find x : int(1..) 
 </code></pre>
 <p>Might want to restrict infinite domain with the grammar so it could be a syntax error.</p>
 <h3 id="4-type-mismatch"><a class="header" href="#4-type-mismatch">4. Type Mismatch</a></h3>
 <p>Description: attempt to do an operation on illegal types</p>
 <p>Example: cannot add integer and boolean</p>
-<pre><code class="language-text">letting y be true 
-find x: int (5..10)
+<pre><code class="language-essence">letting y be true 
+find x : int (5..10)
 such that 5 + y = 6
 </code></pre>
 <h3 id="5-unsafe-division"><a class="header" href="#5-unsafe-division">5. Unsafe division</a></h3>
 <p>Description: cannot divide/modulo by zero</p>
 <p>Example: cannot divide by zero</p>
-<pre><code class="language-text">find x: int(5..10)
+<pre><code class="language-essence">find x : int(5..10)
 such that x/0 = 3
 </code></pre>
 <p>Conjure allows, proceeds to run the solver but just outputs no solutions. We should disallow.</p>
 <h3 id="6-invalid-indexing-in-tuples-and-matrices"><a class="header" href="#6-invalid-indexing-in-tuples-and-matrices">6. Invalid indexing in tuples and matrices</a></h3>
 <p>Description: Tuples and matrices are indexed from . Negative, zero or index out of bounds is invalid</p>
 <p>Example: s tuple index of out bounds</p>
-<pre><code class="language-text">letting s be tuple(0,1,1,0)
+<pre><code class="language-essence">letting s be tuple(0,1,1,0)
 letting t be tuple(0,0,0,1)
 find a : bool such that a = (s[5] = t[1]) $ true
 </code></pre>
@@ -2644,6 +2647,63 @@ find a : bool such that a = (s[5] = t[1]) $ true
 <p>Format: <em>“such that”</em> list(<strong>Expression</strong>, <em>“,”</em>)</p>
 <p>Semantic Errors: All except for Invalid Domain</p>
 <div style="break-before: page; page-break-before: always;"></div>
+<h1 id="semantic-highlighting-for-the-lsp-server"><a class="header" href="#semantic-highlighting-for-the-lsp-server">Semantic Highlighting for the LSP Server</a></h1>
+<h2 id="overview-5"><a class="header" href="#overview-5">Overview</a></h2>
+<p>Semantic highlighting is an LSP feature that provides context-aware token styling. Unlike syntax highlighting, which relies solely on TextMate grammar patterns, semantic highlighting understands the meaning and usage of tokens within the program.</p>
+<p>This implementation extends the existing TextMate-based syntax highlighting and falls back to syntax highlighting whenever a semantic style is not defined by the active theme. Semantic tokens are generated based on prior declarations, allowing variables to be styled differently depending on how they were declared and used throughout the source file.</p>
+<h2 id="key-functions-1"><a class="header" href="#key-functions-1">Key Functions</a></h2>
+<h3 id="token-encoding"><a class="header" href="#token-encoding">Token Encoding</a></h3>
+<p>During parsing, the semantic meaning of each token is stored in the <code>HoverInfo</code> of the <code>SourceMap</code> as a <code>SymbolKind</code> (see list below). Specifically when parsing variables, they are assigned a <code>DeclarationKind</code> during the initial declaration of the variable, which is stored in the symbol table. When used in expressions, the <code>DeclarationKind</code> is then mapped to either a <code>FindVar</code>, <code>LettingVar</code>, or <code>GivenVar</code> and stored in the <code>SourceMap</code>, which allows different styling of the variable based on its declaration type.</p>
+<p>List of available <code>SymbolKinds</code> in <code>diagnostics_api.rs</code>:</p>
+<ul>
+<li>Integer</li>
+<li>Decimal</li>
+<li>Function</li>
+<li>Letting</li>
+<li>Find</li>
+<li>Variable</li>
+<li>Constant</li>
+<li>Domain</li>
+<li>FindVar</li>
+<li>LettingVar</li>
+<li>Given</li>
+<li>GivenVar</li>
+</ul>
+<p>Semantic tokens are encoded using the <code>encode_semantic_tokens()</code> function in <code>semantic_tokens.rs</code>. The function processes each token in the <code>SourceMap</code> and converts it into a semantic token by calling <code>token_encoding()</code>. This helper maps each <code>SymbolKind</code> to a corresponding <code>TokenEncoding</code>.</p>
+<p>Most editor themes do not provide dedicated styles for Essence variables. To visually distinguish variables by declaration type, Essence declarations are mapped onto standard semantic token classifications commonly used in other languages but otherwise unused in Essence.</p>
+<p>The current mappings are shown below:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Declaration kind(s)</th><th>Symbol kind</th><th>Semantic token classifier</th><th>Fallback TextMate grammar</th></tr>
+</thead>
+<tbody>
+<tr><td>Find</td><td>FindVar</td><td>property</td><td>variable.other.property.findVar</td></tr>
+<tr><td>ValueLetting<br>TemporaryValueLetting<br>DomainLetting</td><td>LettingVar</td><td>variable</td><td>variable.other.constant.lettingVar</td></tr>
+<tr><td>Given</td><td>GivenVar</td><td>string</td><td>string.other.givenVar</td></tr>
+</tbody>
+</table>
+</div>
+<p>Additionally, <code>find</code> variables are visually emphasised because they represent the variables the solver is attempting to solve for. An underline style is therefore hard-coded in <code>package.json</code> for tokens classified as <code>FindVar</code>.</p>
+<h3 id="lsp-semantic-highlighting-handler"><a class="header" href="#lsp-semantic-highlighting-handler">LSP Semantic Highlighting Handler</a></h3>
+<p>The semantic highlighting handler retrieves the <code>SourceMap</code> from cache and passes it to <code>encode_semantic_tokens()</code> to generate semantic tokens. These encoded tokens are then returned to the LSP server, which forwards them to the client. The client uses the semantic token classifications together with the active theme to determine how each token should be rendered.</p>
+<h2 id="expanding-semantic-highlighting"><a class="header" href="#expanding-semantic-highlighting">Expanding Semantic Highlighting</a></h2>
+<p>To expand on the current semantic highlighting available, the files that will need to be changed are: <code>crates/conjure-cp-essence-parser/src/diagnostics/diagnostics_api.rs</code>, <code>crates/conjure-cp-essence-parser/src/diagnostics/semantic-tokens.rs</code>, <code>crates/conjure-cp-lsp/src/server.rs</code>, and <code>package.json</code></p>
+<ol>
+<li>In <code>diagnostics_api.rs</code>, add the new symbol kind to the <code>SymbolKind</code> enum.</li>
+<li>In <code>semantic_token.rs</code>, add a new constant variable for the new symbol kind and create a mapping from the symbol kind to a token in the <code>token_encoding()</code> function.</li>
+<li>In <code>server.rs</code>, add the new symbol kind to the server’s <code>semantic_token_provider</code>.</li>
+<li>In <code>package.json</code>, add the new symbol kind to the semantic token scopes to specify its styling in TextMate, and if it is a custom token, add a new field for it in the semantic token types</li>
+</ol>
+<h2 id="semantic-highlighting-customisation-vscode"><a class="header" href="#semantic-highlighting-customisation-vscode">Semantic Highlighting Customisation (VSCode)</a></h2>
+<p>To customise semantic highlighting styles, open up <code>settings.json</code> in VSCode, and add the following code snippet if it does not exist in the file:</p>
+<pre><code class="language-bash">"editor.semanticTokenColorCustomizations": {
+  "rules": {
+    "{token_name}": "{styles}",
+  }
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div>
 <p><strong>CST</strong> - Concrete Syntax Tree. Generated by the tree-sitter parser when parsing an essence file.</p>
 <p><strong>AST</strong> - Abstract Syntax Tree. Generated when the CST is parsed and Model struct is created.</p>
 <h1 id="syntax-errors-1"><a class="header" href="#syntax-errors-1">Syntax Errors</a></h1>
@@ -2656,14 +2716,14 @@ Lead to an invalid CST. They are caught by the tree-sitter when an Essence expre
 <h3 id="detection"><a class="header" href="#detection">Detection</a></h3>
 <p><code>MISSING</code> node inserted or zero range node in the CST.</p>
 <h3 id="example-1-missing-identifiers"><a class="header" href="#example-1-missing-identifiers">Example 1: Missing identifier(s)</a></h3>
-<pre><code class="language-text">find: bool
+<pre><code class="language-essence">find : bool
 </code></pre>
 <h3 id="example-2-missing-right-operand"><a class="header" href="#example-2-missing-right-operand">Example 2: Missing right operand</a></h3>
-<pre><code class="language-text">find x: int
+<pre><code class="language-essence">find x: int
 such that x /
 </code></pre>
 <h3 id="example-3-missing-domain-in-tuple"><a class="header" href="#example-3-missing-domain-in-tuple">Example 3: Missing domain in tuple</a></h3>
-<pre><code class="language-text">find x: tuple()
+<pre><code class="language-essence">find x: tuple()
 </code></pre>
 <h2 id="2-unexpected-token"><a class="header" href="#2-unexpected-token">2. Unexpected Token</a></h2>
 <h3 id="description-1"><a class="header" href="#description-1">Description</a></h3>
@@ -2671,14 +2731,14 @@ such that x /
 <h3 id="detection-1"><a class="header" href="#detection-1">Detection</a></h3>
 <p><code>ERROR</code> node wrapping the unexpected symbol(s).</p>
 <h3 id="example-1-extra--at-the-end"><a class="header" href="#example-1-extra--at-the-end">Example 1: Extra <code>)</code> at the end</a></h3>
-<pre><code class="language-text">find x: int(1..2))
+<pre><code class="language-essence">find x: int(1..2))
 </code></pre>
 <h3 id="example-2-unexpected--in-implication"><a class="header" href="#example-2-unexpected--in-implication">Example 2: Unexpected <code>%</code> in implication</a></h3>
-<pre><code class="language-text">find x: int(1..3)
+<pre><code class="language-essence">find x: int(1..3)
 such that x -&gt; %9
 </code></pre>
 <h3 id="example-3-unexpected--inside-matrix-domain"><a class="header" href="#example-3-unexpected--inside-matrix-domain">Example 3: Unexpected <code>&amp;</code> inside matrix domain</a></h3>
-<pre><code class="language-text">find x: matrix indexed by [int, &amp;] of int
+<pre><code class="language-essence">find x: matrix indexed by [int, &amp;] of int
 </code></pre>
 <h2 id="3-malformed-top-level-statement"><a class="header" href="#3-malformed-top-level-statement">3. Malformed Top Level Statement</a></h2>
 <h3 id="description-2"><a class="header" href="#description-2">Description</a></h3>
@@ -2686,12 +2746,12 @@ such that x -&gt; %9
 <h3 id="detection-2"><a class="header" href="#detection-2">Detection</a></h3>
 <p><code>ERROR</code> node that is a direct child of the root node <code>program</code> and precedes the nodes if the parsed line.</p>
 <h3 id="example-1-invalid-print-x"><a class="header" href="#example-1-invalid-print-x">Example 1: Invalid <code>print x</code></a></h3>
-<pre><code class="language-text">find x: int(1..5)
+<pre><code class="language-essence">find x: int(1..5)
 print x 
 </code></pre>
 <h3 id="example-2-malformed-find-statement"><a class="header" href="#example-2-malformed-find-statement">Example 2: Malformed find statement</a></h3>
 <p>More of an edge case. Even though the keyword <code>find</code> is present, tree-sitter does not parse the line using the <code>find_statement</code> rule since the first symbol after <code>find</code> cannot be parsed an identifier.</p>
-<pre><code class="language-text">find +,a,b: int(1..3)
+<pre><code class="language-essence">find +,a,b: int(1..3)
 </code></pre>
 <h3 id="4-general-syntax-error"><a class="header" href="#4-general-syntax-error">4. General Syntax Error</a></h3>
 <p>Cases that cause an error in the CST but did not fall into any of the previous categories.</p>
@@ -2703,10 +2763,10 @@ print x
 <h3 id="detection-3"><a class="header" href="#detection-3">Detection</a></h3>
 <p>Compare the variable names against the set of keywords that should not be allowed.</p>
 <h3 id="example-1-keyword-bool-as-an-identifier"><a class="header" href="#example-1-keyword-bool-as-an-identifier">Example 1: Keyword <code>bool</code> as an identifier</a></h3>
-<pre><code class="language-text">find bool: bool
+<pre><code class="language-essence">find bool: bool
 </code></pre>
 <h3 id="example-2-keyword-letting-used-as-an-identifier"><a class="header" href="#example-2-keyword-letting-used-as-an-identifier">Example 2: Keyword <code>letting</code> used as an identifier</a></h3>
-<pre><code class="language-text">find letting,b,c: int(1..3)
+<pre><code class="language-essence">find letting,b,c: int(1..3)
 </code></pre>
 <h2 id="2-omitted-declaration-1"><a class="header" href="#2-omitted-declaration-1">2. Omitted Declaration</a></h2>
 <h3 id="description-4"><a class="header" href="#description-4">Description</a></h3>
@@ -2714,7 +2774,7 @@ print x
 <h3 id="detection-4"><a class="header" href="#detection-4">Detection</a></h3>
 <p>Checking that the identifier used in a constraint was previously declared in a <code>find</code> or <code>letting_statement</code>.</p>
 <h3 id="example-x-was-not-declared-before"><a class="header" href="#example-x-was-not-declared-before">Example: x was not declared before</a></h3>
-<pre><code class="language-text">find y: int (1..4)
+<pre><code class="language-essence">find y: int (1..4)
 such that x = 5
 </code></pre>
 <h2 id="3-invalid-domain-1"><a class="header" href="#3-invalid-domain-1">3. Invalid Domain</a></h2>
@@ -2722,7 +2782,7 @@ such that x = 5
 <h3 id="description-5"><a class="header" href="#description-5">Description</a></h3>
 <p>Logically or mathematically invalid bounds.</p>
 <h3 id="example-a-bigger-value-before-smaller"><a class="header" href="#example-a-bigger-value-before-smaller">Example: a bigger value before smaller</a></h3>
-<pre><code class="language-text">find x: int(10..5)
+<pre><code class="language-essence">find x: int(10..5)
 </code></pre>
 <h2 id="4-type-mismatch-1"><a class="header" href="#4-type-mismatch-1">4. Type Mismatch</a></h2>
 <h3 id="description-6"><a class="header" href="#description-6">Description</a></h3>
@@ -2730,7 +2790,7 @@ such that x = 5
 <h3 id="detection-5"><a class="header" href="#detection-5">Detection</a></h3>
 <p>Enforcing types on operations and catching a mismatch between expected types and node <code>kind</code> that is being parsed.</p>
 <h3 id="example-adding-an-integer-and-boolean"><a class="header" href="#example-adding-an-integer-and-boolean">Example: Adding an integer and boolean</a></h3>
-<pre><code class="language-text">letting y be true 
+<pre><code class="language-essence">letting y be true 
 find x: int (5..10)
 such that 5 + y = 6
 </code></pre>
@@ -2739,7 +2799,7 @@ such that 5 + y = 6
 <h3 id="description-7"><a class="header" href="#description-7">Description</a></h3>
 <p>Attempt to divide/modulo by zero.</p>
 <h3 id="example-divide-by-zero"><a class="header" href="#example-divide-by-zero">Example: Divide by zero</a></h3>
-<pre><code class="language-text">find x: int(5..10)
+<pre><code class="language-essence">find x: int(5..10)
 such that x/0 = 3
 </code></pre>
 <p>At the moment says no solutions found. Would want to explicitly disallow it.</p>
@@ -2748,13 +2808,13 @@ such that x/0 = 3
 <p>Tuples and matrices are indexed from 1.
 Negative, zero or index out of bounds is invalid.</p>
 <h3 id="example-s-tuple-index-of-out-bounds"><a class="header" href="#example-s-tuple-index-of-out-bounds">Example: s tuple index of out bounds</a></h3>
-<pre><code class="language-text">letting s be tuple(0,1,1,0)
+<pre><code class="language-essence">letting s be tuple(0,1,1,0)
 letting t be tuple(0,0,0,1)
 find a : bool such that a = (s[5] = t[1]) $ true
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="semantic-errors-detection"><a class="header" href="#semantic-errors-detection">Semantic Errors Detection</a></h1>
-<h2 id="overview-5"><a class="header" href="#overview-5">Overview</a></h2>
+<h2 id="overview-6"><a class="header" href="#overview-6">Overview</a></h2>
 <p>Semantic errors are not picked up by the tree-sitter parser and result in a valid CST but an invalid AST. They are detected at the stage of parsing the CST into a Rust <a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_core/ast/struct.Model.html"><code>Model</code> object</a> representing the Essence problem. The errors generated from the <a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_cp_essence_parser/parser/index.html">Essence parser</a> are extracted and reported via <a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_cp_essence_parser/diagnostics/diagnostics_api/index.html">Diagnostics API</a>.</p>
 <p>The semantic errors detected include type errors, omitted declarations, invalid indexing and using keywords as identifiers.</p>
 <h2 id="implementation-1"><a class="header" href="#implementation-1">Implementation</a></h2>
@@ -2783,7 +2843,7 @@ cargo test -p conjure-cp-essence-parser --test keyword_as_ident
 <h2 id="examples-1"><a class="header" href="#examples-1">Examples</a></h2>
 <h3 id="example-keyword-find-as-an-identifier"><a class="header" href="#example-keyword-find-as-an-identifier">Example: Keyword <code>find</code> as an identifier</a></h3>
 <p><strong>Input</strong></p>
-<pre><code class="language-text">find find,b,c: int(1..3)
+<pre><code class="language-essence">find find,b,c: int(1..3)
 </code></pre>
 <p><strong>Diagnostic</strong></p>
 <pre><code class="language-text">Range: (0:5 - 0:9)
@@ -2793,7 +2853,7 @@ Source: "semantic error detection"
 </code></pre>
 <h3 id="example-keyword-bool-as-an-identifier"><a class="header" href="#example-keyword-bool-as-an-identifier">Example: Keyword <code>bool</code> as an identifier</a></h3>
 <p><strong>Input</strong></p>
-<pre><code class="language-text">find bool: bool
+<pre><code class="language-essence">find bool: bool
 </code></pre>
 <p><strong>Diagnostic</strong></p>
 <pre><code class="language-text">Range: (0:5 - 0:9)
@@ -2803,7 +2863,7 @@ Source: "semantic error detection"
 </code></pre>
 <h3 id="example-omitted-declaration"><a class="header" href="#example-omitted-declaration">Example: Omitted Declaration</a></h3>
 <p><strong>Input</strong></p>
-<pre><code class="language-text">find x: int(1..10)
+<pre><code class="language-essence">find x: int(1..10)
 such that x = y
 </code></pre>
 <p><strong>Diagnostic</strong></p>
@@ -2814,7 +2874,7 @@ Source: "semantic error detection"
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="syntactic-errors-detection"><a class="header" href="#syntactic-errors-detection">Syntactic Errors Detection</a></h1>
-<h2 id="overview-6"><a class="header" href="#overview-6">Overview</a></h2>
+<h2 id="overview-7"><a class="header" href="#overview-7">Overview</a></h2>
 <p>Syntactic errors result in an invalid <strong>Concrete Syntax Tree (CST)</strong> generated by the tree-sitter parser (<a href="https://tree-sitter.github.io/tree-sitter/">Tree-sitter</a>) when parsing Essence code. An invalid CST may contain:</p>
 <ul>
 <li>
@@ -2863,7 +2923,7 @@ cargo test -p conjure-cp-essence-parser --test unexpected_token
 <h2 id="examples-2"><a class="header" href="#examples-2">Examples</a></h2>
 <h3 id="example-missing-right-hand-operand"><a class="header" href="#example-missing-right-hand-operand">Example: Missing Right-Hand Operand</a></h3>
 <p><strong>Input</strong></p>
-<pre><code class="language-text">find x: int
+<pre><code class="language-essence">find x: int
 such that 5 =
 </code></pre>
 <p><strong>Diagnostic</strong></p>
@@ -2874,7 +2934,7 @@ Source: syntactic-error-detector
 </code></pre>
 <h3 id="example-missing-parenthesis-and-expressiondomain"><a class="header" href="#example-missing-parenthesis-and-expressiondomain">Example: Missing Parenthesis and Expression/Domain</a></h3>
 <p><strong>Input</strong></p>
-<pre><code class="language-text">find x: int(1..3
+<pre><code class="language-essence">find x: int(1..3
 letting x be
 </code></pre>
 <p><strong>Diagnostics</strong></p>
@@ -2893,7 +2953,7 @@ Source: syntactic-error-detector
 </code></pre>
 <h3 id="example-unexpected-token-inside-a-construct"><a class="header" href="#example-unexpected-token-inside-a-construct">Example: Unexpected token inside a construct</a></h3>
 <p><strong>Input</strong></p>
-<pre><code class="language-text">find x: int(1..3)
+<pre><code class="language-essence">find x: int(1..3)
 such that x -&gt; %9
 </code></pre>
 <p><strong>Diagnostic</strong></p>
@@ -2904,7 +2964,7 @@ Source: syntactic-error-detector
 </code></pre>
 <h3 id="example-unexpected-tokens-at-the-end-of-a-line"><a class="header" href="#example-unexpected-tokens-at-the-end-of-a-line">Example: Unexpected tokens at the end of a line</a></h3>
 <p><strong>Input</strong></p>
-<pre><code class="language-text">find x, a, b: int(1..3)+x
+<pre><code class="language-essence">find x, a, b: int(1..3)+x
 </code></pre>
 <p><strong>Diagnostic</strong></p>
 <pre><code class="language-text">Range: (0:23) - (0:25)
@@ -2914,7 +2974,7 @@ Source: syntactic-error-detector
 </code></pre>
 <h3 id="example-malformed-line"><a class="header" href="#example-malformed-line">Example: Malformed line</a></h3>
 <p><strong>Input</strong></p>
-<pre><code class="language-text">find x: int(1..3)
+<pre><code class="language-essence">find x: int(1..3)
 find x
 </code></pre>
 <p><strong>Diagnostic</strong></p>
@@ -2925,7 +2985,7 @@ Source: syntactic-error-detector
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="lsp-documentation"><a class="header" href="#lsp-documentation">LSP Documentation</a></h1>
-<h2 id="overview-7"><a class="header" href="#overview-7">Overview</a></h2>
+<h2 id="overview-8"><a class="header" href="#overview-8">Overview</a></h2>
 <p>This is the overview documentation for the Language Server which is developed for use by Conjure Oxide. This is developed following the <a href="https://microsoft.github.io/language-server-protocol/">Language Server Protocol</a> developed by Microsoft Visual Studio Code, and implemented following VSCode guidelines. This means that functionality cannot be guaranteed on other IDE, though this does not mean it will/cannot work. The Language Server and Client provide the basis through which a fully functional Essence extension will be produced. The server and client run as separate processes primarily because this minimises performance cost.</p>
 <p>At present this addresses the client and server, with abstraction over lower level functions called by the server.</p>
 <h2 id="current-functionality-goals"><a class="header" href="#current-functionality-goals">Current Functionality Goals</a></h2>
@@ -3447,7 +3507,7 @@ $<code>x \in [a, b]</code>$ The new range is $<code> -x \in [-b, -a]</code>$. So
 </code></pre>
 <h1 id="general-example-rewriting-the-generalised-model--c--a-intersect-b"><a class="header" href="#general-example-rewriting-the-generalised-model--c--a-intersect-b">General Example: Rewriting the generalised model  “C = A intersect B”</a></h1>
 <h3 id="original-essence-model"><a class="header" href="#original-essence-model">Original Essence Model:</a></h3>
-<pre><code>find A,B,C : set of int(0..6)  
+<pre><code class="language-essence">find A,B,C : set of int(0..6)  
 such that C = A intersect B
 </code></pre>
 <h3 id="conjure-rewriting-the-problem-step-by-step"><a class="header" href="#conjure-rewriting-the-problem-step-by-step">Conjure rewriting the problem, step by step:</a></h3>
@@ -3555,7 +3615,7 @@ Picking the first option: Question 1: [or([A_Occurrence[q5] /\ B_Occurrence[q5] 
 <li>the process is repeated for the right hand side of the conjunction in step 1, leading to a similar but simpler expression due to the order of operations.</li>
 </ol>
 <h3 id="final-rewritten-model"><a class="header" href="#final-rewritten-model">Final Rewritten Model:</a></h3>
-<pre><code>find A_Occurrence: matrix indexed by [int(0..6)] of bool
+<pre><code class="language-essence">find A_Occurrence: matrix indexed by [int(0..6)] of bool
     find B_Occurrence: matrix indexed by [int(0..6)] of bool
     find C_Occurrence: matrix indexed by [int(0..6)] of bool
     branching on [A_Occurrence, B_Occurrence, C_Occurrence]
@@ -3597,7 +3657,7 @@ Picking the first option: Question 1: [or([A_Occurrence[q5] /\ B_Occurrence[q5] 
 </ul>
 </li>
 </ul>
-<pre><code>and([ or([ q5 = q4 | q5 &lt;- A, or([ q6 = q5 | q6 &lt;- B ]) ]) | q4 &lt;- C ])
+<pre><code class="language-essence">and([ or([ q5 = q4 | q5 &lt;- A, or([ q6 = q5 | q6 &lt;- B ]) ]) | q4 &lt;- C ])
 and([C_Occurrence[q4] -&gt; or([A_Occurrence[q5] ∧ B_Occurrence[q5] ∧ q5 = q4 | q5 : int(0..6)]) | q4 : int(0..6)])
 </code></pre>
 <p>this translates to:</p>
@@ -4027,7 +4087,7 @@ This means the body of the and() comprehension must apply to all members (q3) of
                max(A) ~~&gt; max([q3 | q3 &lt;- A])
 </code></pre>
 <h3 id="set-literal-example"><a class="header" href="#set-literal-example">Set-literal example:</a></h3>
-<pre><code>        letting A be {5, 6, 3}
+<pre><code class="language-essence">        letting A be {5, 6, 3}
         find i: int(0..10)
         such that i = min(A)
         branching on [i]
@@ -4125,7 +4185,7 @@ created: 16-02-24
 <blockquote>
 <p>NOTE: Once the rewrite engine API is finalised, we should possibly make a separate page for it.</p>
 </blockquote>
-<h1 id="overview-8"><a class="header" href="#overview-8">Overview</a></h1>
+<h1 id="overview-9"><a class="header" href="#overview-9">Overview</a></h1>
 <p>Conjure uses Essence, a high-level DSL for constraints modelling, and converts it into a solver-specific representation of the problem.
 To do that, we parse the Essence file into an AST, then use a rule engine to walk the expression tree and rewrite constraints into a format that is accepted by the solver before passing the AST to a solver adapter.</p>
 <p>The high-level process is as follows:</p>
@@ -4500,7 +4560,7 @@ Multisets have attributes and a single domain. A multiset can be defined for bot
 </ul>
 <p>In the original conjure implementation, a multiset was <em>infinite</em> without <code>size</code>, <code>maxSize</code>, or <code>maxOccur</code>.
 In the new conjure-oxide implementation, a variable’s domain is <em>ground</em> if it is fully-bounded (i.e. has a <code>minSize</code> and <code>maxSize</code>).</p>
-<pre><code>$ Valid
+<pre><code class="language-essence">$ Valid
 find foo: multiset (maxSize 5, minOccur 2) of int(1..10)
 find bar: multiset (size 3) of int(1..4)
 
@@ -4572,7 +4632,7 @@ For example: <code>r(_,1,_)</code> converts r from a 3-component relation to a 2
 <li>Regularity (i.e. every part has the same cardinality): <code>regular</code></li>
 </ul>
 <p>For example:</p>
-<pre><code>find foo : partition (maxNumParts 3, partSize 1) from int(1..5) 
+<pre><code class="language-essence">find foo : partition (maxNumParts 3, partSize 1) from int(1..5) 
 $ ({1})                 i.e. 1 part of cardinality 1
 $ ... 
 $ ({2}, {4}, {5})       i.e. 3 parts of cardinality 3
@@ -4623,7 +4683,7 @@ $                                       &gt; there is a minPartSize of 2, and on
 <p>Sequences <em>must</em> have either a <code>size</code> or <code>maxSize</code> cardinality attribute.</p>
 <p>The cardinality attribute is used with some value (i.e. <code>size 4</code>), whereas the jectivity attribute is used by itself.
 For example;</p>
-<pre><code>$ Valid
+<pre><code class="language-essence">$ Valid
 find foo: sequence of int(1..5)
 find bar: sequence (size 5, surjective) of int(1..5)
 find fizz: sequence (minSize 2, maxSize 7, injective) of int(1..10)
@@ -4642,12 +4702,62 @@ find biff: sequence (minSize 3, size 4) of int(2..7) $ Cardinality attribute can
 <p>As of writing in April 2026, there is no support for rewriting rules or solving.</p>
 </blockquote>
 <div style="break-before: page; page-break-before: always;"></div>
+<h1 id="domain-pruning"><a class="header" href="#domain-pruning">Domain Pruning</a></h1>
+<h2 id="the-project"><a class="header" href="#the-project">The Project</a></h2>
+<p>In Conjure-Oxide when we convert Essence-level domains into lower-level domains for the solver they can often be blown-up necessarily large, which negatively impacts solver performance.</p>
+<p>We can see an example of this in the following Essence code:<br></p>
+<pre><code>find a : set (maxSize 2) of int(1..10)
+find b : set of int(1..1000)
+such that b subset a
+</code></pre>
+<br>
+Instead of being treated as a set of maximum size 1000, we can deduce that `b` has a maximum size of 1.
+<blockquote>
+<p>Domain Pruning is the process of shrinking the domain of an expression, by inferring the tightest bounds placed on the domain by that expression.</p>
+</blockquote>
+<p>There is lot of domain pruning that can be done at an Essence level, making it a very interesting project. This has the potential to make measurable improvements to Conjure-Oxide in a way that goes beyond Conjure, and is the first step in an Essence-level solver.</p>
+<h2 id="how-would-it-work"><a class="header" href="#how-would-it-work">How Would It Work</a></h2>
+<p>To calculate the tightest domains, we suggest creating an arc-consistency-style algorithm. This can be run between parsing and rule rewriting, to infer the minimal domains of all variables before they are expanded. The algorithm would iterate over constraints, stored as expressions in Conjure-Oxide, and refine the internal variable’s domains. Not all constraints in Conjure-Oxide are binary, and so a form of generalised arc consistency might be necessary. Once the domains have been refined any constraints also containing the newly changed variable must be rechecked.</p>
+<h2 id="what-are-the-current-roadblocks"><a class="header" href="#what-are-the-current-roadblocks">What Are The Current Roadblocks</a></h2>
+<p>Currently all expressions contain the domain of the result of the expression. The first task and a current roadblock would be to propagate this expression domain to the internal variables involved. Conjure-Oxide does not currently use the expression domains in any way when it comes to rewriting.</p>
+<p>A final roadblock for this project is how to test it. In specific cases, where you know pruning has occurred, you can use Conjure-Oxide Pretty’s <code>expression-domains</code> option to view all domains in the model. However, for a more comprehensive testing you need a large number of test cases. One consideration was using a LLM to generate these cases. As of Dec-2025 the free AI models included in APIs were not capable of doing this at scale.</p>
+<h2 id="what-has-been-done-so-far"><a class="header" href="#what-has-been-done-so-far">What Has Been Done So Far</a></h2>
+<p>To aid with explainability and debugging while tightening the domains, an option has been added to Conjure-Oxide Pretty to print out the domains of all expressions as a trace. This can be accessed using <code>--output-format=expression-domains</code> and when combined with custom tests can effectively test the domain pruning.</p>
+<p>Before work on the consistency algorithm could have began it was important that the domain of expressions is actually fully-tightened. This will allow for maximum inference. As such, all work up to this point has been focused on tightening the domains returned from the <code>Expression::domain_of()</code> function.</p>
+<h3 id="set-operators"><a class="header" href="#set-operators">Set Operators</a></h3>
+<p>The intersect and union set expressions have been tightened, such that both the domain and the set attributes which are returned are optimal.</p>
+<h3 id="function-operators"><a class="header" href="#function-operators">Function Operators</a></h3>
+<p>The operators on functions have a lot of potential to be tightened due to them resulting in sets and functions. These operators include <code>defined</code>, <code>range</code>, <code>imageSet</code>, <code>preimage</code>, and <code>restrict</code>. For a function domain we can infer information from both its attributes and the length of its domain and codomain.</p>
+<p>To understand this, consider the defined operator, which results in a set of all domain values defined for the function. This has the domain of a set containing the same domain as the function. However, we can infer a tighter set domain using set attributes. For this operator, the size attributes of the function directly map to the set. We consider the partiality and jectivity attributes.</p>
+<p>For example:</p>
+<ul>
+<li>If the function is total we know the size of the set will be the size of the function’s domain;</li>
+<li>If the function is injective we know we cannot exceed the size of the codomain, because every domain element must map to a different codomain element;</li>
+<li>If the function is surjective or bijective then the size of the set must be either at least the size of the codomain or exactly equal to it respectively, so every codomain element is defined.</li>
+</ul>
+<p>Whilst these conditions are specific to defined as an operator, similarly logic is applied to all other function operators. All partiality and jectivity inference is based around the length of the domain / codomain, and so can only be done if the domain is ground.</p>
+<p>There is however, one currently known limitation, so the results are not always completely minimal. We cannot guarantee a domain is ground and the lengths are known, so there are specific cases where we could infer simple bounds based on domain size, but the added complexity is not worth it in individual parts of the code. In these cases, the size is left as UnboundedR. Instead of adding these extra checks, I propose a separate small project could be to add the inferred domain size of a function as size attributes to that function, when the domain lengths are first known as ground. This means we do not need to separately check the domain size every time.</p>
+<h3 id="sequence-operators"><a class="header" href="#sequence-operators">Sequence Operators</a></h3>
+<p>There are 2 operators for Sequences (<code>Subsequence</code>, <code>Substring</code>), and booth return booleans. They are both of the form <code>s sub.. t</code>, where <code>s</code> must occur in <code>t</code>. You can conclude that either a <code>Subsequence</code> or <code>Substring</code> is definitively false if <code>s</code> is strictly larger than <code>t</code>, but as of writing this documentation there is no mechanism to ‘restrict’ the domain of a boolean to being strictly true or false.</p>
+<p>When it becomes possible to alter the domains of children of an expression, <code>s</code> and <code>t</code> may be able to trim each others domains. Take the following example:</p>
+<pre><code>find s : sequence (minSize 3, maxSize 5) ...
+find t : sequence (minSize 2, maxSize 4) ...
+s subsequence t
+</code></pre>
+<ul>
+<li>You can alter the attribute of <code>s</code> such that it has a maximum size of 4 (it cannot be longer than <code>t</code>)</li>
+<li>You can alter the attributes of <code>t</code> such that it has a minimum size of 3 (it cannot be shorter than <code>s</code>)
+This was quickly attempted in <a href="https://github.com/conjure-cp/conjure-oxide/pull/1786">PR #1786</a> just for experimentation, but was abandoned because there was not a clear way of mutating the state inside the <code>Moo</code> - after all, the Moo exists to stop that from happening.</li>
+</ul>
+<h3 id="cardinality-operator"><a class="header" href="#cardinality-operator">Cardinality Operator</a></h3>
+<p>One other operator which can be tightened is the cardinality operator. As opposed to returning an unbounded integer, we can make inferences on the maximum size of a type using its attributes and domain length. This inference is also limited by the domains being ground. When the domains are ground, we can get an exact length for matrices, and a tightened bound for the size of set, multisets, relations and functions using their attributes.</p>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="testing-2"><a class="header" href="#testing-2">Testing</a></h1>
 <h2 id="types-of-tests"><a class="header" href="#types-of-tests">Types of Tests</a></h2>
 <p>Conjure-Oxide currently has four forms of tests:</p>
 <ul>
 <li>Integration tests</li>
-<li><a href="#overview-10">Custom tests</a></li>
+<li><a href="#overview-11">Custom tests</a></li>
 <li><a href="#roundtrip-testing">Roundtrip tests</a></li>
 <li>A small number of unit tests</li>
 </ul>
@@ -4794,7 +4904,7 @@ In the future, it may also be worth examining the possibility and likelihood of 
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="roundtrip-testing"><a class="header" href="#roundtrip-testing">Roundtrip Testing</a></h1>
-<h2 id="overview-9"><a class="header" href="#overview-9">Overview</a></h2>
+<h2 id="overview-10"><a class="header" href="#overview-10">Overview</a></h2>
 <p>Roundtrip tests check that parsing is valid and that there is no unexpected behaviour during a full roundtrip of an Essence file.
 Roundtrip tests do not consider rewriting or solving.</p>
 <h2 id="full-test-structure"><a class="header" href="#full-test-structure">Full Test Structure</a></h2>
@@ -4821,7 +4931,7 @@ Both parsers will be used by default for each test unless specified and will use
 Any directories within here than contain a singular <code>.essence</code> or <code>.eprime</code> file will be treated as a test.
 After creating the Essence or Essence’ file for your test you should run the test suite with <code>ACCEPT=true</code> to generate the expected files.</p>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="overview-10"><a class="header" href="#overview-10">Overview</a></h1>
+<h1 id="overview-11"><a class="header" href="#overview-11">Overview</a></h1>
 <p>Custom tests were created as a solution to the problem that integration tests do not allow for testing of error messages, which automatically return from the integration test method and therefore cannot be analyzed. The custom tests, however, work for both erroneous and non-erroneous code. Each test contains an input, a <code>run.sh</code> file to execute the test, and an expected standard output/error (or both) to compare against. Conjure Oxide is set up to automatically create and execute a test for each test folder in the <code>tests/custom </code>directory when <code>cargo test</code> is run, so to add a test case all one must do is add a folder in the directory which contains the necessary components.</p>
 <h1 id="how-to-add-a-test-case"><a class="header" href="#how-to-add-a-test-case">How to add a test case</a></h1>
 <p>Adding a test case is simple. First add a folder with the test case name to the <code>tests/custom</code> directory. Tests can be organized within folders in the directory–only folders with a <code>run.sh</code> file will be treated as a test case. Within the test folder, add these components:</p>
@@ -4882,7 +4992,7 @@ created: 19-09-24
 <!-- TODO edit more -->
 <!-- syntax highlighting -->
 <h1 id="semantics-of-rewriting-expressions-with-sideeffects"><a class="header" href="#semantics-of-rewriting-expressions-with-sideeffects">Semantics of Rewriting Expressions with Side‐Effects</a></h1>
-<h2 id="overview-11"><a class="header" href="#overview-11">Overview</a></h2>
+<h2 id="overview-12"><a class="header" href="#overview-12">Overview</a></h2>
 <hr>
 <p>When rewriting expressions, a rule may occasionally introduce new variables and constraints. For example, a rule which handles the <code>Min</code> expression may introduce a new variable <code>aux</code> which represents the minimum value itself, and introduce constraints <code>aux &lt;= x</code> for each <code>x</code> in the original <code>Min</code> expression. Conjure and Conjure Oxide provide similar methods of achieving these “side-effects”.</p>
 <h2 id="reductions"><a class="header" href="#reductions">Reductions</a></h2>
@@ -5087,7 +5197,9 @@ It incrementally rewrites a given model by applying a series of rules.</p>
 </code></pre>
 <p>The use of <code>Result</code> here allows for the type checking of the Model at each stage (amongst other things).</p>
 <p>A sketch of a rewriting algorithm is below. As we are using a <code>Result</code> type, backtracks occur when an <code>Err</code> is returned.</p>
-<pre><code>fn apply(rules,x) {
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>fn apply(rules,x) {
   new_rules = getApplicable(rules)
 
   if shouldStop(x) {
@@ -5110,7 +5222,7 @@ It incrementally rewrites a given model by applying a series of rules.</p>
 
   return Err()
 }
-</code></pre>
+<span class="boring">}</span></code></pre>
 <p>This is, in effect, a recursive tree search algorithm. The behaviour of the search can be changed by changing the following functions:</p>
 <ul>
 <li>getApplicable: <code>fn(Vec&lt;Rule&gt;) -&gt; Vec&lt;Rule&gt;</code></li>
@@ -5155,6 +5267,35 @@ and should not affect how the solver crates are written. See <a href="#solver-ad
 - [ ] What specific error type do rules use? -->
 <hr>
 <p><em>This section had been taken from the ‘2023‐11: High Level Plan’ page of the conjure-oxide wiki</em></p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="what-is-this-section"><a class="header" href="#what-is-this-section">What is this section?</a></h1>
+<p>The <code>conjure-oxide</code> project is a VIP module at the University of St Andrews, and – as of recently – it is also a potential alternative to a year-long group project that all third years have to take. This section contains experiences of those third year sub-teams. If you want some wisdom from the previous generations of teams on this project, you’re welcome to read it!</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="sat-team-reflection-2025-2026"><a class="header" href="#sat-team-reflection-2025-2026">SAT Team Reflection (2025-2026)</a></h1>
+<h2 id="project-management-evolution"><a class="header" href="#project-management-evolution">Project Management Evolution</a></h2>
+<h3 id="semester-1-structured-agile"><a class="header" href="#semester-1-structured-agile">Semester 1: Structured Agile</a></h3>
+<p>In the first semester, we used a standard Agile approach. We had a Scrum Master to manage tasks and the GitHub board, and a Project Owner to talk to Oz. We had weekly meetings to plan and group tasks into “Must-have,” “Should-have,” and “Ideally.” Later, we added the +1/+2 review system based on advice from Nik Dewally. Even with these roles, everyone had the freedom to manage their own work.</p>
+<h3 id="semester-2-flexible-autonomy"><a class="header" href="#semester-2-flexible-autonomy">Semester 2: Flexible Autonomy</a></h3>
+<p>In the second semester, we stopped using formal Agile roles. Instead, people picked their own tasks and worked on them. We replaced regular meetings with updates in Teams to keep everyone informed and had meetings on demand. We kept using the +1/+2 system to keep the code consistent. We also got rid of “Must-have,” “Should-have,” and “Ideally.”</p>
+<hr>
+<h2 id="the-12-review-technique"><a class="header" href="#the-12-review-technique">The +1/+2 Review Technique</a></h2>
+<p>The +1/+2 system meant we didn’t send pull requests to senior reviewers until the whole team agreed. Everyone had to review and approve the PR on GitHub. If one person hadn’t approved it, it wasn’t ready. This helped keep the team aligned.</p>
+<hr>
+<h3 id="what-worked"><a class="header" href="#what-worked">What Worked</a></h3>
+<p>The +1/+2 system worked well to keep us on track. It prevented Oz from wasting time on simple fixes like syntax errors or hygiene issues, and because the entire team reviewed every PR, almost everyone stayed up to date with the codebase and current development.</p>
+<p>Communication also improved when we changed how we used the GitHub board. In the first semester, we there was an unspoken assumption that everyone was following the board, but that didn’t work for everyone. After some discussion within the team, we agreed to primarily using Teams instead, which worked much better. Although some people found it useful to still have their task on the board.</p>
+<p>Breaking work into small tasks was especially successful in the second semester for two reasons:</p>
+<ul>
+<li>Since we already had the direct/order base implemented, adding to that structure was easy. It allowed for clear separation between tasks. Keeping elements decoupled was very useful for our team’s progress. If your team can do that, then please do it since it saves hours of time that you would’ve spent trying to administrate these tasks.</li>
+<li>After a series of discussion we agreed to only pick up one task at a time, and actually followed through. That prevented people from taking on more than they could handle.</li>
+</ul>
+<h3 id="challenges-and-lessons-learned"><a class="header" href="#challenges-and-lessons-learned">Challenges and Lessons Learned</a></h3>
+<ul>
+<li>Using only the GitHub board was hard because it was often out of date, and as mentioned before, we had an implicit assumption that everyone is keeping track of it which slowed us down.</li>
+</ul>
+<p>Also, our “Must/Should/Ideally” labels didn’t always work. Tasks that looked easy often turned out to be hard, which meant some people took on too much work.</p>
+<h3 id="reflections-on-meeting-cadence"><a class="header" href="#reflections-on-meeting-cadence">Reflections on Meeting Cadence</a></h3>
+<p>We aren’t sure how often we should meet. Weekly meetings in the first semester were good for syncing but took time away from coding, and it was sometimes difficult to find the time where everyone is free. In the second semester, “meeting only when needed” helped us code faster, but we sometimes did the same work twice. For example, we missed chances to share code between similar rules because we weren’t talking enough, even with the +1/+2 system.</p>
 
                     </main>
 
@@ -5191,8 +5332,8 @@ and should not affect how the solver crates are written. See <a href="#solver-ad
         <script src="searcher-09f2665d.js"></script>
 
         <script src="clipboard-1626706a.min.js"></script>
-        <script src="highlight-abc7f01d.js"></script>
-        <script src="book-c22b7243.js"></script>
+        <script src="highlight-a1fdb4db.js"></script>
+        <script src="book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
 

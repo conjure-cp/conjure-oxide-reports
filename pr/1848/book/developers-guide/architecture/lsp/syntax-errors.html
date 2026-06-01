@@ -15,8 +15,8 @@
         <link rel="icon" href="../../../favicon-de23e50b.svg">
         <link rel="shortcut icon" href="../../../favicon-8114d1fc.png">
         <link rel="stylesheet" href="../../../css/variables-8adf115d.css">
-        <link rel="stylesheet" href="../../../css/general-0392ca55.css">
-        <link rel="stylesheet" href="../../../css/chrome-fc474251.css">
+        <link rel="stylesheet" href="../../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../../css/chrome-ae938929.css">
         <link rel="stylesheet" href="../../../css/print-9e4910d8.css" media="print">
 
         <!-- Fonts -->
@@ -37,10 +37,10 @@
             const path_to_root = "../../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../../searchindex-366f0e93.js";
+            window.path_to_searchindex_js = "../../../searchindex-acd455f7.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../../toc-e0474c1b.js"></script>
+        <script src="../../../toc-da3493fc.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -182,28 +182,28 @@
 <p>Description: expected token is absent
 Detection: Empty node or a missing child node. (MISSING node is inserted)
 Example: missing variable name</p>
-<pre><code class="language-text">find: bool
+<pre><code class="language-essence">find : bool
 </code></pre>
 <p>Example: missing Expression</p>
-<pre><code class="language-text">letting x be 
+<pre><code class="language-essence">letting x be 
 </code></pre>
 <h3 id="2-missing-keyword"><a class="header" href="#2-missing-keyword">2. Missing Keyword</a></h3>
 <p>Description: a token appears where a different token/keyword is expected
 Detection: ERROR node containing all the tokens where that failed to match the grammar</p>
 <p>Example: missing colon, <code>int</code> is unexpected (here <code>x</code> and <code>int</code> will be children of the ERROR node)</p>
-<pre><code class="language-text">find x int
+<pre><code class="language-essence">find x int
 </code></pre>
 <h3 id="3-unexpected-token"><a class="header" href="#3-unexpected-token">3. Unexpected Token</a></h3>
 <p>Description: a token appearing after a valid construct is complete
 Detection: ERROR node containing the extra token (ERROR node will likely be the last child of a valid construct)
 Example: second <code>)</code> is extra</p>
-<pre><code class="language-text">find x: int(1..2))
+<pre><code class="language-essence">find x : int(1..2))
 </code></pre>
 <h3 id="4-invalid-token"><a class="header" href="#4-invalid-token">4. Invalid Token</a></h3>
 <p>Description: token is malformed or not part of the grammar
 Detection: look for an ERROR node with the invalid token
 Example: <code>@int</code> is not a valid token (ERROR node with <code>@</code>)</p>
-<pre><code class="language-text">find x: @int
+<pre><code class="language-essence">find x : @int
 </code></pre>
 <p>Conjure does not identify <code>int</code> at all, just says “Skipped token”, “Missing Domain”
 Tree-Sitter in conjure-oxide sees <code>int</code> as a valid token but has an ERROR node with <code>@</code> before.
@@ -212,14 +212,14 @@ So in Conjure the same error as Missing Token but might make sense to separate d
 <p>Description: unmatched or missing closing bracket, parenthesis, brace
 Detection: MISSING node “)”
 Example: missing <code>)</code></p>
-<pre><code class="language-text">find x: int(1..2
+<pre><code class="language-essence">find x : int(1..2
 </code></pre>
 <p>Conjure allows it but since out grammar enforces it Tree-Sitter produces an error.</p>
 <h3 id="6-unsupported-statements"><a class="header" href="#6-unsupported-statements">6. Unsupported Statements</a></h3>
 <p>Description: statement not recognised by Essence grammar
 Detection: ERROR node with the unrecognised statement
 Example:</p>
-<pre><code class="language-text">find x: int(1..5)
+<pre><code class="language-essence">find x : int(1..5)
 print x 
 </code></pre>
 <p>Conjure doesn’t recognise <code>print x</code> as a separate invalid statement.</p>
@@ -230,46 +230,46 @@ print x
 <h3 id="1-keywords-as-identifiers"><a class="header" href="#1-keywords-as-identifiers">1. Keywords as Identifiers</a></h3>
 <p>Description: token’s name is not allowed<br>Detection: compare the variable names against the set of keywords
 Example: Keyword “bool” used as a variable name</p>
-<pre><code class="language-text">find bool: bool
+<pre><code class="language-essence">find bool : bool
 </code></pre>
-<pre><code class="language-text">find x: letting
+<pre><code class="language-essence">find x : letting
 </code></pre>
 <p>Conjure doesn’t allow it but Tree-Sitter does so we will have to check as part of semantic checks.</p>
 <h3 id="2-omitted-declaration"><a class="header" href="#2-omitted-declaration">2. Omitted Declaration</a></h3>
 <p>Description: variable not declared
 Detection: save the declared variables and check if the ones used in expressions are in the declared set
 Example: x was not declared before</p>
-<pre><code class="language-text">find y: int (1..4)
+<pre><code class="language-essence">find y : int (1..4)
 such that x = 5
 </code></pre>
 <h3 id="3-invalid-domain"><a class="header" href="#3-invalid-domain">3. Invalid Domain</a></h3>
 <p>Description: logically or mathematically invalid bounds/domain + infinite domain</p>
 <p>Example: a bigger value before smaller</p>
-<pre><code class="language-text">find x: int(10..5)
+<pre><code class="language-essence">find x : int(10..5)
 </code></pre>
 <p>Conjure doesn’t flag as error just says no solutions found.</p>
 <p>Example: infinite domain</p>
-<pre><code class="language-text">find x: int(1..) 
+<pre><code class="language-essence">find x : int(1..) 
 </code></pre>
 <p>Might want to restrict infinite domain with the grammar so it could be a syntax error.</p>
 <h3 id="4-type-mismatch"><a class="header" href="#4-type-mismatch">4. Type Mismatch</a></h3>
 <p>Description: attempt to do an operation on illegal types</p>
 <p>Example: cannot add integer and boolean</p>
-<pre><code class="language-text">letting y be true 
-find x: int (5..10)
+<pre><code class="language-essence">letting y be true 
+find x : int (5..10)
 such that 5 + y = 6
 </code></pre>
 <h3 id="5-unsafe-division"><a class="header" href="#5-unsafe-division">5. Unsafe division</a></h3>
 <p>Description: cannot divide/modulo by zero</p>
 <p>Example: cannot divide by zero</p>
-<pre><code class="language-text">find x: int(5..10)
+<pre><code class="language-essence">find x : int(5..10)
 such that x/0 = 3
 </code></pre>
 <p>Conjure allows, proceeds to run the solver but just outputs no solutions. We should disallow.</p>
 <h3 id="6-invalid-indexing-in-tuples-and-matrices"><a class="header" href="#6-invalid-indexing-in-tuples-and-matrices">6. Invalid indexing in tuples and matrices</a></h3>
 <p>Description: Tuples and matrices are indexed from . Negative, zero or index out of bounds is invalid</p>
 <p>Example: s tuple index of out bounds</p>
-<pre><code class="language-text">letting s be tuple(0,1,1,0)
+<pre><code class="language-essence">letting s be tuple(0,1,1,0)
 letting t be tuple(0,0,0,1)
 find a : bool such that a = (s[5] = t[1]) $ true
 </code></pre>
@@ -296,7 +296,7 @@ find a : bool such that a = (s[5] = t[1]) $ true
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../../developers-guide/architecture/lsp/error-detection/error-classification.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../../developers-guide/architecture/lsp/semantic-highlighting.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -310,7 +310,7 @@ find a : bool such that a = (s[5] = t[1]) $ true
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../../developers-guide/architecture/lsp/error-detection/error-classification.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../../developers-guide/architecture/lsp/semantic-highlighting.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>
@@ -335,8 +335,8 @@ find a : bool such that a = (s[5] = t[1]) $ true
         <script src="../../../searcher-09f2665d.js"></script>
 
         <script src="../../../clipboard-1626706a.min.js"></script>
-        <script src="../../../highlight-abc7f01d.js"></script>
-        <script src="../../../book-c22b7243.js"></script>
+        <script src="../../../highlight-a1fdb4db.js"></script>
+        <script src="../../../book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
 

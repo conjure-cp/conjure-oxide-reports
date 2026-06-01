@@ -15,8 +15,8 @@
         <link rel="icon" href="../../../../favicon-de23e50b.svg">
         <link rel="shortcut icon" href="../../../../favicon-8114d1fc.png">
         <link rel="stylesheet" href="../../../../css/variables-8adf115d.css">
-        <link rel="stylesheet" href="../../../../css/general-0392ca55.css">
-        <link rel="stylesheet" href="../../../../css/chrome-fc474251.css">
+        <link rel="stylesheet" href="../../../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../../../css/chrome-ae938929.css">
         <link rel="stylesheet" href="../../../../css/print-9e4910d8.css" media="print">
 
         <!-- Fonts -->
@@ -37,10 +37,10 @@
             const path_to_root = "../../../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../../../searchindex-366f0e93.js";
+            window.path_to_searchindex_js = "../../../../searchindex-acd455f7.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../../../toc-e0474c1b.js"></script>
+        <script src="../../../../toc-da3493fc.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -188,14 +188,14 @@ Lead to an invalid CST. They are caught by the tree-sitter when an Essence expre
 <h3 id="detection"><a class="header" href="#detection">Detection</a></h3>
 <p><code>MISSING</code> node inserted or zero range node in the CST.</p>
 <h3 id="example-1-missing-identifiers"><a class="header" href="#example-1-missing-identifiers">Example 1: Missing identifier(s)</a></h3>
-<pre><code class="language-text">find: bool
+<pre><code class="language-essence">find : bool
 </code></pre>
 <h3 id="example-2-missing-right-operand"><a class="header" href="#example-2-missing-right-operand">Example 2: Missing right operand</a></h3>
-<pre><code class="language-text">find x: int
+<pre><code class="language-essence">find x: int
 such that x /
 </code></pre>
 <h3 id="example-3-missing-domain-in-tuple"><a class="header" href="#example-3-missing-domain-in-tuple">Example 3: Missing domain in tuple</a></h3>
-<pre><code class="language-text">find x: tuple()
+<pre><code class="language-essence">find x: tuple()
 </code></pre>
 <h2 id="2-unexpected-token"><a class="header" href="#2-unexpected-token">2. Unexpected Token</a></h2>
 <h3 id="description-1"><a class="header" href="#description-1">Description</a></h3>
@@ -203,14 +203,14 @@ such that x /
 <h3 id="detection-1"><a class="header" href="#detection-1">Detection</a></h3>
 <p><code>ERROR</code> node wrapping the unexpected symbol(s).</p>
 <h3 id="example-1-extra--at-the-end"><a class="header" href="#example-1-extra--at-the-end">Example 1: Extra <code>)</code> at the end</a></h3>
-<pre><code class="language-text">find x: int(1..2))
+<pre><code class="language-essence">find x: int(1..2))
 </code></pre>
 <h3 id="example-2-unexpected--in-implication"><a class="header" href="#example-2-unexpected--in-implication">Example 2: Unexpected <code>%</code> in implication</a></h3>
-<pre><code class="language-text">find x: int(1..3)
+<pre><code class="language-essence">find x: int(1..3)
 such that x -&gt; %9
 </code></pre>
 <h3 id="example-3-unexpected--inside-matrix-domain"><a class="header" href="#example-3-unexpected--inside-matrix-domain">Example 3: Unexpected <code>&amp;</code> inside matrix domain</a></h3>
-<pre><code class="language-text">find x: matrix indexed by [int, &amp;] of int
+<pre><code class="language-essence">find x: matrix indexed by [int, &amp;] of int
 </code></pre>
 <h2 id="3-malformed-top-level-statement"><a class="header" href="#3-malformed-top-level-statement">3. Malformed Top Level Statement</a></h2>
 <h3 id="description-2"><a class="header" href="#description-2">Description</a></h3>
@@ -218,12 +218,12 @@ such that x -&gt; %9
 <h3 id="detection-2"><a class="header" href="#detection-2">Detection</a></h3>
 <p><code>ERROR</code> node that is a direct child of the root node <code>program</code> and precedes the nodes if the parsed line.</p>
 <h3 id="example-1-invalid-print-x"><a class="header" href="#example-1-invalid-print-x">Example 1: Invalid <code>print x</code></a></h3>
-<pre><code class="language-text">find x: int(1..5)
+<pre><code class="language-essence">find x: int(1..5)
 print x 
 </code></pre>
 <h3 id="example-2-malformed-find-statement"><a class="header" href="#example-2-malformed-find-statement">Example 2: Malformed find statement</a></h3>
 <p>More of an edge case. Even though the keyword <code>find</code> is present, tree-sitter does not parse the line using the <code>find_statement</code> rule since the first symbol after <code>find</code> cannot be parsed an identifier.</p>
-<pre><code class="language-text">find +,a,b: int(1..3)
+<pre><code class="language-essence">find +,a,b: int(1..3)
 </code></pre>
 <h3 id="4-general-syntax-error"><a class="header" href="#4-general-syntax-error">4. General Syntax Error</a></h3>
 <p>Cases that cause an error in the CST but did not fall into any of the previous categories.</p>
@@ -235,10 +235,10 @@ print x
 <h3 id="detection-3"><a class="header" href="#detection-3">Detection</a></h3>
 <p>Compare the variable names against the set of keywords that should not be allowed.</p>
 <h3 id="example-1-keyword-bool-as-an-identifier"><a class="header" href="#example-1-keyword-bool-as-an-identifier">Example 1: Keyword <code>bool</code> as an identifier</a></h3>
-<pre><code class="language-text">find bool: bool
+<pre><code class="language-essence">find bool: bool
 </code></pre>
 <h3 id="example-2-keyword-letting-used-as-an-identifier"><a class="header" href="#example-2-keyword-letting-used-as-an-identifier">Example 2: Keyword <code>letting</code> used as an identifier</a></h3>
-<pre><code class="language-text">find letting,b,c: int(1..3)
+<pre><code class="language-essence">find letting,b,c: int(1..3)
 </code></pre>
 <h2 id="2-omitted-declaration"><a class="header" href="#2-omitted-declaration">2. Omitted Declaration</a></h2>
 <h3 id="description-4"><a class="header" href="#description-4">Description</a></h3>
@@ -246,7 +246,7 @@ print x
 <h3 id="detection-4"><a class="header" href="#detection-4">Detection</a></h3>
 <p>Checking that the identifier used in a constraint was previously declared in a <code>find</code> or <code>letting_statement</code>.</p>
 <h3 id="example-x-was-not-declared-before"><a class="header" href="#example-x-was-not-declared-before">Example: x was not declared before</a></h3>
-<pre><code class="language-text">find y: int (1..4)
+<pre><code class="language-essence">find y: int (1..4)
 such that x = 5
 </code></pre>
 <h2 id="3-invalid-domain"><a class="header" href="#3-invalid-domain">3. Invalid Domain</a></h2>
@@ -254,7 +254,7 @@ such that x = 5
 <h3 id="description-5"><a class="header" href="#description-5">Description</a></h3>
 <p>Logically or mathematically invalid bounds.</p>
 <h3 id="example-a-bigger-value-before-smaller"><a class="header" href="#example-a-bigger-value-before-smaller">Example: a bigger value before smaller</a></h3>
-<pre><code class="language-text">find x: int(10..5)
+<pre><code class="language-essence">find x: int(10..5)
 </code></pre>
 <h2 id="4-type-mismatch"><a class="header" href="#4-type-mismatch">4. Type Mismatch</a></h2>
 <h3 id="description-6"><a class="header" href="#description-6">Description</a></h3>
@@ -262,7 +262,7 @@ such that x = 5
 <h3 id="detection-5"><a class="header" href="#detection-5">Detection</a></h3>
 <p>Enforcing types on operations and catching a mismatch between expected types and node <code>kind</code> that is being parsed.</p>
 <h3 id="example-adding-an-integer-and-boolean"><a class="header" href="#example-adding-an-integer-and-boolean">Example: Adding an integer and boolean</a></h3>
-<pre><code class="language-text">letting y be true 
+<pre><code class="language-essence">letting y be true 
 find x: int (5..10)
 such that 5 + y = 6
 </code></pre>
@@ -271,7 +271,7 @@ such that 5 + y = 6
 <h3 id="description-7"><a class="header" href="#description-7">Description</a></h3>
 <p>Attempt to divide/modulo by zero.</p>
 <h3 id="example-divide-by-zero"><a class="header" href="#example-divide-by-zero">Example: Divide by zero</a></h3>
-<pre><code class="language-text">find x: int(5..10)
+<pre><code class="language-essence">find x: int(5..10)
 such that x/0 = 3
 </code></pre>
 <p>At the moment says no solutions found. Would want to explicitly disallow it.</p>
@@ -280,7 +280,7 @@ such that x/0 = 3
 <p>Tuples and matrices are indexed from 1.
 Negative, zero or index out of bounds is invalid.</p>
 <h3 id="example-s-tuple-index-of-out-bounds"><a class="header" href="#example-s-tuple-index-of-out-bounds">Example: s tuple index of out bounds</a></h3>
-<pre><code class="language-text">letting s be tuple(0,1,1,0)
+<pre><code class="language-essence">letting s be tuple(0,1,1,0)
 letting t be tuple(0,0,0,1)
 find a : bool such that a = (s[5] = t[1]) $ true
 </code></pre>
@@ -289,7 +289,7 @@ find a : bool such that a = (s[5] = t[1]) $ true
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../../../developers-guide/architecture/lsp/syntax-errors.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../../../developers-guide/architecture/lsp/semantic-highlighting.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
@@ -303,7 +303,7 @@ find a : bool such that a = (s[5] = t[1]) $ true
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../../../developers-guide/architecture/lsp/syntax-errors.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../../../developers-guide/architecture/lsp/semantic-highlighting.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
@@ -332,8 +332,8 @@ find a : bool such that a = (s[5] = t[1]) $ true
         <script src="../../../../searcher-09f2665d.js"></script>
 
         <script src="../../../../clipboard-1626706a.min.js"></script>
-        <script src="../../../../highlight-abc7f01d.js"></script>
-        <script src="../../../../book-c22b7243.js"></script>
+        <script src="../../../../highlight-a1fdb4db.js"></script>
+        <script src="../../../../book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
 
