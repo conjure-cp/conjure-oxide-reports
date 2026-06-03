@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-b9b4a287.js";
+            window.path_to_searchindex_js = "searchindex-88785525.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-db9cd29c.js"></script>
+        <script src="toc-fe519d7f.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -3884,6 +3884,119 @@ $$</p>
 <li>We encode the biconditional $r_1 \leftrightarrow P$ as in the direct encoding version.</li>
 </ul>
 <p>An example of this rule can also be found in the direct encoding page on this rule.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="constraint-dominance-programming-cdp"><a class="header" href="#constraint-dominance-programming-cdp">Constraint Dominance Programming (CDP)</a></h1>
+<h2 id="what-cdp-means-in-conjure-oxide"><a class="header" href="#what-cdp-means-in-conjure-oxide">What CDP Means in Conjure Oxide</a></h2>
+<p>In Conjure Oxide, <strong>Constraint Dominance Programming (CDP)</strong> is used to enumerate solutions while filtering out those that are dominated by other solutions under a user-defined dominance relation.</p>
+<p>At a high level:</p>
+<ol>
+<li>Solve the model and obtain a solution.</li>
+<li>Add a new constraint that blocks any future solution dominated by that solution.</li>
+<li>Continue until no more solutions remain (or the user stops search).</li>
+</ol>
+<p>This is how we obtain a set of non-dominated solutions (Pareto-optimal w.r.t. the chosen dominance relation).</p>
+<h2 id="language-additions"><a class="header" href="#language-additions">Language Additions</a></h2>
+<h3 id="dominance-relation"><a class="header" href="#dominance-relation"><code>dominance relation</code></a></h3>
+<p>The model can now include a top-level dominance section:</p>
+<pre><code class="language-text">dominance relation
+    ...
+</code></pre>
+<p>The parser stores this in <code>Model.dominance</code>.</p>
+<h3 id="fromsolution"><a class="header" href="#fromsolution"><code>fromSolution(...)</code></a></h3>
+<p>Inside a dominance relation, <code>fromSolution(x)</code> refers to the value of <code>x</code> in a previously found solution.</p>
+<p>Example:</p>
+<pre><code class="language-text">dominance relation
+    (x &lt;= fromSolution(x)) /\
+    (x &lt; fromSolution(x))
+</code></pre>
+<p><code>fromSolution(...)</code> is only valid inside <code>dominance relation</code>.</p>
+<h3 id="pareto-syntax"><a class="header" href="#pareto-syntax"><code>pareto(...)</code> syntax</a></h3>
+<p>To avoid writing dominance relations manually, the parser supports:</p>
+<pre><code class="language-text">dominance relation
+    pareto(minimising x, maximising y)
+</code></pre>
+<p>Here, the <code>pareto(...)</code> keyword refers to <a href="https://en.wikipedia.org/wiki/Pareto_efficiency"><strong>Pareto efficiency / Pareto optimality</strong></a> in multi-objective optimisation (not the “80/20 rule”).</p>
+<p>Each item declares a component and direction:</p>
+<ul>
+<li><code>minimising expr</code></li>
+<li><code>maximising expr</code></li>
+</ul>
+<h2 id="how-pareto-is-lowered"><a class="header" href="#how-pareto-is-lowered">How <code>pareto(...)</code> Is Lowered</a></h2>
+<p><code>pareto(...)</code> is parsed as syntactic sugar and lowered into a standard dominance expression in the AST.</p>
+<p>For each component, the parser builds:</p>
+<ul>
+<li>a <strong>non-worsening</strong> condition, and</li>
+<li>a <strong>strict improvement</strong> condition.</li>
+</ul>
+<p>Then it combines all components as:</p>
+<pre><code class="language-text">AND(all non-worsening) AND OR(any strict improvement)
+</code></pre>
+<p>For integer components:</p>
+<ul>
+<li><code>minimising e</code> becomes <code>e &lt;= fromSolution(e)</code> and strict <code>e &lt; fromSolution(e)</code></li>
+<li><code>maximising e</code> becomes <code>e &gt;= fromSolution(e)</code> and strict <code>e &gt; fromSolution(e)</code></li>
+</ul>
+<p>For boolean components:</p>
+<ul>
+<li><code>minimising b</code> becomes <code>b -&gt; fromSolution(b)</code> and strict <code>(!b) /\ fromSolution(b)</code></li>
+<li><code>maximising b</code> becomes <code>fromSolution(b) -&gt; b</code> and strict <code>b /\ !fromSolution(b)</code></li>
+</ul>
+<p>Notes:</p>
+<ul>
+<li><code>pareto(...)</code> is only allowed inside <code>dominance relation</code>.</li>
+<li>Components must have return type <code>int</code> or <code>bool</code>.</li>
+<li>Explicit <code>fromSolution(...)</code> inside <code>pareto(...)</code> components is rejected.</li>
+</ul>
+<h2 id="why-solver-adaptors-needed-changes"><a class="header" href="#why-solver-adaptors-needed-changes">Why Solver Adaptors Needed Changes</a></h2>
+<p>Supporting CDP required adaptors to evolve from “load once, solve once” behaviour into iterative solving with incremental constraint addition.</p>
+<p>After each solution, adaptors construct:</p>
+<pre><code class="language-text">NOT dominance(current_solution, future_solution)
+</code></pre>
+<p>where references in the dominance expression are rewritten as follows:</p>
+<ul>
+<li>current-solution references are substituted with concrete literals,</li>
+<li><code>fromSolution(x)</code> is rewritten to refer to the future candidate variable <code>x</code>,</li>
+<li>the whole expression is negated to block dominated futures.</li>
+</ul>
+<p>This rewritten expression is then fed back to the backend during the same solve run.</p>
+<h2 id="backend-specific-cdp-implementation"><a class="header" href="#backend-specific-cdp-implementation">Backend-Specific CDP Implementation</a></h2>
+<h3 id="sat-rustsat--cadical"><a class="header" href="#sat-rustsat--cadical">SAT (<code>rustsat</code> / CaDiCaL)</a></h3>
+<ul>
+<li><a href="https://github.com/arminbiere/cadical">CaDiCaL</a> is the underlying SAT solver used by the RustSAT-backed adaptor.</li>
+<li>Rewrites the dominance block into CNF through the normal rewrite pipeline.</li>
+<li>Adds resulting clauses incrementally to the SAT solver.</li>
+<li>Extends SAT variable mapping when dominance clauses introduce new references.</li>
+</ul>
+<h3 id="smt-z3"><a class="header" href="#smt-z3">SMT (Z3)</a></h3>
+<ul>
+<li>Rewrites the dominance block through the same model-rewrite pipeline.</li>
+<li>Asserts rewritten constraints into the active Z3 solver instance between solutions.</li>
+</ul>
+<h3 id="minion"><a class="header" href="#minion">Minion</a></h3>
+<ul>
+<li>Rewrites dominance to a temporary model and lowers it to Minion constraints.</li>
+<li>Adds auxiliary Minion variables mid-search as needed.</li>
+<li>Injects remapped Minion constraints mid-search.</li>
+</ul>
+<p>This path required dedicated mid-search injection support and robust handling around Minion runtime constraints.</p>
+<h2 id="cli-and-tracing-notes"><a class="header" href="#cli-and-tracing-notes">CLI and Tracing Notes</a></h2>
+<ul>
+<li><code>--rule-trace-cdp</code> controls whether solver-time CDP rewrites are included in rule traces.</li>
+<li>The CLI solution pipeline still applies a final dominance-pruning pass over collected solutions as a safety net.</li>
+</ul>
+<h2 id="related-minion-follow-ups"><a class="header" href="#related-minion-follow-ups">Related Minion Follow-Ups</a></h2>
+<p>In addition to core CDP support, related Minion work included:</p>
+<ul>
+<li><code>--minion-valorder</code> to control Minion value ordering (<code>ascend</code>, <code>descend</code>, <code>random</code>) from the CLI.</li>
+<li>adaptor robustness fixes in callback/solution handling.</li>
+<li>dedicated regression tests around mid-search variable/constraint injection behaviour.</li>
+</ul>
+<h2 id="testing-coverage"><a class="header" href="#testing-coverage">Testing Coverage</a></h2>
+<p>CDP behaviour is exercised in integration tests under:</p>
+<ul>
+<li><code>tests-integration/tests/integration/dominance/</code></li>
+</ul>
+<p>These include both explicit dominance formulas and <code>pareto(...)</code> syntax, across integer and boolean cases, and across multiple solver families.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <p>Vertical rules for Occurrence, which are applied once all possible horizontal rules have been applied at a given stage. Followed by an example of rewriting a model in Occurrence representation, using both horizontal and vertical rules.</p>
 <ul>

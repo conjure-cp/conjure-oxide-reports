@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Overview - Conjure Oxide</title>
+        <title>Constraint Dominance Programming (CDP) - Conjure Oxide</title>
 
 
         <!-- Custom HTML head -->
@@ -12,20 +12,20 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="../favicon-de23e50b.svg">
-        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
-        <link rel="stylesheet" href="../css/variables-8adf115d.css">
-        <link rel="stylesheet" href="../css/general-2459343d.css">
-        <link rel="stylesheet" href="../css/chrome-ae938929.css">
-        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
+        <link rel="icon" href="../../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/chrome-ae938929.css">
+        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
+        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
-        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
-        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
 
         <!-- Custom theme stylesheets -->
 
@@ -34,13 +34,13 @@
 
         <!-- Provide site root and default themes to javascript -->
         <script>
-            const path_to_root = "../";
+            const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../searchindex-88785525.js";
+            window.path_to_searchindex_js = "../../searchindex-88785525.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-fe519d7f.js"></script>
+        <script src="../../toc-fe519d7f.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -107,7 +107,7 @@
             <!-- populated by js -->
             <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
             <noscript>
-                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
+                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
             </noscript>
             <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -142,7 +142,7 @@
                     <h1 class="menu-title">Conjure Oxide</h1>
 
                     <div class="right-buttons">
-                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
                             <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
                         </a>
 
@@ -176,40 +176,128 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <!-- maturity: draft
-authors: Jamie Melton, Georgii Skorokhod, Özgür Akgün
-created: 24-10-25
----- -->
-<h1 id="contributors-guide"><a class="header" href="#contributors-guide">Contributors Guide</a></h1>
-<p>We love your input! We want to make contributing to this project as easy and transparent as possible, whether it’s:</p>
+                        <h1 id="constraint-dominance-programming-cdp"><a class="header" href="#constraint-dominance-programming-cdp">Constraint Dominance Programming (CDP)</a></h1>
+<h2 id="what-cdp-means-in-conjure-oxide"><a class="header" href="#what-cdp-means-in-conjure-oxide">What CDP Means in Conjure Oxide</a></h2>
+<p>In Conjure Oxide, <strong>Constraint Dominance Programming (CDP)</strong> is used to enumerate solutions while filtering out those that are dominated by other solutions under a user-defined dominance relation.</p>
+<p>At a high level:</p>
+<ol>
+<li>Solve the model and obtain a solution.</li>
+<li>Add a new constraint that blocks any future solution dominated by that solution.</li>
+<li>Continue until no more solutions remain (or the user stops search).</li>
+</ol>
+<p>This is how we obtain a set of non-dominated solutions (Pareto-optimal w.r.t. the chosen dominance relation).</p>
+<h2 id="language-additions"><a class="header" href="#language-additions">Language Additions</a></h2>
+<h3 id="dominance-relation"><a class="header" href="#dominance-relation"><code>dominance relation</code></a></h3>
+<p>The model can now include a top-level dominance section:</p>
+<pre><code class="language-text">dominance relation
+    ...
+</code></pre>
+<p>The parser stores this in <code>Model.dominance</code>.</p>
+<h3 id="fromsolution"><a class="header" href="#fromsolution"><code>fromSolution(...)</code></a></h3>
+<p>Inside a dominance relation, <code>fromSolution(x)</code> refers to the value of <code>x</code> in a previously found solution.</p>
+<p>Example:</p>
+<pre><code class="language-text">dominance relation
+    (x &lt;= fromSolution(x)) /\
+    (x &lt; fromSolution(x))
+</code></pre>
+<p><code>fromSolution(...)</code> is only valid inside <code>dominance relation</code>.</p>
+<h3 id="pareto-syntax"><a class="header" href="#pareto-syntax"><code>pareto(...)</code> syntax</a></h3>
+<p>To avoid writing dominance relations manually, the parser supports:</p>
+<pre><code class="language-text">dominance relation
+    pareto(minimising x, maximising y)
+</code></pre>
+<p>Here, the <code>pareto(...)</code> keyword refers to <a href="https://en.wikipedia.org/wiki/Pareto_efficiency"><strong>Pareto efficiency / Pareto optimality</strong></a> in multi-objective optimisation (not the “80/20 rule”).</p>
+<p>Each item declares a component and direction:</p>
 <ul>
-<li>Reporting a bug</li>
-<li>Discussing the current state of the code</li>
-<li>Submitting a fix</li>
-<li>Proposing new features</li>
-<li>Becoming a maintainer</li>
+<li><code>minimising expr</code></li>
+<li><code>maximising expr</code></li>
 </ul>
-<h2 id="contributing"><a class="header" href="#contributing">Contributing</a></h2>
-<p>This project is open-source: you can find the source code on
-<a href="https://github.com/conjure-cp/conjure-oxide">Github</a>, and issues, questions,
-or feature requests can be posted on the <a href="https://github.com/conjure-cp/conjure-oxide/issues">Github issue
-tracker</a>.</p>
-<p>Currently, Conjure Oxide has been primarily developed by students and staff at the <a href="https://www.st-andrews.ac.uk/">University of St Andrews</a>. That being said, we welcome and encourage contributions from individuals outside the University. Over the course of this section, we will expand further into <strong>how</strong> you can contribute.</p>
-<p>For more detailed information regarding our contributing process, please refer to <a href="https://github.com/conjure-cp/conjure-oxide/blob/main/CONTRIBUTING.md">CONTRIBUTING.md</a></p>
-<h2 id="licence"><a class="header" href="#licence">Licence</a></h2>
-<p>This project is entirely open-source, with all code released under the <a href="https://www.mozilla.org/en-US/MPL/2.0/">MPL 2.0</a> license, unless stated otherwise.</p>
-<hr>
-<p><em>This section had been adapted from the ‘home’ page of the conjure-oxide wiki, and <a href="https://github.com/conjure-cp/conjure-oxide/blob/main/CONTRIBUTING.md">CONTRIBUTING.md</a></em></p>
+<h2 id="how-pareto-is-lowered"><a class="header" href="#how-pareto-is-lowered">How <code>pareto(...)</code> Is Lowered</a></h2>
+<p><code>pareto(...)</code> is parsed as syntactic sugar and lowered into a standard dominance expression in the AST.</p>
+<p>For each component, the parser builds:</p>
+<ul>
+<li>a <strong>non-worsening</strong> condition, and</li>
+<li>a <strong>strict improvement</strong> condition.</li>
+</ul>
+<p>Then it combines all components as:</p>
+<pre><code class="language-text">AND(all non-worsening) AND OR(any strict improvement)
+</code></pre>
+<p>For integer components:</p>
+<ul>
+<li><code>minimising e</code> becomes <code>e &lt;= fromSolution(e)</code> and strict <code>e &lt; fromSolution(e)</code></li>
+<li><code>maximising e</code> becomes <code>e &gt;= fromSolution(e)</code> and strict <code>e &gt; fromSolution(e)</code></li>
+</ul>
+<p>For boolean components:</p>
+<ul>
+<li><code>minimising b</code> becomes <code>b -&gt; fromSolution(b)</code> and strict <code>(!b) /\ fromSolution(b)</code></li>
+<li><code>maximising b</code> becomes <code>fromSolution(b) -&gt; b</code> and strict <code>b /\ !fromSolution(b)</code></li>
+</ul>
+<p>Notes:</p>
+<ul>
+<li><code>pareto(...)</code> is only allowed inside <code>dominance relation</code>.</li>
+<li>Components must have return type <code>int</code> or <code>bool</code>.</li>
+<li>Explicit <code>fromSolution(...)</code> inside <code>pareto(...)</code> components is rejected.</li>
+</ul>
+<h2 id="why-solver-adaptors-needed-changes"><a class="header" href="#why-solver-adaptors-needed-changes">Why Solver Adaptors Needed Changes</a></h2>
+<p>Supporting CDP required adaptors to evolve from “load once, solve once” behaviour into iterative solving with incremental constraint addition.</p>
+<p>After each solution, adaptors construct:</p>
+<pre><code class="language-text">NOT dominance(current_solution, future_solution)
+</code></pre>
+<p>where references in the dominance expression are rewritten as follows:</p>
+<ul>
+<li>current-solution references are substituted with concrete literals,</li>
+<li><code>fromSolution(x)</code> is rewritten to refer to the future candidate variable <code>x</code>,</li>
+<li>the whole expression is negated to block dominated futures.</li>
+</ul>
+<p>This rewritten expression is then fed back to the backend during the same solve run.</p>
+<h2 id="backend-specific-cdp-implementation"><a class="header" href="#backend-specific-cdp-implementation">Backend-Specific CDP Implementation</a></h2>
+<h3 id="sat-rustsat--cadical"><a class="header" href="#sat-rustsat--cadical">SAT (<code>rustsat</code> / CaDiCaL)</a></h3>
+<ul>
+<li><a href="https://github.com/arminbiere/cadical">CaDiCaL</a> is the underlying SAT solver used by the RustSAT-backed adaptor.</li>
+<li>Rewrites the dominance block into CNF through the normal rewrite pipeline.</li>
+<li>Adds resulting clauses incrementally to the SAT solver.</li>
+<li>Extends SAT variable mapping when dominance clauses introduce new references.</li>
+</ul>
+<h3 id="smt-z3"><a class="header" href="#smt-z3">SMT (Z3)</a></h3>
+<ul>
+<li>Rewrites the dominance block through the same model-rewrite pipeline.</li>
+<li>Asserts rewritten constraints into the active Z3 solver instance between solutions.</li>
+</ul>
+<h3 id="minion"><a class="header" href="#minion">Minion</a></h3>
+<ul>
+<li>Rewrites dominance to a temporary model and lowers it to Minion constraints.</li>
+<li>Adds auxiliary Minion variables mid-search as needed.</li>
+<li>Injects remapped Minion constraints mid-search.</li>
+</ul>
+<p>This path required dedicated mid-search injection support and robust handling around Minion runtime constraints.</p>
+<h2 id="cli-and-tracing-notes"><a class="header" href="#cli-and-tracing-notes">CLI and Tracing Notes</a></h2>
+<ul>
+<li><code>--rule-trace-cdp</code> controls whether solver-time CDP rewrites are included in rule traces.</li>
+<li>The CLI solution pipeline still applies a final dominance-pruning pass over collected solutions as a safety net.</li>
+</ul>
+<h2 id="related-minion-follow-ups"><a class="header" href="#related-minion-follow-ups">Related Minion Follow-Ups</a></h2>
+<p>In addition to core CDP support, related Minion work included:</p>
+<ul>
+<li><code>--minion-valorder</code> to control Minion value ordering (<code>ascend</code>, <code>descend</code>, <code>random</code>) from the CLI.</li>
+<li>adaptor robustness fixes in callback/solution handling.</li>
+<li>dedicated regression tests around mid-search variable/constraint injection behaviour.</li>
+</ul>
+<h2 id="testing-coverage"><a class="header" href="#testing-coverage">Testing Coverage</a></h2>
+<p>CDP behaviour is exercised in integration tests under:</p>
+<ul>
+<li><code>tests-integration/tests/integration/dominance/</code></li>
+</ul>
+<p>These include both explicit dominance formulas and <code>pareto(...)</code> syntax, across integer and boolean cases, and across multiple solver families.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../users-guide/command-line-guide/logging.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../../developers-guide/architecture/adaptors/sat-encoding/concrete_sat_rules/order-encoding-toInt.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../contributors-guide/onboarding/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../developers-guide/architecture/sets/vertical-rules.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -219,11 +307,11 @@ tracker</a>.</p>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../users-guide/command-line-guide/logging.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../../developers-guide/architecture/adaptors/sat-encoding/concrete_sat_rules/order-encoding-toInt.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../contributors-guide/onboarding/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../developers-guide/architecture/sets/vertical-rules.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>
@@ -243,13 +331,13 @@ tracker</a>.</p>
         </script>
 
 
-        <script src="../elasticlunr-ef4e11c1.min.js"></script>
-        <script src="../mark-09e88c2c.min.js"></script>
-        <script src="../searcher-09f2665d.js"></script>
+        <script src="../../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../../mark-09e88c2c.min.js"></script>
+        <script src="../../searcher-09f2665d.js"></script>
 
-        <script src="../clipboard-1626706a.min.js"></script>
-        <script src="../highlight-a1fdb4db.js"></script>
-        <script src="../book-a0b12cfe.js"></script>
+        <script src="../../clipboard-1626706a.min.js"></script>
+        <script src="../../highlight-a1fdb4db.js"></script>
+        <script src="../../book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
 
