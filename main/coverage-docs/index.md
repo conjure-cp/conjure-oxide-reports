@@ -3,7 +3,7 @@
 **conjure-cp:** 0% with examples, 25% documented -- 0/1/4
 **conjure-cp-cli:** 0% with examples, 35% documented -- 0/48/137
 **conjure-cp-cli-fuzz:** 0% with examples, 0% documented -- 0/0/1
-**conjure-cp-core:** 3% with examples, 48% documented -- 23/334/691
+**conjure-cp-core:** 3% with examples, 49% documented -- 23/346/702
 **conjure-cp-enum-compatibility-macro:** 33% with examples, 100% documented -- 1/3/3
 **conjure-cp-essence-macros:** 67% with examples, 67% documented -- 2/2/3
 **conjure-cp-essence-parser:** 0% with examples, 16% documented -- 0/29/186
@@ -15,7 +15,7 @@
 **tree-morph-macros:** 50% with examples, 50% documented -- 1/1/2
 **tree-sitter-essence:** 33% with examples, 100% documented -- 1/3/3
 
-Commit: [3da4d952db81302a4acca28336868a420dff037f](https://github.com/conjure-cp/conjure-oxide/commit/3da4d952db81302a4acca28336868a420dff037f)
+Commit: [d09850bd7cca35f7b2fa584294fccfe6f9d89de0](https://github.com/conjure-cp/conjure-oxide/commit/d09850bd7cca35f7b2fa584294fccfe6f9d89de0)
 
 ## RustDoc coverage for `conjure-cp`
 
@@ -101,10 +101,10 @@ Commit: [3da4d952db81302a4acca28336868a420dff037f](https://github.com/conjure-cp
 | crates/conjure-cp-core/src/ast/mod.rs | ❌ 83% *(5/6)* | ❌ 0% *(0/6)* |
 | crates/conjure-cp-core/src/representation.rs | ❌ 83% *(10/12)* | ❌ 0% *(0/12)* |
 | crates/conjure-cp-core/src/ast/categories.rs | ❌ 89% *(8/9)* | ❌ 0% *(0/9)* |
-| crates/conjure-cp-core/src/ast/matrix.rs | ✅ 91% *(10/11)* | ❌ 9% *(1/11)* |
 | crates/conjure-cp-core/src/ast/serde.rs | ✅ 91% *(10/11)* | ❌ 0% *(0/11)* |
 | crates/conjure-cp-core/src/ast/expressions.rs | ✅ 94% *(97/103)* | ❌ 0% *(0/103)* |
 | crates/conjure-cp-core/src/ast/assertions.rs | ✅ 100% *(4/4)* | ❌ 0% *(0/4)* |
+| crates/conjure-cp-core/src/ast/matrix.rs | ✅ 100% *(22/22)* | ❌ 5% *(1/22)* |
 | crates/conjure-cp-core/src/ast/moo.rs | ✅ 100% *(1/1)* | ❌ 0% *(0/1)* |
 | crates/conjure-cp-core/src/ast/name.rs | ✅ 100% *(6/6)* | ❌ 0% *(0/6)* |
 | crates/conjure-cp-core/src/ast/pretty.rs | ✅ 100% *(8/8)* | ❌ 0% *(0/8)* |
