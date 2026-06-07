@@ -1,0 +1,1214 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+        <title>Diff Coverage</title>
+        <style>
+            .src-snippet { margin-top: 2em; }
+            .src-name { font-weight: bold; }
+            .snippets {
+                border-top: 1px solid #bdbdbd;
+                border-bottom: 1px solid #bdbdbd;
+            }
+            pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.hll { background-color: #ffcccc }
+.c { color: #3D7B7B; font-style: italic } /* Comment */
+.err { border: 1px solid #F00 } /* Error */
+.k { color: #008000; font-weight: bold } /* Keyword */
+.o { color: #666 } /* Operator */
+.ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.cp { color: #9C6500 } /* Comment.Preproc */
+.cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.gd { color: #A00000 } /* Generic.Deleted */
+.ge { font-style: italic } /* Generic.Emph */
+.ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.gr { color: #E40000 } /* Generic.Error */
+.gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.gi { color: #008400 } /* Generic.Inserted */
+.go { color: #717171 } /* Generic.Output */
+.gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.gs { font-weight: bold } /* Generic.Strong */
+.gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.gt { color: #04D } /* Generic.Traceback */
+.kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.kp { color: #008000 } /* Keyword.Pseudo */
+.kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.kt { color: #B00040 } /* Keyword.Type */
+.m { color: #666 } /* Literal.Number */
+.s { color: #BA2121 } /* Literal.String */
+.na { color: #687822 } /* Name.Attribute */
+.nb { color: #008000 } /* Name.Builtin */
+.nc { color: #00F; font-weight: bold } /* Name.Class */
+.no { color: #800 } /* Name.Constant */
+.nd { color: #A2F } /* Name.Decorator */
+.ni { color: #717171; font-weight: bold } /* Name.Entity */
+.ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.nf { color: #00F } /* Name.Function */
+.nl { color: #767600 } /* Name.Label */
+.nn { color: #00F; font-weight: bold } /* Name.Namespace */
+.nt { color: #008000; font-weight: bold } /* Name.Tag */
+.nv { color: #19177C } /* Name.Variable */
+.ow { color: #A2F; font-weight: bold } /* Operator.Word */
+.w { color: #BBB } /* Text.Whitespace */
+.mb { color: #666 } /* Literal.Number.Bin */
+.mf { color: #666 } /* Literal.Number.Float */
+.mh { color: #666 } /* Literal.Number.Hex */
+.mi { color: #666 } /* Literal.Number.Integer */
+.mo { color: #666 } /* Literal.Number.Oct */
+.sa { color: #BA2121 } /* Literal.String.Affix */
+.sb { color: #BA2121 } /* Literal.String.Backtick */
+.sc { color: #BA2121 } /* Literal.String.Char */
+.dl { color: #BA2121 } /* Literal.String.Delimiter */
+.sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.s2 { color: #BA2121 } /* Literal.String.Double */
+.se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.sh { color: #BA2121 } /* Literal.String.Heredoc */
+.si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.sx { color: #008000 } /* Literal.String.Other */
+.sr { color: #A45A77 } /* Literal.String.Regex */
+.s1 { color: #BA2121 } /* Literal.String.Single */
+.ss { color: #19177C } /* Literal.String.Symbol */
+.bp { color: #008000 } /* Name.Builtin.Pseudo */
+.fm { color: #00F } /* Name.Function.Magic */
+.vc { color: #19177C } /* Name.Variable.Class */
+.vg { color: #19177C } /* Name.Variable.Global */
+.vi { color: #19177C } /* Name.Variable.Instance */
+.vm { color: #19177C } /* Name.Variable.Magic */
+.il { color: #666 } /* Literal.Number.Integer.Long */
+.diff-cover-covered-line { background-color: #ddffdd; }
+        </style>
+    </head>
+    <body>
+        <h1>Diff Coverage</h1>
+        <p>Diff: upstream/main...HEAD, staged and unstaged changes</p>
+        <ul>
+            <li><b>Total</b>: 315 lines</li>
+            <li><b>Missing</b>: 315 lines</li>
+            <li><b>Coverage</b>: 0%</li>
+        </ul>
+        <table border="1">
+            <tr>
+                <th>Source File</th>
+                <th>Diff Coverage (%)</th>
+                <th>Missing Lines</th>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-bench/src/executor.rs</td>
+                <td>0.0%</td>
+                <td>25-27,31-36,38-40,42-44</td>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-bench/src/executor/conjure.rs</td>
+                <td>0.0%</td>
+                <td>28-34,38-41,43-46,53-57,59-66,73-80,82-83,85,87,89-92,94-95,98,100-103,105,107,109-110,113-114,124-134,136-139,141,143-146,150-155,157-161,163-166,168,171,173-181,183-184,186-189,192-193,196,199-203,207,209-212,215-216,218,220-221,251-255,258-260,263-268,270,272-274,276-277,279-281,283,285-287,290-295,297-301,303-307</td>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-bench/src/lib.rs</td>
+                <td>0.0%</td>
+                <td>23-25,36-43,49-50,53-55,57-58,60</td>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-bench/src/mode.rs</td>
+                <td>0.0%</td>
+                <td>38-44</td>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-bench/src/mode/fixed_iterations.rs</td>
+                <td>0.0%</td>
+                <td>20-22,26-34,38-39,42-52,56-60,63-68,71-73,78-82,85-90,93-95,99-100</td>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-bench/src/model_sources.rs</td>
+                <td>0.0%</td>
+                <td>22-23,28-31,33-35,37-39,41-45,47-51,53-56,59-61,63-67,69-73,75-78,83-84,86,89,93-94</td>
+            </tr>
+        </table>
+        <div class="src-snippet">
+            <div class="src-name">crates/conjure-cp-bench/src/executor.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-bench/src/executor.rs-21" name="crates/conjure-cp-bench/src/executor.rs-21"></a><span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="n">counters</span><span class="p">:</span><span class="w"> </span><span class="nc">HashMap</span><span class="o">&lt;</span><span class="nb">String</span><span class="p">,</span><span class="w"> </span><span class="nb">Option</span><span class="o">&lt;</span><span class="kt">f64</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+<a id="crates/conjure-cp-bench/src/executor.rs-22" name="crates/conjure-cp-bench/src/executor.rs-22"></a><span class="p">}</span>
+<a id="crates/conjure-cp-bench/src/executor.rs-23" name="crates/conjure-cp-bench/src/executor.rs-23"></a>
+<a id="crates/conjure-cp-bench/src/executor.rs-24" name="crates/conjure-cp-bench/src/executor.rs-24"></a><span class="k">impl</span><span class="w"> </span><span class="nb">Default</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">ExecutorOutput</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-bench/src/executor.rs-25" name="crates/conjure-cp-bench/src/executor.rs-25"></a><span class="hll"><span class="w">    </span><span class="k">fn</span><span class="w"> </span><span class="nf">default</span><span class="p">()</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">Self</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/executor.rs-26" name="crates/conjure-cp-bench/src/executor.rs-26"></a><span class="hll"><span class="w">        </span><span class="bp">Self</span><span class="p">::</span><span class="n">new</span><span class="p">()</span>
+</span><a id="crates/conjure-cp-bench/src/executor.rs-27" name="crates/conjure-cp-bench/src/executor.rs-27"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-bench/src/executor.rs-28" name="crates/conjure-cp-bench/src/executor.rs-28"></a><span class="p">}</span>
+<a id="crates/conjure-cp-bench/src/executor.rs-29" name="crates/conjure-cp-bench/src/executor.rs-29"></a>
+<a id="crates/conjure-cp-bench/src/executor.rs-30" name="crates/conjure-cp-bench/src/executor.rs-30"></a><span class="k">impl</span><span class="w"> </span><span class="n">ExecutorOutput</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-bench/src/executor.rs-31" name="crates/conjure-cp-bench/src/executor.rs-31"></a><span class="hll"><span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">new</span><span class="p">()</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">Self</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/executor.rs-32" name="crates/conjure-cp-bench/src/executor.rs-32"></a><span class="hll"><span class="w">        </span><span class="n">ExecutorOutput</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/executor.rs-33" name="crates/conjure-cp-bench/src/executor.rs-33"></a><span class="hll"><span class="w">            </span><span class="n">metadata</span><span class="p">:</span><span class="w"> </span><span class="nc">HashMap</span><span class="p">::</span><span class="n">new</span><span class="p">(),</span>
+</span><a id="crates/conjure-cp-bench/src/executor.rs-34" name="crates/conjure-cp-bench/src/executor.rs-34"></a><span class="hll"><span class="w">            </span><span class="n">counters</span><span class="p">:</span><span class="w"> </span><span class="nc">HashMap</span><span class="p">::</span><span class="n">new</span><span class="p">(),</span>
+</span><a id="crates/conjure-cp-bench/src/executor.rs-35" name="crates/conjure-cp-bench/src/executor.rs-35"></a><span class="hll"><span class="w">        </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-bench/src/executor.rs-36" name="crates/conjure-cp-bench/src/executor.rs-36"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-bench/src/executor.rs-37" name="crates/conjure-cp-bench/src/executor.rs-37"></a>
+<a id="crates/conjure-cp-bench/src/executor.rs-38" name="crates/conjure-cp-bench/src/executor.rs-38"></a><span class="hll"><span class="w">    </span><span class="k">pub</span><span class="p">(</span><span class="k">crate</span><span class="p">)</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">set_metadata</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="bp">self</span><span class="p">,</span><span class="w"> </span><span class="n">key</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="kt">str</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/executor.rs-39" name="crates/conjure-cp-bench/src/executor.rs-39"></a><span class="hll"><span class="w">        </span><span class="bp">self</span><span class="p">.</span><span class="n">metadata</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="n">key</span><span class="p">.</span><span class="n">to_string</span><span class="p">(),</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-bench/src/executor.rs-40" name="crates/conjure-cp-bench/src/executor.rs-40"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-bench/src/executor.rs-41" name="crates/conjure-cp-bench/src/executor.rs-41"></a>
+<a id="crates/conjure-cp-bench/src/executor.rs-42" name="crates/conjure-cp-bench/src/executor.rs-42"></a><span class="hll"><span class="w">    </span><span class="k">pub</span><span class="p">(</span><span class="k">crate</span><span class="p">)</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">set_counter</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="bp">self</span><span class="p">,</span><span class="w"> </span><span class="n">key</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="kt">str</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="p">:</span><span class="w"> </span><span class="nb">Option</span><span class="o">&lt;</span><span class="kt">f64</span><span class="o">&gt;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/executor.rs-43" name="crates/conjure-cp-bench/src/executor.rs-43"></a><span class="hll"><span class="w">        </span><span class="bp">self</span><span class="p">.</span><span class="n">counters</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="n">key</span><span class="p">.</span><span class="n">to_string</span><span class="p">(),</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-bench/src/executor.rs-44" name="crates/conjure-cp-bench/src/executor.rs-44"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-bench/src/executor.rs-45" name="crates/conjure-cp-bench/src/executor.rs-45"></a><span class="p">}</span>
+<a id="crates/conjure-cp-bench/src/executor.rs-46" name="crates/conjure-cp-bench/src/executor.rs-46"></a>
+<a id="crates/conjure-cp-bench/src/executor.rs-47" name="crates/conjure-cp-bench/src/executor.rs-47"></a><span class="cp">#[derive(Clone, Debug, PartialEq, Eq, Error)]</span>
+<a id="crates/conjure-cp-bench/src/executor.rs-48" name="crates/conjure-cp-bench/src/executor.rs-48"></a><span class="cp">#[non_exhaustive]</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/conjure-cp-bench/src/executor/conjure.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-24" name="crates/conjure-cp-bench/src/executor/conjure.rs-24"></a><span class="w">    </span><span class="sd">///</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-25" name="crates/conjure-cp-bench/src/executor/conjure.rs-25"></a><span class="w">    </span><span class="sd">/// # Panics</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-26" name="crates/conjure-cp-bench/src/executor/conjure.rs-26"></a><span class="w">    </span><span class="sd">///</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-27" name="crates/conjure-cp-bench/src/executor/conjure.rs-27"></a><span class="w">    </span><span class="sd">/// - If conjure_executable does not exist, is not executable, or is not conjure.</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-28" name="crates/conjure-cp-bench/src/executor/conjure.rs-28"></a><span class="hll"><span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">new</span><span class="p">(</span><span class="n">conjure_executable</span><span class="p">:</span><span class="w"> </span><span class="nc">PathBuf</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">ConjureExecutorBuilder</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-29" name="crates/conjure-cp-bench/src/executor/conjure.rs-29"></a><span class="hll"><span class="w">        </span><span class="n">assert_executable_exists_and_is_conjure</span><span class="p">(</span><span class="o">&amp;</span><span class="n">conjure_executable</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-30" name="crates/conjure-cp-bench/src/executor/conjure.rs-30"></a><span class="hll"><span class="w">        </span><span class="n">ConjureExecutorBuilder</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-31" name="crates/conjure-cp-bench/src/executor/conjure.rs-31"></a><span class="hll"><span class="w">            </span><span class="n">executable</span><span class="p">:</span><span class="w"> </span><span class="nc">conjure_executable</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-32" name="crates/conjure-cp-bench/src/executor/conjure.rs-32"></a><span class="hll"><span class="w">            </span><span class="n">extra_flags</span><span class="p">:</span><span class="w"> </span><span class="nc">vec</span><span class="o">!</span><span class="p">[],</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-33" name="crates/conjure-cp-bench/src/executor/conjure.rs-33"></a><span class="hll"><span class="w">        </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-34" name="crates/conjure-cp-bench/src/executor/conjure.rs-34"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-35" name="crates/conjure-cp-bench/src/executor/conjure.rs-35"></a>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-36" name="crates/conjure-cp-bench/src/executor/conjure.rs-36"></a><span class="w">    </span><span class="c1">// TODO: do not allow the passing of arbitrary flags, make well-typed builder methods for all</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-37" name="crates/conjure-cp-bench/src/executor/conjure.rs-37"></a><span class="w">    </span><span class="c1">// options.</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-38" name="crates/conjure-cp-bench/src/executor/conjure.rs-38"></a><span class="hll"><span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">add_flag</span><span class="p">(</span><span class="k">mut</span><span class="w"> </span><span class="bp">self</span><span class="p">,</span><span class="w"> </span><span class="n">flag</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">ConjureExecutorBuilder</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-39" name="crates/conjure-cp-bench/src/executor/conjure.rs-39"></a><span class="hll"><span class="w">        </span><span class="bp">self</span><span class="p">.</span><span class="n">extra_flags</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">flag</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-40" name="crates/conjure-cp-bench/src/executor/conjure.rs-40"></a><span class="hll"><span class="w">        </span><span class="bp">self</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-41" name="crates/conjure-cp-bench/src/executor/conjure.rs-41"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-42" name="crates/conjure-cp-bench/src/executor/conjure.rs-42"></a>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-43" name="crates/conjure-cp-bench/src/executor/conjure.rs-43"></a><span class="hll"><span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">add_flags</span><span class="p">(</span><span class="k">mut</span><span class="w"> </span><span class="bp">self</span><span class="p">,</span><span class="w"> </span><span class="n">flags</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="p">[</span><span class="nb">String</span><span class="p">])</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">ConjureExecutorBuilder</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-44" name="crates/conjure-cp-bench/src/executor/conjure.rs-44"></a><span class="hll"><span class="w">        </span><span class="bp">self</span><span class="p">.</span><span class="n">extra_flags</span><span class="p">.</span><span class="n">extend</span><span class="p">(</span><span class="n">flags</span><span class="p">.</span><span class="n">iter</span><span class="p">().</span><span class="n">cloned</span><span class="p">());</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-45" name="crates/conjure-cp-bench/src/executor/conjure.rs-45"></a><span class="hll"><span class="w">        </span><span class="bp">self</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-46" name="crates/conjure-cp-bench/src/executor/conjure.rs-46"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-47" name="crates/conjure-cp-bench/src/executor/conjure.rs-47"></a>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-48" name="crates/conjure-cp-bench/src/executor/conjure.rs-48"></a><span class="w">    </span><span class="sd">/// Changes the Conjure executable to use.</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-49" name="crates/conjure-cp-bench/src/executor/conjure.rs-49"></a><span class="w">    </span><span class="sd">///</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-50" name="crates/conjure-cp-bench/src/executor/conjure.rs-50"></a><span class="w">    </span><span class="sd">/// # Panics</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-49" name="crates/conjure-cp-bench/src/executor/conjure.rs-49"></a><span class="w">    </span><span class="sd">///</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-50" name="crates/conjure-cp-bench/src/executor/conjure.rs-50"></a><span class="w">    </span><span class="sd">/// # Panics</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-51" name="crates/conjure-cp-bench/src/executor/conjure.rs-51"></a><span class="w">    </span><span class="sd">///</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-52" name="crates/conjure-cp-bench/src/executor/conjure.rs-52"></a><span class="w">    </span><span class="sd">/// - If conjure_executable does not exist, is not executable, or is not conjure.</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-53" name="crates/conjure-cp-bench/src/executor/conjure.rs-53"></a><span class="hll"><span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">conjure_executable</span><span class="p">(</span><span class="k">mut</span><span class="w"> </span><span class="bp">self</span><span class="p">,</span><span class="w"> </span><span class="n">conjure_executable</span><span class="p">:</span><span class="w"> </span><span class="nc">PathBuf</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">ConjureExecutorBuilder</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-54" name="crates/conjure-cp-bench/src/executor/conjure.rs-54"></a><span class="hll"><span class="w">        </span><span class="n">assert_executable_exists_and_is_conjure</span><span class="p">(</span><span class="o">&amp;</span><span class="n">conjure_executable</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-55" name="crates/conjure-cp-bench/src/executor/conjure.rs-55"></a><span class="hll"><span class="w">        </span><span class="bp">self</span><span class="p">.</span><span class="n">executable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">conjure_executable</span><span class="p">;</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-56" name="crates/conjure-cp-bench/src/executor/conjure.rs-56"></a><span class="hll"><span class="w">        </span><span class="bp">self</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-57" name="crates/conjure-cp-bench/src/executor/conjure.rs-57"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-58" name="crates/conjure-cp-bench/src/executor/conjure.rs-58"></a>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-59" name="crates/conjure-cp-bench/src/executor/conjure.rs-59"></a><span class="hll"><span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">ConjureExecutor</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-60" name="crates/conjure-cp-bench/src/executor/conjure.rs-60"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">temp_dir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="p">::</span><span class="n">env</span><span class="p">::</span><span class="n">temp_dir</span><span class="p">();</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-61" name="crates/conjure-cp-bench/src/executor/conjure.rs-61"></a><span class="hll"><span class="w">        </span><span class="n">ConjureExecutor</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-62" name="crates/conjure-cp-bench/src/executor/conjure.rs-62"></a><span class="hll"><span class="w">            </span><span class="n">executable</span><span class="p">:</span><span class="w"> </span><span class="nc">self</span><span class="p">.</span><span class="n">executable</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-63" name="crates/conjure-cp-bench/src/executor/conjure.rs-63"></a><span class="hll"><span class="w">            </span><span class="n">extra_flags</span><span class="p">:</span><span class="w"> </span><span class="nc">self</span><span class="p">.</span><span class="n">extra_flags</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-64" name="crates/conjure-cp-bench/src/executor/conjure.rs-64"></a><span class="hll"><span class="w">            </span><span class="n">temp_dir</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-65" name="crates/conjure-cp-bench/src/executor/conjure.rs-65"></a><span class="hll"><span class="w">        </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-66" name="crates/conjure-cp-bench/src/executor/conjure.rs-66"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-67" name="crates/conjure-cp-bench/src/executor/conjure.rs-67"></a><span class="p">}</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-68" name="crates/conjure-cp-bench/src/executor/conjure.rs-68"></a>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-69" name="crates/conjure-cp-bench/src/executor/conjure.rs-69"></a><span class="k">const</span><span class="w"> </span><span class="n">CONJURE_MIN_VERSION</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="kt">str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;2.6.0&quot;</span><span class="p">;</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-70" name="crates/conjure-cp-bench/src/executor/conjure.rs-70"></a><span class="k">const</span><span class="w"> </span><span class="n">CORRECT_FIRST_LINE</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="kt">str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Conjure: The Automated Constraint Modelling Tool&quot;</span><span class="p">;</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 69</span>
+<span class="normal"> 70</span>
+<span class="normal"> 71</span>
+<span class="normal"> 72</span>
+<span class="normal"> 73</span>
+<span class="normal"> 74</span>
+<span class="normal"> 75</span>
+<span class="normal"> 76</span>
+<span class="normal"> 77</span>
+<span class="normal"> 78</span>
+<span class="normal"> 79</span>
+<span class="normal"> 80</span>
+<span class="normal"> 81</span>
+<span class="normal"> 82</span>
+<span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span>
+<span class="normal">111</span>
+<span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-69" name="crates/conjure-cp-bench/src/executor/conjure.rs-69"></a><span class="k">const</span><span class="w"> </span><span class="n">CONJURE_MIN_VERSION</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="kt">str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;2.6.0&quot;</span><span class="p">;</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-70" name="crates/conjure-cp-bench/src/executor/conjure.rs-70"></a><span class="k">const</span><span class="w"> </span><span class="n">CORRECT_FIRST_LINE</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="kt">str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Conjure: The Automated Constraint Modelling Tool&quot;</span><span class="p">;</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-71" name="crates/conjure-cp-bench/src/executor/conjure.rs-71"></a>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-72" name="crates/conjure-cp-bench/src/executor/conjure.rs-72"></a><span class="c1">// adapted from conjure-cp-cli</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-73" name="crates/conjure-cp-bench/src/executor/conjure.rs-73"></a><span class="hll"><span class="k">fn</span><span class="w"> </span><span class="nf">assert_executable_exists_and_is_conjure</span><span class="p">(</span><span class="n">executable</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">PathBuf</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-74" name="crates/conjure-cp-bench/src/executor/conjure.rs-74"></a><span class="hll"><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">cmd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="p">::</span><span class="n">process</span><span class="p">::</span><span class="n">Command</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="n">executable</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-75" name="crates/conjure-cp-bench/src/executor/conjure.rs-75"></a><span class="hll"><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">output</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cmd</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-76" name="crates/conjure-cp-bench/src/executor/conjure.rs-76"></a><span class="hll"><span class="w">        </span><span class="p">.</span><span class="n">arg</span><span class="p">(</span><span class="s">&quot;--version&quot;</span><span class="p">)</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-77" name="crates/conjure-cp-bench/src/executor/conjure.rs-77"></a><span class="hll"><span class="w">        </span><span class="p">.</span><span class="n">output</span><span class="p">()</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-78" name="crates/conjure-cp-bench/src/executor/conjure.rs-78"></a><span class="hll"><span class="w">        </span><span class="p">.</span><span class="n">expect</span><span class="p">(</span><span class="s">&quot;Failed conjure executable check: expect conjure --version to succeed&quot;</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-79" name="crates/conjure-cp-bench/src/executor/conjure.rs-79"></a><span class="hll"><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">stdout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">String</span><span class="p">::</span><span class="n">from_utf8</span><span class="p">(</span><span class="n">output</span><span class="p">.</span><span class="n">stdout</span><span class="p">).</span><span class="n">unwrap</span><span class="p">();</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-80" name="crates/conjure-cp-bench/src/executor/conjure.rs-80"></a><span class="hll"><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">stderr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">String</span><span class="p">::</span><span class="n">from_utf8</span><span class="p">(</span><span class="n">output</span><span class="p">.</span><span class="n">stderr</span><span class="p">).</span><span class="n">unwrap</span><span class="p">();</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-81" name="crates/conjure-cp-bench/src/executor/conjure.rs-81"></a>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-82" name="crates/conjure-cp-bench/src/executor/conjure.rs-82"></a><span class="hll"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">!</span><span class="n">stderr</span><span class="p">.</span><span class="n">is_empty</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-83" name="crates/conjure-cp-bench/src/executor/conjure.rs-83"></a><span class="hll"><span class="w">        </span><span class="fm">panic!</span><span class="p">(</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-84" name="crates/conjure-cp-bench/src/executor/conjure.rs-84"></a><span class="w">            </span><span class="s">&quot;Failed Conjure executable check: running conjure results in error: {}&quot;</span><span class="p">,</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-85" name="crates/conjure-cp-bench/src/executor/conjure.rs-85"></a><span class="hll"><span class="w">            </span><span class="o">&amp;</span><span class="n">stderr</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-86" name="crates/conjure-cp-bench/src/executor/conjure.rs-86"></a><span class="w">        </span><span class="p">);</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-87" name="crates/conjure-cp-bench/src/executor/conjure.rs-87"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-88" name="crates/conjure-cp-bench/src/executor/conjure.rs-88"></a>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-89" name="crates/conjure-cp-bench/src/executor/conjure.rs-89"></a><span class="hll"><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">first</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">stdout</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-90" name="crates/conjure-cp-bench/src/executor/conjure.rs-90"></a><span class="hll"><span class="w">        </span><span class="p">.</span><span class="n">lines</span><span class="p">()</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-91" name="crates/conjure-cp-bench/src/executor/conjure.rs-91"></a><span class="hll"><span class="w">        </span><span class="p">.</span><span class="n">next</span><span class="p">()</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-92" name="crates/conjure-cp-bench/src/executor/conjure.rs-92"></a><span class="hll"><span class="w">        </span><span class="p">.</span><span class="n">expect</span><span class="p">(</span><span class="s">&quot;Failed Conjure executable check: could not read stddout.&quot;</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-93" name="crates/conjure-cp-bench/src/executor/conjure.rs-93"></a>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-94" name="crates/conjure-cp-bench/src/executor/conjure.rs-94"></a><span class="hll"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">first</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">CORRECT_FIRST_LINE</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-95" name="crates/conjure-cp-bench/src/executor/conjure.rs-95"></a><span class="hll"><span class="w">        </span><span class="fm">panic!</span><span class="p">(</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-96" name="crates/conjure-cp-bench/src/executor/conjure.rs-96"></a><span class="w">            </span><span class="s">&quot;Failed Conjure executable check: first line is incorrect when using --version. Expected {CORRECT_FIRST_LINE}, got {first}.&quot;</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-97" name="crates/conjure-cp-bench/src/executor/conjure.rs-97"></a><span class="w">        </span><span class="p">);</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-98" name="crates/conjure-cp-bench/src/executor/conjure.rs-98"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-99" name="crates/conjure-cp-bench/src/executor/conjure.rs-99"></a>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-100" name="crates/conjure-cp-bench/src/executor/conjure.rs-100"></a><span class="hll"><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">version_line</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">stdout</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-101" name="crates/conjure-cp-bench/src/executor/conjure.rs-101"></a><span class="hll"><span class="w">        </span><span class="p">.</span><span class="n">lines</span><span class="p">()</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-102" name="crates/conjure-cp-bench/src/executor/conjure.rs-102"></a><span class="hll"><span class="w">        </span><span class="p">.</span><span class="n">nth</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-103" name="crates/conjure-cp-bench/src/executor/conjure.rs-103"></a><span class="hll"><span class="w">        </span><span class="p">.</span><span class="n">expect</span><span class="p">(</span><span class="s">&quot;Failed conjure executable check: could not read stdout&quot;</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-104" name="crates/conjure-cp-bench/src/executor/conjure.rs-104"></a>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-105" name="crates/conjure-cp-bench/src/executor/conjure.rs-105"></a><span class="hll"><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">version_and_repo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">version_line</span><span class="p">.</span><span class="n">strip_prefix</span><span class="p">(</span><span class="s">&quot;Conjure v&quot;</span><span class="p">).</span><span class="n">unwrap_or_else</span><span class="p">(</span><span class="o">||</span><span class="w"> </span><span class="fm">panic!</span><span class="p">(</span><span class="s">&quot;Failed Conjure executable check: could not read conjure&#39;s version from: {version_line}&quot;</span><span class="p">));</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-106" name="crates/conjure-cp-bench/src/executor/conjure.rs-106"></a>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-107" name="crates/conjure-cp-bench/src/executor/conjure.rs-107"></a><span class="hll"><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="p">(</span><span class="n">version</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">version_and_repo</span><span class="p">.</span><span class="n">split_once</span><span class="p">(</span><span class="s">&quot; (Repository version &quot;</span><span class="p">).</span><span class="n">unwrap_or_else</span><span class="p">(</span><span class="o">||</span><span class="w"> </span><span class="fm">panic!</span><span class="p">(</span><span class="s">&quot;Failed Conjure executable check: could not read Conjure&#39;s version from: {version_line}&quot;</span><span class="p">));</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-108" name="crates/conjure-cp-bench/src/executor/conjure.rs-108"></a>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-109" name="crates/conjure-cp-bench/src/executor/conjure.rs-109"></a><span class="hll"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="n">Versioning</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="n">version</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">Versioning</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="n">CONJURE_MIN_VERSION</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-110" name="crates/conjure-cp-bench/src/executor/conjure.rs-110"></a><span class="hll"><span class="w">        </span><span class="fm">panic!</span><span class="p">(</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-111" name="crates/conjure-cp-bench/src/executor/conjure.rs-111"></a><span class="w">            </span><span class="s">&quot;failed Conjure executable check: conjure version is too old (&lt; {CONJURE_MIN_VERSION}): {version}&quot;</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-112" name="crates/conjure-cp-bench/src/executor/conjure.rs-112"></a><span class="w">        </span><span class="p">);</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-113" name="crates/conjure-cp-bench/src/executor/conjure.rs-113"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-114" name="crates/conjure-cp-bench/src/executor/conjure.rs-114"></a><span class="hll"><span class="p">}</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-115" name="crates/conjure-cp-bench/src/executor/conjure.rs-115"></a>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-116" name="crates/conjure-cp-bench/src/executor/conjure.rs-116"></a><span class="cp">#[derive(Debug, Clone, PartialEq, Eq)]</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-117" name="crates/conjure-cp-bench/src/executor/conjure.rs-117"></a><span class="k">pub</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">ConjureExecutor</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-118" name="crates/conjure-cp-bench/src/executor/conjure.rs-118"></a><span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="n">executable</span><span class="p">:</span><span class="w"> </span><span class="nc">PathBuf</span><span class="p">,</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span>
+<span class="normal">172</span>
+<span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-120" name="crates/conjure-cp-bench/src/executor/conjure.rs-120"></a><span class="w">    </span><span class="n">temp_dir</span><span class="p">:</span><span class="w"> </span><span class="nc">PathBuf</span><span class="p">,</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-121" name="crates/conjure-cp-bench/src/executor/conjure.rs-121"></a><span class="p">}</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-122" name="crates/conjure-cp-bench/src/executor/conjure.rs-122"></a>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-123" name="crates/conjure-cp-bench/src/executor/conjure.rs-123"></a><span class="k">impl</span><span class="w"> </span><span class="n">Executor</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">ConjureExecutor</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-124" name="crates/conjure-cp-bench/src/executor/conjure.rs-124"></a><span class="hll"><span class="w">    </span><span class="k">fn</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-125" name="crates/conjure-cp-bench/src/executor/conjure.rs-125"></a><span class="hll"><span class="w">        </span><span class="o">&amp;</span><span class="bp">self</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-126" name="crates/conjure-cp-bench/src/executor/conjure.rs-126"></a><span class="hll"><span class="w">        </span><span class="n">model</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">Model</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-127" name="crates/conjure-cp-bench/src/executor/conjure.rs-127"></a><span class="hll"><span class="w">        </span><span class="n">param_file</span><span class="p">:</span><span class="w"> </span><span class="nb">Option</span><span class="o">&lt;&amp;</span><span class="n">ParamFile</span><span class="o">&gt;</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-128" name="crates/conjure-cp-bench/src/executor/conjure.rs-128"></a><span class="hll"><span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nb">Result</span><span class="o">&lt;</span><span class="n">ExecutorOutput</span><span class="p">,</span><span class="w"> </span><span class="n">ExecutorError</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-129" name="crates/conjure-cp-bench/src/executor/conjure.rs-129"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">model_file_path</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">match</span><span class="w"> </span><span class="o">&amp;</span><span class="n">model</span><span class="p">.</span><span class="n">source</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-130" name="crates/conjure-cp-bench/src/executor/conjure.rs-130"></a><span class="hll"><span class="w">            </span><span class="n">FileSource</span><span class="p">::</span><span class="n">File</span><span class="p">(</span><span class="n">path_buf</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-131" name="crates/conjure-cp-bench/src/executor/conjure.rs-131"></a><span class="hll"><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="o">!</span><span class="n">path_buf</span><span class="p">.</span><span class="n">exists</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-132" name="crates/conjure-cp-bench/src/executor/conjure.rs-132"></a><span class="hll"><span class="w">                    </span><span class="kd">let</span><span class="w"> </span><span class="n">model_path_str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">path_buf</span><span class="p">.</span><span class="n">to_str</span><span class="p">().</span><span class="n">unwrap</span><span class="p">();</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-133" name="crates/conjure-cp-bench/src/executor/conjure.rs-133"></a><span class="hll"><span class="w">                    </span><span class="fm">panic!</span><span class="p">(</span><span class="s">&quot;Model {model_path_str} does not exist&quot;</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-134" name="crates/conjure-cp-bench/src/executor/conjure.rs-134"></a><span class="hll"><span class="w">                </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-135" name="crates/conjure-cp-bench/src/executor/conjure.rs-135"></a>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-136" name="crates/conjure-cp-bench/src/executor/conjure.rs-136"></a><span class="hll"><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="o">!</span><span class="n">path_buf</span><span class="p">.</span><span class="n">is_absolute</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-137" name="crates/conjure-cp-bench/src/executor/conjure.rs-137"></a><span class="hll"><span class="w">                    </span><span class="kd">let</span><span class="w"> </span><span class="n">model_path_str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">path_buf</span><span class="p">.</span><span class="n">to_str</span><span class="p">().</span><span class="n">unwrap</span><span class="p">();</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-138" name="crates/conjure-cp-bench/src/executor/conjure.rs-138"></a><span class="hll"><span class="w">                    </span><span class="fm">panic!</span><span class="p">(</span><span class="s">&quot;Model {model_path_str} is not an absolute path.&quot;</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-139" name="crates/conjure-cp-bench/src/executor/conjure.rs-139"></a><span class="hll"><span class="w">                </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-140" name="crates/conjure-cp-bench/src/executor/conjure.rs-140"></a>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-141" name="crates/conjure-cp-bench/src/executor/conjure.rs-141"></a><span class="hll"><span class="w">                </span><span class="nb">String</span><span class="p">::</span><span class="n">from</span><span class="p">(</span><span class="n">path_buf</span><span class="p">.</span><span class="n">to_string_lossy</span><span class="p">())</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-142" name="crates/conjure-cp-bench/src/executor/conjure.rs-142"></a><span class="w">            </span><span class="p">}</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-143" name="crates/conjure-cp-bench/src/executor/conjure.rs-143"></a><span class="hll"><span class="w">            </span><span class="n">FileSource</span><span class="p">::</span><span class="n">Text</span><span class="p">(</span><span class="n">src</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-144" name="crates/conjure-cp-bench/src/executor/conjure.rs-144"></a><span class="hll"><span class="w">                </span><span class="kd">let</span><span class="w"> </span><span class="n">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="bp">self</span><span class="p">.</span><span class="n">temp_dir</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="fm">format!</span><span class="p">(</span><span class="s">&quot;{}.essence&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">model</span><span class="p">.</span><span class="n">name</span><span class="p">));</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-145" name="crates/conjure-cp-bench/src/executor/conjure.rs-145"></a><span class="hll"><span class="w">                </span><span class="n">std</span><span class="p">::</span><span class="n">fs</span><span class="p">::</span><span class="n">write</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="n">src</span><span class="p">).</span><span class="n">unwrap</span><span class="p">();</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-146" name="crates/conjure-cp-bench/src/executor/conjure.rs-146"></a><span class="hll"><span class="w">                </span><span class="nb">String</span><span class="p">::</span><span class="n">from</span><span class="p">(</span><span class="n">path</span><span class="p">.</span><span class="n">to_string_lossy</span><span class="p">())</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-147" name="crates/conjure-cp-bench/src/executor/conjure.rs-147"></a><span class="w">            </span><span class="p">}</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-148" name="crates/conjure-cp-bench/src/executor/conjure.rs-148"></a><span class="w">        </span><span class="p">};</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-149" name="crates/conjure-cp-bench/src/executor/conjure.rs-149"></a>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-150" name="crates/conjure-cp-bench/src/executor/conjure.rs-150"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">param_file_path</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">match</span><span class="w"> </span><span class="o">&amp;</span><span class="n">param_file</span><span class="p">.</span><span class="n">map</span><span class="p">(</span><span class="o">|</span><span class="n">x</span><span class="o">|</span><span class="w"> </span><span class="o">&amp;</span><span class="n">x</span><span class="p">.</span><span class="n">source</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-151" name="crates/conjure-cp-bench/src/executor/conjure.rs-151"></a><span class="hll"><span class="w">            </span><span class="nb">Some</span><span class="p">(</span><span class="n">FileSource</span><span class="p">::</span><span class="n">File</span><span class="p">(</span><span class="n">path_buf</span><span class="p">))</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-152" name="crates/conjure-cp-bench/src/executor/conjure.rs-152"></a><span class="hll"><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="o">!</span><span class="n">path_buf</span><span class="p">.</span><span class="n">exists</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-153" name="crates/conjure-cp-bench/src/executor/conjure.rs-153"></a><span class="hll"><span class="w">                    </span><span class="kd">let</span><span class="w"> </span><span class="n">param_path_str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">path_buf</span><span class="p">.</span><span class="n">to_str</span><span class="p">().</span><span class="n">unwrap</span><span class="p">();</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-154" name="crates/conjure-cp-bench/src/executor/conjure.rs-154"></a><span class="hll"><span class="w">                    </span><span class="fm">panic!</span><span class="p">(</span><span class="s">&quot;Param file {param_path_str} does not exist&quot;</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-155" name="crates/conjure-cp-bench/src/executor/conjure.rs-155"></a><span class="hll"><span class="w">                </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-156" name="crates/conjure-cp-bench/src/executor/conjure.rs-156"></a>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-157" name="crates/conjure-cp-bench/src/executor/conjure.rs-157"></a><span class="hll"><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="o">!</span><span class="n">path_buf</span><span class="p">.</span><span class="n">is_absolute</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-158" name="crates/conjure-cp-bench/src/executor/conjure.rs-158"></a><span class="hll"><span class="w">                    </span><span class="kd">let</span><span class="w"> </span><span class="n">param_path_str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">path_buf</span><span class="p">.</span><span class="n">to_str</span><span class="p">().</span><span class="n">unwrap</span><span class="p">();</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-159" name="crates/conjure-cp-bench/src/executor/conjure.rs-159"></a><span class="hll"><span class="w">                    </span><span class="fm">panic!</span><span class="p">(</span><span class="s">&quot;Param file {param_path_str} is not an absolute path&quot;</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-160" name="crates/conjure-cp-bench/src/executor/conjure.rs-160"></a><span class="hll"><span class="w">                </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-161" name="crates/conjure-cp-bench/src/executor/conjure.rs-161"></a><span class="hll"><span class="w">                </span><span class="nb">String</span><span class="p">::</span><span class="n">from</span><span class="p">(</span><span class="n">path_buf</span><span class="p">.</span><span class="n">to_string_lossy</span><span class="p">())</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-162" name="crates/conjure-cp-bench/src/executor/conjure.rs-162"></a><span class="w">            </span><span class="p">}</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-163" name="crates/conjure-cp-bench/src/executor/conjure.rs-163"></a><span class="hll"><span class="w">            </span><span class="nb">Some</span><span class="p">(</span><span class="n">FileSource</span><span class="p">::</span><span class="n">Text</span><span class="p">(</span><span class="n">src</span><span class="p">))</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-164" name="crates/conjure-cp-bench/src/executor/conjure.rs-164"></a><span class="hll"><span class="w">                </span><span class="kd">let</span><span class="w"> </span><span class="n">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="bp">self</span><span class="p">.</span><span class="n">temp_dir</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="fm">format!</span><span class="p">(</span><span class="s">&quot;{}.essence&quot;</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">model</span><span class="p">.</span><span class="n">name</span><span class="p">));</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-165" name="crates/conjure-cp-bench/src/executor/conjure.rs-165"></a><span class="hll"><span class="w">                </span><span class="n">std</span><span class="p">::</span><span class="n">fs</span><span class="p">::</span><span class="n">write</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="w"> </span><span class="n">src</span><span class="p">).</span><span class="n">unwrap</span><span class="p">();</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-166" name="crates/conjure-cp-bench/src/executor/conjure.rs-166"></a><span class="hll"><span class="w">                </span><span class="nb">String</span><span class="p">::</span><span class="n">from</span><span class="p">(</span><span class="n">path</span><span class="p">.</span><span class="n">to_string_lossy</span><span class="p">())</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-167" name="crates/conjure-cp-bench/src/executor/conjure.rs-167"></a><span class="w">            </span><span class="p">}</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-168" name="crates/conjure-cp-bench/src/executor/conjure.rs-168"></a><span class="hll"><span class="w">            </span><span class="nb">None</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">String</span><span class="p">::</span><span class="n">from</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">),</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-169" name="crates/conjure-cp-bench/src/executor/conjure.rs-169"></a><span class="w">        </span><span class="p">};</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-170" name="crates/conjure-cp-bench/src/executor/conjure.rs-170"></a>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-171" name="crates/conjure-cp-bench/src/executor/conjure.rs-171"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">output</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ExecutorOutput</span><span class="p">::</span><span class="n">new</span><span class="p">();</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-172" name="crates/conjure-cp-bench/src/executor/conjure.rs-172"></a>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-173" name="crates/conjure-cp-bench/src/executor/conjure.rs-173"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">command</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Command</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="o">&amp;</span><span class="bp">self</span><span class="p">.</span><span class="n">executable</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-174" name="crates/conjure-cp-bench/src/executor/conjure.rs-174"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">command</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">command</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-175" name="crates/conjure-cp-bench/src/executor/conjure.rs-175"></a><span class="hll"><span class="w">            </span><span class="p">.</span><span class="n">current_dir</span><span class="p">(</span><span class="o">&amp;</span><span class="bp">self</span><span class="p">.</span><span class="n">temp_dir</span><span class="p">)</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-176" name="crates/conjure-cp-bench/src/executor/conjure.rs-176"></a><span class="hll"><span class="w">            </span><span class="p">.</span><span class="n">arg</span><span class="p">(</span><span class="s">&quot;solve&quot;</span><span class="p">)</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-177" name="crates/conjure-cp-bench/src/executor/conjure.rs-177"></a><span class="hll"><span class="w">            </span><span class="p">.</span><span class="n">arg</span><span class="p">(</span><span class="n">model_file_path</span><span class="p">)</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-178" name="crates/conjure-cp-bench/src/executor/conjure.rs-178"></a><span class="hll"><span class="w">            </span><span class="p">.</span><span class="n">arg</span><span class="p">(</span><span class="n">param_file_path</span><span class="p">)</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-179" name="crates/conjure-cp-bench/src/executor/conjure.rs-179"></a><span class="hll"><span class="w">            </span><span class="p">.</span><span class="n">args</span><span class="p">(</span><span class="o">&amp;</span><span class="bp">self</span><span class="p">.</span><span class="n">extra_flags</span><span class="p">)</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-180" name="crates/conjure-cp-bench/src/executor/conjure.rs-180"></a><span class="hll"><span class="w">            </span><span class="p">.</span><span class="n">stdout</span><span class="p">(</span><span class="n">Stdio</span><span class="p">::</span><span class="n">piped</span><span class="p">())</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-181" name="crates/conjure-cp-bench/src/executor/conjure.rs-181"></a><span class="hll"><span class="w">            </span><span class="p">.</span><span class="n">stderr</span><span class="p">(</span><span class="n">Stdio</span><span class="p">::</span><span class="n">piped</span><span class="p">());</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-182" name="crates/conjure-cp-bench/src/executor/conjure.rs-182"></a>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-183" name="crates/conjure-cp-bench/src/executor/conjure.rs-183"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">command_as_string</span><span class="p">:</span><span class="w"> </span><span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="w"> </span><span class="o">=</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-184" name="crates/conjure-cp-bench/src/executor/conjure.rs-184"></a><span class="hll"><span class="w">            </span><span class="fm">vec!</span><span class="p">[</span><span class="nb">String</span><span class="p">::</span><span class="n">from</span><span class="p">(</span><span class="n">command</span><span class="p">.</span><span class="n">get_program</span><span class="p">().</span><span class="n">to_string_lossy</span><span class="p">())];</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-185" name="crates/conjure-cp-bench/src/executor/conjure.rs-185"></a>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-186" name="crates/conjure-cp-bench/src/executor/conjure.rs-186"></a><span class="hll"><span class="w">        </span><span class="n">command_as_string</span><span class="p">.</span><span class="n">extend</span><span class="p">(</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-187" name="crates/conjure-cp-bench/src/executor/conjure.rs-187"></a><span class="hll"><span class="w">            </span><span class="n">command</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-188" name="crates/conjure-cp-bench/src/executor/conjure.rs-188"></a><span class="hll"><span class="w">                </span><span class="p">.</span><span class="n">get_args</span><span class="p">()</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-189" name="crates/conjure-cp-bench/src/executor/conjure.rs-189"></a><span class="hll"><span class="w">                </span><span class="p">.</span><span class="n">map</span><span class="p">(</span><span class="o">|</span><span class="n">x</span><span class="o">|</span><span class="w"> </span><span class="nb">String</span><span class="p">::</span><span class="n">from</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">to_string_lossy</span><span class="p">())),</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-190" name="crates/conjure-cp-bench/src/executor/conjure.rs-190"></a><span class="w">        </span><span class="p">);</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-191" name="crates/conjure-cp-bench/src/executor/conjure.rs-191"></a>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-192" name="crates/conjure-cp-bench/src/executor/conjure.rs-192"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">command_as_string</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">command_as_string</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="s">&quot; &quot;</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-193" name="crates/conjure-cp-bench/src/executor/conjure.rs-193"></a><span class="hll"><span class="w">        </span><span class="n">output</span><span class="p">.</span><span class="n">set_metadata</span><span class="p">(</span><span class="s">&quot;command&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">command_as_string</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-194" name="crates/conjure-cp-bench/src/executor/conjure.rs-194"></a>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-195" name="crates/conjure-cp-bench/src/executor/conjure.rs-195"></a><span class="w">        </span><span class="c1">// clear conjure cache, ignoring errors that arise if conjure-output does not exist yet</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-196" name="crates/conjure-cp-bench/src/executor/conjure.rs-196"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="p">::</span><span class="n">fs</span><span class="p">::</span><span class="n">remove_dir_all</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">temp_dir</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="s">&quot;conjure-output&quot;</span><span class="p">));</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-197" name="crates/conjure-cp-bench/src/executor/conjure.rs-197"></a>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-198" name="crates/conjure-cp-bench/src/executor/conjure.rs-198"></a><span class="w">        </span><span class="c1">// run and time conjure</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-199" name="crates/conjure-cp-bench/src/executor/conjure.rs-199"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">now</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Instant</span><span class="p">::</span><span class="n">now</span><span class="p">();</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-200" name="crates/conjure-cp-bench/src/executor/conjure.rs-200"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">p_handle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">command</span><span class="p">.</span><span class="n">spawn</span><span class="p">().</span><span class="n">expect</span><span class="p">(</span><span class="s">&quot;conjure failed to start&quot;</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-201" name="crates/conjure-cp-bench/src/executor/conjure.rs-201"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">conjure_output</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p_handle</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-202" name="crates/conjure-cp-bench/src/executor/conjure.rs-202"></a><span class="hll"><span class="w">            </span><span class="p">.</span><span class="n">wait_with_output</span><span class="p">()</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-203" name="crates/conjure-cp-bench/src/executor/conjure.rs-203"></a><span class="hll"><span class="w">            </span><span class="p">.</span><span class="n">expect</span><span class="p">(</span><span class="s">&quot;TODO: return error upwards instead of panicing&quot;</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-204" name="crates/conjure-cp-bench/src/executor/conjure.rs-204"></a>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-205" name="crates/conjure-cp-bench/src/executor/conjure.rs-205"></a><span class="w">        </span><span class="c1">// TODO: on linux, call getrusage syscall on this process to see peak memory usage, cpu time, swap, etc.</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-206" name="crates/conjure-cp-bench/src/executor/conjure.rs-206"></a>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-207" name="crates/conjure-cp-bench/src/executor/conjure.rs-207"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">elapsed_wall_time</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">now</span><span class="p">.</span><span class="n">elapsed</span><span class="p">();</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-208" name="crates/conjure-cp-bench/src/executor/conjure.rs-208"></a>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-209" name="crates/conjure-cp-bench/src/executor/conjure.rs-209"></a><span class="hll"><span class="w">        </span><span class="n">output</span><span class="p">.</span><span class="n">set_counter</span><span class="p">(</span><span class="s">&quot;wall_time_s&quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">elapsed_wall_time</span><span class="p">.</span><span class="n">as_secs_f64</span><span class="p">()));</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-210" name="crates/conjure-cp-bench/src/executor/conjure.rs-210"></a><span class="hll"><span class="w">        </span><span class="n">output</span><span class="p">.</span><span class="n">set_counter</span><span class="p">(</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-211" name="crates/conjure-cp-bench/src/executor/conjure.rs-211"></a><span class="hll"><span class="w">            </span><span class="s">&quot;exit_status&quot;</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-212" name="crates/conjure-cp-bench/src/executor/conjure.rs-212"></a><span class="hll"><span class="w">            </span><span class="n">conjure_output</span><span class="p">.</span><span class="n">status</span><span class="p">.</span><span class="n">code</span><span class="p">().</span><span class="n">map</span><span class="p">(</span><span class="o">|</span><span class="n">x</span><span class="o">|</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="kt">f64</span><span class="p">),</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-213" name="crates/conjure-cp-bench/src/executor/conjure.rs-213"></a><span class="w">        </span><span class="p">);</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-214" name="crates/conjure-cp-bench/src/executor/conjure.rs-214"></a>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-215" name="crates/conjure-cp-bench/src/executor/conjure.rs-215"></a><span class="hll"><span class="w">        </span><span class="n">output</span><span class="p">.</span><span class="n">set_metadata</span><span class="p">(</span><span class="s">&quot;stdout&quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">String</span><span class="p">::</span><span class="n">from_utf8</span><span class="p">(</span><span class="n">conjure_output</span><span class="p">.</span><span class="n">stdout</span><span class="p">).</span><span class="n">unwrap</span><span class="p">());</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-216" name="crates/conjure-cp-bench/src/executor/conjure.rs-216"></a><span class="hll"><span class="w">        </span><span class="n">output</span><span class="p">.</span><span class="n">set_metadata</span><span class="p">(</span><span class="s">&quot;stderr&quot;</span><span class="p">,</span><span class="w"> </span><span class="nb">String</span><span class="p">::</span><span class="n">from_utf8</span><span class="p">(</span><span class="n">conjure_output</span><span class="p">.</span><span class="n">stderr</span><span class="p">).</span><span class="n">unwrap</span><span class="p">());</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-217" name="crates/conjure-cp-bench/src/executor/conjure.rs-217"></a>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-218" name="crates/conjure-cp-bench/src/executor/conjure.rs-218"></a><span class="hll"><span class="w">        </span><span class="n">process_stats_json</span><span class="p">(</span><span class="o">&amp;</span><span class="bp">self</span><span class="p">.</span><span class="n">temp_dir</span><span class="p">,</span><span class="w"> </span><span class="n">param_file</span><span class="p">.</span><span class="n">map</span><span class="p">(</span><span class="o">|</span><span class="n">x</span><span class="o">|</span><span class="w"> </span><span class="o">&amp;</span><span class="n">x</span><span class="p">.</span><span class="n">name</span><span class="p">),</span><span class="w"> </span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">output</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-219" name="crates/conjure-cp-bench/src/executor/conjure.rs-219"></a>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-220" name="crates/conjure-cp-bench/src/executor/conjure.rs-220"></a><span class="hll"><span class="w">        </span><span class="nb">Ok</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-221" name="crates/conjure-cp-bench/src/executor/conjure.rs-221"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-222" name="crates/conjure-cp-bench/src/executor/conjure.rs-222"></a><span class="p">}</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-223" name="crates/conjure-cp-bench/src/executor/conjure.rs-223"></a>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-224" name="crates/conjure-cp-bench/src/executor/conjure.rs-224"></a><span class="fm">macro_rules!</span><span class="w"> </span><span class="n">_counter_from_json</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-225" name="crates/conjure-cp-bench/src/executor/conjure.rs-225"></a><span class="w">    </span><span class="p">(</span><span class="cp">$json</span><span class="p">:</span><span class="w"> </span><span class="nc">expr</span><span class="p">,</span><span class="w"> </span><span class="cp">$out</span><span class="p">:</span><span class="w"> </span><span class="nc">expr</span><span class="p">,</span><span class="w"> </span><span class="cp">$counter_name</span><span class="p">:</span><span class="w"> </span><span class="nc">expr</span><span class="p">,</span><span class="w"> </span><span class="cp">$pointer_name</span><span class="p">:</span><span class="w"> </span><span class="nc">expr</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span>
+<span class="normal">255</span>
+<span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span>
+<span class="normal">299</span>
+<span class="normal">300</span>
+<span class="normal">301</span>
+<span class="normal">302</span>
+<span class="normal">303</span>
+<span class="normal">304</span>
+<span class="normal">305</span>
+<span class="normal">306</span>
+<span class="normal">307</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-247" name="crates/conjure-cp-bench/src/executor/conjure.rs-247"></a><span class="w">    </span><span class="p">};</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-248" name="crates/conjure-cp-bench/src/executor/conjure.rs-248"></a><span class="p">}</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-249" name="crates/conjure-cp-bench/src/executor/conjure.rs-249"></a>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-250" name="crates/conjure-cp-bench/src/executor/conjure.rs-250"></a><span class="c1">// Add counters and metadata from stats.json to the output, if stats.json exists.</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-251" name="crates/conjure-cp-bench/src/executor/conjure.rs-251"></a><span class="hll"><span class="k">fn</span><span class="w"> </span><span class="nf">process_stats_json</span><span class="p">(</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-252" name="crates/conjure-cp-bench/src/executor/conjure.rs-252"></a><span class="hll"><span class="w">    </span><span class="n">temp_dir</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">PathBuf</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-253" name="crates/conjure-cp-bench/src/executor/conjure.rs-253"></a><span class="hll"><span class="w">    </span><span class="n">param_file_name</span><span class="p">:</span><span class="w"> </span><span class="nb">Option</span><span class="o">&lt;&amp;</span><span class="nb">String</span><span class="o">&gt;</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-254" name="crates/conjure-cp-bench/src/executor/conjure.rs-254"></a><span class="hll"><span class="w">    </span><span class="n">out</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">mut</span><span class="w"> </span><span class="n">ExecutorOutput</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-255" name="crates/conjure-cp-bench/src/executor/conjure.rs-255"></a><span class="hll"><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-256" name="crates/conjure-cp-bench/src/executor/conjure.rs-256"></a><span class="w">    </span><span class="c1">// called model000001.stats.json without param file,</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-257" name="crates/conjure-cp-bench/src/executor/conjure.rs-257"></a><span class="w">    </span><span class="c1">// model000001-{param_file_name}.stats.json with param file</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-258" name="crates/conjure-cp-bench/src/executor/conjure.rs-258"></a><span class="hll"><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">stats_json_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">match</span><span class="w"> </span><span class="n">param_file_name</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-259" name="crates/conjure-cp-bench/src/executor/conjure.rs-259"></a><span class="hll"><span class="w">        </span><span class="nb">Some</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">temp_dir</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="fm">format!</span><span class="p">(</span><span class="s">&quot;conjure-output/model000001-{p}.stats.json&quot;</span><span class="p">)),</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-260" name="crates/conjure-cp-bench/src/executor/conjure.rs-260"></a><span class="hll"><span class="w">        </span><span class="nb">None</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">temp_dir</span><span class="p">.</span><span class="n">join</span><span class="p">(</span><span class="s">&quot;conjure-output/model000001.stats.json&quot;</span><span class="p">),</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-261" name="crates/conjure-cp-bench/src/executor/conjure.rs-261"></a><span class="w">    </span><span class="p">};</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-262" name="crates/conjure-cp-bench/src/executor/conjure.rs-262"></a>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-263" name="crates/conjure-cp-bench/src/executor/conjure.rs-263"></a><span class="hll"><span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="o">!</span><span class="n">stats_json_path</span><span class="p">.</span><span class="n">exists</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-264" name="crates/conjure-cp-bench/src/executor/conjure.rs-264"></a><span class="hll"><span class="w">        </span><span class="k">return</span><span class="p">;</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-265" name="crates/conjure-cp-bench/src/executor/conjure.rs-265"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-266" name="crates/conjure-cp-bench/src/executor/conjure.rs-266"></a><span class="hll"><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">file</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">File</span><span class="p">::</span><span class="n">open</span><span class="p">(</span><span class="n">stats_json_path</span><span class="p">).</span><span class="n">unwrap</span><span class="p">();</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-267" name="crates/conjure-cp-bench/src/executor/conjure.rs-267"></a><span class="hll"><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">json</span><span class="p">:</span><span class="w"> </span><span class="nc">serde_json</span><span class="p">::</span><span class="n">Value</span><span class="w"> </span><span class="o">=</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-268" name="crates/conjure-cp-bench/src/executor/conjure.rs-268"></a><span class="hll"><span class="w">        </span><span class="n">serde_json</span><span class="p">::</span><span class="n">from_reader</span><span class="p">(</span><span class="n">file</span><span class="p">).</span><span class="n">expect</span><span class="p">(</span><span class="s">&quot;conjure stats.json to be valid json&quot;</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-269" name="crates/conjure-cp-bench/src/executor/conjure.rs-269"></a>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-270" name="crates/conjure-cp-bench/src/executor/conjure.rs-270"></a><span class="hll"><span class="w">    </span><span class="n">_counter_from_json</span><span class="o">!</span><span class="p">(</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-271" name="crates/conjure-cp-bench/src/executor/conjure.rs-271"></a><span class="w">        </span><span class="n">json</span><span class="p">,</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-272" name="crates/conjure-cp-bench/src/executor/conjure.rs-272"></a><span class="hll"><span class="w">        </span><span class="n">out</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-273" name="crates/conjure-cp-bench/src/executor/conjure.rs-273"></a><span class="hll"><span class="w">        </span><span class="s">&quot;SavileRowTotalTime&quot;</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-274" name="crates/conjure-cp-bench/src/executor/conjure.rs-274"></a><span class="hll"><span class="w">        </span><span class="s">&quot;/savilerowInfo/SavileRowTotalTime&quot;</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-275" name="crates/conjure-cp-bench/src/executor/conjure.rs-275"></a><span class="w">    </span><span class="p">);</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-276" name="crates/conjure-cp-bench/src/executor/conjure.rs-276"></a><span class="hll"><span class="w">    </span><span class="n">_counter_from_json</span><span class="o">!</span><span class="p">(</span><span class="n">json</span><span class="p">,</span><span class="w"> </span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;SolverNodes&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;/savilerowInfo/SolverNodes&quot;</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-277" name="crates/conjure-cp-bench/src/executor/conjure.rs-277"></a><span class="hll"><span class="w">    </span><span class="n">_counter_from_json</span><span class="o">!</span><span class="p">(</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-278" name="crates/conjure-cp-bench/src/executor/conjure.rs-278"></a><span class="w">        </span><span class="n">json</span><span class="p">,</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-279" name="crates/conjure-cp-bench/src/executor/conjure.rs-279"></a><span class="hll"><span class="w">        </span><span class="n">out</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-280" name="crates/conjure-cp-bench/src/executor/conjure.rs-280"></a><span class="hll"><span class="w">        </span><span class="s">&quot;SolverSolveTime&quot;</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-281" name="crates/conjure-cp-bench/src/executor/conjure.rs-281"></a><span class="hll"><span class="w">        </span><span class="s">&quot;/savilerowInfo/SolverSolveTime&quot;</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-282" name="crates/conjure-cp-bench/src/executor/conjure.rs-282"></a><span class="w">    </span><span class="p">);</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-283" name="crates/conjure-cp-bench/src/executor/conjure.rs-283"></a><span class="hll"><span class="w">    </span><span class="n">_counter_from_json</span><span class="o">!</span><span class="p">(</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-284" name="crates/conjure-cp-bench/src/executor/conjure.rs-284"></a><span class="w">        </span><span class="n">json</span><span class="p">,</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-285" name="crates/conjure-cp-bench/src/executor/conjure.rs-285"></a><span class="hll"><span class="w">        </span><span class="n">out</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-286" name="crates/conjure-cp-bench/src/executor/conjure.rs-286"></a><span class="hll"><span class="w">        </span><span class="s">&quot;SolverSetupTime&quot;</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-287" name="crates/conjure-cp-bench/src/executor/conjure.rs-287"></a><span class="hll"><span class="w">        </span><span class="s">&quot;/savilerowInfo/SolverSetupTime&quot;</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-288" name="crates/conjure-cp-bench/src/executor/conjure.rs-288"></a><span class="w">    </span><span class="p">);</span>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-289" name="crates/conjure-cp-bench/src/executor/conjure.rs-289"></a>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-290" name="crates/conjure-cp-bench/src/executor/conjure.rs-290"></a><span class="hll"><span class="w">    </span><span class="n">_meta_from_json</span><span class="o">!</span><span class="p">(</span><span class="n">json</span><span class="p">,</span><span class="w"> </span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;conjureVersion&quot;</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-291" name="crates/conjure-cp-bench/src/executor/conjure.rs-291"></a><span class="hll"><span class="w">    </span><span class="n">_meta_from_json</span><span class="o">!</span><span class="p">(</span><span class="n">json</span><span class="p">,</span><span class="w"> </span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;savileRowVersion&quot;</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-292" name="crates/conjure-cp-bench/src/executor/conjure.rs-292"></a><span class="hll"><span class="w">    </span><span class="n">_meta_from_json</span><span class="o">!</span><span class="p">(</span><span class="n">json</span><span class="p">,</span><span class="w"> </span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;solver&quot;</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-293" name="crates/conjure-cp-bench/src/executor/conjure.rs-293"></a><span class="hll"><span class="w">    </span><span class="n">_meta_from_json</span><span class="o">!</span><span class="p">(</span><span class="n">json</span><span class="p">,</span><span class="w"> </span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;solverOptions&quot;</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-294" name="crates/conjure-cp-bench/src/executor/conjure.rs-294"></a><span class="hll"><span class="w">    </span><span class="n">_meta_from_json</span><span class="o">!</span><span class="p">(</span><span class="n">json</span><span class="p">,</span><span class="w"> </span><span class="n">out</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;conjureTimestamp&quot;</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-295" name="crates/conjure-cp-bench/src/executor/conjure.rs-295"></a><span class="hll"><span class="p">}</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-296" name="crates/conjure-cp-bench/src/executor/conjure.rs-296"></a>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-297" name="crates/conjure-cp-bench/src/executor/conjure.rs-297"></a><span class="hll"><span class="k">fn</span><span class="w"> </span><span class="nf">f64_from_stats_json</span><span class="p">(</span><span class="n">json</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">serde_json</span><span class="p">::</span><span class="n">Value</span><span class="p">,</span><span class="w"> </span><span class="n">pointer</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="kt">str</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nb">Option</span><span class="o">&lt;</span><span class="kt">f64</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-298" name="crates/conjure-cp-bench/src/executor/conjure.rs-298"></a><span class="hll"><span class="w">    </span><span class="n">json</span><span class="p">.</span><span class="n">pointer</span><span class="p">(</span><span class="n">pointer</span><span class="p">)</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-299" name="crates/conjure-cp-bench/src/executor/conjure.rs-299"></a><span class="hll"><span class="w">        </span><span class="p">.</span><span class="n">and_then</span><span class="p">(</span><span class="o">|</span><span class="n">x</span><span class="o">|</span><span class="w"> </span><span class="n">x</span><span class="p">.</span><span class="n">as_str</span><span class="p">())</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-300" name="crates/conjure-cp-bench/src/executor/conjure.rs-300"></a><span class="hll"><span class="w">        </span><span class="p">.</span><span class="n">and_then</span><span class="p">(</span><span class="o">|</span><span class="n">x</span><span class="o">|</span><span class="w"> </span><span class="n">x</span><span class="p">.</span><span class="n">parse</span><span class="p">().</span><span class="n">ok</span><span class="p">())</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-301" name="crates/conjure-cp-bench/src/executor/conjure.rs-301"></a><span class="hll"><span class="p">}</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-302" name="crates/conjure-cp-bench/src/executor/conjure.rs-302"></a>
+<a id="crates/conjure-cp-bench/src/executor/conjure.rs-303" name="crates/conjure-cp-bench/src/executor/conjure.rs-303"></a><span class="hll"><span class="k">fn</span><span class="w"> </span><span class="nf">str_from_stats_json</span><span class="p">(</span><span class="n">json</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">serde_json</span><span class="p">::</span><span class="n">Value</span><span class="p">,</span><span class="w"> </span><span class="n">pointer</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="kt">str</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nb">String</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-304" name="crates/conjure-cp-bench/src/executor/conjure.rs-304"></a><span class="hll"><span class="w">    </span><span class="n">json</span><span class="p">.</span><span class="n">pointer</span><span class="p">(</span><span class="n">pointer</span><span class="p">)</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-305" name="crates/conjure-cp-bench/src/executor/conjure.rs-305"></a><span class="hll"><span class="w">        </span><span class="p">.</span><span class="n">map</span><span class="p">(</span><span class="o">|</span><span class="n">x</span><span class="o">|</span><span class="w"> </span><span class="n">x</span><span class="p">.</span><span class="n">to_string</span><span class="p">())</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-306" name="crates/conjure-cp-bench/src/executor/conjure.rs-306"></a><span class="hll"><span class="w">        </span><span class="p">.</span><span class="n">unwrap_or_default</span><span class="p">()</span>
+</span><a id="crates/conjure-cp-bench/src/executor/conjure.rs-307" name="crates/conjure-cp-bench/src/executor/conjure.rs-307"></a><span class="hll"><span class="p">}</span>
+</span></pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/conjure-cp-bench/src/lib.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-bench/src/lib.rs-19" name="crates/conjure-cp-bench/src/lib.rs-19"></a><span class="k">impl</span><span class="w"> </span><span class="n">ModelAndParams</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-bench/src/lib.rs-20" name="crates/conjure-cp-bench/src/lib.rs-20"></a><span class="w">    </span><span class="sd">/// Constructs an iterator of (model,param) combinations.</span>
+<a id="crates/conjure-cp-bench/src/lib.rs-21" name="crates/conjure-cp-bench/src/lib.rs-21"></a><span class="w">    </span><span class="sd">///</span>
+<a id="crates/conjure-cp-bench/src/lib.rs-22" name="crates/conjure-cp-bench/src/lib.rs-22"></a><span class="w">    </span><span class="sd">/// If this model does not require parameter files, a single iteration (model,None) is returned.</span>
+<a id="crates/conjure-cp-bench/src/lib.rs-23" name="crates/conjure-cp-bench/src/lib.rs-23"></a><span class="hll"><span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">iter</span><span class="p">(</span><span class="o">&amp;</span><span class="bp">self</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">impl</span><span class="w"> </span><span class="nb">Iterator</span><span class="o">&lt;</span><span class="n">Item</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="o">&amp;</span><span class="n">Model</span><span class="p">,</span><span class="w"> </span><span class="nb">Option</span><span class="o">&lt;&amp;</span><span class="n">ParamFile</span><span class="o">&gt;</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/lib.rs-24" name="crates/conjure-cp-bench/src/lib.rs-24"></a><span class="hll"><span class="w">        </span><span class="n">ModelAndParamsIter</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="o">&amp;</span><span class="bp">self</span><span class="p">.</span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="bp">self</span><span class="p">.</span><span class="n">params</span><span class="p">)</span>
+</span><a id="crates/conjure-cp-bench/src/lib.rs-25" name="crates/conjure-cp-bench/src/lib.rs-25"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-bench/src/lib.rs-26" name="crates/conjure-cp-bench/src/lib.rs-26"></a><span class="p">}</span>
+<a id="crates/conjure-cp-bench/src/lib.rs-27" name="crates/conjure-cp-bench/src/lib.rs-27"></a>
+<a id="crates/conjure-cp-bench/src/lib.rs-28" name="crates/conjure-cp-bench/src/lib.rs-28"></a><span class="k">struct</span><span class="w"> </span><span class="nc">ModelAndParamsIter</span><span class="o">&lt;&#39;</span><span class="na">a</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-bench/src/lib.rs-29" name="crates/conjure-cp-bench/src/lib.rs-29"></a><span class="w">    </span><span class="n">model</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="o">&#39;</span><span class="na">a</span><span class="w"> </span><span class="nc">Model</span><span class="p">,</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-bench/src/lib.rs-32" name="crates/conjure-cp-bench/src/lib.rs-32"></a><span class="w">    </span><span class="n">no_params</span><span class="p">:</span><span class="w"> </span><span class="kt">bool</span><span class="p">,</span>
+<a id="crates/conjure-cp-bench/src/lib.rs-33" name="crates/conjure-cp-bench/src/lib.rs-33"></a><span class="p">}</span>
+<a id="crates/conjure-cp-bench/src/lib.rs-34" name="crates/conjure-cp-bench/src/lib.rs-34"></a>
+<a id="crates/conjure-cp-bench/src/lib.rs-35" name="crates/conjure-cp-bench/src/lib.rs-35"></a><span class="k">impl</span><span class="o">&lt;&#39;</span><span class="na">a</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ModelAndParamsIter</span><span class="o">&lt;&#39;</span><span class="na">a</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-bench/src/lib.rs-36" name="crates/conjure-cp-bench/src/lib.rs-36"></a><span class="hll"><span class="w">    </span><span class="k">fn</span><span class="w"> </span><span class="nf">new</span><span class="p">(</span><span class="n">model</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="o">&#39;</span><span class="na">a</span><span class="w"> </span><span class="nc">Model</span><span class="p">,</span><span class="w"> </span><span class="n">params</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="o">&#39;</span><span class="na">a</span><span class="w"> </span><span class="nb">Option</span><span class="o">&lt;</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="n">ParamFile</span><span class="o">&gt;&gt;</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">ModelAndParamsIter</span><span class="o">&lt;&#39;</span><span class="na">a</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/lib.rs-37" name="crates/conjure-cp-bench/src/lib.rs-37"></a><span class="hll"><span class="w">        </span><span class="n">ModelAndParamsIter</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/lib.rs-38" name="crates/conjure-cp-bench/src/lib.rs-38"></a><span class="hll"><span class="w">            </span><span class="n">model</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-bench/src/lib.rs-39" name="crates/conjure-cp-bench/src/lib.rs-39"></a><span class="hll"><span class="w">            </span><span class="n">params</span><span class="p">:</span><span class="w"> </span><span class="nc">params</span><span class="p">.</span><span class="n">as_deref</span><span class="p">().</span><span class="n">unwrap_or_default</span><span class="p">(),</span>
+</span><a id="crates/conjure-cp-bench/src/lib.rs-40" name="crates/conjure-cp-bench/src/lib.rs-40"></a><span class="hll"><span class="w">            </span><span class="n">i</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-bench/src/lib.rs-41" name="crates/conjure-cp-bench/src/lib.rs-41"></a><span class="hll"><span class="w">            </span><span class="n">no_params</span><span class="p">:</span><span class="w"> </span><span class="nc">params</span><span class="p">.</span><span class="n">is_none</span><span class="p">(),</span>
+</span><a id="crates/conjure-cp-bench/src/lib.rs-42" name="crates/conjure-cp-bench/src/lib.rs-42"></a><span class="hll"><span class="w">        </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-bench/src/lib.rs-43" name="crates/conjure-cp-bench/src/lib.rs-43"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-bench/src/lib.rs-44" name="crates/conjure-cp-bench/src/lib.rs-44"></a><span class="p">}</span>
+<a id="crates/conjure-cp-bench/src/lib.rs-45" name="crates/conjure-cp-bench/src/lib.rs-45"></a>
+<a id="crates/conjure-cp-bench/src/lib.rs-46" name="crates/conjure-cp-bench/src/lib.rs-46"></a><span class="k">impl</span><span class="o">&lt;&#39;</span><span class="na">a</span><span class="o">&gt;</span><span class="w"> </span><span class="nb">Iterator</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">ModelAndParamsIter</span><span class="o">&lt;&#39;</span><span class="na">a</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-bench/src/lib.rs-47" name="crates/conjure-cp-bench/src/lib.rs-47"></a><span class="w">    </span><span class="k">type</span><span class="w"> </span><span class="nc">Item</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="o">&amp;&#39;</span><span class="na">a</span><span class="w"> </span><span class="n">Model</span><span class="p">,</span><span class="w"> </span><span class="nb">Option</span><span class="o">&lt;&amp;&#39;</span><span class="na">a</span><span class="w"> </span><span class="n">ParamFile</span><span class="o">&gt;</span><span class="p">);</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-bench/src/lib.rs-45" name="crates/conjure-cp-bench/src/lib.rs-45"></a>
+<a id="crates/conjure-cp-bench/src/lib.rs-46" name="crates/conjure-cp-bench/src/lib.rs-46"></a><span class="k">impl</span><span class="o">&lt;&#39;</span><span class="na">a</span><span class="o">&gt;</span><span class="w"> </span><span class="nb">Iterator</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">ModelAndParamsIter</span><span class="o">&lt;&#39;</span><span class="na">a</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-bench/src/lib.rs-47" name="crates/conjure-cp-bench/src/lib.rs-47"></a><span class="w">    </span><span class="k">type</span><span class="w"> </span><span class="nc">Item</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="o">&amp;&#39;</span><span class="na">a</span><span class="w"> </span><span class="n">Model</span><span class="p">,</span><span class="w"> </span><span class="nb">Option</span><span class="o">&lt;&amp;&#39;</span><span class="na">a</span><span class="w"> </span><span class="n">ParamFile</span><span class="o">&gt;</span><span class="p">);</span>
+<a id="crates/conjure-cp-bench/src/lib.rs-48" name="crates/conjure-cp-bench/src/lib.rs-48"></a>
+<a id="crates/conjure-cp-bench/src/lib.rs-49" name="crates/conjure-cp-bench/src/lib.rs-49"></a><span class="hll"><span class="w">    </span><span class="k">fn</span><span class="w"> </span><span class="nf">next</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="bp">self</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nb">Option</span><span class="o">&lt;</span><span class="bp">Self</span><span class="p">::</span><span class="n">Item</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/lib.rs-50" name="crates/conjure-cp-bench/src/lib.rs-50"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">next_params</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="bp">self</span><span class="p">.</span><span class="n">params</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">i</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-bench/src/lib.rs-51" name="crates/conjure-cp-bench/src/lib.rs-51"></a>
+<a id="crates/conjure-cp-bench/src/lib.rs-52" name="crates/conjure-cp-bench/src/lib.rs-52"></a><span class="w">        </span><span class="c1">// if no params and first run, return (model,None).</span>
+<a id="crates/conjure-cp-bench/src/lib.rs-53" name="crates/conjure-cp-bench/src/lib.rs-53"></a><span class="hll"><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="bp">self</span><span class="p">.</span><span class="n">i</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="bp">self</span><span class="p">.</span><span class="n">no_params</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/lib.rs-54" name="crates/conjure-cp-bench/src/lib.rs-54"></a><span class="hll"><span class="w">            </span><span class="bp">self</span><span class="p">.</span><span class="n">i</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+</span><a id="crates/conjure-cp-bench/src/lib.rs-55" name="crates/conjure-cp-bench/src/lib.rs-55"></a><span class="hll"><span class="w">            </span><span class="nb">Some</span><span class="p">((</span><span class="bp">self</span><span class="p">.</span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="nb">None</span><span class="p">))</span>
+</span><a id="crates/conjure-cp-bench/src/lib.rs-56" name="crates/conjure-cp-bench/src/lib.rs-56"></a><span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-bench/src/lib.rs-57" name="crates/conjure-cp-bench/src/lib.rs-57"></a><span class="hll"><span class="w">            </span><span class="bp">self</span><span class="p">.</span><span class="n">i</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+</span><a id="crates/conjure-cp-bench/src/lib.rs-58" name="crates/conjure-cp-bench/src/lib.rs-58"></a><span class="hll"><span class="w">            </span><span class="n">next_params</span><span class="p">.</span><span class="n">map</span><span class="p">(</span><span class="o">|</span><span class="n">p</span><span class="o">|</span><span class="w"> </span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">p</span><span class="p">)))</span>
+</span><a id="crates/conjure-cp-bench/src/lib.rs-59" name="crates/conjure-cp-bench/src/lib.rs-59"></a><span class="w">        </span><span class="p">}</span>
+<a id="crates/conjure-cp-bench/src/lib.rs-60" name="crates/conjure-cp-bench/src/lib.rs-60"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-bench/src/lib.rs-61" name="crates/conjure-cp-bench/src/lib.rs-61"></a><span class="p">}</span>
+<a id="crates/conjure-cp-bench/src/lib.rs-62" name="crates/conjure-cp-bench/src/lib.rs-62"></a>
+<a id="crates/conjure-cp-bench/src/lib.rs-63" name="crates/conjure-cp-bench/src/lib.rs-63"></a><span class="cp">#[derive(Clone, Debug, PartialEq, Eq)]</span>
+<a id="crates/conjure-cp-bench/src/lib.rs-64" name="crates/conjure-cp-bench/src/lib.rs-64"></a><span class="k">pub</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">ParamFile</span><span class="w"> </span><span class="p">{</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/conjure-cp-bench/src/mode.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-bench/src/mode.rs-34" name="crates/conjure-cp-bench/src/mode.rs-34"></a><span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="n">counters</span><span class="p">:</span><span class="w"> </span><span class="nc">HashMap</span><span class="o">&lt;</span><span class="n">ModeOutputKey</span><span class="p">,</span><span class="w"> </span><span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">Option</span><span class="o">&lt;</span><span class="kt">f64</span><span class="o">&gt;&gt;&gt;</span><span class="p">,</span>
+<a id="crates/conjure-cp-bench/src/mode.rs-35" name="crates/conjure-cp-bench/src/mode.rs-35"></a><span class="p">}</span>
+<a id="crates/conjure-cp-bench/src/mode.rs-36" name="crates/conjure-cp-bench/src/mode.rs-36"></a>
+<a id="crates/conjure-cp-bench/src/mode.rs-37" name="crates/conjure-cp-bench/src/mode.rs-37"></a><span class="k">impl</span><span class="w"> </span><span class="n">ModeOutput</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-bench/src/mode.rs-38" name="crates/conjure-cp-bench/src/mode.rs-38"></a><span class="hll"><span class="w">    </span><span class="k">pub</span><span class="p">(</span><span class="k">crate</span><span class="p">)</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">new</span><span class="p">()</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">ModeOutput</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/mode.rs-39" name="crates/conjure-cp-bench/src/mode.rs-39"></a><span class="hll"><span class="w">        </span><span class="n">ModeOutput</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/mode.rs-40" name="crates/conjure-cp-bench/src/mode.rs-40"></a><span class="hll"><span class="w">            </span><span class="n">mode_metadata</span><span class="p">:</span><span class="w"> </span><span class="nc">HashMap</span><span class="p">::</span><span class="n">new</span><span class="p">(),</span>
+</span><a id="crates/conjure-cp-bench/src/mode.rs-41" name="crates/conjure-cp-bench/src/mode.rs-41"></a><span class="hll"><span class="w">            </span><span class="n">executor_metadata</span><span class="p">:</span><span class="w"> </span><span class="nc">HashMap</span><span class="p">::</span><span class="n">new</span><span class="p">(),</span>
+</span><a id="crates/conjure-cp-bench/src/mode.rs-42" name="crates/conjure-cp-bench/src/mode.rs-42"></a><span class="hll"><span class="w">            </span><span class="n">counters</span><span class="p">:</span><span class="w"> </span><span class="nc">HashMap</span><span class="p">::</span><span class="n">new</span><span class="p">(),</span>
+</span><a id="crates/conjure-cp-bench/src/mode.rs-43" name="crates/conjure-cp-bench/src/mode.rs-43"></a><span class="hll"><span class="w">        </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-bench/src/mode.rs-44" name="crates/conjure-cp-bench/src/mode.rs-44"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-bench/src/mode.rs-45" name="crates/conjure-cp-bench/src/mode.rs-45"></a><span class="p">}</span>
+<a id="crates/conjure-cp-bench/src/mode.rs-46" name="crates/conjure-cp-bench/src/mode.rs-46"></a>
+<a id="crates/conjure-cp-bench/src/mode.rs-47" name="crates/conjure-cp-bench/src/mode.rs-47"></a><span class="cp">#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]</span>
+<a id="crates/conjure-cp-bench/src/mode.rs-48" name="crates/conjure-cp-bench/src/mode.rs-48"></a><span class="k">pub</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">ModeOutputKey</span><span class="w"> </span><span class="p">{</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/conjure-cp-bench/src/mode/fixed_iterations.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 16</span>
+<span class="normal"> 17</span>
+<span class="normal"> 18</span>
+<span class="normal"> 19</span>
+<span class="normal"> 20</span>
+<span class="normal"> 21</span>
+<span class="normal"> 22</span>
+<span class="normal"> 23</span>
+<span class="normal"> 24</span>
+<span class="normal"> 25</span>
+<span class="normal"> 26</span>
+<span class="normal"> 27</span>
+<span class="normal"> 28</span>
+<span class="normal"> 29</span>
+<span class="normal"> 30</span>
+<span class="normal"> 31</span>
+<span class="normal"> 32</span>
+<span class="normal"> 33</span>
+<span class="normal"> 34</span>
+<span class="normal"> 35</span>
+<span class="normal"> 36</span>
+<span class="normal"> 37</span>
+<span class="normal"> 38</span>
+<span class="normal"> 39</span>
+<span class="normal"> 40</span>
+<span class="normal"> 41</span>
+<span class="normal"> 42</span>
+<span class="normal"> 43</span>
+<span class="normal"> 44</span>
+<span class="normal"> 45</span>
+<span class="normal"> 46</span>
+<span class="normal"> 47</span>
+<span class="normal"> 48</span>
+<span class="normal"> 49</span>
+<span class="normal"> 50</span>
+<span class="normal"> 51</span>
+<span class="normal"> 52</span>
+<span class="normal"> 53</span>
+<span class="normal"> 54</span>
+<span class="normal"> 55</span>
+<span class="normal"> 56</span>
+<span class="normal"> 57</span>
+<span class="normal"> 58</span>
+<span class="normal"> 59</span>
+<span class="normal"> 60</span>
+<span class="normal"> 61</span>
+<span class="normal"> 62</span>
+<span class="normal"> 63</span>
+<span class="normal"> 64</span>
+<span class="normal"> 65</span>
+<span class="normal"> 66</span>
+<span class="normal"> 67</span>
+<span class="normal"> 68</span>
+<span class="normal"> 69</span>
+<span class="normal"> 70</span>
+<span class="normal"> 71</span>
+<span class="normal"> 72</span>
+<span class="normal"> 73</span>
+<span class="normal"> 74</span>
+<span class="normal"> 75</span>
+<span class="normal"> 76</span>
+<span class="normal"> 77</span>
+<span class="normal"> 78</span>
+<span class="normal"> 79</span>
+<span class="normal"> 80</span>
+<span class="normal"> 81</span>
+<span class="normal"> 82</span>
+<span class="normal"> 83</span>
+<span class="normal"> 84</span>
+<span class="normal"> 85</span>
+<span class="normal"> 86</span>
+<span class="normal"> 87</span>
+<span class="normal"> 88</span>
+<span class="normal"> 89</span>
+<span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-16" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-16"></a><span class="w">    </span><span class="n">iterations</span><span class="p">:</span><span class="w"> </span><span class="kt">usize</span><span class="p">,</span>
+<a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-17" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-17"></a><span class="p">}</span>
+<a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-18" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-18"></a>
+<a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-19" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-19"></a><span class="k">impl</span><span class="w"> </span><span class="n">FixedIterationsMode</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-20" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-20"></a><span class="hll"><span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">new</span><span class="p">(</span><span class="n">iterations</span><span class="p">:</span><span class="w"> </span><span class="kt">usize</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">FixedIterationsMode</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-21" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-21"></a><span class="hll"><span class="w">        </span><span class="n">FixedIterationsMode</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">iterations</span><span class="w"> </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-22" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-22"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-23" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-23"></a><span class="p">}</span>
+<a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-24" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-24"></a>
+<a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-25" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-25"></a><span class="k">impl</span><span class="w"> </span><span class="n">BenchmarkingMode</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">FixedIterationsMode</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-26" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-26"></a><span class="hll"><span class="w">    </span><span class="k">fn</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-27" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-27"></a><span class="hll"><span class="w">        </span><span class="o">&amp;</span><span class="bp">self</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-28" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-28"></a><span class="hll"><span class="w">        </span><span class="n">model_and_params</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="p">[</span><span class="n">ModelAndParams</span><span class="p">],</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-29" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-29"></a><span class="hll"><span class="w">        </span><span class="n">executor</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">dyn</span><span class="w"> </span><span class="n">Executor</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-30" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-30"></a><span class="hll"><span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nb">Result</span><span class="o">&lt;</span><span class="n">ModeOutput</span><span class="p">,</span><span class="w"> </span><span class="n">ModeError</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-31" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-31"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">output</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ModeOutput</span><span class="p">::</span><span class="n">new</span><span class="p">();</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-32" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-32"></a><span class="hll"><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">param_file</span><span class="p">)</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">model_and_params</span><span class="p">.</span><span class="n">iter</span><span class="p">().</span><span class="n">flat_map</span><span class="p">(</span><span class="o">|</span><span class="n">x</span><span class="o">|</span><span class="w"> </span><span class="n">x</span><span class="p">.</span><span class="n">iter</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-33" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-33"></a><span class="hll"><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">0</span><span class="o">..</span><span class="bp">self</span><span class="p">.</span><span class="n">iterations</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-34" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-34"></a><span class="hll"><span class="w">                </span><span class="n">run_once</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="n">output</span><span class="p">,</span><span class="w"> </span><span class="n">executor</span><span class="p">,</span><span class="w"> </span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">param_file</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="bp">self</span><span class="p">.</span><span class="n">iterations</span><span class="p">)</span><span class="o">?</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-35" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-35"></a><span class="w">            </span><span class="p">}</span>
+<a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-36" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-36"></a><span class="w">        </span><span class="p">}</span>
+<a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-37" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-37"></a>
+<a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-38" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-38"></a><span class="hll"><span class="w">        </span><span class="nb">Ok</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-39" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-39"></a><span class="hll"><span class="w">    </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-40" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-40"></a><span class="p">}</span>
+<a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-41" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-41"></a>
+<a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-42" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-42"></a><span class="hll"><span class="k">fn</span><span class="w"> </span><span class="nf">run_once</span><span class="p">(</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-43" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-43"></a><span class="hll"><span class="w">    </span><span class="n">output</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">mut</span><span class="w"> </span><span class="n">ModeOutput</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-44" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-44"></a><span class="hll"><span class="w">    </span><span class="n">executor</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">dyn</span><span class="w"> </span><span class="n">Executor</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-45" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-45"></a><span class="hll"><span class="w">    </span><span class="n">model</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">Model</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-46" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-46"></a><span class="hll"><span class="w">    </span><span class="n">param_file</span><span class="p">:</span><span class="w"> </span><span class="nb">Option</span><span class="o">&lt;&amp;</span><span class="n">ParamFile</span><span class="o">&gt;</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-47" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-47"></a><span class="hll"><span class="w">    </span><span class="n">i</span><span class="p">:</span><span class="w"> </span><span class="kt">usize</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-48" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-48"></a><span class="hll"><span class="w">    </span><span class="n">iterations</span><span class="p">:</span><span class="w"> </span><span class="kt">usize</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-49" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-49"></a><span class="hll"><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nb">Result</span><span class="o">&lt;</span><span class="p">(),</span><span class="w"> </span><span class="n">ModeError</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-50" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-50"></a><span class="hll"><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="n">executor_result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">executor</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">param_file</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-51" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-51"></a><span class="hll"><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="nb">Ok</span><span class="p">(</span><span class="n">ExecutorOutput</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">metadata</span><span class="p">,</span><span class="w"> </span><span class="n">counters</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">executor_result</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-52" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-52"></a><span class="hll"><span class="w">        </span><span class="fm">panic!</span><span class="p">(</span><span class="s">&quot;Todo: propogate executor error&quot;</span><span class="p">)</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-53" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-53"></a><span class="w">    </span><span class="p">};</span>
+<a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-54" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-54"></a>
+<a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-55" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-55"></a><span class="w">    </span><span class="c1">// update output.metadata</span>
+<a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-56" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-56"></a><span class="hll"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">metadata</span><span class="p">.</span><span class="n">into_iter</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-57" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-57"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ModeOutputKey</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-58" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-58"></a><span class="hll"><span class="w">            </span><span class="n">model</span><span class="p">:</span><span class="w"> </span><span class="nc">model</span><span class="p">.</span><span class="n">name</span><span class="p">.</span><span class="n">clone</span><span class="p">(),</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-59" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-59"></a><span class="hll"><span class="w">            </span><span class="n">param</span><span class="p">:</span><span class="w"> </span><span class="nc">param_file</span><span class="p">.</span><span class="n">map</span><span class="p">(</span><span class="o">|</span><span class="n">x</span><span class="o">|</span><span class="w"> </span><span class="n">x</span><span class="p">.</span><span class="n">name</span><span class="p">.</span><span class="n">clone</span><span class="p">()),</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-60" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-60"></a><span class="hll"><span class="w">            </span><span class="n">counter_name</span><span class="p">:</span><span class="w"> </span><span class="nc">key</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-61" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-61"></a><span class="w">        </span><span class="p">};</span>
+<a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-62" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-62"></a>
+<a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-63" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-63"></a><span class="hll"><span class="w">        </span><span class="k">match</span><span class="w"> </span><span class="n">output</span><span class="p">.</span><span class="n">executor_metadata</span><span class="p">.</span><span class="n">entry</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-64" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-64"></a><span class="hll"><span class="w">            </span><span class="n">Entry</span><span class="p">::</span><span class="n">Occupied</span><span class="p">(</span><span class="k">mut</span><span class="w"> </span><span class="n">occupied_entry</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-65" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-65"></a><span class="hll"><span class="w">                </span><span class="kd">let</span><span class="w"> </span><span class="n">entry_val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">occupied_entry</span><span class="p">.</span><span class="n">get_mut</span><span class="p">();</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-66" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-66"></a><span class="hll"><span class="w">                </span><span class="n">entry_val</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">value</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-67" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-67"></a><span class="hll"><span class="w">            </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-68" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-68"></a><span class="hll"><span class="w">            </span><span class="n">Entry</span><span class="p">::</span><span class="n">Vacant</span><span class="p">(</span><span class="n">vacant_entry</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-69" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-69"></a><span class="w">                </span><span class="c1">// when we see a counter we havent seen yet, create a vector of size</span>
+<a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-70" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-70"></a><span class="w">                </span><span class="c1">// iterations, so xs[i] = counter value for ith run.</span>
+<a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-71" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-71"></a><span class="hll"><span class="w">                </span><span class="kd">let</span><span class="w"> </span><span class="n">entry_val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vacant_entry</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="fm">vec!</span><span class="p">[</span><span class="nb">None</span><span class="p">;</span><span class="w"> </span><span class="n">iterations</span><span class="p">]);</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-72" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-72"></a><span class="hll"><span class="w">                </span><span class="n">entry_val</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">value</span><span class="p">);</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-73" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-73"></a><span class="hll"><span class="w">            </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-74" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-74"></a><span class="w">        </span><span class="p">};</span>
+<a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-75" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-75"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-76" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-76"></a>
+<a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-77" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-77"></a><span class="w">    </span><span class="c1">// update output.counters</span>
+<a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-78" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-78"></a><span class="hll"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">counters</span><span class="p">.</span><span class="n">into_iter</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-79" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-79"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">key</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ModeOutputKey</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-80" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-80"></a><span class="hll"><span class="w">            </span><span class="n">model</span><span class="p">:</span><span class="w"> </span><span class="nc">model</span><span class="p">.</span><span class="n">name</span><span class="p">.</span><span class="n">clone</span><span class="p">(),</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-81" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-81"></a><span class="hll"><span class="w">            </span><span class="n">param</span><span class="p">:</span><span class="w"> </span><span class="nc">param_file</span><span class="p">.</span><span class="n">map</span><span class="p">(</span><span class="o">|</span><span class="n">x</span><span class="o">|</span><span class="w"> </span><span class="n">x</span><span class="p">.</span><span class="n">name</span><span class="p">.</span><span class="n">clone</span><span class="p">()),</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-82" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-82"></a><span class="hll"><span class="w">            </span><span class="n">counter_name</span><span class="p">:</span><span class="w"> </span><span class="nc">key</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-83" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-83"></a><span class="w">        </span><span class="p">};</span>
+<a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-84" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-84"></a>
+<a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-85" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-85"></a><span class="hll"><span class="w">        </span><span class="k">match</span><span class="w"> </span><span class="n">output</span><span class="p">.</span><span class="n">counters</span><span class="p">.</span><span class="n">entry</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-86" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-86"></a><span class="hll"><span class="w">            </span><span class="n">Entry</span><span class="p">::</span><span class="n">Occupied</span><span class="p">(</span><span class="k">mut</span><span class="w"> </span><span class="n">occupied_entry</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-87" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-87"></a><span class="hll"><span class="w">                </span><span class="kd">let</span><span class="w"> </span><span class="n">entry_val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">occupied_entry</span><span class="p">.</span><span class="n">get_mut</span><span class="p">();</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-88" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-88"></a><span class="hll"><span class="w">                </span><span class="n">entry_val</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">value</span><span class="p">;</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-89" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-89"></a><span class="hll"><span class="w">            </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-90" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-90"></a><span class="hll"><span class="w">            </span><span class="n">Entry</span><span class="p">::</span><span class="n">Vacant</span><span class="p">(</span><span class="n">vacant_entry</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-91" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-91"></a><span class="w">                </span><span class="c1">// when we see a counter we havent seen yet, create a vector of size</span>
+<a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-92" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-92"></a><span class="w">                </span><span class="c1">// iterations, so xs[i] = counter value for ith run.</span>
+<a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-93" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-93"></a><span class="hll"><span class="w">                </span><span class="kd">let</span><span class="w"> </span><span class="n">entry_val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vacant_entry</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="fm">vec!</span><span class="p">[</span><span class="nb">None</span><span class="p">;</span><span class="w"> </span><span class="n">iterations</span><span class="p">]);</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-94" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-94"></a><span class="hll"><span class="w">                </span><span class="n">entry_val</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">value</span><span class="p">;</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-95" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-95"></a><span class="hll"><span class="w">            </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-96" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-96"></a><span class="w">        </span><span class="p">};</span>
+<a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-97" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-97"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-98" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-98"></a>
+<a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-99" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-99"></a><span class="hll"><span class="w">    </span><span class="nb">Ok</span><span class="p">(())</span>
+</span><a id="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-100" name="crates/conjure-cp-bench/src/mode/fixed_iterations.rs-100"></a><span class="hll"><span class="p">}</span>
+</span></pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/conjure-cp-bench/src/model_sources.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span>
+<span class="normal">30</span>
+<span class="normal">31</span>
+<span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span>
+<span class="normal">35</span>
+<span class="normal">36</span>
+<span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span>
+<span class="normal">86</span>
+<span class="normal">87</span>
+<span class="normal">88</span>
+<span class="normal">89</span>
+<span class="normal">90</span>
+<span class="normal">91</span>
+<span class="normal">92</span>
+<span class="normal">93</span>
+<span class="normal">94</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-bench/src/model_sources.rs-18" name="crates/conjure-cp-bench/src/model_sources.rs-18"></a><span class="sd">///</span>
+<a id="crates/conjure-cp-bench/src/model_sources.rs-19" name="crates/conjure-cp-bench/src/model_sources.rs-19"></a><span class="sd">/// # Returns</span>
+<a id="crates/conjure-cp-bench/src/model_sources.rs-20" name="crates/conjure-cp-bench/src/model_sources.rs-20"></a><span class="sd">///</span>
+<a id="crates/conjure-cp-bench/src/model_sources.rs-21" name="crates/conjure-cp-bench/src/model_sources.rs-21"></a><span class="sd">/// - If dir does not exist or is a file that is not a model, an empty vector is returned.</span>
+<a id="crates/conjure-cp-bench/src/model_sources.rs-22" name="crates/conjure-cp-bench/src/model_sources.rs-22"></a><span class="hll"><span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">models_from_directory_tree</span><span class="p">(</span><span class="n">dir</span><span class="p">:</span><span class="w"> </span><span class="kp">&amp;</span><span class="nc">PathBuf</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nb">Result</span><span class="o">&lt;</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="n">ModelAndParams</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">walkdir</span><span class="p">::</span><span class="n">Error</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-23" name="crates/conjure-cp-bench/src/model_sources.rs-23"></a><span class="hll"><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">output</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="fm">vec!</span><span class="p">[];</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-24" name="crates/conjure-cp-bench/src/model_sources.rs-24"></a>
+<a id="crates/conjure-cp-bench/src/model_sources.rs-25" name="crates/conjure-cp-bench/src/model_sources.rs-25"></a><span class="w">    </span><span class="c1">// only use walkdir to traverse directories not files inside of them. This is necessary to look</span>
+<a id="crates/conjure-cp-bench/src/model_sources.rs-26" name="crates/conjure-cp-bench/src/model_sources.rs-26"></a><span class="w">    </span><span class="c1">// at all the files in a specific directory at the same time and match models to param files only</span>
+<a id="crates/conjure-cp-bench/src/model_sources.rs-27" name="crates/conjure-cp-bench/src/model_sources.rs-27"></a><span class="w">    </span><span class="c1">// if they are in the same directory.</span>
+<a id="crates/conjure-cp-bench/src/model_sources.rs-28" name="crates/conjure-cp-bench/src/model_sources.rs-28"></a><span class="hll"><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">entry</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">WalkDir</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="n">dir</span><span class="p">)</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-29" name="crates/conjure-cp-bench/src/model_sources.rs-29"></a><span class="hll"><span class="w">        </span><span class="p">.</span><span class="n">follow_links</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-30" name="crates/conjure-cp-bench/src/model_sources.rs-30"></a><span class="hll"><span class="w">        </span><span class="p">.</span><span class="n">into_iter</span><span class="p">()</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-31" name="crates/conjure-cp-bench/src/model_sources.rs-31"></a><span class="hll"><span class="w">        </span><span class="p">.</span><span class="n">filter_entry</span><span class="p">(</span><span class="o">|</span><span class="n">x</span><span class="o">|</span><span class="w"> </span><span class="n">x</span><span class="p">.</span><span class="n">file_type</span><span class="p">().</span><span class="n">is_dir</span><span class="p">())</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-32" name="crates/conjure-cp-bench/src/model_sources.rs-32"></a><span class="w">    </span><span class="p">{</span>
+<a id="crates/conjure-cp-bench/src/model_sources.rs-33" name="crates/conjure-cp-bench/src/model_sources.rs-33"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">entry</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">entry</span><span class="o">?</span><span class="p">;</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-34" name="crates/conjure-cp-bench/src/model_sources.rs-34"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">entry</span><span class="p">.</span><span class="n">path</span><span class="p">();</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-35" name="crates/conjure-cp-bench/src/model_sources.rs-35"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">path_str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">path</span><span class="p">.</span><span class="n">to_str</span><span class="p">().</span><span class="n">unwrap</span><span class="p">();</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-36" name="crates/conjure-cp-bench/src/model_sources.rs-36"></a>
+<a id="crates/conjure-cp-bench/src/model_sources.rs-37" name="crates/conjure-cp-bench/src/model_sources.rs-37"></a><span class="hll"><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">models</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">glob</span><span class="p">(</span><span class="fm">format!</span><span class="p">(</span><span class="s">&quot;{path_str}/*.eprime&quot;</span><span class="p">).</span><span class="n">as_str</span><span class="p">())</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-38" name="crates/conjure-cp-bench/src/model_sources.rs-38"></a><span class="hll"><span class="w">            </span><span class="p">.</span><span class="n">unwrap</span><span class="p">()</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-39" name="crates/conjure-cp-bench/src/model_sources.rs-39"></a><span class="hll"><span class="w">            </span><span class="p">.</span><span class="n">chain</span><span class="p">(</span><span class="n">glob</span><span class="p">(</span><span class="fm">format!</span><span class="p">(</span><span class="s">&quot;{path_str}/*.essence&quot;</span><span class="p">).</span><span class="n">as_str</span><span class="p">()).</span><span class="n">unwrap</span><span class="p">());</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-40" name="crates/conjure-cp-bench/src/model_sources.rs-40"></a>
+<a id="crates/conjure-cp-bench/src/model_sources.rs-41" name="crates/conjure-cp-bench/src/model_sources.rs-41"></a><span class="hll"><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="n">model_path</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">models</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-42" name="crates/conjure-cp-bench/src/model_sources.rs-42"></a><span class="hll"><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="n">model_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">model_path</span><span class="p">.</span><span class="n">unwrap</span><span class="p">();</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-43" name="crates/conjure-cp-bench/src/model_sources.rs-43"></a><span class="hll"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="o">!</span><span class="n">model_path</span><span class="p">.</span><span class="n">is_file</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-44" name="crates/conjure-cp-bench/src/model_sources.rs-44"></a><span class="hll"><span class="w">                </span><span class="k">continue</span><span class="p">;</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-45" name="crates/conjure-cp-bench/src/model_sources.rs-45"></a><span class="hll"><span class="w">            </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-46" name="crates/conjure-cp-bench/src/model_sources.rs-46"></a>
+<a id="crates/conjure-cp-bench/src/model_sources.rs-47" name="crates/conjure-cp-bench/src/model_sources.rs-47"></a><span class="hll"><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="n">model_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">model_path</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-48" name="crates/conjure-cp-bench/src/model_sources.rs-48"></a><span class="hll"><span class="w">                </span><span class="p">.</span><span class="n">file_stem</span><span class="p">()</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-49" name="crates/conjure-cp-bench/src/model_sources.rs-49"></a><span class="hll"><span class="w">                </span><span class="p">.</span><span class="n">expect</span><span class="p">(</span><span class="s">&quot;path to have a file stem as it is an ordinary file&quot;</span><span class="p">)</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-50" name="crates/conjure-cp-bench/src/model_sources.rs-50"></a><span class="hll"><span class="w">                </span><span class="p">.</span><span class="n">to_str</span><span class="p">()</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-51" name="crates/conjure-cp-bench/src/model_sources.rs-51"></a><span class="hll"><span class="w">                </span><span class="p">.</span><span class="n">unwrap</span><span class="p">();</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-52" name="crates/conjure-cp-bench/src/model_sources.rs-52"></a>
+<a id="crates/conjure-cp-bench/src/model_sources.rs-53" name="crates/conjure-cp-bench/src/model_sources.rs-53"></a><span class="hll"><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="n">model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Model</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-54" name="crates/conjure-cp-bench/src/model_sources.rs-54"></a><span class="hll"><span class="w">                </span><span class="n">name</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">::</span><span class="n">from</span><span class="p">(</span><span class="n">model_name</span><span class="p">),</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-55" name="crates/conjure-cp-bench/src/model_sources.rs-55"></a><span class="hll"><span class="w">                </span><span class="n">source</span><span class="p">:</span><span class="w"> </span><span class="nc">FileSource</span><span class="p">::</span><span class="n">File</span><span class="p">(</span><span class="n">model_path</span><span class="p">.</span><span class="n">clone</span><span class="p">()),</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-56" name="crates/conjure-cp-bench/src/model_sources.rs-56"></a><span class="hll"><span class="w">            </span><span class="p">};</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-57" name="crates/conjure-cp-bench/src/model_sources.rs-57"></a>
+<a id="crates/conjure-cp-bench/src/model_sources.rs-58" name="crates/conjure-cp-bench/src/model_sources.rs-58"></a><span class="w">            </span><span class="c1">// find param files for this model</span>
+<a id="crates/conjure-cp-bench/src/model_sources.rs-59" name="crates/conjure-cp-bench/src/model_sources.rs-59"></a><span class="hll"><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="n">param_file_paths</span><span class="w"> </span><span class="o">=</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-60" name="crates/conjure-cp-bench/src/model_sources.rs-60"></a><span class="hll"><span class="w">                </span><span class="n">glob</span><span class="p">(</span><span class="fm">format!</span><span class="p">(</span><span class="s">&quot;{path_str}/{model_name}*.param&quot;</span><span class="p">).</span><span class="n">as_str</span><span class="p">()).</span><span class="n">unwrap</span><span class="p">();</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-61" name="crates/conjure-cp-bench/src/model_sources.rs-61"></a><span class="hll"><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">params</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Vec</span><span class="p">::</span><span class="o">&lt;</span><span class="n">ParamFile</span><span class="o">&gt;</span><span class="p">::</span><span class="n">new</span><span class="p">();</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-62" name="crates/conjure-cp-bench/src/model_sources.rs-62"></a>
+<a id="crates/conjure-cp-bench/src/model_sources.rs-63" name="crates/conjure-cp-bench/src/model_sources.rs-63"></a><span class="hll"><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="n">param_file_path</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">param_file_paths</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-64" name="crates/conjure-cp-bench/src/model_sources.rs-64"></a><span class="hll"><span class="w">                </span><span class="kd">let</span><span class="w"> </span><span class="n">param_file_path</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">param_file_path</span><span class="p">.</span><span class="n">unwrap</span><span class="p">();</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-65" name="crates/conjure-cp-bench/src/model_sources.rs-65"></a><span class="hll"><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="o">!</span><span class="n">param_file_path</span><span class="p">.</span><span class="n">is_file</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-66" name="crates/conjure-cp-bench/src/model_sources.rs-66"></a><span class="hll"><span class="w">                    </span><span class="k">continue</span><span class="p">;</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-67" name="crates/conjure-cp-bench/src/model_sources.rs-67"></a><span class="hll"><span class="w">                </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-68" name="crates/conjure-cp-bench/src/model_sources.rs-68"></a>
+<a id="crates/conjure-cp-bench/src/model_sources.rs-69" name="crates/conjure-cp-bench/src/model_sources.rs-69"></a><span class="hll"><span class="w">                </span><span class="kd">let</span><span class="w"> </span><span class="n">param_file_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">param_file_path</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-70" name="crates/conjure-cp-bench/src/model_sources.rs-70"></a><span class="hll"><span class="w">                    </span><span class="p">.</span><span class="n">file_stem</span><span class="p">()</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-71" name="crates/conjure-cp-bench/src/model_sources.rs-71"></a><span class="hll"><span class="w">                    </span><span class="p">.</span><span class="n">expect</span><span class="p">(</span><span class="s">&quot;path to have a file stem as it is an ordinary file&quot;</span><span class="p">)</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-72" name="crates/conjure-cp-bench/src/model_sources.rs-72"></a><span class="hll"><span class="w">                    </span><span class="p">.</span><span class="n">to_str</span><span class="p">()</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-73" name="crates/conjure-cp-bench/src/model_sources.rs-73"></a><span class="hll"><span class="w">                    </span><span class="p">.</span><span class="n">unwrap</span><span class="p">();</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-74" name="crates/conjure-cp-bench/src/model_sources.rs-74"></a>
+<a id="crates/conjure-cp-bench/src/model_sources.rs-75" name="crates/conjure-cp-bench/src/model_sources.rs-75"></a><span class="hll"><span class="w">                </span><span class="n">params</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">ParamFile</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-76" name="crates/conjure-cp-bench/src/model_sources.rs-76"></a><span class="hll"><span class="w">                    </span><span class="n">name</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">::</span><span class="n">from</span><span class="p">(</span><span class="n">param_file_name</span><span class="p">),</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-77" name="crates/conjure-cp-bench/src/model_sources.rs-77"></a><span class="hll"><span class="w">                    </span><span class="n">source</span><span class="p">:</span><span class="w"> </span><span class="nc">FileSource</span><span class="p">::</span><span class="n">File</span><span class="p">(</span><span class="n">param_file_path</span><span class="p">.</span><span class="n">clone</span><span class="p">()),</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-78" name="crates/conjure-cp-bench/src/model_sources.rs-78"></a><span class="hll"><span class="w">                </span><span class="p">});</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-79" name="crates/conjure-cp-bench/src/model_sources.rs-79"></a><span class="w">            </span><span class="p">}</span>
+<a id="crates/conjure-cp-bench/src/model_sources.rs-80" name="crates/conjure-cp-bench/src/model_sources.rs-80"></a>
+<a id="crates/conjure-cp-bench/src/model_sources.rs-81" name="crates/conjure-cp-bench/src/model_sources.rs-81"></a><span class="w">            </span><span class="c1">// convert param_files from Vec&lt;ParamFile&gt; to an Option&lt;Vec&lt;ParamFile&gt;&gt;, as required</span>
+<a id="crates/conjure-cp-bench/src/model_sources.rs-82" name="crates/conjure-cp-bench/src/model_sources.rs-82"></a><span class="w">            </span><span class="c1">// for ModelAndParams. --&gt; If no param files were found, set to None.</span>
+<a id="crates/conjure-cp-bench/src/model_sources.rs-83" name="crates/conjure-cp-bench/src/model_sources.rs-83"></a><span class="hll"><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="n">params</span><span class="p">:</span><span class="w"> </span><span class="nb">Option</span><span class="o">&lt;</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="n">ParamFile</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">params</span><span class="p">.</span><span class="n">is_empty</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-84" name="crates/conjure-cp-bench/src/model_sources.rs-84"></a><span class="hll"><span class="w">                </span><span class="nb">None</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-85" name="crates/conjure-cp-bench/src/model_sources.rs-85"></a><span class="w">            </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-bench/src/model_sources.rs-86" name="crates/conjure-cp-bench/src/model_sources.rs-86"></a><span class="hll"><span class="w">                </span><span class="nb">Some</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-87" name="crates/conjure-cp-bench/src/model_sources.rs-87"></a><span class="w">            </span><span class="p">};</span>
+<a id="crates/conjure-cp-bench/src/model_sources.rs-88" name="crates/conjure-cp-bench/src/model_sources.rs-88"></a>
+<a id="crates/conjure-cp-bench/src/model_sources.rs-89" name="crates/conjure-cp-bench/src/model_sources.rs-89"></a><span class="hll"><span class="w">            </span><span class="n">output</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">ModelAndParams</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">params</span><span class="w"> </span><span class="p">})</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-90" name="crates/conjure-cp-bench/src/model_sources.rs-90"></a><span class="w">        </span><span class="p">}</span>
+<a id="crates/conjure-cp-bench/src/model_sources.rs-91" name="crates/conjure-cp-bench/src/model_sources.rs-91"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/conjure-cp-bench/src/model_sources.rs-92" name="crates/conjure-cp-bench/src/model_sources.rs-92"></a>
+<a id="crates/conjure-cp-bench/src/model_sources.rs-93" name="crates/conjure-cp-bench/src/model_sources.rs-93"></a><span class="hll"><span class="w">    </span><span class="nb">Ok</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+</span><a id="crates/conjure-cp-bench/src/model_sources.rs-94" name="crates/conjure-cp-bench/src/model_sources.rs-94"></a><span class="hll"><span class="p">}</span>
+</span></pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+    </body>
+</html>
