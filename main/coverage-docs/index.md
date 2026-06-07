@@ -15,7 +15,7 @@
 **tree-morph-macros:** 50% with examples, 50% documented -- 1/1/2
 **tree-sitter-essence:** 33% with examples, 100% documented -- 1/3/3
 
-Commit: [d09850bd7cca35f7b2fa584294fccfe6f9d89de0](https://github.com/conjure-cp/conjure-oxide/commit/d09850bd7cca35f7b2fa584294fccfe6f9d89de0)
+Commit: [71c9b490f9be0e86da2d1bdfbad7621b79a931e0](https://github.com/conjure-cp/conjure-oxide/commit/71c9b490f9be0e86da2d1bdfbad7621b79a931e0)
 
 ## RustDoc coverage for `conjure-cp`
 
