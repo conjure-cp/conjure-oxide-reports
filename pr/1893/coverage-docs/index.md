@@ -3,7 +3,7 @@
 **conjure-cp:** 0% with examples, 25% documented -- 0/1/4
 **conjure-cp-cli:** 0% with examples, 35% documented -- 0/55/156
 **conjure-cp-cli-fuzz:** 0% with examples, 0% documented -- 0/0/1
-**conjure-cp-core:** 3% with examples, 51% documented -- 22/374/729
+**conjure-cp-core:** 3% with examples, 52% documented -- 22/372/718
 **conjure-cp-enum-compatibility-macro:** 33% with examples, 100% documented -- 1/3/3
 **conjure-cp-essence-macros:** 67% with examples, 67% documented -- 2/2/3
 **conjure-cp-essence-parser:** 0% with examples, 16% documented -- 0/29/187
@@ -11,12 +11,10 @@
 **conjure-cp-rule-macros:** 33% with examples, 67% documented -- 1/2/3
 **conjure-cp-rules:** 0% with examples, 100% documented -- 0/1/1
 **minion-sys:** 1% with examples, 31% documented -- 2/43/137
-**tree-morph:** 7% with examples, 100% documented -- 7/95/95
-**tree-morph-macros:** 50% with examples, 50% documented -- 1/1/2
 **tree-sitter-essence:** 33% with examples, 100% documented -- 1/3/3
 
 PR: [#1893](https://github.com/conjure-cp/conjure-oxide/pull/1893)
-Commit: [d870e6542065b8a4f657226d887e699ea02199bc](https://github.com/conjure-cp/conjure-oxide/commit/d870e6542065b8a4f657226d887e699ea02199bc)
+Commit: [ec436ee6e32d28ebf0915b2e0cfbb8aafa2dd219](https://github.com/conjure-cp/conjure-oxide/commit/ec436ee6e32d28ebf0915b2e0cfbb8aafa2dd219)
 
 ## RustDoc coverage for `conjure-cp`
 
@@ -67,7 +65,7 @@ Commit: [d870e6542065b8a4f657226d887e699ea02199bc](https://github.com/conjure-cp
 | crates/conjure-cp-core/src/solver/adaptors/rustsat/mod.rs | ❌ 0% *(0/1)* | ❌ 0% *(0/1)* |
 | crates/conjure-cp-core/src/solver/adaptors/smt/mod.rs | ❌ 0% *(0/1)* | ❌ 0% *(0/1)* |
 | crates/conjure-cp-core/src/stats/mod.rs | ❌ 0% *(0/7)* | ❌ 0% *(0/7)* |
-| crates/conjure-cp-core/src/settings.rs | ❌ 8% *(5/62)* | ❌ 0% *(0/62)* |
+| crates/conjure-cp-core/src/settings.rs | ❌ 8% *(4/52)* | ❌ 0% *(0/52)* |
 | crates/conjure-cp-core/src/error.rs | ❌ 11% *(1/9)* | ❌ 0% *(0/9)* |
 | crates/conjure-cp-core/src/ast/domains/error.rs | ❌ 13% *(1/8)* | ❌ 0% *(0/8)* |
 | crates/conjure-cp-core/src/ast/literals.rs | ❌ 13% *(2/15)* | ❌ 0% *(0/15)* |
@@ -115,8 +113,7 @@ Commit: [d870e6542065b8a4f657226d887e699ea02199bc](https://github.com/conjure-cp
 | crates/conjure-cp-core/src/bug.rs | ✅ 100% *(1/1)* | ✅ 100% *(1/1)* |
 | crates/conjure-cp-core/src/objective.rs | ✅ 100% *(2/2)* | ❌ 0% *(0/2)* |
 | crates/conjure-cp-core/src/parse/example_models.rs | ✅ 100% *(2/2)* | ❌ 0% *(0/2)* |
-| crates/conjure-cp-core/src/rule_engine/rewrite_morph.rs | ✅ 100% *(1/1)* | ❌ 0% *(0/1)* |
-| crates/conjure-cp-core/src/rule_engine/rewrite_naive.rs | ✅ 100% *(1/1)* | ❌ 0% *(0/1)* |
+| crates/conjure-cp-core/src/rule_engine/rewrite.rs | ✅ 100% *(1/1)* | ❌ 0% *(0/1)* |
 | crates/conjure-cp-core/src/rule_engine/rule_set.rs | ✅ 100% *(2/2)* | ❌ 0% *(0/2)* |
 | crates/conjure-cp-core/src/solver/adaptors/mod.rs | ✅ 100% *(1/1)* | ❌ 0% *(0/1)* |
 | crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs | ✅ 100% *(2/2)* | ❌ 0% *(0/2)* |
@@ -194,26 +191,6 @@ Commit: [d870e6542065b8a4f657226d887e699ea02199bc](https://github.com/conjure-cp
 | crates/minion-sys/src/error.rs | ✅ 100% *(13/13)* | ❌ 0% *(0/13)* |
 | crates/minion-sys/src/lib.rs | ✅ 100% *(1/1)* | ✅ 100% *(1/1)* |
 | crates/minion-sys/src/print.rs | ✅ 100% *(6/6)* | ❌ 0% *(0/6)* |
-
-## RustDoc coverage for `tree-morph`
-
-| File | Percentage Documented | Percentage with examples |
-|----|----|----|
-| crates/tree-morph/src/cache.rs | ✅ 100% *(31/31)* | ❌ 0% *(0/31)* |
-| crates/tree-morph/src/commands.rs | ✅ 100% *(5/5)* | ❌ 20% *(1/5)* |
-| crates/tree-morph/src/engine.rs | ✅ 100% *(4/4)* | ❌ 25% *(1/4)* |
-| crates/tree-morph/src/engine_builder.rs | ✅ 100% *(24/24)* | ❌ 0% *(0/24)* |
-| crates/tree-morph/src/engine_zipper.rs | ✅ 100% *(1/1)* | ❌ 0% *(0/1)* |
-| crates/tree-morph/src/helpers.rs | ✅ 100% *(7/7)* | ❌ 0% *(0/7)* |
-| crates/tree-morph/src/lib.rs | ✅ 100% *(2/2)* | ❌ 50% *(1/2)* |
-| crates/tree-morph/src/rule.rs | ✅ 100% *(20/20)* | ❌ 20% *(4/20)* |
-| crates/tree-morph/src/update.rs | ✅ 100% *(1/1)* | ❌ 0% *(0/1)* |
-
-## RustDoc coverage for `tree-morph-macros`
-
-| File | Percentage Documented | Percentage with examples |
-|----|----|----|
-| crates/tree-morph-macros/src/lib.rs | ❌ 50% *(1/2)* | ❌ 50% *(1/2)* |
 
 ## RustDoc coverage for `tree-sitter-essence`
 
