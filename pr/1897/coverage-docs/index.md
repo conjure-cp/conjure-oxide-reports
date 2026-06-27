@@ -16,7 +16,7 @@
 **tree-sitter-essence:** 33% with examples, 100% documented -- 1/3/3
 
 PR: [#1897](https://github.com/conjure-cp/conjure-oxide/pull/1897)
-Commit: [7be730e5fcbd8f6bd5711af39a5c2583300cd331](https://github.com/conjure-cp/conjure-oxide/commit/7be730e5fcbd8f6bd5711af39a5c2583300cd331)
+Commit: [4f960dfc8c2991b260c6b56abdb9ea714dced8ed](https://github.com/conjure-cp/conjure-oxide/commit/4f960dfc8c2991b260c6b56abdb9ea714dced8ed)
 
 ## RustDoc coverage for `conjure-cp`
 
