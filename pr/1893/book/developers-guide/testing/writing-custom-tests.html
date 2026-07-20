@@ -37,7 +37,7 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../searchindex-18bf8fba.js";
+            window.path_to_searchindex_js = "../../searchindex-f66d81f1.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-d7933c8e.js"></script>
@@ -193,7 +193,7 @@
 <p><code>stdout.expected</code>/<code>stderr.expected</code>: These files will be what the output is compared against. They will also be what is overwritten if the test is run with <code>ACCEPT=true</code>. Avoid creating empty files: if there is no expected error from the input, do not create a <code>stderr.expected</code> file and if there is no output, do not create a <code>stdout.expected</code> file.</p>
 </li>
 </ol>
-<p>The custom tests are run automatically when <code>cargo nextest run</code> is run. You can run just the custom tests with <code>cargo nextest run -E 'test(custom)'</code> and a specific test with <code>cargo nextest run -E 'test(custom_&lt;test_path&gt;)'</code>. To run one of several tests, use <code>or</code>, for example <code>cargo nextest run -E 'test(custom_foo) or test(custom_bar)'</code>. To overwrite the expected output/error with the actual output/error, run the tests with <code>ACCEPT=true</code>.</p>
+<p>The custom tests are run automatically when <code>cargo nextest run</code> is run. You can run just the custom tests with <code>cargo nextest run -E 'test(custom)'</code> and a specific test with <code>cargo nextest run -E 'test(custom_&lt;test_path&gt;)'</code>. To run one of several tests, use <code>or</code>, for example <code>cargo nextest run -E 'test(custom_foo) or test(custom_bar)'</code>. To overwrite the expected output/error with the actual output/error (and refresh <code>expected-time</code> in <code>config.toml</code>), run the tests with <code>ACCEPT=true</code>. Integration tests keep the same timing metadata in <code>stats.toml</code> instead. See <code>test-suite/README.md</code> and <code>CONTRIBUTING.md</code> for accept modes and guidance on avoiding timing-only churn in <code>config.toml</code> / <code>stats.toml</code>; <code>./tools/discard-config-time-changes.sh</code> can restore files from HEAD when their only local edits are <code>*-time</code> fields.</p>
 <h1 id="code-structure"><a class="header" href="#code-structure">Code structure</a></h1>
 <p>The code to run the custom tests is integrated into the <code>build.rs</code> file. Much like for the integration tests, the custom tests directory is traversed and a test is dynamically written at compile time for any folder containing a <code>run.sh</code> file. Tests are based on a custom test template (shown below) which calls the <code>custom_test</code> function (passing in the test folder path). They are written into a generated file, which is included at the bottom of the <code>custom_tests.rs</code> file (which contains the <code>custom_test</code> function).</p>
 <pre><code>#[test]
