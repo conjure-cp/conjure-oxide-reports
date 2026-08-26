@@ -37,7 +37,7 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../searchindex-f66d81f1.js";
+            window.path_to_searchindex_js = "../searchindex-80bd9bf4.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-d7933c8e.js"></script>
@@ -187,19 +187,18 @@ such that x &gt; y
 </code></pre>
 <p>If you are curious about more complex models, you can check out the models that we use to test Conjure Oxide, available in the <code>test-suite/tests/integration</code> directory of the repository.</p>
 <h2 id="running-with-different-solvers"><a class="header" href="#running-with-different-solvers">Running with Different Solvers</a></h2>
+<p><code>--solver</code> takes <code>minion</code>, <code>sat</code>, or <code>z3</code>.</p>
+<p>How a model is <em>expressed</em> for the chosen solver is separate from which solver it is. SAT has no
+integers, so each integer variable is encoded into Booleans as <code>int_log</code>, <code>int_direct</code> or
+<code>int_order</code>; Z3 has integers but two theories to hold them in, <code>lia</code> or <code>bv</code>. Both are
+representation choices made per declaration, exactly like choosing <code>occurrence</code> or <code>explicit</code> for a
+set, and both are steered with <code>--heuristic</code> (see the modelling-choices guide). Variables in
+different encodings are channelled together automatically where a constraint needs them to agree.</p>
 <h3 id="sat-solver"><a class="header" href="#sat-solver">SAT Solver</a></h3>
-<p><code>--sat-encoding</code> specifies the encoding strategy used by the SAT solver. This affects performance and solution structure.</p>
-<p>Supported options:</p>
-<ul>
-<li><code>log</code> (default)</li>
-<li><code>direct</code></li>
-<li><code>order</code></li>
-</ul>
-<p>Default usage (uses <code>log</code>):</p>
 <pre><code class="language-bash">cargo run -- solve --solver sat my_problem.essence
 </code></pre>
-<p>Specify an encoding:</p>
-<pre><code class="language-bash">cargo run -- solve --solver sat my_problem.essence
+<h3 id="z3-smt"><a class="header" href="#z3-smt">Z3 (SMT)</a></h3>
+<pre><code class="language-bash">cargo run -- solve --solver z3 my_problem.essence
 </code></pre>
 <h3 id="minion-solver"><a class="header" href="#minion-solver">Minion Solver</a></h3>
 <pre><code class="language-bash">cargo run -- solve --solver minion my_problem.essence

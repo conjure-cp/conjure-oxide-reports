@@ -37,7 +37,7 @@
             const path_to_root = "../../../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../../../searchindex-f66d81f1.js";
+            window.path_to_searchindex_js = "../../../../searchindex-80bd9bf4.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../../../toc-d7933c8e.js"></script>
@@ -189,6 +189,13 @@
 <li><strong>Domain propagation (Integers only)</strong> - Update the range of the returned <code>SATInt</code> to reflect the new interval. The bit-width of the <code>SATInt</code> should also be updated for the new range.</li>
 <li><strong>Return the result</strong> - Use <code>Reduction::cnf(..)</code> to return the created expression along with the new CNF clauses and symbol table.</li>
 </ol>
+<blockquote>
+<p>All three integer encodings share the one <code>SAT</code> rule set, because which encoding a variable gets
+is chosen per declaration and a single model can hold more than one. A rule must therefore decline
+when its operands are not in its own encoding – which is what the <code>validate_*_int_operands</code>
+helpers do. An operation whose operands disagree, or whose shared encoding has no rule for it, is
+re-encoded into the log form by the channelling fallback before it reaches here.</p>
+</blockquote>
 <h2 id="example---negation-of-log-integers"><a class="header" href="#example---negation-of-log-integers">Example - negation of log integers</a></h2>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -198,7 +205,7 @@
 /// -SATInt(a) ~&gt; SATInt(b)
 ///
 /// ```
-#[register_rule("SAT_Log", 4100, [Neg])]
+#[register_rule("SAT", 4100, [Neg])]
 fn cnf_int_neg(expr: &amp;Expr, symbols: &amp;SymbolTable) -&gt; ApplicationResult {
     let Expr::Neg(_, expr) = expr else {
         return Err(RuleNotApplicable);
