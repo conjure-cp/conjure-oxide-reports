@@ -38,7 +38,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-80bd9bf4.js";
+            window.path_to_searchindex_js = "searchindex-97aafb60.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-d7933c8e.js"></script>
@@ -2368,16 +2368,16 @@ find a : bool such that a = (s[5] = t[1]) $ true
 </tbody>
 </table>
 </div>
-<p>Additionally, <code>find</code> variables are visually emphasised because they represent the variables the solver is attempting to solve for. An underline style is therefore hard-coded in <code>package.json</code> for tokens classified as <code>FindVar</code>.</p>
+<p>Additionally, <code>find</code> variables are visually emphasised because they represent the variables the solver is attempting to solve for. An underline style is therefore hard-coded in <code>tools/vscode-ext/package.json</code> for tokens classified as <code>FindVar</code>.</p>
 <h3 id="lsp-semantic-highlighting-handler"><a class="header" href="#lsp-semantic-highlighting-handler">LSP Semantic Highlighting Handler</a></h3>
 <p>The semantic highlighting handler retrieves the <code>SourceMap</code> from cache and passes it to <code>encode_semantic_tokens()</code> to generate semantic tokens. These encoded tokens are then returned to the LSP server, which forwards them to the client. The client uses the semantic token classifications together with the active theme to determine how each token should be rendered.</p>
 <h2 id="expanding-semantic-highlighting"><a class="header" href="#expanding-semantic-highlighting">Expanding Semantic Highlighting</a></h2>
-<p>To expand on the current semantic highlighting available, the files that will need to be changed are: <code>crates/conjure-cp-essence-parser/src/diagnostics/diagnostics_api.rs</code>, <code>crates/conjure-cp-essence-parser/src/diagnostics/semantic-tokens.rs</code>, <code>crates/conjure-cp-lsp/src/server.rs</code>, and <code>package.json</code></p>
+<p>To expand on the current semantic highlighting available, the files that will need to be changed are: <code>crates/conjure-cp-essence-parser/src/diagnostics/diagnostics_api.rs</code>, <code>crates/conjure-cp-essence-parser/src/diagnostics/semantic-tokens.rs</code>, <code>crates/conjure-cp-lsp/src/server.rs</code>, and <code>tools/vscode-ext/package.json</code>.</p>
 <ol>
 <li>In <code>diagnostics_api.rs</code>, add the new symbol kind to the <code>SymbolKind</code> enum.</li>
 <li>In <code>semantic_token.rs</code>, add a new constant variable for the new symbol kind and create a mapping from the symbol kind to a token in the <code>token_encoding()</code> function.</li>
 <li>In <code>server.rs</code>, add the new symbol kind to the server’s <code>semantic_token_provider</code>.</li>
-<li>In <code>package.json</code>, add the new symbol kind to the semantic token scopes to specify its styling in TextMate, and if it is a custom token, add a new field for it in the semantic token types</li>
+<li>In <code>tools/vscode-ext/package.json</code>, add the new symbol kind to the semantic token scopes to specify its styling in TextMate, and if it is a custom token, add a new field for it in the semantic token types</li>
 </ol>
 <h2 id="semantic-highlighting-customisation-vscode"><a class="header" href="#semantic-highlighting-customisation-vscode">Semantic Highlighting Customisation (VSCode)</a></h2>
 <p>To customise semantic highlighting styles, open up <code>settings.json</code> in VSCode, and add the following code snippet if it does not exist in the file:</p>
@@ -2724,9 +2724,8 @@ tools/vscode-ext
 ├── essence.tmLanguage.json
 ├─ language-configuration.json
 ├─ package-lock.json
-package.json
-package-lock.json
-tsconfig.json
+├─ package.json
+└─ tsconfig.json
 </code></pre>
 <h2 id="client-server-communication"><a class="header" href="#client-server-communication">Client-Server Communication</a></h2>
 <p>The client and server communicate asynchronously through I/O streams. Communication occurs through requests and responses, which use well-defined JSON objects to communicate. This communication is triggered on events (such as on-open, on-save, on-change), where the client will prompt the server.</p>
@@ -2772,7 +2771,7 @@ When changing a file, due to the <code>INCREMENTAL</code> change setting, passes
 <p>It is of note that the hovering does not currently work if there is an error anywhere in the tree. If there is an underlined error, then there is no access to hovering, as the AST and sourcemap cannot be generated when there is an error in the CST. This is currently one of the priorities for modification.</p>
 <h2 id="development"><a class="header" href="#development">Development</a></h2>
 <h3 id="how-to-use-for-development"><a class="header" href="#how-to-use-for-development">How to use (for development)</a></h3>
-<p>At the current stage of development, the extension is not released into the VSCode Marketplace. This means that functionality must be tested using VSCode’s Extension Development Environment. In order to ensure that this works as intended, compile <code>extension.ts</code> using <code>npm run compile</code> (or ctrl-shift-b and select this). Then launch the Extension Development Environment. This can be launched <strong>either</strong> by pressing F5 from within <code>extension.ts</code>, or by pressing on ‘Run’ within the ‘Run and Debug’ VSCode tab. Running the Extension Development Environment will cause the client to run. Due to the structure of the client-server, the server will then run and link to the client, and the LSP can then be tested. Please ensure that <code>npm install</code> has been run in advance/all required node modules are installed, otherwise the client will not be able to launch. The client can be seen running when opening a .essence file. In the VSCode panel (bar at bottom)’s output, it is possible to select Conjure-Oxide Language Server as the channel to listen to. This will display the logs communicated to the client.</p>
+<p>At the current stage of development, the extension is not released into the VSCode Marketplace. This means that functionality must be tested using VSCode’s Extension Development Environment. From <code>tools/vscode-ext</code>, install the dependencies with <code>npm install</code> and compile <code>extension.ts</code> using <code>npm run compile</code>. Then launch the Extension Development Environment. This can be launched <strong>either</strong> by pressing F5 from within <code>extension.ts</code>, or by pressing on ‘Run’ within the ‘Run and Debug’ VSCode tab. Running the Extension Development Environment will cause the client to run. Due to the structure of the client-server, the server will then run and link to the client, and the LSP can then be tested. The client can be seen running when opening a .essence file. In the VSCode panel (bar at bottom)’s output, it is possible to select Conjure-Oxide Language Server as the channel to listen to. This will display the logs communicated to the client.</p>
 <p>It is worth noting that a copy of conjure-oxide <strong>MUST</strong> be installed in order for the client to work. Testing the server requires for an updated install.</p>
 <p>If wishing to just run the server (though without a client it will be incapable of connecting to anything, and will time out), the user can run <code>conjure-oxide server-lsp</code>, which is a custom subcommand specifically to call the server. This does not run any other aspects of conjure-oxide.</p>
 <h3 id="development-directions"><a class="header" href="#development-directions">Development Directions</a></h3>
