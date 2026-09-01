@@ -13,7 +13,7 @@
 **minion-sys:** 1% with examples, 32% documented -- 2/50/158
 **tree-sitter-essence:** 33% with examples, 100% documented -- 1/3/3
 
-Commit: [e80c06874569caed4aa93733637a3f4db9d9427f](https://github.com/conjure-cp/conjure-oxide/commit/e80c06874569caed4aa93733637a3f4db9d9427f)
+Commit: [a78e72a9d87d5b95cfece4a26b4529ba0ebd363e](https://github.com/conjure-cp/conjure-oxide/commit/a78e72a9d87d5b95cfece4a26b4529ba0ebd363e)
 
 ## RustDoc coverage for `conjure-cp`
 
