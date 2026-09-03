@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["CacheResult"],"struct":["CachedHashKey","HashMapCache","NoCache","StdHashKey"],"trait":["CacheHashable","CacheKey","RewriteCache"],"type":["CachedHashMapCache"]};

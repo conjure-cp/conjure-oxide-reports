@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["combinatorics"],"struct":["BiMap","MatrixShape","View"]};

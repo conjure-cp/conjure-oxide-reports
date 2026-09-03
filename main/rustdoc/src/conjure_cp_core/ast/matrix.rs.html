@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/conjure-cp-core/src/ast/matrix.rs`."><title>matrix.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-203241e4.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="conjure_cp_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.100.0-nightly (0dfb098f3 2026-08-31)" data-channel="nightly" data-search-js="search-b167f383.js" data-stringdex-js="stringdex-b5109af9.js" data-settings-js="settings-170eb4bf.js" ><script src="../../../static.files/storage-41dd4d93.js"></script><script defer src="../../../static.files/src-script-813739b1.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-1814ead3.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-9f56287d.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><a class="skip-main-content" href="#main-content">Skip to main content</a><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><section id="main-content" class="content" tabindex="-1"><div class="main-heading"><h1><div class="sub-heading">conjure_cp_core/ast/</div>matrix.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-3"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="doccomment">//! Utility functions for working with matrices.
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/conjure-cp-core/src/ast/matrix.rs`."><title>matrix.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-203241e4.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="conjure_cp_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.100.0-nightly (2e2b193f8 2026-09-02)" data-channel="nightly" data-search-js="search-b167f383.js" data-stringdex-js="stringdex-b5109af9.js" data-settings-js="settings-170eb4bf.js" ><script src="../../../static.files/storage-41dd4d93.js"></script><script defer src="../../../static.files/src-script-813739b1.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-1814ead3.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-9f56287d.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><a class="skip-main-content" href="#main-content">Skip to main content</a><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><section id="main-content" class="content" tabindex="-1"><div class="main-heading"><h1><div class="sub-heading">conjure_cp_core/ast/</div>matrix.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-3"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="doccomment">//! Utility functions for working with matrices.
 <a href=#2 id=2 data-nosnippet>2</a></span><span class="kw">use </span>std::collections::VecDeque;
 <a href=#3 id=3 data-nosnippet>3</a>
 <a href=#4 id=4 data-nosnippet>4</a><span class="kw">use </span><span class="kw">crate</span>::ast::literals::AbstractLiteralValue;
@@ -326,202 +326,209 @@
 <a href=#326 id=326 data-nosnippet>326</a>///   + If `matrix` is not a matrix.
 <a href=#327 id=327 data-nosnippet>327</a>///
 <a href=#328 id=328 data-nosnippet>328</a>///   + If any dimensions in the matrix are not finite or enumerable with [`Domain::values`].
-<a href=#329 id=329 data-nosnippet>329</a>///     However, index domains in the form `int(i..)` are supported.
-<a href=#330 id=330 data-nosnippet>330</a></span><span class="kw">pub fn </span>flatten_enumerate(
-<a href=#331 id=331 data-nosnippet>331</a>    matrix: AbstractLiteral&lt;Literal&gt;,
-<a href=#332 id=332 data-nosnippet>332</a>) -&gt; <span class="kw">impl </span>Iterator&lt;Item = (Vec&lt;Literal&gt;, Literal)&gt; {
-<a href=#333 id=333 data-nosnippet>333</a>    <span class="kw">let </span>index_domains = index_domains(<span class="kw-2">&amp;</span>matrix);
-<a href=#334 id=334 data-nosnippet>334</a>    <span class="macro">izip!</span>(enumerate_indices(index_domains), flatten_owned(matrix))
-<a href=#335 id=335 data-nosnippet>335</a>}
-<a href=#336 id=336 data-nosnippet>336</a>
-<a href=#337 id=337 data-nosnippet>337</a><span class="doccomment">/// See [`enumerate_indices`]. This function zips the two given lists of index domains, performs a
-<a href=#338 id=338 data-nosnippet>338</a>/// union on each pair, and returns an enumerating iterator over the new list of domains.
-<a href=#339 id=339 data-nosnippet>339</a></span><span class="kw">pub fn </span>enumerate_index_union_indices(
-<a href=#340 id=340 data-nosnippet>340</a>    a_domains: <span class="kw-2">&amp;</span>[Moo&lt;GroundDomain&gt;],
-<a href=#341 id=341 data-nosnippet>341</a>    b_domains: <span class="kw-2">&amp;</span>[Moo&lt;GroundDomain&gt;],
-<a href=#342 id=342 data-nosnippet>342</a>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw">impl </span>Iterator&lt;Item = Vec&lt;Literal&gt;&gt;, DomainOpError&gt; {
-<a href=#343 id=343 data-nosnippet>343</a>    <span class="kw">if </span>a_domains.len() != b_domains.len() {
-<a href=#344 id=344 data-nosnippet>344</a>        <span class="kw">return </span><span class="prelude-val">Err</span>(DomainOpError::WrongType);
-<a href=#345 id=345 data-nosnippet>345</a>    }
-<a href=#346 id=346 data-nosnippet>346</a>    <span class="kw">let </span>idx_domains: <span class="prelude-ty">Result</span>&lt;Vec&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt; = a_domains
-<a href=#347 id=347 data-nosnippet>347</a>        .iter()
-<a href=#348 id=348 data-nosnippet>348</a>        .zip(b_domains.iter())
-<a href=#349 id=349 data-nosnippet>349</a>        .map(|(a, b)| a.union(b))
-<a href=#350 id=350 data-nosnippet>350</a>        .collect();
-<a href=#351 id=351 data-nosnippet>351</a>    <span class="kw">let </span>idx_domains = idx_domains<span class="question-mark">?</span>.into_iter().map(Moo::new).collect();
-<a href=#352 id=352 data-nosnippet>352</a>
-<a href=#353 id=353 data-nosnippet>353</a>    try_enumerate_indices(idx_domains)
-<a href=#354 id=354 data-nosnippet>354</a>}
-<a href=#355 id=355 data-nosnippet>355</a>
-<a href=#356 id=356 data-nosnippet>356</a><span class="doccomment">/// Given index domains for a multi-dimensional matrix and
-<a href=#357 id=357 data-nosnippet>357</a>/// the nth index in the flattened matrix, find the coordinates in the original matrix
-<a href=#358 id=358 data-nosnippet>358</a></span><span class="kw">pub fn </span>flat_index_to_full_index(index_domains: <span class="kw-2">&amp;</span>[Moo&lt;GroundDomain&gt;], index: u64) -&gt; Vec&lt;Literal&gt; {
-<a href=#359 id=359 data-nosnippet>359</a>    <span class="kw">let </span><span class="kw-2">mut </span>remaining = index;
-<a href=#360 id=360 data-nosnippet>360</a>    <span class="kw">let </span><span class="kw-2">mut </span>multipliers = <span class="macro">vec!</span>[<span class="number">1</span>; index_domains.len()];
-<a href=#361 id=361 data-nosnippet>361</a>
-<a href=#362 id=362 data-nosnippet>362</a>    <span class="kw">for </span>i <span class="kw">in </span>(<span class="number">1</span>..index_domains.len()).rev() {
-<a href=#363 id=363 data-nosnippet>363</a>        multipliers[i - <span class="number">1</span>] = multipliers[i] * index_domains[i].as_ref().length().unwrap();
-<a href=#364 id=364 data-nosnippet>364</a>    }
-<a href=#365 id=365 data-nosnippet>365</a>
-<a href=#366 id=366 data-nosnippet>366</a>    <span class="kw">let </span><span class="kw-2">mut </span>coords = Vec::new();
-<a href=#367 id=367 data-nosnippet>367</a>    <span class="kw">for </span>m <span class="kw">in </span>multipliers.iter() {
-<a href=#368 id=368 data-nosnippet>368</a>        <span class="comment">// adjust for 1-based indexing
-<a href=#369 id=369 data-nosnippet>369</a>        </span>coords.push(((remaining / m + <span class="number">1</span>) <span class="kw">as </span>i32).into());
-<a href=#370 id=370 data-nosnippet>370</a>        remaining %= <span class="kw-2">*</span>m;
-<a href=#371 id=371 data-nosnippet>371</a>    }
-<a href=#372 id=372 data-nosnippet>372</a>
-<a href=#373 id=373 data-nosnippet>373</a>    coords
-<a href=#374 id=374 data-nosnippet>374</a>}
-<a href=#375 id=375 data-nosnippet>375</a>
-<a href=#376 id=376 data-nosnippet>376</a><span class="doccomment">/// Gets concrete index domains for a matrix expression.
-<a href=#377 id=377 data-nosnippet>377</a>///
-<a href=#378 id=378 data-nosnippet>378</a>/// For matrix literals, right-unbounded integer index domains like `int(1..)` are bounded using
-<a href=#379 id=379 data-nosnippet>379</a>/// the literal's realised size in that dimension. For non-literals, this falls back to the
-<a href=#380 id=380 data-nosnippet>380</a>/// expression's resolved domain.
-<a href=#381 id=381 data-nosnippet>381</a></span><span class="kw">pub fn </span>bound_index_domains_of_expr(expr: <span class="kw-2">&amp;</span>Expr) -&gt; <span class="prelude-ty">Option</span>&lt;Vec&lt;Moo&lt;GroundDomain&gt;&gt;&gt; {
-<a href=#382 id=382 data-nosnippet>382</a>    <span class="kw">let </span>dom = expr.domain_of().and_then(|dom| dom.resolve().ok())<span class="question-mark">?</span>;
-<a href=#383 id=383 data-nosnippet>383</a>    <span class="kw">let </span>GroundDomain::Matrix(<span class="kw">_</span>, index_domains) = dom.as_ref() <span class="kw">else </span>{
-<a href=#384 id=384 data-nosnippet>384</a>        <span class="kw">return </span><span class="prelude-val">None</span>;
-<a href=#385 id=385 data-nosnippet>385</a>    };
-<a href=#386 id=386 data-nosnippet>386</a>
-<a href=#387 id=387 data-nosnippet>387</a>    <span class="kw">let </span><span class="prelude-val">Some</span>(dimension_lengths) = expr_matrix_dimension_lengths(expr) <span class="kw">else </span>{
-<a href=#388 id=388 data-nosnippet>388</a>        <span class="kw">return </span><span class="prelude-val">Some</span>(index_domains.clone());
-<a href=#389 id=389 data-nosnippet>389</a>    };
-<a href=#390 id=390 data-nosnippet>390</a>
-<a href=#391 id=391 data-nosnippet>391</a>    <span class="macro">assert_eq!</span>(
-<a href=#392 id=392 data-nosnippet>392</a>        index_domains.len(),
-<a href=#393 id=393 data-nosnippet>393</a>        dimension_lengths.len(),
-<a href=#394 id=394 data-nosnippet>394</a>        <span class="string">"matrix literal domain rank should match its realised rank"
-<a href=#395 id=395 data-nosnippet>395</a>    </span>);
-<a href=#396 id=396 data-nosnippet>396</a>
-<a href=#397 id=397 data-nosnippet>397</a>    <span class="prelude-val">Some</span>(
-<a href=#398 id=398 data-nosnippet>398</a>        index_domains
-<a href=#399 id=399 data-nosnippet>399</a>            .iter()
-<a href=#400 id=400 data-nosnippet>400</a>            .cloned()
-<a href=#401 id=401 data-nosnippet>401</a>            .zip(dimension_lengths)
-<a href=#402 id=402 data-nosnippet>402</a>            .map(|(domain, len)| bound_index_domain_from_length(domain, len))
-<a href=#403 id=403 data-nosnippet>403</a>            .collect(),
-<a href=#404 id=404 data-nosnippet>404</a>    )
-<a href=#405 id=405 data-nosnippet>405</a>}
-<a href=#406 id=406 data-nosnippet>406</a>
-<a href=#407 id=407 data-nosnippet>407</a><span class="doccomment">/// This is the same as `m[x]` except when `m` is of the forms:
-<a href=#408 id=408 data-nosnippet>408</a>///
-<a href=#409 id=409 data-nosnippet>409</a>/// - `n[..]`, then it produces n[x] instead of n[..][x]
-<a href=#410 id=410 data-nosnippet>410</a>/// - `flatten(n)`, then it produces `n[y]` instead of `flatten(n)[y]`,
-<a href=#411 id=411 data-nosnippet>411</a>///   where `y` is the full index corresponding to flat index `x`
-<a href=#412 id=412 data-nosnippet>412</a>///
-<a href=#413 id=413 data-nosnippet>413</a>/// # Returns
-<a href=#414 id=414 data-nosnippet>414</a>/// + `Some(expr)` if the safe indexing could be constructed
-<a href=#415 id=415 data-nosnippet>415</a>/// + `None` if it could not be constructed (e.g. invalid index type)
-<a href=#416 id=416 data-nosnippet>416</a></span><span class="kw">pub fn </span>safe_index_optimised(m: Expr, idx: Literal) -&gt; <span class="prelude-ty">Option</span>&lt;Expr&gt; {
-<a href=#417 id=417 data-nosnippet>417</a>    <span class="kw">match </span>m {
-<a href=#418 id=418 data-nosnippet>418</a>        Expr::SafeSlice(<span class="kw">_</span>, mat, idxs) =&gt; {
-<a href=#419 id=419 data-nosnippet>419</a>            <span class="comment">// TODO: support &gt;1 slice index (i.e. multidimensional slices)
-<a href=#420 id=420 data-nosnippet>420</a>
-<a href=#421 id=421 data-nosnippet>421</a>            </span><span class="kw">let </span><span class="kw-2">mut </span>idxs = idxs;
-<a href=#422 id=422 data-nosnippet>422</a>            <span class="kw">let </span>(slice_idx, <span class="kw">_</span>) = idxs.iter().find_position(|opt| opt.is_none())<span class="question-mark">?</span>;
-<a href=#423 id=423 data-nosnippet>423</a>            <span class="kw">let _ </span>= idxs[slice_idx].replace(idx.into());
-<a href=#424 id=424 data-nosnippet>424</a>
-<a href=#425 id=425 data-nosnippet>425</a>            <span class="kw">let </span><span class="prelude-val">Some</span>(idxs) = idxs.into_iter().collect::&lt;<span class="prelude-ty">Option</span>&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;&gt;() <span class="kw">else </span>{
-<a href=#426 id=426 data-nosnippet>426</a>                <span class="macro">todo!</span>(<span class="string">"slice expression should not contain more than one unspecified index"</span>)
-<a href=#427 id=427 data-nosnippet>427</a>            };
-<a href=#428 id=428 data-nosnippet>428</a>
-<a href=#429 id=429 data-nosnippet>429</a>            <span class="prelude-val">Some</span>(Expr::SafeIndex(Metadata::new(), mat, idxs))
-<a href=#430 id=430 data-nosnippet>430</a>        }
-<a href=#431 id=431 data-nosnippet>431</a>        Expr::Flatten(<span class="kw">_</span>, <span class="prelude-val">None</span>, inner) =&gt; {
-<a href=#432 id=432 data-nosnippet>432</a>            <span class="comment">// Similar to indexed_flatten_matrix rule, but we don't care about out of bounds here
-<a href=#433 id=433 data-nosnippet>433</a>            </span><span class="kw">let </span>Literal::Int(index) = idx <span class="kw">else </span>{
-<a href=#434 id=434 data-nosnippet>434</a>                <span class="kw">return </span><span class="prelude-val">None</span>;
-<a href=#435 id=435 data-nosnippet>435</a>            };
-<a href=#436 id=436 data-nosnippet>436</a>
-<a href=#437 id=437 data-nosnippet>437</a>            <span class="kw">let </span>index_domains = bound_index_domains_of_expr(inner.as_ref())<span class="question-mark">?</span>;
-<a href=#438 id=438 data-nosnippet>438</a>            <span class="kw">if </span>index_domains.iter().any(|domain| domain.length().is_err()) {
+<a href=#329 id=329 data-nosnippet>329</a></span><span class="kw">pub fn </span>flatten_enumerate(
+<a href=#330 id=330 data-nosnippet>330</a>    matrix: AbstractLiteral&lt;Literal&gt;,
+<a href=#331 id=331 data-nosnippet>331</a>) -&gt; <span class="kw">impl </span>Iterator&lt;Item = (Vec&lt;Literal&gt;, Literal)&gt; {
+<a href=#332 id=332 data-nosnippet>332</a>    <span class="kw">let </span>shape = shape_of(<span class="kw-2">&amp;</span>matrix).unwrap_or_else(|| <span class="macro">bug!</span>(<span class="string">"Expected matrix, got: {matrix}"</span>));
+<a href=#333 id=333 data-nosnippet>333</a>    <span class="kw">let </span>index_domains: Vec&lt;Moo&lt;GroundDomain&gt;&gt; = shape
+<a href=#334 id=334 data-nosnippet>334</a>        .idx_doms
+<a href=#335 id=335 data-nosnippet>335</a>        .into_iter()
+<a href=#336 id=336 data-nosnippet>336</a>        .zip(shape.dims)
+<a href=#337 id=337 data-nosnippet>337</a>        .map(|(domain, len)| bound_index_domain_from_length(domain, len))
+<a href=#338 id=338 data-nosnippet>338</a>        .collect();
+<a href=#339 id=339 data-nosnippet>339</a>    <span class="macro">izip!</span>(enumerate_indices(index_domains), flatten_owned(matrix))
+<a href=#340 id=340 data-nosnippet>340</a>}
+<a href=#341 id=341 data-nosnippet>341</a>
+<a href=#342 id=342 data-nosnippet>342</a><span class="doccomment">/// See [`enumerate_indices`]. This function zips the two given lists of index domains, performs a
+<a href=#343 id=343 data-nosnippet>343</a>/// union on each pair, and returns an enumerating iterator over the new list of domains.
+<a href=#344 id=344 data-nosnippet>344</a></span><span class="kw">pub fn </span>enumerate_index_union_indices(
+<a href=#345 id=345 data-nosnippet>345</a>    a_domains: <span class="kw-2">&amp;</span>[Moo&lt;GroundDomain&gt;],
+<a href=#346 id=346 data-nosnippet>346</a>    b_domains: <span class="kw-2">&amp;</span>[Moo&lt;GroundDomain&gt;],
+<a href=#347 id=347 data-nosnippet>347</a>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw">impl </span>Iterator&lt;Item = Vec&lt;Literal&gt;&gt;, DomainOpError&gt; {
+<a href=#348 id=348 data-nosnippet>348</a>    <span class="kw">if </span>a_domains.len() != b_domains.len() {
+<a href=#349 id=349 data-nosnippet>349</a>        <span class="kw">return </span><span class="prelude-val">Err</span>(DomainOpError::WrongType);
+<a href=#350 id=350 data-nosnippet>350</a>    }
+<a href=#351 id=351 data-nosnippet>351</a>    <span class="kw">let </span>idx_domains: <span class="prelude-ty">Result</span>&lt;Vec&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt; = a_domains
+<a href=#352 id=352 data-nosnippet>352</a>        .iter()
+<a href=#353 id=353 data-nosnippet>353</a>        .zip(b_domains.iter())
+<a href=#354 id=354 data-nosnippet>354</a>        .map(|(a, b)| a.union(b))
+<a href=#355 id=355 data-nosnippet>355</a>        .collect();
+<a href=#356 id=356 data-nosnippet>356</a>    <span class="kw">let </span>idx_domains = idx_domains<span class="question-mark">?</span>.into_iter().map(Moo::new).collect();
+<a href=#357 id=357 data-nosnippet>357</a>
+<a href=#358 id=358 data-nosnippet>358</a>    try_enumerate_indices(idx_domains)
+<a href=#359 id=359 data-nosnippet>359</a>}
+<a href=#360 id=360 data-nosnippet>360</a>
+<a href=#361 id=361 data-nosnippet>361</a><span class="doccomment">/// Given index domains for a multi-dimensional matrix and
+<a href=#362 id=362 data-nosnippet>362</a>/// the nth index in the flattened matrix, find the coordinates in the original matrix
+<a href=#363 id=363 data-nosnippet>363</a></span><span class="kw">pub fn </span>flat_index_to_full_index(index_domains: <span class="kw-2">&amp;</span>[Moo&lt;GroundDomain&gt;], index: u64) -&gt; Vec&lt;Literal&gt; {
+<a href=#364 id=364 data-nosnippet>364</a>    <span class="kw">let </span><span class="kw-2">mut </span>remaining = index;
+<a href=#365 id=365 data-nosnippet>365</a>    <span class="kw">let </span><span class="kw-2">mut </span>multipliers = <span class="macro">vec!</span>[<span class="number">1</span>; index_domains.len()];
+<a href=#366 id=366 data-nosnippet>366</a>
+<a href=#367 id=367 data-nosnippet>367</a>    <span class="kw">for </span>i <span class="kw">in </span>(<span class="number">1</span>..index_domains.len()).rev() {
+<a href=#368 id=368 data-nosnippet>368</a>        multipliers[i - <span class="number">1</span>] = multipliers[i] * index_domains[i].as_ref().length().unwrap();
+<a href=#369 id=369 data-nosnippet>369</a>    }
+<a href=#370 id=370 data-nosnippet>370</a>
+<a href=#371 id=371 data-nosnippet>371</a>    <span class="kw">let </span><span class="kw-2">mut </span>coords = Vec::new();
+<a href=#372 id=372 data-nosnippet>372</a>    <span class="kw">for </span>m <span class="kw">in </span>multipliers.iter() {
+<a href=#373 id=373 data-nosnippet>373</a>        <span class="comment">// adjust for 1-based indexing
+<a href=#374 id=374 data-nosnippet>374</a>        </span>coords.push(((remaining / m + <span class="number">1</span>) <span class="kw">as </span>i32).into());
+<a href=#375 id=375 data-nosnippet>375</a>        remaining %= <span class="kw-2">*</span>m;
+<a href=#376 id=376 data-nosnippet>376</a>    }
+<a href=#377 id=377 data-nosnippet>377</a>
+<a href=#378 id=378 data-nosnippet>378</a>    coords
+<a href=#379 id=379 data-nosnippet>379</a>}
+<a href=#380 id=380 data-nosnippet>380</a>
+<a href=#381 id=381 data-nosnippet>381</a><span class="doccomment">/// Gets concrete index domains for a matrix expression.
+<a href=#382 id=382 data-nosnippet>382</a>///
+<a href=#383 id=383 data-nosnippet>383</a>/// For matrix literals, right-unbounded integer index domains like `int(1..)` are bounded using
+<a href=#384 id=384 data-nosnippet>384</a>/// the literal's realised size in that dimension. For non-literals, this falls back to the
+<a href=#385 id=385 data-nosnippet>385</a>/// expression's resolved domain.
+<a href=#386 id=386 data-nosnippet>386</a></span><span class="kw">pub fn </span>bound_index_domains_of_expr(expr: <span class="kw-2">&amp;</span>Expr) -&gt; <span class="prelude-ty">Option</span>&lt;Vec&lt;Moo&lt;GroundDomain&gt;&gt;&gt; {
+<a href=#387 id=387 data-nosnippet>387</a>    <span class="kw">let </span>dom = expr.domain_of().and_then(|dom| dom.resolve().ok())<span class="question-mark">?</span>;
+<a href=#388 id=388 data-nosnippet>388</a>    <span class="kw">let </span>GroundDomain::Matrix(<span class="kw">_</span>, index_domains) = dom.as_ref() <span class="kw">else </span>{
+<a href=#389 id=389 data-nosnippet>389</a>        <span class="kw">return </span><span class="prelude-val">None</span>;
+<a href=#390 id=390 data-nosnippet>390</a>    };
+<a href=#391 id=391 data-nosnippet>391</a>
+<a href=#392 id=392 data-nosnippet>392</a>    <span class="kw">let </span><span class="prelude-val">Some</span>(dimension_lengths) = expr_matrix_dimension_lengths(expr) <span class="kw">else </span>{
+<a href=#393 id=393 data-nosnippet>393</a>        <span class="kw">return </span><span class="prelude-val">Some</span>(index_domains.clone());
+<a href=#394 id=394 data-nosnippet>394</a>    };
+<a href=#395 id=395 data-nosnippet>395</a>
+<a href=#396 id=396 data-nosnippet>396</a>    <span class="macro">assert_eq!</span>(
+<a href=#397 id=397 data-nosnippet>397</a>        index_domains.len(),
+<a href=#398 id=398 data-nosnippet>398</a>        dimension_lengths.len(),
+<a href=#399 id=399 data-nosnippet>399</a>        <span class="string">"matrix literal domain rank should match its realised rank"
+<a href=#400 id=400 data-nosnippet>400</a>    </span>);
+<a href=#401 id=401 data-nosnippet>401</a>
+<a href=#402 id=402 data-nosnippet>402</a>    <span class="prelude-val">Some</span>(
+<a href=#403 id=403 data-nosnippet>403</a>        index_domains
+<a href=#404 id=404 data-nosnippet>404</a>            .iter()
+<a href=#405 id=405 data-nosnippet>405</a>            .cloned()
+<a href=#406 id=406 data-nosnippet>406</a>            .zip(dimension_lengths)
+<a href=#407 id=407 data-nosnippet>407</a>            .map(|(domain, len)| bound_index_domain_from_length(domain, len))
+<a href=#408 id=408 data-nosnippet>408</a>            .collect(),
+<a href=#409 id=409 data-nosnippet>409</a>    )
+<a href=#410 id=410 data-nosnippet>410</a>}
+<a href=#411 id=411 data-nosnippet>411</a>
+<a href=#412 id=412 data-nosnippet>412</a><span class="doccomment">/// This is the same as `m[x]` except when `m` is of the forms:
+<a href=#413 id=413 data-nosnippet>413</a>///
+<a href=#414 id=414 data-nosnippet>414</a>/// - `n[..]`, then it produces n[x] instead of n[..][x]
+<a href=#415 id=415 data-nosnippet>415</a>/// - `flatten(n)`, then it produces `n[y]` instead of `flatten(n)[y]`,
+<a href=#416 id=416 data-nosnippet>416</a>///   where `y` is the full index corresponding to flat index `x`
+<a href=#417 id=417 data-nosnippet>417</a>///
+<a href=#418 id=418 data-nosnippet>418</a>/// # Returns
+<a href=#419 id=419 data-nosnippet>419</a>/// + `Some(expr)` if the safe indexing could be constructed
+<a href=#420 id=420 data-nosnippet>420</a>/// + `None` if it could not be constructed (e.g. invalid index type)
+<a href=#421 id=421 data-nosnippet>421</a></span><span class="kw">pub fn </span>safe_index_optimised(m: Expr, idx: Literal) -&gt; <span class="prelude-ty">Option</span>&lt;Expr&gt; {
+<a href=#422 id=422 data-nosnippet>422</a>    <span class="kw">match </span>m {
+<a href=#423 id=423 data-nosnippet>423</a>        Expr::SafeSlice(<span class="kw">_</span>, mat, idxs) =&gt; {
+<a href=#424 id=424 data-nosnippet>424</a>            <span class="comment">// TODO: support &gt;1 slice index (i.e. multidimensional slices)
+<a href=#425 id=425 data-nosnippet>425</a>
+<a href=#426 id=426 data-nosnippet>426</a>            </span><span class="kw">let </span><span class="kw-2">mut </span>idxs = idxs;
+<a href=#427 id=427 data-nosnippet>427</a>            <span class="kw">let </span>(slice_idx, <span class="kw">_</span>) = idxs.iter().find_position(|opt| opt.is_none())<span class="question-mark">?</span>;
+<a href=#428 id=428 data-nosnippet>428</a>            <span class="kw">let _ </span>= idxs[slice_idx].replace(idx.into());
+<a href=#429 id=429 data-nosnippet>429</a>
+<a href=#430 id=430 data-nosnippet>430</a>            <span class="kw">let </span><span class="prelude-val">Some</span>(idxs) = idxs.into_iter().collect::&lt;<span class="prelude-ty">Option</span>&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;&gt;() <span class="kw">else </span>{
+<a href=#431 id=431 data-nosnippet>431</a>                <span class="macro">todo!</span>(<span class="string">"slice expression should not contain more than one unspecified index"</span>)
+<a href=#432 id=432 data-nosnippet>432</a>            };
+<a href=#433 id=433 data-nosnippet>433</a>
+<a href=#434 id=434 data-nosnippet>434</a>            <span class="prelude-val">Some</span>(Expr::SafeIndex(Metadata::new(), mat, idxs))
+<a href=#435 id=435 data-nosnippet>435</a>        }
+<a href=#436 id=436 data-nosnippet>436</a>        Expr::Flatten(<span class="kw">_</span>, <span class="prelude-val">None</span>, inner) =&gt; {
+<a href=#437 id=437 data-nosnippet>437</a>            <span class="comment">// Similar to indexed_flatten_matrix rule, but we don't care about out of bounds here
+<a href=#438 id=438 data-nosnippet>438</a>            </span><span class="kw">let </span>Literal::Int(index) = idx <span class="kw">else </span>{
 <a href=#439 id=439 data-nosnippet>439</a>                <span class="kw">return </span><span class="prelude-val">None</span>;
-<a href=#440 id=440 data-nosnippet>440</a>            }
-<a href=#441 id=441 data-nosnippet>441</a>            <span class="kw">let </span>flat_index = flat_index_to_full_index(<span class="kw-2">&amp;</span>index_domains, (index - <span class="number">1</span>) <span class="kw">as </span>u64);
-<a href=#442 id=442 data-nosnippet>442</a>            <span class="kw">let </span>flat_index: Vec&lt;Expr&gt; = flat_index.into_iter().map(Into::into).collect();
-<a href=#443 id=443 data-nosnippet>443</a>
-<a href=#444 id=444 data-nosnippet>444</a>            <span class="prelude-val">Some</span>(Expr::SafeIndex(Metadata::new(), inner, flat_index))
-<a href=#445 id=445 data-nosnippet>445</a>        }
-<a href=#446 id=446 data-nosnippet>446</a>        <span class="kw">_ </span>=&gt; <span class="prelude-val">Some</span>(Expr::SafeIndex(
-<a href=#447 id=447 data-nosnippet>447</a>            Metadata::new(),
-<a href=#448 id=448 data-nosnippet>448</a>            Moo::new(m),
-<a href=#449 id=449 data-nosnippet>449</a>            <span class="macro">vec!</span>[idx.into()],
-<a href=#450 id=450 data-nosnippet>450</a>        )),
-<a href=#451 id=451 data-nosnippet>451</a>    }
-<a href=#452 id=452 data-nosnippet>452</a>}
-<a href=#453 id=453 data-nosnippet>453</a>
-<a href=#454 id=454 data-nosnippet>454</a><span class="comment">// ====================
-<a href=#455 id=455 data-nosnippet>455</a>// = Internal helpers =
-<a href=#456 id=456 data-nosnippet>456</a>// ====================
-<a href=#457 id=457 data-nosnippet>457</a>
-<a href=#458 id=458 data-nosnippet>458</a></span><span class="doccomment">/// If this is a matrix expression, get sizes along its dimensions
-<a href=#459 id=459 data-nosnippet>459</a></span><span class="attr">#[inline]
-<a href=#460 id=460 data-nosnippet>460</a></span><span class="kw">fn </span>expr_matrix_dimension_lengths(expr: <span class="kw-2">&amp;</span>Expr) -&gt; <span class="prelude-ty">Option</span>&lt;Vec&lt;usize&gt;&gt; {
-<a href=#461 id=461 data-nosnippet>461</a>    <span class="prelude-val">Some</span>(shape_of_matrix_expr(expr)<span class="question-mark">?</span>.dims)
-<a href=#462 id=462 data-nosnippet>462</a>}
-<a href=#463 id=463 data-nosnippet>463</a>
-<a href=#464 id=464 data-nosnippet>464</a><span class="doccomment">/// Cap all `N..` ranges in an int domain to the given length
-<a href=#465 id=465 data-nosnippet>465</a></span><span class="attr">#[inline]
-<a href=#466 id=466 data-nosnippet>466</a></span><span class="kw">fn </span>bound_index_domain_from_length(<span class="kw-2">mut </span>domain: Moo&lt;GroundDomain&gt;, len: usize) -&gt; Moo&lt;GroundDomain&gt; {
-<a href=#467 id=467 data-nosnippet>467</a>    <span class="kw">match </span>Moo::make_mut(<span class="kw-2">&amp;mut </span>domain) {
-<a href=#468 id=468 data-nosnippet>468</a>        GroundDomain::Int(ranges) <span class="kw">if </span>ranges.len() == <span class="number">1 </span>&amp;&amp; len &gt; <span class="number">0 </span>=&gt; {
-<a href=#469 id=469 data-nosnippet>469</a>            <span class="kw">if let </span>Range::UnboundedR(start) = ranges[<span class="number">0</span>] {
-<a href=#470 id=470 data-nosnippet>470</a>                <span class="kw">let </span>end = start + (len <span class="kw">as </span>i32 - <span class="number">1</span>);
-<a href=#471 id=471 data-nosnippet>471</a>                ranges[<span class="number">0</span>] = Range::Bounded(start, end);
-<a href=#472 id=472 data-nosnippet>472</a>            }
-<a href=#473 id=473 data-nosnippet>473</a>            domain
-<a href=#474 id=474 data-nosnippet>474</a>        }
-<a href=#475 id=475 data-nosnippet>475</a>        <span class="kw">_ </span>=&gt; domain,
-<a href=#476 id=476 data-nosnippet>476</a>    }
-<a href=#477 id=477 data-nosnippet>477</a>}
-<a href=#478 id=478 data-nosnippet>478</a>
-<a href=#479 id=479 data-nosnippet>479</a><span class="doccomment">/// Things that can appear inside a matrix.
-<a href=#480 id=480 data-nosnippet>480</a>///
-<a href=#481 id=481 data-nosnippet>481</a>/// This is a helper trait to unify matrix operations on `Expression::AbstractLiteral`
-<a href=#482 id=482 data-nosnippet>482</a>/// and `AbstractLiteral&lt;Literal&gt;`
-<a href=#483 id=483 data-nosnippet>483</a></span><span class="kw">pub trait </span>MatrixValue:
-<a href=#484 id=484 data-nosnippet>484</a>    AbstractLiteralValue + Sized + From&lt;AbstractLiteral&lt;<span class="self">Self</span>&gt;&gt; + Biplate&lt;AbstractLiteral&lt;<span class="self">Self</span>&gt;&gt;
-<a href=#485 id=485 data-nosnippet>485</a>{
-<a href=#486 id=486 data-nosnippet>486</a>    <span class="doccomment">/// If this element is a nested matrix, return a reference to it
-<a href=#487 id=487 data-nosnippet>487</a>    </span><span class="kw">fn </span>as_nested_matrix(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>AbstractLiteral&lt;<span class="self">Self</span>&gt;&gt;;
-<a href=#488 id=488 data-nosnippet>488</a>    <span class="doccomment">/// If this element is a nested matrix, consume it and return the matrix
-<a href=#489 id=489 data-nosnippet>489</a>    </span><span class="kw">fn </span>into_nested_matrix(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;AbstractLiteral&lt;<span class="self">Self</span>&gt;, <span class="self">Self</span>&gt;;
-<a href=#490 id=490 data-nosnippet>490</a>}
-<a href=#491 id=491 data-nosnippet>491</a>
-<a href=#492 id=492 data-nosnippet>492</a><span class="kw">impl </span>MatrixValue <span class="kw">for </span>Literal {
-<a href=#493 id=493 data-nosnippet>493</a>    <span class="attr">#[inline]
-<a href=#494 id=494 data-nosnippet>494</a>    </span><span class="kw">fn </span>as_nested_matrix(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>AbstractLiteral&lt;Literal&gt;&gt; {
-<a href=#495 id=495 data-nosnippet>495</a>        <span class="kw">match </span><span class="self">self </span>{
-<a href=#496 id=496 data-nosnippet>496</a>            Literal::AbstractLiteral(m @ AbstractLiteral::Matrix(..)) =&gt; <span class="prelude-val">Some</span>(m),
-<a href=#497 id=497 data-nosnippet>497</a>            <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
-<a href=#498 id=498 data-nosnippet>498</a>        }
-<a href=#499 id=499 data-nosnippet>499</a>    }
-<a href=#500 id=500 data-nosnippet>500</a>
-<a href=#501 id=501 data-nosnippet>501</a>    <span class="attr">#[inline]
-<a href=#502 id=502 data-nosnippet>502</a>    </span><span class="kw">fn </span>into_nested_matrix(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;AbstractLiteral&lt;Literal&gt;, <span class="self">Self</span>&gt; {
-<a href=#503 id=503 data-nosnippet>503</a>        <span class="kw">match </span><span class="self">self </span>{
-<a href=#504 id=504 data-nosnippet>504</a>            Literal::AbstractLiteral(m @ AbstractLiteral::Matrix(..)) =&gt; <span class="prelude-val">Ok</span>(m),
-<a href=#505 id=505 data-nosnippet>505</a>            other =&gt; <span class="prelude-val">Err</span>(other),
-<a href=#506 id=506 data-nosnippet>506</a>        }
-<a href=#507 id=507 data-nosnippet>507</a>    }
-<a href=#508 id=508 data-nosnippet>508</a>}
-<a href=#509 id=509 data-nosnippet>509</a>
-<a href=#510 id=510 data-nosnippet>510</a><span class="kw">impl </span>MatrixValue <span class="kw">for </span>Expr {
-<a href=#511 id=511 data-nosnippet>511</a>    <span class="attr">#[inline]
-<a href=#512 id=512 data-nosnippet>512</a>    </span><span class="kw">fn </span>as_nested_matrix(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>AbstractLiteral&lt;Expr&gt;&gt; {
-<a href=#513 id=513 data-nosnippet>513</a>        <span class="kw">match </span><span class="self">self </span>{
-<a href=#514 id=514 data-nosnippet>514</a>            Expr::AbstractLiteral(<span class="kw">_</span>, m @ AbstractLiteral::Matrix(..)) =&gt; <span class="prelude-val">Some</span>(m),
-<a href=#515 id=515 data-nosnippet>515</a>            <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
-<a href=#516 id=516 data-nosnippet>516</a>        }
-<a href=#517 id=517 data-nosnippet>517</a>    }
-<a href=#518 id=518 data-nosnippet>518</a>
-<a href=#519 id=519 data-nosnippet>519</a>    <span class="attr">#[inline]
-<a href=#520 id=520 data-nosnippet>520</a>    </span><span class="kw">fn </span>into_nested_matrix(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;AbstractLiteral&lt;Expr&gt;, <span class="self">Self</span>&gt; {
-<a href=#521 id=521 data-nosnippet>521</a>        <span class="kw">match </span><span class="self">self </span>{
-<a href=#522 id=522 data-nosnippet>522</a>            Expr::AbstractLiteral(<span class="kw">_</span>, m @ AbstractLiteral::Matrix(..)) =&gt; <span class="prelude-val">Ok</span>(m),
-<a href=#523 id=523 data-nosnippet>523</a>            other =&gt; <span class="prelude-val">Err</span>(other),
-<a href=#524 id=524 data-nosnippet>524</a>        }
-<a href=#525 id=525 data-nosnippet>525</a>    }
-<a href=#526 id=526 data-nosnippet>526</a>}
+<a href=#440 id=440 data-nosnippet>440</a>            };
+<a href=#441 id=441 data-nosnippet>441</a>
+<a href=#442 id=442 data-nosnippet>442</a>            <span class="kw">let </span>index_domains = bound_index_domains_of_expr(inner.as_ref())<span class="question-mark">?</span>;
+<a href=#443 id=443 data-nosnippet>443</a>            <span class="kw">if </span>index_domains.iter().any(|domain| domain.length().is_err()) {
+<a href=#444 id=444 data-nosnippet>444</a>                <span class="kw">return </span><span class="prelude-val">None</span>;
+<a href=#445 id=445 data-nosnippet>445</a>            }
+<a href=#446 id=446 data-nosnippet>446</a>            <span class="kw">let </span>flat_index = flat_index_to_full_index(<span class="kw-2">&amp;</span>index_domains, (index - <span class="number">1</span>) <span class="kw">as </span>u64);
+<a href=#447 id=447 data-nosnippet>447</a>            <span class="kw">let </span>flat_index: Vec&lt;Expr&gt; = flat_index.into_iter().map(Into::into).collect();
+<a href=#448 id=448 data-nosnippet>448</a>
+<a href=#449 id=449 data-nosnippet>449</a>            <span class="prelude-val">Some</span>(Expr::SafeIndex(Metadata::new(), inner, flat_index))
+<a href=#450 id=450 data-nosnippet>450</a>        }
+<a href=#451 id=451 data-nosnippet>451</a>        <span class="kw">_ </span>=&gt; <span class="prelude-val">Some</span>(Expr::SafeIndex(
+<a href=#452 id=452 data-nosnippet>452</a>            Metadata::new(),
+<a href=#453 id=453 data-nosnippet>453</a>            Moo::new(m),
+<a href=#454 id=454 data-nosnippet>454</a>            <span class="macro">vec!</span>[idx.into()],
+<a href=#455 id=455 data-nosnippet>455</a>        )),
+<a href=#456 id=456 data-nosnippet>456</a>    }
+<a href=#457 id=457 data-nosnippet>457</a>}
+<a href=#458 id=458 data-nosnippet>458</a>
+<a href=#459 id=459 data-nosnippet>459</a><span class="comment">// ====================
+<a href=#460 id=460 data-nosnippet>460</a>// = Internal helpers =
+<a href=#461 id=461 data-nosnippet>461</a>// ====================
+<a href=#462 id=462 data-nosnippet>462</a>
+<a href=#463 id=463 data-nosnippet>463</a></span><span class="doccomment">/// If this is a matrix expression, get sizes along its dimensions
+<a href=#464 id=464 data-nosnippet>464</a></span><span class="attr">#[inline]
+<a href=#465 id=465 data-nosnippet>465</a></span><span class="kw">fn </span>expr_matrix_dimension_lengths(expr: <span class="kw-2">&amp;</span>Expr) -&gt; <span class="prelude-ty">Option</span>&lt;Vec&lt;usize&gt;&gt; {
+<a href=#466 id=466 data-nosnippet>466</a>    <span class="prelude-val">Some</span>(shape_of_matrix_expr(expr)<span class="question-mark">?</span>.dims)
+<a href=#467 id=467 data-nosnippet>467</a>}
+<a href=#468 id=468 data-nosnippet>468</a>
+<a href=#469 id=469 data-nosnippet>469</a><span class="doccomment">/// Cap unbounded integer index domains to the given matrix dimension length.
+<a href=#470 id=470 data-nosnippet>470</a></span><span class="attr">#[inline]
+<a href=#471 id=471 data-nosnippet>471</a></span><span class="kw">fn </span>bound_index_domain_from_length(<span class="kw-2">mut </span>domain: Moo&lt;GroundDomain&gt;, len: usize) -&gt; Moo&lt;GroundDomain&gt; {
+<a href=#472 id=472 data-nosnippet>472</a>    <span class="kw">match </span>Moo::make_mut(<span class="kw-2">&amp;mut </span>domain) {
+<a href=#473 id=473 data-nosnippet>473</a>        GroundDomain::Int(ranges) <span class="kw">if </span>ranges.len() == <span class="number">1 </span>&amp;&amp; len &gt; <span class="number">0 </span>=&gt; {
+<a href=#474 id=474 data-nosnippet>474</a>            ranges[<span class="number">0</span>] = <span class="kw">match </span><span class="kw-2">&amp;</span>ranges[<span class="number">0</span>] {
+<a href=#475 id=475 data-nosnippet>475</a>                Range::UnboundedR(start) =&gt; Range::Bounded(<span class="kw-2">*</span>start, start + (len <span class="kw">as </span>i32 - <span class="number">1</span>)),
+<a href=#476 id=476 data-nosnippet>476</a>                Range::Unbounded | Range::UnboundedL(<span class="kw">_</span>) =&gt; Range::Bounded(<span class="number">1</span>, len <span class="kw">as </span>i32),
+<a href=#477 id=477 data-nosnippet>477</a>                Range::Bounded(low, high) =&gt; Range::Bounded(<span class="kw-2">*</span>low, <span class="kw-2">*</span>high),
+<a href=#478 id=478 data-nosnippet>478</a>                Range::Single(value) =&gt; Range::Single(<span class="kw-2">*</span>value),
+<a href=#479 id=479 data-nosnippet>479</a>            };
+<a href=#480 id=480 data-nosnippet>480</a>            domain
+<a href=#481 id=481 data-nosnippet>481</a>        }
+<a href=#482 id=482 data-nosnippet>482</a>        <span class="kw">_ </span>=&gt; domain,
+<a href=#483 id=483 data-nosnippet>483</a>    }
+<a href=#484 id=484 data-nosnippet>484</a>}
+<a href=#485 id=485 data-nosnippet>485</a>
+<a href=#486 id=486 data-nosnippet>486</a><span class="doccomment">/// Things that can appear inside a matrix.
+<a href=#487 id=487 data-nosnippet>487</a>///
+<a href=#488 id=488 data-nosnippet>488</a>/// This is a helper trait to unify matrix operations on `Expression::AbstractLiteral`
+<a href=#489 id=489 data-nosnippet>489</a>/// and `AbstractLiteral&lt;Literal&gt;`
+<a href=#490 id=490 data-nosnippet>490</a></span><span class="kw">pub trait </span>MatrixValue:
+<a href=#491 id=491 data-nosnippet>491</a>    AbstractLiteralValue + Sized + From&lt;AbstractLiteral&lt;<span class="self">Self</span>&gt;&gt; + Biplate&lt;AbstractLiteral&lt;<span class="self">Self</span>&gt;&gt;
+<a href=#492 id=492 data-nosnippet>492</a>{
+<a href=#493 id=493 data-nosnippet>493</a>    <span class="doccomment">/// If this element is a nested matrix, return a reference to it
+<a href=#494 id=494 data-nosnippet>494</a>    </span><span class="kw">fn </span>as_nested_matrix(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>AbstractLiteral&lt;<span class="self">Self</span>&gt;&gt;;
+<a href=#495 id=495 data-nosnippet>495</a>    <span class="doccomment">/// If this element is a nested matrix, consume it and return the matrix
+<a href=#496 id=496 data-nosnippet>496</a>    </span><span class="kw">fn </span>into_nested_matrix(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;AbstractLiteral&lt;<span class="self">Self</span>&gt;, <span class="self">Self</span>&gt;;
+<a href=#497 id=497 data-nosnippet>497</a>}
+<a href=#498 id=498 data-nosnippet>498</a>
+<a href=#499 id=499 data-nosnippet>499</a><span class="kw">impl </span>MatrixValue <span class="kw">for </span>Literal {
+<a href=#500 id=500 data-nosnippet>500</a>    <span class="attr">#[inline]
+<a href=#501 id=501 data-nosnippet>501</a>    </span><span class="kw">fn </span>as_nested_matrix(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>AbstractLiteral&lt;Literal&gt;&gt; {
+<a href=#502 id=502 data-nosnippet>502</a>        <span class="kw">match </span><span class="self">self </span>{
+<a href=#503 id=503 data-nosnippet>503</a>            Literal::AbstractLiteral(m @ AbstractLiteral::Matrix(..)) =&gt; <span class="prelude-val">Some</span>(m),
+<a href=#504 id=504 data-nosnippet>504</a>            <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
+<a href=#505 id=505 data-nosnippet>505</a>        }
+<a href=#506 id=506 data-nosnippet>506</a>    }
+<a href=#507 id=507 data-nosnippet>507</a>
+<a href=#508 id=508 data-nosnippet>508</a>    <span class="attr">#[inline]
+<a href=#509 id=509 data-nosnippet>509</a>    </span><span class="kw">fn </span>into_nested_matrix(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;AbstractLiteral&lt;Literal&gt;, <span class="self">Self</span>&gt; {
+<a href=#510 id=510 data-nosnippet>510</a>        <span class="kw">match </span><span class="self">self </span>{
+<a href=#511 id=511 data-nosnippet>511</a>            Literal::AbstractLiteral(m @ AbstractLiteral::Matrix(..)) =&gt; <span class="prelude-val">Ok</span>(m),
+<a href=#512 id=512 data-nosnippet>512</a>            other =&gt; <span class="prelude-val">Err</span>(other),
+<a href=#513 id=513 data-nosnippet>513</a>        }
+<a href=#514 id=514 data-nosnippet>514</a>    }
+<a href=#515 id=515 data-nosnippet>515</a>}
+<a href=#516 id=516 data-nosnippet>516</a>
+<a href=#517 id=517 data-nosnippet>517</a><span class="kw">impl </span>MatrixValue <span class="kw">for </span>Expr {
+<a href=#518 id=518 data-nosnippet>518</a>    <span class="attr">#[inline]
+<a href=#519 id=519 data-nosnippet>519</a>    </span><span class="kw">fn </span>as_nested_matrix(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>AbstractLiteral&lt;Expr&gt;&gt; {
+<a href=#520 id=520 data-nosnippet>520</a>        <span class="kw">match </span><span class="self">self </span>{
+<a href=#521 id=521 data-nosnippet>521</a>            Expr::AbstractLiteral(<span class="kw">_</span>, m @ AbstractLiteral::Matrix(..)) =&gt; <span class="prelude-val">Some</span>(m),
+<a href=#522 id=522 data-nosnippet>522</a>            <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
+<a href=#523 id=523 data-nosnippet>523</a>        }
+<a href=#524 id=524 data-nosnippet>524</a>    }
+<a href=#525 id=525 data-nosnippet>525</a>
+<a href=#526 id=526 data-nosnippet>526</a>    <span class="attr">#[inline]
+<a href=#527 id=527 data-nosnippet>527</a>    </span><span class="kw">fn </span>into_nested_matrix(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;AbstractLiteral&lt;Expr&gt;, <span class="self">Self</span>&gt; {
+<a href=#528 id=528 data-nosnippet>528</a>        <span class="kw">match </span><span class="self">self </span>{
+<a href=#529 id=529 data-nosnippet>529</a>            Expr::AbstractLiteral(<span class="kw">_</span>, m @ AbstractLiteral::Matrix(..)) =&gt; <span class="prelude-val">Ok</span>(m),
+<a href=#530 id=530 data-nosnippet>530</a>            other =&gt; <span class="prelude-val">Err</span>(other),
+<a href=#531 id=531 data-nosnippet>531</a>        }
+<a href=#532 id=532 data-nosnippet>532</a>    }
+<a href=#533 id=533 data-nosnippet>533</a>}
 </code></pre></div></section></main></body></html>

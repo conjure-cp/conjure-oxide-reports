@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["NumberOfSolutions"],"fn":["init_context","init_solver","parse","parse_number_of_solutions","parse_with_conjure","rewrite","run_solve_command","run_solver"],"struct":["Args"]};
+window.SIDEBAR_ITEMS = {"enum":["NumberOfSolutions","OutputFormat"],"fn":["coerce_bools_in_solutions","init_context","init_solver","parse","parse_number_of_solutions","parse_param","parse_with_conjure","per_solution_output_path","rewrite","run_solve_command","run_solver","write_solutions"],"struct":["Args"]};

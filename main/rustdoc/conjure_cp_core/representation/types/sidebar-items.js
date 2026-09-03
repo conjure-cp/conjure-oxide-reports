@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"trait":["ReprAssignment","ReprDeclLevel","ReprDomainLevel","ReprRule"],"type":["LookupFn","ReprGetOrInitResult","ReprInstantiateResult","ReprResult"]};

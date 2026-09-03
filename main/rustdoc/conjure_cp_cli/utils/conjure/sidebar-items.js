@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["get_solutions","get_solutions_from_conjure","solutions_to_json"]};
+window.SIDEBAR_ITEMS = {"fn":["get_solutions","get_solutions_from_conjure","get_solutions_from_conjure_with_stats","solutions_to_essence","solutions_to_json"],"struct":["ConjureRunTimings","ConjureSolutions","ConjureSolveCaptureOptions"]};

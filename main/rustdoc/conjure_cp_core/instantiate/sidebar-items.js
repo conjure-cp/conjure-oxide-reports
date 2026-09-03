@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["instantiate_model"]};
+window.SIDEBAR_ITEMS = {"fn":["instantiate_model","validate_instantiation_conditions"]};

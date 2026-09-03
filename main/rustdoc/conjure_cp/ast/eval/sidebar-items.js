@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["bin_op","eval_constant","flat_op","opt_vec_lit_op","opt_vec_op","tern_op","un_op","unwrap_expr","vec_lit_op","vec_op"]};
+window.SIDEBAR_ITEMS = {"fn":["bin_op","eval_constant","eval_constant_local","finish_root_evaluator_normalisation","flat_op","generator_values_from_expr","normalise_evaluator_local","normalise_root_constraint_deep","normalise_root_constraints_deep","normalise_root_constraints_local","normalise_root_selective_deep_expr","opt_vec_lit_op","opt_vec_op","tern_op","un_op","unwrap_expr","vec_lit_op","vec_op"]};

@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"struct":["NamedRule","RuleGroups","RuleSet"],"trait":["Rule"],"type":["RuleFn"]};

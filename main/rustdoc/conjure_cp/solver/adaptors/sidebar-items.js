@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["MinionValueOrder"],"mod":["minion","rustsat","smt"],"struct":["Minion","Sat","Smt"]};
+window.SIDEBAR_ITEMS = {"enum":["MinionValueOrder","MinionVariableOrder"],"mod":["minion","rustsat","smt"],"struct":["Minion","Sat","Smt"]};

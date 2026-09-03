@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"attr":["register_rule"],"macro":["register_rule_set"]};
+window.SIDEBAR_ITEMS = {"attr":["register_rule"],"macro":["register_representation","register_rule_set"]};

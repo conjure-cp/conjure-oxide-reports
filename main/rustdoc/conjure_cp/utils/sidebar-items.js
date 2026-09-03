@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["CombinatoricsError"],"fn":["count_combinations","count_permutations","derangements","restricted_partition_count","stirling_second_kind"],"mod":["combinatorics"],"struct":["BiMap","MatrixShape","View"]};

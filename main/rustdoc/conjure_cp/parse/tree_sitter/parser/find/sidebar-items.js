@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["parse_declaration_statement","parse_find_statement","parse_given_statement"]};
+window.SIDEBAR_ITEMS = {"fn":["parse_declaration_statement","parse_find_statement","parse_given_statement"],"struct":["ParsedFindStatement"]};

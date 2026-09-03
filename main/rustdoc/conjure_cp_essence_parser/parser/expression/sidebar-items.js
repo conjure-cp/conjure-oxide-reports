@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["parse_binary_expression","parse_expression"]};
+window.SIDEBAR_ITEMS = {"fn":["parse_annotation_expression","parse_binary_expression","parse_expression"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["domain_size","instantiate_default_impl","lookup_via_default_impl","to_domain_level_default_impl"]};
