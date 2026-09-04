@@ -3,18 +3,17 @@
 **conjure-cp:** 0% with examples, 25% documented -- 0/1/4
 **conjure-cp-cli:** 0% with examples, 42% documented -- 0/81/194
 **conjure-cp-cli-fuzz:** 0% with examples, 0% documented -- 0/0/1
-**conjure-cp-core:** 2% with examples, 50% documented -- 22/472/942
+**conjure-cp-core:** 2% with examples, 50% documented -- 22/471/941
 **conjure-cp-enum-compatibility-macro:** 33% with examples, 100% documented -- 1/3/3
 **conjure-cp-essence-macros:** 67% with examples, 67% documented -- 2/2/3
 **conjure-cp-essence-parser:** 0% with examples, 15% documented -- 0/30/196
 **conjure-cp-lsp:** 0% with examples, 0% documented -- 0/0/29
 **conjure-cp-rule-macros:** 25% with examples, 50% documented -- 1/2/4
 **conjure-cp-rules:** 3% with examples, 9% documented -- 1/3/35
-**minion-sys:** 1% with examples, 32% documented -- 2/50/158
 **tree-sitter-essence:** 33% with examples, 100% documented -- 1/3/3
 
 PR: [#1950](https://github.com/conjure-cp/conjure-oxide/pull/1950)
-Commit: [b91f06d0afe8e55204e6209a6236078b1ae842ec](https://github.com/conjure-cp/conjure-oxide/commit/b91f06d0afe8e55204e6209a6236078b1ae842ec)
+Commit: [0592b7042d7fc8218ff4ff82c48e3b19378b1200](https://github.com/conjure-cp/conjure-oxide/commit/0592b7042d7fc8218ff4ff82c48e3b19378b1200)
 
 ## RustDoc coverage for `conjure-cp`
 
@@ -118,7 +117,7 @@ Commit: [b91f06d0afe8e55204e6209a6236078b1ae842ec](https://github.com/conjure-cp
 | crates/conjure-cp-core/src/ast/domains/ground.rs | ✅ 100% *(15/15)* | ❌ 0% *(0/15)* |
 | crates/conjure-cp-core/src/ast/expression_arena.rs | ✅ 100% *(2/2)* | ❌ 0% *(0/2)* |
 | crates/conjure-cp-core/src/ast/matrix.rs | ✅ 100% *(22/22)* | ❌ 5% *(1/22)* |
-| crates/conjure-cp-core/src/ast/metadata.rs | ✅ 100% *(5/5)* | ❌ 0% *(0/5)* |
+| crates/conjure-cp-core/src/ast/metadata.rs | ✅ 100% *(4/4)* | ❌ 0% *(0/4)* |
 | crates/conjure-cp-core/src/ast/moo.rs | ✅ 100% *(1/1)* | ❌ 0% *(0/1)* |
 | crates/conjure-cp-core/src/ast/name.rs | ✅ 100% *(6/6)* | ❌ 0% *(0/6)* |
 | crates/conjure-cp-core/src/ast/pretty.rs | ✅ 100% *(12/12)* | ❌ 0% *(0/12)* |
@@ -227,16 +226,6 @@ Commit: [b91f06d0afe8e55204e6209a6236078b1ae842ec](https://github.com/conjure-cp
 | crates/conjure-cp-rules/src/types/variant/packed/representation.rs | ❌ 0% *(0/1)* | ❌ 0% *(0/1)* |
 | crates/conjure-cp-rules/src/lib.rs | ✅ 100% *(2/2)* | ❌ 50% *(1/2)* |
 | crates/conjure-cp-rules/src/representation.rs | ✅ 100% *(1/1)* | ❌ 0% *(0/1)* |
-
-## RustDoc coverage for `minion-sys`
-
-| File | Percentage Documented | Percentage with examples |
-|----|----|----|
-| crates/minion-sys/src/ast.rs | ❌ 13% *(14/105)* | ❌ 0% *(0/105)* |
-| crates/minion-sys/src/run.rs | ❌ 48% *(16/33)* | ❌ 3% *(1/33)* |
-| crates/minion-sys/src/error.rs | ✅ 100% *(13/13)* | ❌ 0% *(0/13)* |
-| crates/minion-sys/src/lib.rs | ✅ 100% *(1/1)* | ✅ 100% *(1/1)* |
-| crates/minion-sys/src/print.rs | ✅ 100% *(6/6)* | ❌ 0% *(0/6)* |
 
 ## RustDoc coverage for `tree-sitter-essence`
 
