@@ -3,7 +3,7 @@
 **conjure-cp:** 0% with examples, 25% documented -- 0/1/4
 **conjure-cp-cli:** 0% with examples, 42% documented -- 0/81/194
 **conjure-cp-cli-fuzz:** 0% with examples, 0% documented -- 0/0/1
-**conjure-cp-core:** 2% with examples, 50% documented -- 22/471/941
+**conjure-cp-core:** 2% with examples, 50% documented -- 22/475/945
 **conjure-cp-enum-compatibility-macro:** 33% with examples, 100% documented -- 1/3/3
 **conjure-cp-essence-macros:** 67% with examples, 67% documented -- 2/2/3
 **conjure-cp-essence-parser:** 0% with examples, 15% documented -- 0/30/196
@@ -12,7 +12,7 @@
 **conjure-cp-rules:** 3% with examples, 9% documented -- 1/3/35
 **tree-sitter-essence:** 33% with examples, 100% documented -- 1/3/3
 
-Commit: [3ef5518e324e995a67978164b08c30a79d7e77e6](https://github.com/conjure-cp/conjure-oxide/commit/3ef5518e324e995a67978164b08c30a79d7e77e6)
+Commit: [3c08952c4af0deb4b866968e4c1645ae5d343ddc](https://github.com/conjure-cp/conjure-oxide/commit/3c08952c4af0deb4b866968e4c1645ae5d343ddc)
 
 ## RustDoc coverage for `conjure-cp`
 
@@ -94,10 +94,10 @@ Commit: [3ef5518e324e995a67978164b08c30a79d7e77e6](https://github.com/conjure-cp
 | crates/conjure-cp-core/src/ast/symbol_table.rs | ❌ 50% *(1/2)* | ❌ 0% *(0/2)* |
 | crates/conjure-cp-core/src/ast/variables.rs | ❌ 50% *(1/2)* | ❌ 0% *(0/2)* |
 | crates/conjure-cp-core/src/rule_engine/rewriter_common.rs | ❌ 50% *(1/2)* | ❌ 0% *(0/2)* |
-| crates/conjure-cp-core/src/rule_engine/rule.rs | ❌ 50% *(13/26)* | ❌ 4% *(1/26)* |
 | crates/conjure-cp-core/src/utils/combinatorics.rs | ❌ 50% *(5/10)* | ❌ 0% *(0/10)* |
 | crates/conjure-cp-core/src/representation/errors.rs | ❌ 56% *(18/32)* | ❌ 0% *(0/32)* |
 | crates/conjure-cp-core/src/rule_engine/resolve_rules.rs | ❌ 57% *(4/7)* | ❌ 0% *(0/7)* |
+| crates/conjure-cp-core/src/rule_engine/rule.rs | ❌ 57% *(17/30)* | ❌ 3% *(1/30)* |
 | crates/conjure-cp-core/src/ast/domains/unresolved.rs | ❌ 64% *(9/14)* | ❌ 0% *(0/14)* |
 | crates/conjure-cp-core/src/solver/states.rs | ❌ 64% *(7/11)* | ❌ 0% *(0/11)* |
 | crates/conjure-cp-core/src/ast/partial_eval.rs | ❌ 67% *(2/3)* | ❌ 0% *(0/3)* |
