@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/conjure-cp-core/src/representation/types.rs`."><title>types.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-203241e4.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="conjure_cp_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.100.0-nightly (67eda617e 2026-09-10)" data-channel="nightly" data-search-js="search-b167f383.js" data-stringdex-js="stringdex-b5109af9.js" data-settings-js="settings-170eb4bf.js" ><script src="../../../static.files/storage-41dd4d93.js"></script><script defer src="../../../static.files/src-script-813739b1.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-1814ead3.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-9f56287d.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><a class="skip-main-content" href="#main-content">Skip to main content</a><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><section id="main-content" class="content" tabindex="-1"><div class="main-heading"><h1><div class="sub-heading">conjure_cp_core/representation/</div>types.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-3"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="kw">use </span><span class="kw">super</span>::errors::{ReprDownError, ReprError, ReprInitError, ReprInstantiateError, ReprUpError};
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/conjure-cp-core/src/representation/types.rs`."><title>types.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-203241e4.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="conjure_cp_core" data-themes="" data-resource-suffix="" data-rustdoc-version="1.100.0-nightly (0fc141305 2026-09-11)" data-channel="nightly" data-search-js="search-b167f383.js" data-stringdex-js="stringdex-b5109af9.js" data-settings-js="settings-170eb4bf.js" ><script src="../../../static.files/storage-41dd4d93.js"></script><script defer src="../../../static.files/src-script-813739b1.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-1814ead3.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-9f56287d.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><a class="skip-main-content" href="#main-content">Skip to main content</a><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><section id="main-content" class="content" tabindex="-1"><div class="main-heading"><h1><div class="sub-heading">conjure_cp_core/representation/</div>types.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-3"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="kw">use </span><span class="kw">super</span>::errors::{ReprDownError, ReprError, ReprInitError, ReprInstantiateError, ReprUpError};
 <a href=#2 id=2 data-nosnippet>2</a><span class="kw">use </span><span class="kw">super</span>::stored::ReprRuleStored;
 <a href=#3 id=3 data-nosnippet>3</a><span class="kw">use </span><span class="kw">crate</span>::ast::{
 <a href=#4 id=4 data-nosnippet>4</a>    DeclarationPtr, DomainPtr, Expression, Literal, Metadata, Moo, Name, Reference, SymbolTable,
@@ -85,100 +85,106 @@
 <a href=#85 id=85 data-nosnippet>85</a><span class="kw">pub trait </span>ReprRule: Send + Sync {
 <a href=#86 id=86 data-nosnippet>86</a>    <span class="kw">const </span>NAME: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str;
 <a href=#87 id=87 data-nosnippet>87</a>    <span class="kw">const </span>SHORT_NAME: <span class="kw-2">&amp;</span><span class="lifetime">'static </span>str;
-<a href=#88 id=88 data-nosnippet>88</a>    <span class="kw">const </span>STORED: <span class="kw-2">&amp;</span><span class="lifetime">'static </span><span class="kw">dyn </span>ReprRuleStored;
-<a href=#89 id=89 data-nosnippet>89</a>    <span class="kw">type </span>Assignment: ReprAssignment;
-<a href=#90 id=90 data-nosnippet>90</a>    <span class="kw">type </span>DeclLevel: ReprDeclLevel&lt;Assignment = <span class="self">Self</span>::Assignment&gt;;
-<a href=#91 id=91 data-nosnippet>91</a>    <span class="kw">type </span>DomainLevel: ReprDomainLevel&lt;DeclLevel = <span class="self">Self</span>::DeclLevel&gt;;
-<a href=#92 id=92 data-nosnippet>92</a>
-<a href=#93 id=93 data-nosnippet>93</a>    <span class="doccomment">/// Whether this representation is available when targeting `family`.
-<a href=#94 id=94 data-nosnippet>94</a>    ///
-<a href=#95 id=95 data-nosnippet>95</a>    /// Solver-specific representations -- the SAT integer encodings, say, or the SMT integer
-<a href=#96 id=96 data-nosnippet>96</a>    /// theories -- are only candidates for their own backend. Representations of Essence's
-<a href=#97 id=97 data-nosnippet>97</a>    /// abstract types are solver-independent and keep the default.
-<a href=#98 id=98 data-nosnippet>98</a>    </span><span class="kw">fn </span>applies_to(_family: <span class="kw">crate</span>::settings::SolverFamily) -&gt; bool {
-<a href=#99 id=99 data-nosnippet>99</a>        <span class="bool-val">true
-<a href=#100 id=100 data-nosnippet>100</a>    </span>}
-<a href=#101 id=101 data-nosnippet>101</a>
-<a href=#102 id=102 data-nosnippet>102</a>    <span class="kw">fn </span>compactness_score(dom: DomainPtr) -&gt; <span class="prelude-ty">Result</span>&lt;usize, ReprInitError&gt; {
-<a href=#103 id=103 data-nosnippet>103</a>        <span class="prelude-val">Ok</span>(<span class="self">Self</span>::DomainLevel::init(dom)<span class="question-mark">?</span>.compactness_score())
-<a href=#104 id=104 data-nosnippet>104</a>    }
-<a href=#105 id=105 data-nosnippet>105</a>
-<a href=#106 id=106 data-nosnippet>106</a>    <span class="kw">fn </span>get_or_init_for(
-<a href=#107 id=107 data-nosnippet>107</a>        decl: <span class="kw-2">&amp;</span><span class="lifetime">'_ </span><span class="kw-2">mut </span>DeclarationPtr,
-<a href=#108 id=108 data-nosnippet>108</a>    ) -&gt; ReprGetOrInitResult&lt;<span class="lifetime">'_</span>, <span class="self">Self</span>::DeclLevel, ReprError&gt; {
-<a href=#109 id=109 data-nosnippet>109</a>        <span class="kw">let </span>(symbols, constraints) = <span class="self">Self</span>::init_for_if_not_exists(decl)<span class="question-mark">?</span>;
-<a href=#110 id=110 data-nosnippet>110</a>        <span class="kw">let </span>state = decl.get_repr::&lt;<span class="self">Self</span>&gt;().unwrap_or_else(|| {
-<a href=#111 id=111 data-nosnippet>111</a>            <span class="macro">bug!</span>(
-<a href=#112 id=112 data-nosnippet>112</a>                <span class="string">"just initialised representation `{}` for `{}`, but it was not stored"</span>,
-<a href=#113 id=113 data-nosnippet>113</a>                <span class="self">Self</span>::NAME,
-<a href=#114 id=114 data-nosnippet>114</a>                decl
-<a href=#115 id=115 data-nosnippet>115</a>            )
-<a href=#116 id=116 data-nosnippet>116</a>        });
-<a href=#117 id=117 data-nosnippet>117</a>        <span class="prelude-val">Ok</span>((state, symbols, constraints))
-<a href=#118 id=118 data-nosnippet>118</a>    }
-<a href=#119 id=119 data-nosnippet>119</a>
-<a href=#120 id=120 data-nosnippet>120</a>    <span class="kw">fn </span>get_for(decl: <span class="kw-2">&amp;</span>DeclarationPtr) -&gt; <span class="prelude-ty">Option</span>&lt;MappedRwLockReadGuard&lt;<span class="lifetime">'_</span>, <span class="self">Self</span>::DeclLevel&gt;&gt; {
-<a href=#121 id=121 data-nosnippet>121</a>        decl.get_repr::&lt;<span class="self">Self</span>&gt;()
-<a href=#122 id=122 data-nosnippet>122</a>    }
-<a href=#123 id=123 data-nosnippet>123</a>
-<a href=#124 id=124 data-nosnippet>124</a>    <span class="kw">fn </span>init_for(decl: <span class="kw-2">&amp;mut </span>DeclarationPtr) -&gt; ReprResult {
-<a href=#125 id=125 data-nosnippet>125</a>        <span class="kw">if let </span><span class="prelude-val">Some</span>(family) = <span class="kw">crate</span>::settings::try_current_solver_family()
-<a href=#126 id=126 data-nosnippet>126</a>            &amp;&amp; !<span class="self">Self</span>::applies_to(family)
-<a href=#127 id=127 data-nosnippet>127</a>        {
-<a href=#128 id=128 data-nosnippet>128</a>            <span class="kw">return </span><span class="prelude-val">Err</span>(ReprInitError::WrongSolverFamily(<span class="self">Self</span>::NAME, family).into());
-<a href=#129 id=129 data-nosnippet>129</a>        }
-<a href=#130 id=130 data-nosnippet>130</a>
-<a href=#131 id=131 data-nosnippet>131</a>        <span class="kw">if </span><span class="kw">crate</span>::settings::channelling() == <span class="kw">crate</span>::settings::Channelling::No {
-<a href=#132 id=132 data-nosnippet>132</a>            <span class="kw">let </span>existing_rule = decl.reprs().iter().next().map(|(<span class="kw">_</span>, state)| state.rule());
-<a href=#133 id=133 data-nosnippet>133</a>            <span class="kw">if let </span><span class="prelude-val">Some</span>(existing_rule) = existing_rule
-<a href=#134 id=134 data-nosnippet>134</a>                &amp;&amp; existing_rule.name() != <span class="self">Self</span>::NAME
-<a href=#135 id=135 data-nosnippet>135</a>            {
-<a href=#136 id=136 data-nosnippet>136</a>                <span class="kw">return </span><span class="prelude-val">Err</span>(ReprInstantiateError::ConflictingRepresentation {
-<a href=#137 id=137 data-nosnippet>137</a>                    declaration: decl.clone(),
-<a href=#138 id=138 data-nosnippet>138</a>                    existing: existing_rule.name(),
-<a href=#139 id=139 data-nosnippet>139</a>                    requested: <span class="self">Self</span>::NAME,
-<a href=#140 id=140 data-nosnippet>140</a>                }
-<a href=#141 id=141 data-nosnippet>141</a>                .into());
-<a href=#142 id=142 data-nosnippet>142</a>            }
-<a href=#143 id=143 data-nosnippet>143</a>        }
-<a href=#144 id=144 data-nosnippet>144</a>
-<a href=#145 id=145 data-nosnippet>145</a>        <span class="kw">let </span>dom = decl
-<a href=#146 id=146 data-nosnippet>146</a>            .domain()
-<a href=#147 id=147 data-nosnippet>147</a>            .ok_or(ReprInstantiateError::NoDomain(decl.clone()))<span class="question-mark">?</span>;
-<a href=#148 id=148 data-nosnippet>148</a>        <span class="comment">// Named domain lettings are represented by an unresolved reference in a
-<a href=#149 id=149 data-nosnippet>149</a>        // declaration.  Representation initialisers need the domain behind that
-<a href=#150 id=150 data-nosnippet>150</a>        // reference; preserve genuinely unresolved domains for rules which can
-<a href=#151 id=151 data-nosnippet>151</a>        // handle them directly.
-<a href=#152 id=152 data-nosnippet>152</a>        </span><span class="kw">let </span>dom = dom.resolve().map(Into::into).unwrap_or(dom);
-<a href=#153 id=153 data-nosnippet>153</a>
-<a href=#154 id=154 data-nosnippet>154</a>        <span class="kw">let </span>dom_level = <span class="self">Self</span>::DomainLevel::init(dom)<span class="question-mark">?</span>;
-<a href=#155 id=155 data-nosnippet>155</a>        <span class="kw">let </span>(state, symbols, <span class="kw-2">mut </span>constraints) = dom_level.instantiate(decl.clone())<span class="question-mark">?</span>;
-<a href=#156 id=156 data-nosnippet>156</a>
-<a href=#157 id=157 data-nosnippet>157</a>        <span class="comment">// save a copy `decl` so we can acquire a lock on the original
-<a href=#158 id=158 data-nosnippet>158</a>        </span><span class="kw">let </span>decl2 = decl.clone();
-<a href=#159 id=159 data-nosnippet>159</a>        <span class="kw">for </span>(<span class="kw">_</span>, decl) <span class="kw">in </span>decl.reprs().iter() {
-<a href=#160 id=160 data-nosnippet>160</a>            <span class="kw">let </span>us = Reference {
-<a href=#161 id=161 data-nosnippet>161</a>                ptr: decl2.clone(),
-<a href=#162 id=162 data-nosnippet>162</a>                repr: <span class="prelude-val">Some</span>(<span class="self">Self</span>::STORED),
-<a href=#163 id=163 data-nosnippet>163</a>            };
-<a href=#164 id=164 data-nosnippet>164</a>            <span class="kw">let </span>them = Reference {
-<a href=#165 id=165 data-nosnippet>165</a>                ptr: decl2.clone(),
-<a href=#166 id=166 data-nosnippet>166</a>                repr: <span class="prelude-val">Some</span>(decl.rule()),
-<a href=#167 id=167 data-nosnippet>167</a>            };
-<a href=#168 id=168 data-nosnippet>168</a>            <span class="kw">let </span>eq = Expression::Eq(Metadata::new(), Moo::new(us.into()), Moo::new(them.into()));
-<a href=#169 id=169 data-nosnippet>169</a>            constraints.push(eq);
-<a href=#170 id=170 data-nosnippet>170</a>        }
-<a href=#171 id=171 data-nosnippet>171</a>
-<a href=#172 id=172 data-nosnippet>172</a>        <span class="comment">// we acquire a write lock here so nothing else beyond this point should touch `decl`
-<a href=#173 id=173 data-nosnippet>173</a>        </span>decl.reprs_mut().put::&lt;<span class="self">Self</span>&gt;(state);
-<a href=#174 id=174 data-nosnippet>174</a>        <span class="prelude-val">Ok</span>((symbols, constraints))
-<a href=#175 id=175 data-nosnippet>175</a>    }
-<a href=#176 id=176 data-nosnippet>176</a>
-<a href=#177 id=177 data-nosnippet>177</a>    <span class="kw">fn </span>init_for_if_not_exists(decl: <span class="kw-2">&amp;mut </span>DeclarationPtr) -&gt; ReprResult {
-<a href=#178 id=178 data-nosnippet>178</a>        <span class="kw">if </span>decl.reprs().has::&lt;<span class="self">Self</span>&gt;() {
-<a href=#179 id=179 data-nosnippet>179</a>            <span class="kw">return </span><span class="prelude-val">Ok</span>((SymbolTable::default(), Vec::new()));
-<a href=#180 id=180 data-nosnippet>180</a>        }
-<a href=#181 id=181 data-nosnippet>181</a>        <span class="self">Self</span>::init_for(decl)
-<a href=#182 id=182 data-nosnippet>182</a>    }
-<a href=#183 id=183 data-nosnippet>183</a>}
+<a href=#88 id=88 data-nosnippet>88</a>
+<a href=#89 id=89 data-nosnippet>89</a>    <span class="doccomment">/// This representation's identity.
+<a href=#90 id=90 data-nosnippet>90</a>    </span><span class="kw">fn </span>id() -&gt; <span class="kw">super</span>::ReprId {
+<a href=#91 id=91 data-nosnippet>91</a>        <span class="kw">super</span>::ReprId::new(<span class="self">Self</span>::NAME, <span class="self">Self</span>::SHORT_NAME)
+<a href=#92 id=92 data-nosnippet>92</a>    }
+<a href=#93 id=93 data-nosnippet>93</a>
+<a href=#94 id=94 data-nosnippet>94</a>    <span class="kw">const </span>STORED: <span class="kw-2">&amp;</span><span class="lifetime">'static </span><span class="kw">dyn </span>ReprRuleStored;
+<a href=#95 id=95 data-nosnippet>95</a>    <span class="kw">type </span>Assignment: ReprAssignment;
+<a href=#96 id=96 data-nosnippet>96</a>    <span class="kw">type </span>DeclLevel: ReprDeclLevel&lt;Assignment = <span class="self">Self</span>::Assignment&gt;;
+<a href=#97 id=97 data-nosnippet>97</a>    <span class="kw">type </span>DomainLevel: ReprDomainLevel&lt;DeclLevel = <span class="self">Self</span>::DeclLevel&gt;;
+<a href=#98 id=98 data-nosnippet>98</a>
+<a href=#99 id=99 data-nosnippet>99</a>    <span class="doccomment">/// Whether this representation is available when targeting `family`.
+<a href=#100 id=100 data-nosnippet>100</a>    ///
+<a href=#101 id=101 data-nosnippet>101</a>    /// Solver-specific representations -- the SAT integer encodings, say, or the SMT integer
+<a href=#102 id=102 data-nosnippet>102</a>    /// theories -- are only candidates for their own backend. Representations of Essence's
+<a href=#103 id=103 data-nosnippet>103</a>    /// abstract types are solver-independent and keep the default.
+<a href=#104 id=104 data-nosnippet>104</a>    </span><span class="kw">fn </span>applies_to(_family: <span class="kw">crate</span>::settings::SolverFamily) -&gt; bool {
+<a href=#105 id=105 data-nosnippet>105</a>        <span class="bool-val">true
+<a href=#106 id=106 data-nosnippet>106</a>    </span>}
+<a href=#107 id=107 data-nosnippet>107</a>
+<a href=#108 id=108 data-nosnippet>108</a>    <span class="kw">fn </span>compactness_score(dom: DomainPtr) -&gt; <span class="prelude-ty">Result</span>&lt;usize, ReprInitError&gt; {
+<a href=#109 id=109 data-nosnippet>109</a>        <span class="prelude-val">Ok</span>(<span class="self">Self</span>::DomainLevel::init(dom)<span class="question-mark">?</span>.compactness_score())
+<a href=#110 id=110 data-nosnippet>110</a>    }
+<a href=#111 id=111 data-nosnippet>111</a>
+<a href=#112 id=112 data-nosnippet>112</a>    <span class="kw">fn </span>get_or_init_for(
+<a href=#113 id=113 data-nosnippet>113</a>        decl: <span class="kw-2">&amp;</span><span class="lifetime">'_ </span><span class="kw-2">mut </span>DeclarationPtr,
+<a href=#114 id=114 data-nosnippet>114</a>    ) -&gt; ReprGetOrInitResult&lt;<span class="lifetime">'_</span>, <span class="self">Self</span>::DeclLevel, ReprError&gt; {
+<a href=#115 id=115 data-nosnippet>115</a>        <span class="kw">let </span>(symbols, constraints) = <span class="self">Self</span>::init_for_if_not_exists(decl)<span class="question-mark">?</span>;
+<a href=#116 id=116 data-nosnippet>116</a>        <span class="kw">let </span>state = decl.get_repr::&lt;<span class="self">Self</span>&gt;().unwrap_or_else(|| {
+<a href=#117 id=117 data-nosnippet>117</a>            <span class="macro">bug!</span>(
+<a href=#118 id=118 data-nosnippet>118</a>                <span class="string">"just initialised representation `{}` for `{}`, but it was not stored"</span>,
+<a href=#119 id=119 data-nosnippet>119</a>                <span class="self">Self</span>::NAME,
+<a href=#120 id=120 data-nosnippet>120</a>                decl
+<a href=#121 id=121 data-nosnippet>121</a>            )
+<a href=#122 id=122 data-nosnippet>122</a>        });
+<a href=#123 id=123 data-nosnippet>123</a>        <span class="prelude-val">Ok</span>((state, symbols, constraints))
+<a href=#124 id=124 data-nosnippet>124</a>    }
+<a href=#125 id=125 data-nosnippet>125</a>
+<a href=#126 id=126 data-nosnippet>126</a>    <span class="kw">fn </span>get_for(decl: <span class="kw-2">&amp;</span>DeclarationPtr) -&gt; <span class="prelude-ty">Option</span>&lt;MappedRwLockReadGuard&lt;<span class="lifetime">'_</span>, <span class="self">Self</span>::DeclLevel&gt;&gt; {
+<a href=#127 id=127 data-nosnippet>127</a>        decl.get_repr::&lt;<span class="self">Self</span>&gt;()
+<a href=#128 id=128 data-nosnippet>128</a>    }
+<a href=#129 id=129 data-nosnippet>129</a>
+<a href=#130 id=130 data-nosnippet>130</a>    <span class="kw">fn </span>init_for(decl: <span class="kw-2">&amp;mut </span>DeclarationPtr) -&gt; ReprResult {
+<a href=#131 id=131 data-nosnippet>131</a>        <span class="kw">if let </span><span class="prelude-val">Some</span>(family) = <span class="kw">crate</span>::settings::try_current_solver_family()
+<a href=#132 id=132 data-nosnippet>132</a>            &amp;&amp; !<span class="self">Self</span>::applies_to(family)
+<a href=#133 id=133 data-nosnippet>133</a>        {
+<a href=#134 id=134 data-nosnippet>134</a>            <span class="kw">return </span><span class="prelude-val">Err</span>(ReprInitError::WrongSolverFamily(<span class="self">Self</span>::NAME, family).into());
+<a href=#135 id=135 data-nosnippet>135</a>        }
+<a href=#136 id=136 data-nosnippet>136</a>
+<a href=#137 id=137 data-nosnippet>137</a>        <span class="kw">if </span><span class="kw">crate</span>::settings::channelling() == <span class="kw">crate</span>::settings::Channelling::No {
+<a href=#138 id=138 data-nosnippet>138</a>            <span class="kw">let </span>existing_rule = decl.reprs().iter().next().map(|(<span class="kw">_</span>, state)| state.rule());
+<a href=#139 id=139 data-nosnippet>139</a>            <span class="kw">if let </span><span class="prelude-val">Some</span>(existing_rule) = existing_rule
+<a href=#140 id=140 data-nosnippet>140</a>                &amp;&amp; existing_rule.id() != <span class="self">Self</span>::id()
+<a href=#141 id=141 data-nosnippet>141</a>            {
+<a href=#142 id=142 data-nosnippet>142</a>                <span class="kw">return </span><span class="prelude-val">Err</span>(ReprInstantiateError::ConflictingRepresentation {
+<a href=#143 id=143 data-nosnippet>143</a>                    declaration: decl.clone(),
+<a href=#144 id=144 data-nosnippet>144</a>                    existing: existing_rule.name(),
+<a href=#145 id=145 data-nosnippet>145</a>                    requested: <span class="self">Self</span>::NAME,
+<a href=#146 id=146 data-nosnippet>146</a>                }
+<a href=#147 id=147 data-nosnippet>147</a>                .into());
+<a href=#148 id=148 data-nosnippet>148</a>            }
+<a href=#149 id=149 data-nosnippet>149</a>        }
+<a href=#150 id=150 data-nosnippet>150</a>
+<a href=#151 id=151 data-nosnippet>151</a>        <span class="kw">let </span>dom = decl
+<a href=#152 id=152 data-nosnippet>152</a>            .domain()
+<a href=#153 id=153 data-nosnippet>153</a>            .ok_or(ReprInstantiateError::NoDomain(decl.clone()))<span class="question-mark">?</span>;
+<a href=#154 id=154 data-nosnippet>154</a>        <span class="comment">// Named domain lettings are represented by an unresolved reference in a
+<a href=#155 id=155 data-nosnippet>155</a>        // declaration.  Representation initialisers need the domain behind that
+<a href=#156 id=156 data-nosnippet>156</a>        // reference; preserve genuinely unresolved domains for rules which can
+<a href=#157 id=157 data-nosnippet>157</a>        // handle them directly.
+<a href=#158 id=158 data-nosnippet>158</a>        </span><span class="kw">let </span>dom = dom.resolve().map(Into::into).unwrap_or(dom);
+<a href=#159 id=159 data-nosnippet>159</a>
+<a href=#160 id=160 data-nosnippet>160</a>        <span class="kw">let </span>dom_level = <span class="self">Self</span>::DomainLevel::init(dom)<span class="question-mark">?</span>;
+<a href=#161 id=161 data-nosnippet>161</a>        <span class="kw">let </span>(state, symbols, <span class="kw-2">mut </span>constraints) = dom_level.instantiate(decl.clone())<span class="question-mark">?</span>;
+<a href=#162 id=162 data-nosnippet>162</a>
+<a href=#163 id=163 data-nosnippet>163</a>        <span class="comment">// save a copy `decl` so we can acquire a lock on the original
+<a href=#164 id=164 data-nosnippet>164</a>        </span><span class="kw">let </span>decl2 = decl.clone();
+<a href=#165 id=165 data-nosnippet>165</a>        <span class="kw">for </span>(<span class="kw">_</span>, decl) <span class="kw">in </span>decl.reprs().iter() {
+<a href=#166 id=166 data-nosnippet>166</a>            <span class="kw">let </span>us = Reference {
+<a href=#167 id=167 data-nosnippet>167</a>                ptr: decl2.clone(),
+<a href=#168 id=168 data-nosnippet>168</a>                repr: <span class="prelude-val">Some</span>(<span class="self">Self</span>::STORED),
+<a href=#169 id=169 data-nosnippet>169</a>            };
+<a href=#170 id=170 data-nosnippet>170</a>            <span class="kw">let </span>them = Reference {
+<a href=#171 id=171 data-nosnippet>171</a>                ptr: decl2.clone(),
+<a href=#172 id=172 data-nosnippet>172</a>                repr: <span class="prelude-val">Some</span>(decl.rule()),
+<a href=#173 id=173 data-nosnippet>173</a>            };
+<a href=#174 id=174 data-nosnippet>174</a>            <span class="kw">let </span>eq = Expression::Eq(Metadata::new(), Moo::new(us.into()), Moo::new(them.into()));
+<a href=#175 id=175 data-nosnippet>175</a>            constraints.push(eq);
+<a href=#176 id=176 data-nosnippet>176</a>        }
+<a href=#177 id=177 data-nosnippet>177</a>
+<a href=#178 id=178 data-nosnippet>178</a>        <span class="comment">// we acquire a write lock here so nothing else beyond this point should touch `decl`
+<a href=#179 id=179 data-nosnippet>179</a>        </span>decl.reprs_mut().put::&lt;<span class="self">Self</span>&gt;(state);
+<a href=#180 id=180 data-nosnippet>180</a>        <span class="prelude-val">Ok</span>((symbols, constraints))
+<a href=#181 id=181 data-nosnippet>181</a>    }
+<a href=#182 id=182 data-nosnippet>182</a>
+<a href=#183 id=183 data-nosnippet>183</a>    <span class="kw">fn </span>init_for_if_not_exists(decl: <span class="kw-2">&amp;mut </span>DeclarationPtr) -&gt; ReprResult {
+<a href=#184 id=184 data-nosnippet>184</a>        <span class="kw">if </span>decl.reprs().has::&lt;<span class="self">Self</span>&gt;() {
+<a href=#185 id=185 data-nosnippet>185</a>            <span class="kw">return </span><span class="prelude-val">Ok</span>((SymbolTable::default(), Vec::new()));
+<a href=#186 id=186 data-nosnippet>186</a>        }
+<a href=#187 id=187 data-nosnippet>187</a>        <span class="self">Self</span>::init_for(decl)
+<a href=#188 id=188 data-nosnippet>188</a>    }
+<a href=#189 id=189 data-nosnippet>189</a>}
 </code></pre></div></section></main></body></html>

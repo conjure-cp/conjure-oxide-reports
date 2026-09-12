@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["get_repr_rule"],"macro":[["register_legacy_representation",1],"register_representation"],"mod":["default_impls","errors","registry","stored","types","util"],"struct":["ReprStore"],"trait":["Representation"]};
+window.SIDEBAR_ITEMS = {"macro":["register_representation"],"mod":["default_impls","errors","id","registry","stored","types","util"],"struct":["ReprStore"],"trait":["Representation"]};
