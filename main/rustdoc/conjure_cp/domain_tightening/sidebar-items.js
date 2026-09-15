@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["tighten_domains_from_constraints"]};
