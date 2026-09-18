@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../searchindex-28911750.js";
+            window.path_to_searchindex_js = "../../searchindex-90e5e0f6.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-fe519d7f.js"></script>
+        <script src="../../toc-d7933c8e.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -180,43 +180,50 @@
 <p><strong>This document is a work in progress - for a full list of logging options,
 see Conjure Oxide’s <code>--help</code> output.</strong></p>
 <h2 id="to-stderr"><a class="header" href="#to-stderr">To <code>stderr</code></a></h2>
-<p>Using <code>--verbose</code>, and the <code>RUST_LOG</code> environment variable, you can control the
-contents, and formatting of, Conjure Oxide’s <code>stderr</code> output:</p>
+<p>The verbosity flags form a detail ladder:</p>
 <ul>
-<li>
-<p><strong><code>--verbose</code></strong> changes the formatting of the logs for improved readability,
-including printing source locations and line numbers for log events. It also
-enables the printing of the log levels <code>INFO</code> and above.</p>
-</li>
-<li>
-<p>The <strong><code>RUST_LOG</code></strong> environment variable can be used to customise the
-log levels that are printed depending on the module . For more
-information, see:
-<a href="https://docs.rs/env_logger/latest/env_logger/#enabling-logging">https://docs.rs/env_logger/latest/env_logger/#enabling-logging</a>.</p>
-</li>
+<li>With no flag, only warnings are logged.</li>
+<li><code>-q</code> / <code>--quiet</code> disables logs on <code>stderr</code>.</li>
+<li><code>-v</code> logs concise stage information such as parsing, rewriting, and running the solver.</li>
+<li><code>-vv</code> additionally logs successful rule applications.</li>
+<li><code>-vvv</code> additionally logs every rule attempt, including failures. This can be expensive and
+produce a very large amount of output.</li>
 </ul>
+<p>The <strong><code>RUST_LOG</code></strong> environment variable remains available as an advanced override for selecting
+levels or modules when no verbosity flag is supplied. Explicit <code>-v</code>/<code>-vv</code>/<code>-vvv</code> and <code>--quiet</code>
+take precedence over it.</p>
+<h2 id="to-a-file"><a class="header" href="#to-a-file">To a file</a></h2>
+<p><code>--log-file &lt;PATH&gt;</code> creates one general log file. Its format and detail are independent of the
+terminal verbosity:</p>
+<pre><code class="language-sh">conjure-oxide solve model.essence \
+  --log-file attempts.json \
+  --log-format json \
+  --log-detail attempts
+</code></pre>
+<p><code>--log-format</code> accepts <code>text</code> (the default) or <code>json</code>. <code>--log-detail</code> accepts <code>stages</code> (the
+default), <code>applications</code>, or <code>attempts</code>. The supplied filename is used exactly as written and is
+truncated at the start of the run.</p>
 <h3 id="example-logging-rule-applications"><a class="header" href="#example-logging-rule-applications">Example: Logging Rule Applications</a></h3>
 <p>Different log levels provide different information about the rules applied to
 the model:</p>
 <ul>
 <li>
-<p><code>INFO</code> provides information on the rules that were applied to the model.</p>
+<p><code>-vv</code> prints rules that were successfully applied to the model.</p>
 </li>
 <li>
-<p><code>TRACE</code> additionally prints the rules that were attempted and why they were
-not applicable.</p>
+<p><code>-vvv</code> additionally prints every attempted rule and whether it succeeded.</p>
 </li>
 </ul>
 <p>To see TRACE logs in a pretty format (mainly useful for
 debugging):</p>
-<pre><code class="language-sh">RUST_LOG=trace conjure-oxide solve --verbose &lt;model&gt;
+<pre><code class="language-sh">conjure-oxide solve -vvv &lt;model&gt;
 </code></pre>
 <p>Or, using cargo:</p>
-<pre><code class="language-sh">RUST_LOG=trace cargo run -- solve --verbose &lt;model&gt;
+<pre><code class="language-sh">cargo run -- solve -vvv &lt;model&gt;
 </code></pre>
 <h3 id="example-tracing-sat-solver-rules"><a class="header" href="#example-tracing-sat-solver-rules">Example: Tracing SAT Solver Rules</a></h3>
 <p>When working with the SAT solver, you can trace the complete transformation pipeline:</p>
-<pre><code class="language-bash">RUST_LOG=TRACE cargo run -- solve --solver sat my_problem.essence --verbose
+<pre><code class="language-bash">cargo run -- solve --solver sat -vvv my_problem.essence
 </code></pre>
 <p>This will show:</p>
 <ul>
@@ -226,7 +233,10 @@ debugging):</p>
 <li>All rules that were tried and applied</li>
 </ul>
 <blockquote>
-<p>This also applies for the other possible SAT solver encodings such as <code>sat-direct</code>, <code>sat-log</code> and <code>sat-order</code>.</p>
+<p>Which integer encoding each variable gets – <code>int_log</code>, <code>int_direct</code> or <code>int_order</code> – is a
+representation choice made per declaration rather than part of the solver name. Use
+<code>--heuristic</code> to steer it: <code>-h i</code> prompts for each choice, and <code>-h c</code> (the default) takes the
+most compact.</p>
 </blockquote>
 <p>For more detailed testing output (including JSON traces and rewritten models), run specific tests:</p>
 <pre><code class="language-bash">cargo nextest run -E 'test(&lt;test_name&gt;)'
@@ -280,7 +290,7 @@ debugging):</p>
         <script src="../../searcher-09f2665d.js"></script>
 
         <script src="../../clipboard-1626706a.min.js"></script>
-        <script src="../../highlight-a1fdb4db.js"></script>
+        <script src="../../highlight-f33deea9.js"></script>
         <script src="../../book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->

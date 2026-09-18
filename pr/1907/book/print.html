@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-28911750.js";
+            window.path_to_searchindex_js = "searchindex-90e5e0f6.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-fe519d7f.js"></script>
+        <script src="toc-d7933c8e.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -207,15 +207,7 @@ last updated: 21-12-2025
 <h2 id="api-documentation"><a class="header" href="#api-documentation">API Documentation</a></h2>
 <ul>
 <li><a href="https://conjure-cp.github.io/conjure-oxide/docs/conjure_cp/index.html">conjure-cp</a></li>
-</ul>
-<!--- This link seems to be dead. Cannot find an equivalent on the docs --->
-<!-- md-dead-link-check: off -->
-<ul>
-<li><a href="https://conjure-cp.github.io/conjure-oxide/docs/tree_morph/index.html">tree-morph</a></li>
-</ul>
- <!-- md-dead-link-check: on -->
-<ul>
-<li><a href="https://conjure-cp.github.io/conjure-oxide/docs/minion_sys/index.html">minion-sys</a></li>
+<li><a href="https://docs.rs/minion-sys">minion-sys</a></li>
 </ul>
 <h3 id="internal-crates"><a class="header" href="#internal-crates">Internal crates</a></h3>
 <p>The following crates are internal, and are re-exported by <code>conjure-cp</code>:</p>
@@ -368,19 +360,18 @@ such that x &gt; y
 </code></pre>
 <p>If you are curious about more complex models, you can check out the models that we use to test Conjure Oxide, available in the <code>test-suite/tests/integration</code> directory of the repository.</p>
 <h2 id="running-with-different-solvers"><a class="header" href="#running-with-different-solvers">Running with Different Solvers</a></h2>
+<p><code>--solver</code> takes <code>minion</code>, <code>sat</code>, or <code>z3</code>.</p>
+<p>How a model is <em>expressed</em> for the chosen solver is separate from which solver it is. SAT has no
+integers, so each integer variable is encoded into Booleans as <code>int_log</code>, <code>int_direct</code> or
+<code>int_order</code>; Z3 has integers but two theories to hold them in, <code>lia</code> or <code>bv</code>. Both are
+representation choices made per declaration, exactly like choosing <code>occurrence</code> or <code>explicit</code> for a
+set, and both are steered with <code>--heuristic</code> (see the modelling-choices guide). Variables in
+different encodings are channelled together automatically where a constraint needs them to agree.</p>
 <h3 id="sat-solver"><a class="header" href="#sat-solver">SAT Solver</a></h3>
-<p><code>--sat-encoding</code> specifies the encoding strategy used by the SAT solver. This affects performance and solution structure.</p>
-<p>Supported options:</p>
-<ul>
-<li><code>log</code> (default)</li>
-<li><code>direct</code></li>
-<li><code>order</code></li>
-</ul>
-<p>Default usage (uses <code>log</code>):</p>
 <pre><code class="language-bash">cargo run -- solve --solver sat my_problem.essence
 </code></pre>
-<p>Specify an encoding:</p>
-<pre><code class="language-bash">cargo run -- solve --solver sat my_problem.essence
+<h3 id="z3-smt"><a class="header" href="#z3-smt">Z3 (SMT)</a></h3>
+<pre><code class="language-bash">cargo run -- solve --solver z3 my_problem.essence
 </code></pre>
 <h3 id="minion-solver"><a class="header" href="#minion-solver">Minion Solver</a></h3>
 <pre><code class="language-bash">cargo run -- solve --solver minion my_problem.essence
@@ -414,43 +405,50 @@ such that x &gt; y
 <p><strong>This document is a work in progress - for a full list of logging options,
 see Conjure Oxide’s <code>--help</code> output.</strong></p>
 <h2 id="to-stderr"><a class="header" href="#to-stderr">To <code>stderr</code></a></h2>
-<p>Using <code>--verbose</code>, and the <code>RUST_LOG</code> environment variable, you can control the
-contents, and formatting of, Conjure Oxide’s <code>stderr</code> output:</p>
+<p>The verbosity flags form a detail ladder:</p>
 <ul>
-<li>
-<p><strong><code>--verbose</code></strong> changes the formatting of the logs for improved readability,
-including printing source locations and line numbers for log events. It also
-enables the printing of the log levels <code>INFO</code> and above.</p>
-</li>
-<li>
-<p>The <strong><code>RUST_LOG</code></strong> environment variable can be used to customise the
-log levels that are printed depending on the module . For more
-information, see:
-<a href="https://docs.rs/env_logger/latest/env_logger/#enabling-logging">https://docs.rs/env_logger/latest/env_logger/#enabling-logging</a>.</p>
-</li>
+<li>With no flag, only warnings are logged.</li>
+<li><code>-q</code> / <code>--quiet</code> disables logs on <code>stderr</code>.</li>
+<li><code>-v</code> logs concise stage information such as parsing, rewriting, and running the solver.</li>
+<li><code>-vv</code> additionally logs successful rule applications.</li>
+<li><code>-vvv</code> additionally logs every rule attempt, including failures. This can be expensive and
+produce a very large amount of output.</li>
 </ul>
+<p>The <strong><code>RUST_LOG</code></strong> environment variable remains available as an advanced override for selecting
+levels or modules when no verbosity flag is supplied. Explicit <code>-v</code>/<code>-vv</code>/<code>-vvv</code> and <code>--quiet</code>
+take precedence over it.</p>
+<h2 id="to-a-file"><a class="header" href="#to-a-file">To a file</a></h2>
+<p><code>--log-file &lt;PATH&gt;</code> creates one general log file. Its format and detail are independent of the
+terminal verbosity:</p>
+<pre><code class="language-sh">conjure-oxide solve model.essence \
+  --log-file attempts.json \
+  --log-format json \
+  --log-detail attempts
+</code></pre>
+<p><code>--log-format</code> accepts <code>text</code> (the default) or <code>json</code>. <code>--log-detail</code> accepts <code>stages</code> (the
+default), <code>applications</code>, or <code>attempts</code>. The supplied filename is used exactly as written and is
+truncated at the start of the run.</p>
 <h3 id="example-logging-rule-applications"><a class="header" href="#example-logging-rule-applications">Example: Logging Rule Applications</a></h3>
 <p>Different log levels provide different information about the rules applied to
 the model:</p>
 <ul>
 <li>
-<p><code>INFO</code> provides information on the rules that were applied to the model.</p>
+<p><code>-vv</code> prints rules that were successfully applied to the model.</p>
 </li>
 <li>
-<p><code>TRACE</code> additionally prints the rules that were attempted and why they were
-not applicable.</p>
+<p><code>-vvv</code> additionally prints every attempted rule and whether it succeeded.</p>
 </li>
 </ul>
 <p>To see TRACE logs in a pretty format (mainly useful for
 debugging):</p>
-<pre><code class="language-sh">RUST_LOG=trace conjure-oxide solve --verbose &lt;model&gt;
+<pre><code class="language-sh">conjure-oxide solve -vvv &lt;model&gt;
 </code></pre>
 <p>Or, using cargo:</p>
-<pre><code class="language-sh">RUST_LOG=trace cargo run -- solve --verbose &lt;model&gt;
+<pre><code class="language-sh">cargo run -- solve -vvv &lt;model&gt;
 </code></pre>
 <h3 id="example-tracing-sat-solver-rules"><a class="header" href="#example-tracing-sat-solver-rules">Example: Tracing SAT Solver Rules</a></h3>
 <p>When working with the SAT solver, you can trace the complete transformation pipeline:</p>
-<pre><code class="language-bash">RUST_LOG=TRACE cargo run -- solve --solver sat my_problem.essence --verbose
+<pre><code class="language-bash">cargo run -- solve --solver sat -vvv my_problem.essence
 </code></pre>
 <p>This will show:</p>
 <ul>
@@ -460,7 +458,10 @@ debugging):</p>
 <li>All rules that were tried and applied</li>
 </ul>
 <blockquote>
-<p>This also applies for the other possible SAT solver encodings such as <code>sat-direct</code>, <code>sat-log</code> and <code>sat-order</code>.</p>
+<p>Which integer encoding each variable gets – <code>int_log</code>, <code>int_direct</code> or <code>int_order</code> – is a
+representation choice made per declaration rather than part of the solver name. Use
+<code>--heuristic</code> to steer it: <code>-h i</code> prompts for each choice, and <code>-h c</code> (the default) takes the
+most compact.</p>
 </blockquote>
 <p>For more detailed testing output (including JSON traces and rewritten models), run specific tests:</p>
 <pre><code class="language-bash">cargo nextest run -E 'test(&lt;test_name&gt;)'
@@ -481,8 +482,8 @@ created: 24-10-25
 </ul>
 <h2 id="contributing-1"><a class="header" href="#contributing-1">Contributing</a></h2>
 <p>This project is open-source: you can find the source code on
-<a href="https://github.com/conjure-cp/conjure-oxide">Github</a>, and issues, questions,
-or feature requests can be posted on the <a href="https://github.com/conjure-cp/conjure-oxide/issues">Github issue
+<a href="https://github.com/conjure-cp/conjure-oxide">GitHub</a>, and issues, questions,
+or feature requests can be posted on the <a href="https://github.com/conjure-cp/conjure-oxide/issues">GitHub issue
 tracker</a>.</p>
 <p>Currently, Conjure Oxide has been primarily developed by students and staff at the <a href="https://www.st-andrews.ac.uk/">University of St Andrews</a>. That being said, we welcome and encourage contributions from individuals outside the University. Over the course of this section, we will expand further into <strong>how</strong> you can contribute.</p>
 <p>For more detailed information regarding our contributing process, please refer to <a href="https://github.com/conjure-cp/conjure-oxide/blob/main/CONTRIBUTING.md">CONTRIBUTING.md</a></p>
@@ -660,7 +661,7 @@ echo ~/Documents/... &gt; /cs/home/$USER/.paths.d/z3
 <h1 id="pull-requests"><a class="header" href="#pull-requests">Pull Requests</a></h1>
 <blockquote class="blockquote-tag blockquote-tag-tip">
 <p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M8 1.5c-2.363 0-4 1.69-4 3.75 0 .984.424 1.625.984 2.304l.214.253c.223.264.47.556.673.848.284.411.537.896.621 1.49a.75.75 0 0 1-1.484.211c-.04-.282-.163-.547-.37-.847a8.456 8.456 0 0 0-.542-.68c-.084-.1-.173-.205-.268-.32C3.201 7.75 2.5 6.766 2.5 5.25 2.5 2.31 4.863 0 8 0s5.5 2.31 5.5 5.25c0 1.516-.701 2.5-1.328 3.259-.095.115-.184.22-.268.319-.207.245-.383.453-.541.681-.208.3-.33.565-.37.847a.751.751 0 0 1-1.485-.212c.084-.593.337-1.078.621-1.489.203-.292.45-.584.673-.848.075-.088.147-.173.213-.253.561-.679.985-1.32.985-2.304 0-2.06-1.637-3.75-4-3.75ZM5.75 12h4.5a.75.75 0 0 1 0 1.5h-4.5a.75.75 0 0 1 0-1.5ZM6 15.25a.75.75 0 0 1 .75-.75h2.5a.75.75 0 0 1 0 1.5h-2.5a.75.75 0 0 1-.75-.75Z"></path></svg>Tip</p>
-<p>We Use <a href="https://guides.github.com/introduction/flow/index.html">Github Flow</a>, so All Code Changes Happen Through Pull Requests</p>
+<p>We Use <a href="https://guides.github.com/introduction/flow/index.html">GitHub Flow</a>, so All Code Changes Happen Through Pull Requests</p>
 </blockquote>
 <p>Our development process is as follows:</p>
 <ol>
@@ -682,7 +683,7 @@ Details on how to update a PR are given below.</li>
 </li>
 <li>Once Oz has approved the PR:
 <ul>
-<li>Update your PR to main by rebase or merge. This can be done through the Github UI or locally.</li>
+<li>Update your PR to main by rebase or merge. This can be done through the GitHub UI or locally.</li>
 <li>Cleanup your git history (see below) or request your PR to be squash merged.</li>
 </ul>
 </li>
@@ -1104,10 +1105,10 @@ For simple methods they may not be necessary.</p>
 /// # Returns
 /// - true if the environment variable is set to "1".
 /// - false if the environment variable is not set or set to any other value.
-fn optimizations_enabled() -&gt; bool {
+fn optimisations_enabled() -&gt; bool {
     match env::var("OPTIMIZATIONS") {
         Ok(val) =&gt; val == "1",
-        Err(_) =&gt; false, // Assume optimizations are disabled if the environment variable is not set
+        Err(_) =&gt; false, // Assume optimisations are disabled if the environment variable is not set
     }
 }
 <span class="boring">}</span></code></pre>
@@ -1115,7 +1116,7 @@ fn optimizations_enabled() -&gt; bool {
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>/// Checks if the OPTIMIZATIONS environment variable is set to "1"
-fn optimizations_enabled() -&gt; bool { ... }
+fn optimisations_enabled() -&gt; bool { ... }
 <span class="boring">}</span></code></pre>
 <p>⚠️ Not bad, but sounds a bit robotic</p>
 <pre><code class="language-markdown"># Side-Effects
@@ -1195,9 +1196,9 @@ Although we don’t use it yet, we can get doc coverage information as JSON. Thi
 <hr>
 <p><em>This section had been taken from the ‘Coverage’ page of the conjure-oxide wiki</em></p>
 <div style="break-before: page; page-break-before: always;"></div><!-- TODO: Edit this -->
-<h1 id="github-actions-cookbook"><a class="header" href="#github-actions-cookbook">Github Actions Cookbook</a></h1>
+<h1 id="github-actions-cookbook"><a class="header" href="#github-actions-cookbook">GitHub Actions Cookbook</a></h1>
 <ul>
-<li>This document lists common patterns and issues we’ve had in our Github actions, and practical solutions to them.</li>
+<li>This document lists common patterns and issues we’ve had in our GitHub actions, and practical solutions to them.</li>
 <li>The first point of reference should be the official documentation, but if that is ever unclear, here would be a good place to look!</li>
 </ul>
 <p>Terminology used in this document:</p>
@@ -1221,7 +1222,7 @@ Although we don’t use it yet, we can get doc coverage information as JSON. Thi
 <p>PR branches and their workflows typically live in on a branch on an external fork. Therefore, they cannot write to the repository. The solution is to split things into two workflows - one that runs on the PR with read-only permissions, and one that runs on main and can write to the repository. This is called a <code>workflow_run</code> workflow. Read <a href="https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_run">the docs</a>.</p>
 <p><strong>The workflow_run workflow should not run any user provided code as it has secrets in scope.</strong></p>
 <h2 id="i-want-to-access-the-calling-pr-in-a-workflow_run-workflow"><a class="header" href="#i-want-to-access-the-calling-pr-in-a-workflow_run-workflow">I want to access the calling PR in a workflow_run workflow</a></h2>
-<p><code>workflow_run</code> jobs do not get access to the calling workflows detail. While one can access some things via the Github API such as head_sha, head_repo, this may not give any PR information. <a href="https://securitylab.github.com/research/github-actions-preventing-pwn-requests/">Github</a> recommends saving the PR number to an artifact, and using this number to fetch the PR info through the API:</p>
+<p><code>workflow_run</code> jobs do not get access to the calling workflows detail. While one can access some things via the GitHub API such as head_sha, head_repo, this may not give any PR information. <a href="https://securitylab.github.com/research/github-actions-preventing-pwn-requests/">GitHub</a> recommends saving the PR number to an artifact, and using this number to fetch the PR info through the API:</p>
 <p>Example from <a href="https://securitylab.github.com/research/github-actions-preventing-pwn-requests/">this github blog post</a> - see this for more explanation and details!</p>
 <pre><code class="language-yml">name: Receive PR
 
@@ -1308,7 +1309,7 @@ jobs:
 <p><strong>If you are running in a workflow_run workflow, you will need to get the calling PR first. See <a href="https://github.com/conjure-cp/conjure-oxide/wiki/_new#i-want-to-access-the-calling-pr-in-a-workflow_run-workflow">I want to access the calling PR in a workflow_run workflow</a> instead.</strong></p>
 <p>The default <code>github.sha</code> is a temporary commit representing the state of the repo should the PR be merged now. You probably want <code>github.event.pull_request.head.sha</code>. Read <a href="https://www.kenmuse.com/blog/the-many-shas-of-a-github-pull-request/">The many SHAs of a github pull request</a>.</p>
 <hr>
-<p><em>This section had been taken from the ‘Github Actions’ page of the conjure-oxide wiki</em></p>
+<p><em>This section had been taken from the ‘GitHub Actions’ page of the conjure-oxide wiki</em></p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="test-github-actions-locally-with-act"><a class="header" href="#test-github-actions-locally-with-act">Test GitHub Actions Locally With act</a></h1>
 <p>This guide shows how to run GitHub Actions workflows locally using act. It is useful for fast feedback on CI changes without waiting for a remote run.</p>
@@ -1411,7 +1412,7 @@ criterion_main!(benches);
 Which shows the average wall-clock time, as well as providing some information on outliers and performance against previous benchmarks. For the full details, see <code>\target\criterion</code>. The <code>.html</code> reports are especially good.</p>
 <p><code>criterion</code> is usually the right tool for most benchmarks, although there are issues. Due to the statistics-driven ethos of <code>criterion</code>, there is currently no one-shot support, with 10 samples being the minimum number of samples for a benchmark. Wall-clock time also gives little insight into where things are slowing in your code, and will not catch things like poor memory locality. Even more crucially, however, is how <code>criterion</code> performs in CI pipelines. The developer’s themselves say the following:</p>
 <p><em>”You probably shouldn’t (or, if you do, don’t rely on the results). The virtualization used by</em>
-<em>Cloud-CI providers like Travis-CI and Github Actions introduces a great deal of noise into the</em>
+<em>Cloud-CI providers like Travis-CI and GitHub Actions introduces a great deal of noise into the</em>
 <em>benchmarking process, and Criterion.rs’ statistical analysis can only do so much to mitigate</em>
 <em>that. This can result in the appearance of large changes in the measured performance even</em>
 <em>if the actual performance of the code is not changing.“</em></p>
@@ -1458,8 +1459,8 @@ main!(library_benchmark_groups = bench_fibonacci_group);
 <p><label class="checkbox-label"><input class="checkbox-img" type="checkbox"><img src="https://github.com/user-attachments/assets/8db29f54-0558-435e-a8ae-844bbfd3f312" alt="image"><span class="img-wrapper"><img src="https://github.com/user-attachments/assets/8db29f54-0558-435e-a8ae-844bbfd3f312" alt="image"></span></label>
 As you can see, <code>iai</code> is lightweight, fast and can provide some really accurate statistics on instruction count and memory hits. This makes <code>iai</code> perfect for benching in CI workflows!</p>
 <h1 id="workflows"><a class="header" href="#workflows">Workflows</a></h1>
-<p>Once benchmarking is established, workflows are not too difficult to add too. As discussed before, for CI workflows <code>iai</code> should be used, and not <code>criterion</code>. Take the following example from the <code>tree-morph</code> crate. I will put the code below and then briefly explain each portion. It should not be too difficult to adapt to other benchmarks.</p>
-<pre><code class="language-yaml">name: "iai tree-morph Benchmarks"
+<p>Once benchmarking is established, workflows are not too difficult to add too. As discussed before, for CI workflows <code>iai</code> should be used, and not <code>criterion</code>. Take the following example workflow. It should not be too difficult to adapt to other benchmarks.</p>
+<pre><code class="language-yaml">name: "iai Benchmarks"
 
 on:
   push:
@@ -1472,7 +1473,7 @@ on:
       - crates/**
       - Cargo.*
       - conjure_oxide/tests/**
-      - .github/workflows/iai-tree-morph-benches.yml
+      - .github/workflows/iai-benches.yml
   pull_request:
     paths:
       - conjure_oxide/**
@@ -1480,14 +1481,14 @@ on:
       - crates/**
       - Cargo.*
       - conjure_oxide/tests/**
-      - .github/workflows/iai-tree-morph-benches.yml
+      - .github/workflows/iai-benches.yml
   workflow_dispatch:
 
 
 
 jobs:
   benches:
-    name: "Run iai tree-morph benchmarks"
+    name: "Run iai benchmarks"
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -1521,8 +1522,8 @@ jobs:
       - name: Install iai-callgrind-runner
         run: cargo install --version 0.14.0 iai-callgrind-runner
 
-      - name: Run tree-morph benchmarks with iai-callgrind
-        run: cargo bench --manifest-path crates/tree_morph/Cargo.toml --bench iai-factorial --bench iai-identity --bench iai-modify_leafs &gt; iai_callgrind_output.txt
+      - name: Run benchmarks with iai-callgrind
+        run: cargo bench --bench iai-bench &gt; iai_callgrind_output.txt
 
       - name: Upload artefact
         uses: actions/upload-artifact@v4
@@ -1599,8 +1600,6 @@ It uses our Tree-sitter grammar, which is defined <em>separately</em> in<code>tr
 <li><code>enum_compatability_macro</code> is a macro that allows us to indicate whether certain features of Essence are compatible with certain solvers, for documentation purposes.</li>
 <li><code>randicheck</code> is a somewhat separate project developed by Ty (@TAswan) and others.
 It aims to use Conjure to automatically validate Haskell code and generate minimal failing tests. (TODO is this accurate?)</li>
-<li><code>tree_morph</code> is a generic library for tree transformations.
-In the future, it will replace our current rule engine implementation.</li>
 </ul>
 <p>Also:</p>
 <ul>
@@ -2103,7 +2102,7 @@ fn display_message(message: String, file_path: Option&lt;String&gt;, kind: Kind)
 
 <span class="boring">}</span></code></pre>
 <h1 id="tracing-in-integration-tests"><a class="header" href="#tracing-in-integration-tests">Tracing in integration tests</a></h1>
-<p>Similar to how a <code>Consumer</code> is created in solve.rs for <code>cargo run solve</code>, a <code>combined_consumer</code> is manually constructed for each integration test, with its fields explicitly set rather than being derived from command-line arguments. This consumer is configured to log successful rule applications to two separate files—one in a human-readable format and the other in JSON. It is then passed to the <code>rewrite_naive</code> function. By establishing a uniform internal interface for tracing in both <code>cargo run</code> and <code>cargo test</code>, we were able to significantly reduce code duplication and streamline the overall tracing logic.</p>
+<p>Similar to how a <code>Consumer</code> is created in solve.rs for <code>cargo run solve</code>, a <code>combined_consumer</code> is manually constructed for each integration test, with its fields explicitly set rather than being derived from command-line arguments. This consumer is configured to log successful rule applications to two separate files—one in a human-readable format and the other in JSON. It is then passed to the <code>rewrite_model</code> function. By establishing a uniform internal interface for tracing in both <code>cargo run</code> and <code>cargo test</code>, we were able to significantly reduce code duplication and streamline the overall tracing logic.</p>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>   let combined_consumer = create_consumer(
@@ -2140,354 +2139,6 @@ fn display_message(message: String, file_path: Option&lt;String&gt;, kind: Kind)
 <p>Filter rule trace to only show given rule set names (comma separated)</p>
 <pre><code>--filter-rule-set &lt;RULE_SET_FILTER&gt;
 </code></pre>
-<div style="break-before: page; page-break-before: always;"></div>
-<p>Tree-morph is a library that helps you perform boilerplate-free generic tree transformations. In its current state, tree-morph is able to perform transformations in a large number of test cases, and work is now being done to try to implement Essence with tree-morph. When completed, tree-morph will be a very powerful stand-alone crate, as well as sitting at the core of <code>conjure-oxide</code>. Despite its current power, there is a still a lot of work to be done on the <code>tree-morph</code> crate. It is currently in a completely unoptimised state, and will be very slow when performing on large trees with a rich rule set and rule hierarchy. In order to assess progress on new optimisations, it is essential to have a diverse list of benchmarks. All benchmarking has been done using the <a href="https://crates.io/crates/criterion">criterion</a> crate. The following section outlines some of the most important benchmarks.</p>
-<h1 id="benchmarks"><a class="header" href="#benchmarks">Benchmarks</a></h1>
-<h2 id="identity"><a class="header" href="#identity">identity</a></h2>
-<p>The <code>identity benchmark</code> is a test designed to capture how long one tree traversal takes. There is no metadata, and the only rule is <code>do_nothing</code> which is never evaluated. The helper function <code>construct_tree</code> creates a simple tree of variable depth. This is an important benchmark to make sure that new proposed changes do not negatively effect <code>tree-morph</code> traversal speed.</p>
-<p>Filename: <code>conjure-oxide/crates/tree_morph/benches/identity.rs</code></p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use tree_morph::prelude::*;
-use uniplate::derive::Uniplate;
-
-#[derive(Debug, Clone, PartialEq, Eq, Uniplate)]
-#[uniplate()]
-enum Expr {
-    Branch(Box&lt;Expr&gt;, Box&lt;Expr&gt;),
-    Val(i32),
-}
-struct Meta {}
-fn do_nothing(cmds: &amp;mut Commands&lt;Expr, Meta&gt;, subtree: &amp;Expr, meta: &amp;Meta) -&gt; Option&lt;Expr&gt; {
-    None
-}
-
-fn construct_tree(n: i32) -&gt; Box&lt;Expr&gt; {
-    if n == 1 {
-        Box::new(Expr::Val(0))
-    } else {
-        Box::new(Expr::Branch(Box::new(Expr::Val(0)), construct_tree(n - 1)))
-    }
-}
-
-pub fn criterion_benchmark(c: &amp;mut Criterion) {
-    let base: i32 = 2;
-    let expr = *construct_tree(base.pow(5));
-    let rules = vec![vec![do_nothing]];
-
-    c.bench_function("Identity", |b| {
-        b.iter(|| {
-            morph(
-                black_box(rules.clone()),
-                select_first,
-                black_box(expr.clone()),
-                Meta {},
-            )
-        })
-    });
-}
-
-criterion_group!(benches, criterion_benchmark);
-criterion_main!(benches);
-<span class="boring">}</span></code></pre>
-<h2 id="modify_leafs"><a class="header" href="#modify_leafs">modify_leafs</a></h2>
-<p>The <code>modify_leafs</code> benchmark is designed to capture how long it takes for a simple modification rule to be applied to all of the leaf nodes. The function <code>construct_tree</code> creates a tree of variable depth with all leaf nodes initialised to 0. There is no metadata and the only function <code>zero_to_one</code> changes a leaf node of 0 to a leaf node of 1. It should be expected that this will take a lot longer than the identity benchmark, as when a node is changed in <code>tree-morph</code>, an entirely new tree is created.</p>
-<p>Filename: <code>conjure-oxide/crates/tree_morph/benches/modify_leafs.rs</code></p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use tree_morph::prelude::*;
-use uniplate::derive::Uniplate;
-
-#[derive(Debug, Clone, PartialEq, Eq, Uniplate)]
-#[uniplate()]
-enum Expr {
-    Branch(Box&lt;Expr&gt;, Box&lt;Expr&gt;),
-    Val(i32),
-}
-
-struct Meta {} // not relevant for this benchmark
-
-fn zero_to_one(cmds: &amp;mut Commands&lt;Expr, Meta&gt;, subtree: &amp;Expr, meta: &amp;Meta) -&gt; Option&lt;Expr&gt; {
-    if let Expr::Val(a) = subtree {
-        if let 0 = *a {
-            return Some(Expr::Val(1));
-        }
-    }
-    None
-}
-
-fn construct_tree(n: i32) -&gt; Box&lt;Expr&gt; {
-    if n == 1 {
-        Box::new(Expr::Val(0))
-    } else {
-        Box::new(Expr::Branch(Box::new(Expr::Val(0)), construct_tree(n - 1)))
-    }
-}
-
-pub fn criterion_benchmark(c: &amp;mut Criterion) {
-    let base: i32 = 2;
-    let expr = *construct_tree(base.pow(5));
-    let rules = vec![vec![zero_to_one]];
-
-    c.bench_function("Modify_leafs", |b| {
-        b.iter(|| {
-            morph(
-                black_box(rules.clone()),
-                select_first,
-                black_box(expr.clone()),
-                Meta {},
-            )
-        })
-    });
-}
-
-criterion_group!(benches, criterion_benchmark);
-criterion_main!(benches);
-<span class="boring">}</span></code></pre>
-<h2 id="factorial"><a class="header" href="#factorial">factorial</a></h2>
-<p>The <code>factorial</code> benchmark is the most difficult benchmark currently made, and an improved score on factorial will be indicative of serious gains in optimisations. As the name suggests, <code>factorial</code> is centred around the mathematical factorial operation (<code>5! = 5*4*3*2*1</code>), which will grow the tree depth, providing a rich set of transformations for <code>tree-morph</code> to calculate. The tree generating function <code>random_exp_tree</code> here takes as input a random seed and a max depth, and generates a tree of an arithmetic expression involving values, additions, multiplications and factorials. An example of such an expression with a random seed of <code>41</code> and a max depth of <code>5</code> is shown below.</p>
-<pre><code class="language-bash">(((8 + 1!) + (1 * 3)!) + (1!! * ((2 + 1) * (1 * 1))))!
-</code></pre>
-<p>It is worth mentioning that this expression is extremely large due to the nested factorials, and as such we need a way of making sure that calculations are bounded. This is achieved by modding the results of any additions and multiplications in the <code>rule_eval_add</code> and <code>rule_eval_mul</code> functions by <code>10</code>, which will bound all factorial expressions by <code>10!</code>. The benchmark counts the number of addition and multiplication rule applications, and also has a high priority dummy rule <code>do_nothing</code>, in order to increase the benchmark difficulty.</p>
-<p>Filename: <code>conjure-oxide/crates/tree_morph/benches/factorial.rs</code></p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use rand::rngs::StdRng;
-use rand::{Rng, SeedableRng};
-use tree_morph::prelude::*;
-use uniplate::derive::Uniplate;
-
-#[derive(Debug, Clone, PartialEq, Eq, Uniplate)]
-#[uniplate()]
-enum Expr {
-    Add(Box&lt;Expr&gt;, Box&lt;Expr&gt;),
-    Mul(Box&lt;Expr&gt;, Box&lt;Expr&gt;),
-    Val(i32),
-    Factorial(Box&lt;Expr&gt;),
-}
-
-fn random_exp_tree(rng: &amp;mut StdRng, count: &amp;mut usize, depth: usize) -&gt; Expr {
-    if depth == 0 {
-        *count += 1;
-        return Expr::Val(rng.random_range(1..=3));
-    }
-
-    match rng.random_range(1..=13) {
-        x if (1..=4).contains(&amp;x) =&gt; Expr::Add(
-            Box::new(random_exp_tree(rng, count, depth - 1)),
-            Box::new(random_exp_tree(rng, count, depth - 1)),
-        ),
-        x if (5..=8).contains(&amp;x) =&gt; Expr::Mul(
-            Box::new(random_exp_tree(rng, count, depth - 1)),
-            Box::new(random_exp_tree(rng, count, depth - 1)),
-        ),
-        x if (8..=11).contains(&amp;x) =&gt; {
-            Expr::Factorial(Box::new(random_exp_tree(rng, count, depth - 1)))
-        }
-        _ =&gt; Expr::Val(rng.random_range(1..=10)),
-    }
-}
-fn do_nothing(cmds: &amp;mut Commands&lt;Expr, Meta&gt;, subtree: &amp;Expr, meta: &amp;Meta) -&gt; Option&lt;Expr&gt; {
-    None
-}
-
-fn factorial_eval(cmds: &amp;mut Commands&lt;Expr, Meta&gt;, subtree: &amp;Expr, meta: &amp;Meta) -&gt; Option&lt;Expr&gt; {
-    if let Expr::Factorial(a) = subtree {
-        if let Expr::Val(n) = *a.as_ref() {
-            if n == 0 {
-                return Some(Expr::Val(1));
-            }
-            return Some(Expr::Mul(
-                Box::new(Expr::Val(n)),
-                Box::new(Expr::Factorial(Box::new(Expr::Val(n - 1)))),
-            ));
-        }
-    }
-    None
-}
-
-fn rule_eval_add(cmds: &amp;mut Commands&lt;Expr, Meta&gt;, subtree: &amp;Expr, meta: &amp;Meta) -&gt; Option&lt;Expr&gt; {
-    if let Expr::Add(a, b) = subtree {
-        if let (Expr::Val(a_v), Expr::Val(b_v)) = (a.as_ref(), b.as_ref()) {
-            cmds.mut_meta(|m| m.num_applications_addition += 1);
-            return Some(Expr::Val((a_v + b_v) % 10));
-        }
-    }
-    None
-}
-
-fn rule_eval_mul(cmds: &amp;mut Commands&lt;Expr, Meta&gt;, subtree: &amp;Expr, meta: &amp;Meta) -&gt; Option&lt;Expr&gt; {
-    if let Expr::Mul(a, b) = subtree {
-        if let (Expr::Val(a_v), Expr::Val(b_v)) = (a.as_ref(), b.as_ref()) {
-            cmds.mut_meta(|m| m.num_applications_multiplication += 1);
-            return Some(Expr::Val((a_v * b_v) % 10));
-        }
-    }
-    None
-}
-
-#[derive(Debug)]
-struct Meta {
-    num_applications_addition: i32,
-    num_applications_multiplication: i32,
-}
-
-pub fn criterion_benchmark(c: &amp;mut Criterion) {
-    let seed = [41; 32];
-    let mut rng = StdRng::from_seed(seed);
-    let mut count = 0;
-
-    let my_expression = random_exp_tree(&amp;mut rng, &amp;mut count, 10);
-    let rules = vec![
-        rule_fns![do_nothing],
-        rule_fns![rule_eval_add, rule_eval_mul, factorial_eval],
-    ];
-
-    c.bench_function("factorial", |b| {
-        b.iter(|| {
-            let meta = Meta {
-                num_applications_addition: 0,
-                num_applications_multiplication: 0,
-            };
-            morph(
-                black_box(rules.clone()),
-                select_first,
-                black_box(my_expression.clone()),
-                black_box(meta),
-            )
-        })
-    });
-}
-
-criterion_group!(benches, criterion_benchmark);
-criterion_main!(benches);
-<span class="boring">}</span></code></pre>
-<h2 id="left_addleft_add_hard"><a class="header" href="#left_addleft_add_hard">left_add/left_add_hard</a></h2>
-<p>The benchmarks <code>left_add</code> and <code>left_add_hard</code> are two benchmarks that evaluate a very simple nested addition expression <code>(1+(1+(1+...)))</code> of variable depth. In its unoptimised state, all but he final two instances of a <code>1</code> node will undergo several superfluous rule checks. The benchmark <code>left_add_hard</code> also is identical to <code>left_add</code>, except there are also four additional dummy rules, all assigned with a higher priority than the <code>rule_eval_add</code>. As expected, this will reduce code performance by about 400% (shown later). The code for <code>left_add_hard</code> is shown below, with <code>left_add</code> being very similar.</p>
-<p>Filename: <code>conjure-oxide/crates/tree_morph/benches/left_add_hard.rs</code></p>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use tree_morph::prelude::*;
-use uniplate::derive::Uniplate;
-
-#[derive(Debug, Clone, PartialEq, Eq, Uniplate)]
-#[uniplate()]
-enum Expr {
-    Add(Box&lt;Expr&gt;, Box&lt;Expr&gt;),
-    Val(i32),
-}
-
-fn rule_eval_add(_: &amp;mut Commands&lt;Expr, Meta&gt;, expr: &amp;Expr, _: &amp;Meta) -&gt; Option&lt;Expr&gt; {
-    match expr {
-        Expr::Add(a, b) =&gt; match (a.as_ref(), b.as_ref()) {
-            (Expr::Val(x), Expr::Val(y)) =&gt; Some(Expr::Val(x + y)),
-            _ =&gt; None,
-        },
-        _ =&gt; None,
-    }
-}
-
-#[derive(Clone)]
-enum MyRule {
-    EvalAdd,
-    Fee,
-    Fi,
-    Fo,
-    Fum,
-}
-
-impl Rule&lt;Expr, Meta&gt; for MyRule {
-    fn apply(&amp;self, cmd: &amp;mut Commands&lt;Expr, Meta&gt;, expr: &amp;Expr, meta: &amp;Meta) -&gt; Option&lt;Expr&gt; {
-        cmd.mut_meta(|m| m.num_applications += 1); // Only applied if successful
-        match self {
-            MyRule::EvalAdd =&gt; rule_eval_add(cmd, expr, meta),
-            MyRule::Fee =&gt; None,
-            MyRule::Fi =&gt; None,
-            MyRule::Fo =&gt; None,
-            MyRule::Fum =&gt; None,
-        }
-    }
-}
-
-#[derive(Clone)]
-struct Meta {
-    num_applications: u32,
-}
-
-fn val(n: i32) -&gt; Box&lt;Expr&gt; {
-    Box::new(Expr::Val(n))
-}
-
-fn add(lhs: Box&lt;Expr&gt;, rhs: Box&lt;Expr&gt;) -&gt; Box&lt;Expr&gt; {
-    Box::new(Expr::Add(lhs, rhs))
-}
-
-fn nested_addition(n: i32) -&gt; Box&lt;Expr&gt; {
-    if n == 1 {
-        val(1)
-    } else {
-        add(val(1), nested_addition(n - 1))
-    }
-}
-
-pub fn criterion_benchmark(c: &amp;mut Criterion) {
-    let base: i32 = 2;
-    let expr = *nested_addition(base.pow(5));
-    let rules = vec![
-        vec![MyRule::Fi],
-        vec![MyRule::Fee],
-        vec![MyRule::Fo],
-        vec![MyRule::Fum],
-        vec![MyRule::EvalAdd],
-    ];
-
-    c.bench_function("left_add_hard", |b| {
-        b.iter(|| {
-            let meta = Meta {
-                num_applications: 0,
-            };
-            morph(rules.clone(), select_first, black_box(expr.clone()), meta)
-        })
-    });
-}
-
-criterion_group!(benches, criterion_benchmark);
-criterion_main!(benches);
-<span class="boring">}</span></code></pre>
-<h2 id="right_add"><a class="header" href="#right_add">right_add</a></h2>
-<p>The benchmark <code>right_add</code> is identical to <code>left_add</code>, except there now we are evaluating <code>((...+1)+1)</code> instead. This is designed to show the inherent left bias used in <code>tree-morph</code>. Performance is a little better than <code>left_add</code>. Due to the similarity with <code>left_add</code>, the code is omitted.</p>
-<h1 id="results"><a class="header" href="#results">results</a></h1>
-<p>The most helpful feature that <code>criterion</code> produces is its automatic graphing software. Upon a run of <code>cargo bench</code>, <code>criterion</code> automatically produces html reports of all benchmarks, accessible in <code>conjure-oxide/target/criterion</code>. An example report is shown below.
-<img width="1300" alt="image" src="https://github.com/user-attachments/assets/963c76eb-2d8c-4c77-8529-8b9b6bc22dc3" />
-The left graph is a probability density function for the run time. It says that on average it takes <code>854.26 µs</code> for identity to run at a fixed depth (in this case <code>2^5</code> was used). The right graph is a cumulative time plot. The fact that the line is almost straight indicates that the run times are all very comparable in time. The additional stats provided are all standard statistics measurements, with MAD standing for the mean absolute deviation.</p>
-<h2 id="identity-vs-modify_leafs"><a class="header" href="#identity-vs-modify_leafs">identity vs modify_leafs</a></h2>
-<p>The probability density functions for <code>identity</code> and <code>modify_leafs</code> are shown below, both evaluated a tree depth of <code>2^5</code>.
-<img width="550" alt="image" src="https://github.com/user-attachments/assets/06fd9c0e-b094-4a5f-ab5e-6d88b3ace29a" />
-<img width="547.5" alt="image" src="https://github.com/user-attachments/assets/2e31067d-a848-4259-bf67-bf516c70a6cf" /></p>
-<p>As you can see, <code>modify_leafs</code> takes significantly longer (<code>2300%</code>) than <code>identity</code> on average, showing how costly even simple tree transformations take. This is most likely due to the fact that <code>tree-morph</code> does not edit in-place, but rather constructs a new tree after applying a transformation.</p>
-<h2 id="factorial-1"><a class="header" href="#factorial-1">factorial</a></h2>
-<p>The following is the probability density function for <code>factorial</code>, ran at a max depth of <code>10</code> and a seed of <code>[41; 32]</code>.
-<label class="checkbox-label"><input class="checkbox-img" type="checkbox"><img src="https://github.com/user-attachments/assets/afb83193-b33c-452b-a5ba-8b9b9ae66f1a" alt="image"><span class="img-wrapper"><img src="https://github.com/user-attachments/assets/afb83193-b33c-452b-a5ba-8b9b9ae66f1a" alt="image"></span></label></p>
-<p>As you can see, even for a relatively small max depth compute is large. Also note that <code>factorial</code> still has a very small amount of rule groupings, and performance would likely be orders of magnitude worse if a number of rules comparable to a <code>conjure</code> problem was presented. This shows a significant need for optimisations, and an improved score on <code>factorial</code> would indicate a lot of good progress.</p>
-<h2 id="left_add-vs-left_add_hard"><a class="header" href="#left_add-vs-left_add_hard">left_add vs left_add_hard</a></h2>
-<p>A comparison between <code>left_add</code> and <code>left_add_hard</code> is a clear demonstration of how detrimental duplicate rule checks can be for performance.</p>
-<p><label class="checkbox-label"><input class="checkbox-img" type="checkbox"><img src="https://github.com/user-attachments/assets/ae292d37-f26d-4080-9520-019f60476e93" alt="image"><span class="img-wrapper"><img src="https://github.com/user-attachments/assets/ae292d37-f26d-4080-9520-019f60476e93" alt="image"></span></label>
-<label class="checkbox-label"><input class="checkbox-img" type="checkbox"><img src="https://github.com/user-attachments/assets/2f882085-71fc-4d13-a266-ead400db31e8" alt="image"><span class="img-wrapper"><img src="https://github.com/user-attachments/assets/2f882085-71fc-4d13-a266-ead400db31e8" alt="image"></span></label></p>
-<p>Ignoring the differences between the shapes of the graphs (I am unsure why this is the case), we can immediately notice how the extra 4 dummy rules in <code>left_add_hard</code> lead to almost exactly a <code>400%</code> increase in performance!</p>
-<h1 id="further-work"><a class="header" href="#further-work">Further work</a></h1>
-<p>Benchmarks are still in an early stage, and there is lots more to do. Some ideas for future work include:</p>
-<ul>
-<li>Set up some automated infrastructure for running benchmarks automatically on GitHub</li>
-<li>Find out scaling laws for increasing tree depth for current benchmarks</li>
-<li>Set up some head to head tests between two functions</li>
-<li>Set up counters that can measure things like node counts, maximum tree depths and other useful information</li>
-<li>Benchmark individual functions (such as a rule application) in order to better understand how trees grow and shrink during transformations</li>
-<li>Benchmark meta applications</li>
-</ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="overview-3"><a class="header" href="#overview-3">Overview</a></h1>
 <p>The Language Server Protocol (LSP) for Essence is designed to provide error detection and syntax highlighting for the Essence language. It consists of a server component and a diagnostics API. When fully implemented, the server will receive document change events from clients (e.g., VS Code), call the diagnostics API to detect syntactic and semantic errors, and publish these diagnostics back to the client for. The diagnostics API provides error detection and document symbol information for syntax highlighting. Its main purpose is to improve the user experience when formulating the problems in Essence.</p>
@@ -2724,16 +2375,16 @@ find a : bool such that a = (s[5] = t[1]) $ true
 </tbody>
 </table>
 </div>
-<p>Additionally, <code>find</code> variables are visually emphasised because they represent the variables the solver is attempting to solve for. An underline style is therefore hard-coded in <code>package.json</code> for tokens classified as <code>FindVar</code>.</p>
+<p>Additionally, <code>find</code> variables are visually emphasised because they represent the variables the solver is attempting to solve for. An underline style is therefore hard-coded in <code>tools/vscode-ext/package.json</code> for tokens classified as <code>FindVar</code>.</p>
 <h3 id="lsp-semantic-highlighting-handler"><a class="header" href="#lsp-semantic-highlighting-handler">LSP Semantic Highlighting Handler</a></h3>
 <p>The semantic highlighting handler retrieves the <code>SourceMap</code> from cache and passes it to <code>encode_semantic_tokens()</code> to generate semantic tokens. These encoded tokens are then returned to the LSP server, which forwards them to the client. The client uses the semantic token classifications together with the active theme to determine how each token should be rendered.</p>
 <h2 id="expanding-semantic-highlighting"><a class="header" href="#expanding-semantic-highlighting">Expanding Semantic Highlighting</a></h2>
-<p>To expand on the current semantic highlighting available, the files that will need to be changed are: <code>crates/conjure-cp-essence-parser/src/diagnostics/diagnostics_api.rs</code>, <code>crates/conjure-cp-essence-parser/src/diagnostics/semantic-tokens.rs</code>, <code>crates/conjure-cp-lsp/src/server.rs</code>, and <code>package.json</code></p>
+<p>To expand on the current semantic highlighting available, the files that will need to be changed are: <code>crates/conjure-cp-essence-parser/src/diagnostics/diagnostics_api.rs</code>, <code>crates/conjure-cp-essence-parser/src/diagnostics/semantic-tokens.rs</code>, <code>crates/conjure-cp-lsp/src/server.rs</code>, and <code>tools/vscode-ext/package.json</code>.</p>
 <ol>
 <li>In <code>diagnostics_api.rs</code>, add the new symbol kind to the <code>SymbolKind</code> enum.</li>
 <li>In <code>semantic_token.rs</code>, add a new constant variable for the new symbol kind and create a mapping from the symbol kind to a token in the <code>token_encoding()</code> function.</li>
 <li>In <code>server.rs</code>, add the new symbol kind to the server’s <code>semantic_token_provider</code>.</li>
-<li>In <code>package.json</code>, add the new symbol kind to the semantic token scopes to specify its styling in TextMate, and if it is a custom token, add a new field for it in the semantic token types</li>
+<li>In <code>tools/vscode-ext/package.json</code>, add the new symbol kind to the semantic token scopes to specify its styling in TextMate, and if it is a custom token, add a new field for it in the semantic token types</li>
 </ol>
 <h2 id="semantic-highlighting-customisation-vscode"><a class="header" href="#semantic-highlighting-customisation-vscode">Semantic Highlighting Customisation (VSCode)</a></h2>
 <p>To customise semantic highlighting styles, open up <code>settings.json</code> in VSCode, and add the following code snippet if it does not exist in the file:</p>
@@ -3080,9 +2731,8 @@ tools/vscode-ext
 ├── essence.tmLanguage.json
 ├─ language-configuration.json
 ├─ package-lock.json
-package.json
-package-lock.json
-tsconfig.json
+├─ package.json
+└─ tsconfig.json
 </code></pre>
 <h2 id="client-server-communication"><a class="header" href="#client-server-communication">Client-Server Communication</a></h2>
 <p>The client and server communicate asynchronously through I/O streams. Communication occurs through requests and responses, which use well-defined JSON objects to communicate. This communication is triggered on events (such as on-open, on-save, on-change), where the client will prompt the server.</p>
@@ -3128,7 +2778,7 @@ When changing a file, due to the <code>INCREMENTAL</code> change setting, passes
 <p>It is of note that the hovering does not currently work if there is an error anywhere in the tree. If there is an underlined error, then there is no access to hovering, as the AST and sourcemap cannot be generated when there is an error in the CST. This is currently one of the priorities for modification.</p>
 <h2 id="development"><a class="header" href="#development">Development</a></h2>
 <h3 id="how-to-use-for-development"><a class="header" href="#how-to-use-for-development">How to use (for development)</a></h3>
-<p>At the current stage of development, the extension is not released into the VSCode Marketplace. This means that functionality must be tested using VSCode’s Extension Development Environment. In order to ensure that this works as intended, compile <code>extension.ts</code> using <code>npm run compile</code> (or ctrl-shift-b and select this). Then launch the Extension Development Environment. This can be launched <strong>either</strong> by pressing F5 from within <code>extension.ts</code>, or by pressing on ‘Run’ within the ‘Run and Debug’ VSCode tab. Running the Extension Development Environment will cause the client to run. Due to the structure of the client-server, the server will then run and link to the client, and the LSP can then be tested. Please ensure that <code>npm install</code> has been run in advance/all required node modules are installed, otherwise the client will not be able to launch. The client can be seen running when opening a .essence file. In the VSCode panel (bar at bottom)’s output, it is possible to select Conjure-Oxide Language Server as the channel to listen to. This will display the logs communicated to the client.</p>
+<p>At the current stage of development, the extension is not released into the VSCode Marketplace. This means that functionality must be tested using VSCode’s Extension Development Environment. From <code>tools/vscode-ext</code>, install the dependencies with <code>npm install</code> and compile <code>extension.ts</code> using <code>npm run compile</code>. Then launch the Extension Development Environment. This can be launched <strong>either</strong> by pressing F5 from within <code>extension.ts</code>, or by pressing on ‘Run’ within the ‘Run and Debug’ VSCode tab. Running the Extension Development Environment will cause the client to run. Due to the structure of the client-server, the server will then run and link to the client, and the LSP can then be tested. The client can be seen running when opening a .essence file. In the VSCode panel (bar at bottom)’s output, it is possible to select Conjure-Oxide Language Server as the channel to listen to. This will display the logs communicated to the client.</p>
 <p>It is worth noting that a copy of conjure-oxide <strong>MUST</strong> be installed in order for the client to work. Testing the server requires for an updated install.</p>
 <p>If wishing to just run the server (though without a client it will be incapable of connecting to anything, and will time out), the user can run <code>conjure-oxide server-lsp</code>, which is a custom subcommand specifically to call the server. This does not run any other aspects of conjure-oxide.</p>
 <h3 id="development-directions"><a class="header" href="#development-directions">Development Directions</a></h3>
@@ -3281,7 +2931,7 @@ last updated: 3-3-2026
 <h1 id="sat"><a href="#sat" class="header">SAT</a></h1>
 <h2 id="sat-encoding"><a class="header" href="#sat-encoding">SAT Encoding</a></h2>
 <p>This book chapter explains how the SAT adapter is built, the generic patterns that SAT rules follow, and the concrete SAT rule implementations, including references to the code files where you can find each rule.</p>
-<p><strong>Important note:</strong> The concrete SAT rule implementation part of this chapter will change frequently, as the rules are still in the process of implementation and optimization. The general principles of how the adapter and the SAT rules are built, on the other hand, are more likely to stay the same. Please keep this in mind when reading this chapter.</p>
+<p><strong>Important note:</strong> The concrete SAT rule implementation part of this chapter will change frequently, as the rules are still in the process of implementation and optimisation. The general principles of how the adapter and the SAT rules are built, on the other hand, are more likely to stay the same. Please keep this in mind when reading this chapter.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="sat-adaptor"><a class="header" href="#sat-adaptor">SAT Adaptor</a></h1>
 <p>The <strong>SAT Adaptor</strong>:</p>
@@ -3362,6 +3012,13 @@ such that x &gt; 10
 <li><strong>Domain propagation (Integers only)</strong> - Update the range of the returned <code>SATInt</code> to reflect the new interval. The bit-width of the <code>SATInt</code> should also be updated for the new range.</li>
 <li><strong>Return the result</strong> - Use <code>Reduction::cnf(..)</code> to return the created expression along with the new CNF clauses and symbol table.</li>
 </ol>
+<blockquote>
+<p>All three integer encodings share the one <code>SAT</code> rule set, because which encoding a variable gets
+is chosen per declaration and a single model can hold more than one. A rule must therefore decline
+when its operands are not in its own encoding – which is what the <code>validate_*_int_operands</code>
+helpers do. An operation whose operands disagree, or whose shared encoding has no rule for it, is
+re-encoded into the log form by the channelling fallback before it reaches here.</p>
+</blockquote>
 <h2 id="example---negation-of-log-integers"><a class="header" href="#example---negation-of-log-integers">Example - negation of log integers</a></h2>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
@@ -3371,7 +3028,7 @@ such that x &gt; 10
 /// -SATInt(a) ~&gt; SATInt(b)
 ///
 /// ```
-#[register_rule("SAT_Log", 4100, [Neg])]
+#[register_rule("SAT", 4100, [Neg])]
 fn cnf_int_neg(expr: &amp;Expr, symbols: &amp;SymbolTable) -&gt; ApplicationResult {
     let Expr::Neg(_, expr) = expr else {
         return Err(RuleNotApplicable);
@@ -5030,7 +4687,7 @@ fn tseitin_and(expr: &amp;Expression) -&gt; Result&lt;Expression, RuleApplicatio
 <span class="boring">}</span></code></pre>
 <h3 id="viewing-the-transformations"><a class="header" href="#viewing-the-transformations">Viewing the Transformations</a></h3>
 <p>You can see this pipeline in action using logging:</p>
-<pre><code class="language-bash">RUST_LOG=TRACE cargo run -- solve --solver sat my_problem.essence --verbose
+<pre><code class="language-bash">cargo run -- solve --solver sat -vvv my_problem.essence
 </code></pre>
 <hr>
 <p><em>This section had been taken from the ‘Expression rewriting, Rules and RuleSets’ page of the conjure-oxide wiki</em></p>
@@ -5415,7 +5072,7 @@ Performance testing, both <strong>load</strong> and <strong>stress</strong> base
 To performance test a program, a number of things need to be established. Firstly, what the metric(s) are being considered - as established above, for Conjure-Oxide this is the translation-, and to some degree solver-, time. Secondly, what is the independent variable - as in, what is being varied to result in different outputs. In Conjure-Oxide, this will be size or complexity of a given Essence file. Size and complexity will be defined contextually below.</p>
 <h4 id="distinction-between-size-and-complexity"><a class="header" href="#distinction-between-size-and-complexity">Distinction between Size and Complexity</a></h4>
 <p>Size and complexity of a given Essence file are separate, although certainly correlated. Put simply, size refers more directly to the number of components that make up an Essence input problem, whereas complexity refers to specific aspects which complicate translation, rather than directly increase its size.
-When applying rules to a model, the rules are applied by priority. The implementation of this is essentially that each rule is checked against the model, and if it applies, it is applied to transform the model in order of priority (e.g., two rules are valid, the higher priority rule is the one selected). Use of a dirty-clean (this will not try to apply rules to a finished model) or naive (this will try and apply all rules until they have all been checked, applied, checked again, etc.) rewriter will also result in variance on translation time, so when experiments are being defined it is best to account that all models are using the same version of the rewriter.
+When applying rules to a model, the rules are applied by priority. The implementation of this is essentially that each rule is checked against the model, and if it applies, it is applied to transform the model in order of priority (e.g., two rules are valid, the higher priority rule is the one selected). Rewriter settings such as dirty tracking, caching, and prefiltering can affect translation time, so when experiments are being defined it is best to account that all models are using the same version of the rewriter.
 Size refers to the number of variables, constraints, or size of input data (for example, a larger set or array) given as part of an input file. A ‘larger’ problem has more constraints and variables than a ‘smaller’ one. This will impact translation time (the relationship of this change should be examined by the performance testing) because there is more to parse and translate, even if the actual rule application is simple.
 On the other hand, in this context, complexity can be loosely defined as elements of the model which make it difficult to translate, without regard for the size. Features which could increase complexity include nesting, conditional constraints, dynamic constraints, etc.
 When testing for size, it is best to use very simple, repeated rules, and when testing complexity it is best to try to ensure that this is not also linked into increasing size, although these two features are tied together and therefore difficult to isolate from one another.</p>
@@ -5527,7 +5184,7 @@ After creating the Essence or Essence’ file for your test you should run the t
 <p><code>stdout.expected</code>/<code>stderr.expected</code>: These files will be what the output is compared against. They will also be what is overwritten if the test is run with <code>ACCEPT=true</code>. Avoid creating empty files: if there is no expected error from the input, do not create a <code>stderr.expected</code> file and if there is no output, do not create a <code>stdout.expected</code> file.</p>
 </li>
 </ol>
-<p>The custom tests are run automatically when <code>cargo nextest run</code> is run. You can run just the custom tests with <code>cargo nextest run -E 'test(custom)'</code> and a specific test with <code>cargo nextest run -E 'test(custom_&lt;test_path&gt;)'</code>. To run one of several tests, use <code>or</code>, for example <code>cargo nextest run -E 'test(custom_foo) or test(custom_bar)'</code>. To overwrite the expected output/error with the actual output/error, run the tests with <code>ACCEPT=true</code>.</p>
+<p>The custom tests are run automatically when <code>cargo nextest run</code> is run. You can run just the custom tests with <code>cargo nextest run -E 'test(custom)'</code> and a specific test with <code>cargo nextest run -E 'test(custom_&lt;test_path&gt;)'</code>. To run one of several tests, use <code>or</code>, for example <code>cargo nextest run -E 'test(custom_foo) or test(custom_bar)'</code>. To overwrite the expected output/error with the actual output/error (and refresh <code>expected-time</code> in <code>config.toml</code>), run the tests with <code>ACCEPT=true</code>. Integration tests keep the same timing metadata in <code>stats.toml</code> instead. See <code>test-suite/README.md</code> and <code>CONTRIBUTING.md</code> for accept modes and guidance on avoiding timing-only churn in <code>config.toml</code> / <code>stats.toml</code>; <code>./tools/discard-config-time-changes.sh</code> can restore files from HEAD when their only local edits are <code>*-time</code> fields.</p>
 <h1 id="code-structure"><a class="header" href="#code-structure">Code structure</a></h1>
 <p>The code to run the custom tests is integrated into the <code>build.rs</code> file. Much like for the integration tests, the custom tests directory is traversed and a test is dynamically written at compile time for any folder containing a <code>run.sh</code> file. Tests are based on a custom test template (shown below) which calls the <code>custom_test</code> function (passing in the test folder path). They are written into a generated file, which is included at the bottom of the <code>custom_tests.rs</code> file (which contains the <code>custom_test</code> function).</p>
 <pre><code>#[test]
@@ -5615,7 +5272,7 @@ created: 21-03-24
 <hr>
 <p>In <a href="https://github.com/conjure-cp/conjure-oxide/pull/180">#180</a> and <a href="https://github.com/conjure-cp/conjure-oxide/pull/259">#259</a> we implemented the basic Uniplate interface and a derive macro to automatically implement it for <code>enum</code> types. However, our current implementation is incorrect and problematic: we have defined children wrong; and our children list does not preserve structure, making more complex nested structures hard to recreate in the context function.</p>
 <h2 id="recap-uniplates-and-biplates"><a class="header" href="#recap-uniplates-and-biplates">Recap: Uniplates and Biplates</a></h2>
-<p><em>A quick recap of what we are trying to do - for details, see the <a href="https://hackage.haskell.org/package/uniplate">Uniplate Haskell docs</a>, our Github Issues, and the paper.</em></p>
+<p><em>A quick recap of what we are trying to do - for details, see the <a href="https://hackage.haskell.org/package/uniplate">Uniplate Haskell docs</a>, our GitHub Issues, and the paper.</em></p>
 <p>Uniplates are an easy way to perform recursion over complex recursive data types.</p>
 <p>It is typically used with enums containing multiple variants, many of which may be different types.</p>
 <pre><code class="language-hs">data T = A T [Integer]
@@ -5915,7 +5572,7 @@ and should not affect how the solver crates are written. See <a href="#solver-ad
         <script src="searcher-09f2665d.js"></script>
 
         <script src="clipboard-1626706a.min.js"></script>
-        <script src="highlight-a1fdb4db.js"></script>
+        <script src="highlight-f33deea9.js"></script>
         <script src="book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
