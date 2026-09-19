@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"attr":["distributed_slice"]};
+window.SIDEBAR_ITEMS = {};
