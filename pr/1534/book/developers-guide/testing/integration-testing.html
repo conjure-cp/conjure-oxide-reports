@@ -37,7 +37,7 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../searchindex-26bb23f8.js";
+            window.path_to_searchindex_js = "../../searchindex-6ff4cc19.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-66c46656.js"></script>
@@ -195,48 +195,16 @@
 </code></pre>
 <p>The environment variable <code>ACCEPT</code> is particularly important: when <code>ACCEPT</code> is set, the integration system will first attempt to solve the model using each of the configurations. It will compare the generated solution against conjure, and if the solutions are the same, it will generate and save test metadata for each configuration.</p>
 <h2 id="configuring-integration-tests"><a class="header" href="#configuring-integration-tests">Configuring Integration Tests</a></h2>
-<p>By convention, the <code>config.toml</code> file for a test looks something like this:</p>
-<pre><code class="language-toml">parser = [
-    "tree-sitter",
-    "via-conjure",
-]
-
-rewriter = [
-    "naive",
-    "morph",
-]
-
-comprehension-expander = [
-    # "native",
-    # "via-solver",
-    "via-solver-ac",
-]
-
-solver = [
-    "minion",
-    "sat-log",
-    "sat-direct",
-    "sat-order",
-    # "smt-bv-arrays-nodiscrete",
-    # "smt-bv-arrays",
-    # "smt-bv-atomic-nodiscrete",
-    # "smt-bv-atomic",
-    # "smt-lia-arrays-nodiscrete",
-    # "smt-lia-arrays",
-    # "smt-lia-atomic-nodiscrete",
-    # "smt-lia-atomic",
-]
-expected-time = 10
-</code></pre>
-<p>The config file has the following fields, each of which contains a list of the ‘active’ or ‘enabled’ configuration options. All possible options supported by conjure-oxide are written in the file:</p>
+<p>The config file for an integration test has the following fields, each of which contains a list of the ‘active’ or ‘enabled’ configuration options. All possible options supported by conjure-oxide are written in the file:</p>
 <ul>
-<li><code>parser</code>: defines which parsers</li>
-<li><code>rewriter</code>: defines which rewriters to use</li>
-<li><code>comprehension-expander</code>: defines how to expand comprehensions</li>
-<li><code>solver</code>: defines which solvers to use</li>
-<li><code>expected-time</code>: defines in seconds how long a solution is expected to take.</li>
+<li><code>parser</code>: defines which parser</li>
+<li><code>rewriter</code>: defines which rewriter</li>
+<li><code>comprehension-expander</code>: defines which system is used to expand comprehensions</li>
+<li><code>solver</code>: a list of which solvers to use</li>
+<li><code>number-of-solutions</code>: the number of solutions to generate. This could be a number, or it could be <code>all</code>.
+``
+The integration tester tries all possible combinations of the options enabled in the <code>config.toml</code> file.</li>
 </ul>
-<p>The integration tester tries all possible combinations of the options enabled in the <code>config.toml</code> file.</p>
 <p>Also by convention, we comment out configurations which are supported by conjure-oxide but do not work for the current solver. For instance, SAT solver does not support Matrices of Integers, so any tests that have matrices of integers will have all sat-solver options as comments.</p>
 <p>As support is added, we go through tests and change the comments to code incrementally. We then regenerate the test metadata for the new tests. To generate a large number of tests at the same time, use the <code>test-accept</code> MakeFile target.</p>
 <hr>
