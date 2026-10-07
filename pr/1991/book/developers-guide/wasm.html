@@ -37,7 +37,7 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../searchindex-4c37be9f.js";
+            window.path_to_searchindex_js = "../searchindex-7d9ab549.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-ed4d3c14.js"></script>
@@ -205,8 +205,14 @@ in-memory filesystem. For a parameter file, supply its text in <code>files</code
 its path after the model path, just as with the native CLI. Use
 <code>--output-format json</code> if your page wants to parse JSON instead of displaying
 the usual Essence output. <code>await run(["--help"])</code> returns CLI help.</p>
-<p>Results contain <code>exitCode</code>, <code>stdout</code>, <code>stderr</code>, and <code>elapsedMs</code>. A nonzero exit
-code resolves normally with the CLI’s diagnostics. Worker, Wasm loading, and
+<p>Results contain <code>exitCode</code>, <code>stdout</code>, <code>stderr</code>, <code>elapsedMs</code>, and <code>files</code>. Pass
+<code>captureFiles: ["/solutions.json"]</code> in the options to return that file’s UTF-8
+text in <code>result.files["/solutions.json"]</code>, for example after writing JSON solutions
+with <code>--output-format json -o /solutions.json</code>. Requested files are read before
+the worker terminates; missing files reject with an error identifying the path
+and CLI exit code. With no requested files, <code>files</code> is an empty object.
+A nonzero exit code resolves normally with the CLI’s diagnostics if requested
+files can be read. Worker, Wasm loading, and
 filesystem failures reject the Promise. Optional <code>signal</code> supports cancellation;
 <code>timeoutMs</code> defaults to 30000 and includes startup. Cancellation and timeout
 terminate the worker, discard partial output, and reject with <code>AbortError</code> and
