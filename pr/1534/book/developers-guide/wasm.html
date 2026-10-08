@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Testing - Conjure Oxide</title>
+        <title>WebAssembly interface - Conjure Oxide</title>
 
 
         <!-- Custom HTML head -->
@@ -12,20 +12,20 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="theme-color" content="#ffffff">
 
-        <link rel="icon" href="../../favicon-de23e50b.svg">
-        <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
-        <link rel="stylesheet" href="../../css/variables-8adf115d.css">
-        <link rel="stylesheet" href="../../css/general-e96d0476.css">
-        <link rel="stylesheet" href="../../css/chrome-d279d366.css">
-        <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
+        <link rel="icon" href="../favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="../favicon-8114d1fc.png">
+        <link rel="stylesheet" href="../css/variables-8adf115d.css">
+        <link rel="stylesheet" href="../css/general-e96d0476.css">
+        <link rel="stylesheet" href="../css/chrome-d279d366.css">
+        <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
 
         <!-- Fonts -->
-        <link rel="stylesheet" href="../../fonts/fonts-9644e21d.css">
+        <link rel="stylesheet" href="../fonts/fonts-9644e21d.css">
 
         <!-- Highlight.js Stylesheets -->
-        <link rel="stylesheet" id="mdbook-highlight-css" href="../../highlight-493f70e1.css">
-        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../../tomorrow-night-4c0ae647.css">
-        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../../ayu-highlight-3fdfc3ac.css">
+        <link rel="stylesheet" id="mdbook-highlight-css" href="../highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="../tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="../ayu-highlight-3fdfc3ac.css">
 
         <!-- Custom theme stylesheets -->
 
@@ -34,13 +34,13 @@
 
         <!-- Provide site root and default themes to javascript -->
         <script>
-            const path_to_root = "../../";
+            const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../searchindex-23ed8a75.js";
+            window.path_to_searchindex_js = "../searchindex-23ed8a75.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-b476c482.js"></script>
+        <script src="../toc-b476c482.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -107,7 +107,7 @@
             <!-- populated by js -->
             <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
             <noscript>
-                <iframe class="sidebar-iframe-outer" src="../../toc.html"></iframe>
+                <iframe class="sidebar-iframe-outer" src="../toc.html"></iframe>
             </noscript>
             <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -142,7 +142,7 @@
                     <h1 class="menu-title">Conjure Oxide</h1>
 
                     <div class="right-buttons">
-                        <a href="../../print.html" title="Print this book" aria-label="Print this book">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
                             <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
                         </a>
 
@@ -176,43 +176,153 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="testing"><a class="header" href="#testing">Testing</a></h1>
-<h2 id="types-of-tests"><a class="header" href="#types-of-tests">Types of Tests</a></h2>
-<p>Conjure-Oxide currently has four forms of internal tests:</p>
-<ul>
-<li><a href="integration-testing.html">Integration tests</a></li>
-<li><a href="writing-custom-tests.html">Custom tests</a></li>
-<li><a href="roundtrip-testing.html">Roundtrip tests</a></li>
-<li>A small number of unit tests</li>
-</ul>
-<p>Additionally, the project has infrastructure for <a href="bb-test.html">black-box-testing</a> using a tool suite that runs tests in parallel and gathers data using GNU Parallel.</p>
-<h2 id="test-generation"><a class="header" href="#test-generation">Test generation</a></h2>
-<p>The test generation occurs in the file <code>./test-suite/build.rs</code>. This generates the integration, custom and roundtrip tests all in a similar manner.</p>
-<p>For each test framework we define a base directory for all these tests:</p>
-<ul>
-<li><code>./test-suite/tests/integration</code></li>
-<li><code>./test-suite/tests/custom</code></li>
-<li><code>./test-suite/tests/roundtrip</code></li>
-</ul>
-<p>Any sub-directory of these defined directories containing the necessary files to make a test, will be considered a test.</p>
-<ul>
-<li>For integration and roundtrip tests this is containing a singular file with a <code>.essence</code> or <code>.eprime</code> extension.</li>
-<li>For custom tests this is containing a <code>run.sh</code> script file.</li>
-</ul>
-<p>Once these tests are identified a Rust <code>#[test]</code> is created using the defined templates (<code>&lt;test type&gt;_test_template</code>). This test is within the pre-generated file <code>gen_tests_&lt;test type&gt;.rs</code> within the specified output directory (<code>OUT_DIR</code>).</p>
-<p>This template contains the code to call a new function which carries out the test. The values passed to the template determines its test name, through sanitation of the path, and determine the arguments to this test function.</p>
-<p>Finally, the test function itself includes the line <code>include!(concat!(env!("OUT_DIR"), "/gen_tests_&lt;test type&gt;.rs"));</code>, such that it is accessible during the test through insertion using the include macro.</p>
-<p>This format improves scalability and allows new tests to be created by just creating the input file.</p>
+                        <h1 id="webassembly-interface-and-emscripten-builds"><a class="header" href="#webassembly-interface-and-emscripten-builds">WebAssembly interface and Emscripten builds</a></h1>
+<p>The WebAssembly build compiles the standard <code>conjure-oxide</code> executable for
+<code>wasm32-unknown-emscripten</code>. A small browser wrapper passes CLI arguments and
+input files, then returns the exit code, stdout, and stderr. The normal Essence
+parser, released <code>minion-sys</code> 0.1.2, and BatSat are included.</p>
+<h2 id="build-and-try-the-minimal-page"><a class="header" href="#build-and-try-the-minimal-page">Build and try the minimal page</a></h2>
+<p>First follow <a href="#install-the-build-tools">Install the build tools</a>, then run from
+the repository root:</p>
+<pre><code class="language-sh">bash tools/build-wasm.sh
+python3 -m http.server 8767 --bind 127.0.0.1 --directory target/wasm-package
+</code></pre>
+<p>Open <code>http://127.0.0.1:8767/minimal.html</code>. It has three text boxes and a Submit
+button, with no CSS or npm setup. The build writes a self-contained
+<code>target/wasm-package</code> directory. An optional first argument to the build script
+chooses another package directory. Copy the whole directory into your application.</p>
+<h2 id="use-the-javascript-interface"><a class="header" href="#use-the-javascript-interface">Use the JavaScript interface</a></h2>
+<pre><code class="language-js">import { run } from "./conjure/index.mjs";
+const result = await run(
+  ["solve", "/model.essence", "--solver", "sat", "-n", "20"],
+  { "/model.essence": "find x, y : bool\nsuch that x != y\n" },
+);
+console.log(result.exitCode, result.stdout, result.stderr);
+</code></pre>
+<p><code>run(args, files?, options?)</code> accepts ordinary CLI arguments without the executable
+name and a map of input paths to text. Files live in each worker’s private
+in-memory filesystem. For a parameter file, supply its text in <code>files</code> and add
+its path after the model path, just as with the native CLI. Use
+<code>--output-format json</code> if your page wants to parse JSON instead of displaying
+the usual Essence output. <code>await run(["--help"])</code> returns CLI help.</p>
+<p>Results contain <code>exitCode</code>, <code>stdout</code>, <code>stderr</code>, <code>elapsedMs</code>, and <code>files</code>. Pass
+<code>captureFiles: ["/solutions.json"]</code> in the options to return that file’s UTF-8
+text in <code>result.files["/solutions.json"]</code>, for example after writing JSON solutions
+with <code>--output-format json -o /solutions.json</code>. Requested files are read before
+the worker terminates; missing files reject with an error identifying the path
+and CLI exit code. With no requested files, <code>files</code> is an empty object.
+A nonzero exit code resolves normally with the CLI’s diagnostics if requested
+files can be read. Worker, Wasm loading, and
+filesystem failures reject the Promise. Optional <code>signal</code> supports cancellation;
+<code>timeoutMs</code> defaults to 30000 and includes startup. Cancellation and timeout
+terminate the worker, discard partial output, and reject with <code>AbortError</code> and
+<code>TimeoutError</code> respectively. <code>onStage</code> receives <code>"loading"</code> and <code>"running"</code>.
+Each invocation has a fresh worker and engine; concurrent calls are independent
+and leave the page responsive.</p>
+<p>See <a href="../../../tools/wasm/README.html"><code>tools/wasm/README.md</code></a> for the full API and
+student integration instructions. To run the browser regression suite, serve
+the repository root over HTTP and open <code>/tools/wasm/tests/browser.html</code>.
+The full React playground is maintained in the separate <code>conjure-oxide-web</code>
+repository, which imports the built package without Rust dependencies.</p>
+<h2 id="cli-build-features"><a class="header" href="#cli-build-features">CLI build features</a></h2>
+<p>The script compiles <code>conjure-cp-cli</code> with
+<code>--no-default-features --features wasm-target</code>. This selects BatSat; Minion
+remains available. Z3, the language server, mimalloc, and extra rule checks are
+omitted. Requesting Z3 or <code>server-lsp</code> reports that support was not compiled in,
+with the feature needed to enable it. These feature choices also work natively.</p>
+<p>The generated <code>conjure.mjs</code> exposes Emscripten’s <code>FS</code> and <code>callMain</code> to
+<code>worker.mjs</code>, which writes the input files, runs the standard <code>main</code>, and captures
+stdout and stderr. There is no dedicated Wasm Rust executable. CLI parsing,
+parameters, solution limits, output formats, and help use the same code as native
+builds. Commands that launch external programs, such as <code>--parser via-conjure</code>,
+compile but return an operating-system error in a browser.</p>
+<h2 id="library-backend-features"><a class="header" href="#library-backend-features">Library backend features</a></h2>
+<p>Minion remains available unconditionally. SAT is also always available in a
+successful library build: select exactly one backend at compile time, <code>sat-cadical</code> or <code>sat-batsat</code>.
+Native defaults select CaDiCaL and enable Z3. To select BatSat, disable defaults
+and enable <code>sat-batsat</code> on <code>conjure-cp</code> / <code>conjure-cp-rules</code>. Re-enable <code>z3</code>
+explicitly if needed on native builds. Selecting neither or both SAT features is
+a compile error; consequently <code>--all-features</code> is not a supported configuration.</p>
+<p>Wasm requires <code>sat-batsat</code>. CaDiCaL is a native-only dependency. Cargo features
+are additive, so dependencies must agree on the target backend. Parser features
+forward the same choice. Procedural macros run on the host and use the parser’s
+native default backend independently of the Wasm target’s selection.</p>
+<p>The common <code>Sat</code> adaptor API is unchanged. BatSat supports timeout termination
+through its callback API; nonzero solver seeds return an explicit unsupported
+error rather than being ignored. Default seed zero uses BatSat’s defaults.
+These features select the library backend. CLI builds expose the same backend
+choices, together with optional <code>z3</code>, <code>lsp</code>, and <code>mimalloc</code> features. Defaults
+retain CaDiCaL, Z3, the language server, and mimalloc on native builds. The
+language server itself still uses its native dependencies.</p>
+<h2 id="install-the-build-tools"><a class="header" href="#install-the-build-tools">Install the build tools</a></h2>
+<p>If you have an already-built package, you can serve it and use the JavaScript
+interface without installing Rust or Emscripten. Building from source needs
+Python 3 and native C/C++ build tools, libclang, and CMake for Rust dependencies.</p>
+<p>With Rust installed through <a href="https://rustup.rs/">rustup</a>, run this from the
+repository root to install the target for the repository’s selected Rust version:</p>
+<pre><code class="language-sh">rustup target add wasm32-unknown-emscripten
+</code></pre>
+<p>This installs Rust’s target standard library. Install Emscripten separately.
+On macOS with Homebrew available, use the
+<a href="https://formulae.brew.sh/formula/emscripten">Homebrew package</a>:</p>
+<pre><code class="language-sh">brew install emscripten
+</code></pre>
+<p>For macOS or Linux without administrator access, use the official
+<a href="https://emscripten.org/docs/getting_started/downloads.html">Emscripten SDK installation instructions</a>.
+With Git and Python 3 available, these commands install the SDK in your home
+directory without <code>sudo</code>:</p>
+<pre><code class="language-sh">git clone https://github.com/emscripten-core/emsdk.git "$HOME/emsdk"
+cd "$HOME/emsdk"
+./emsdk install 6.0.10
+./emsdk activate 6.0.10
+source ./emsdk_env.sh
+</code></pre>
+<p>The commands select a tested Emscripten version. In each new Bash or Zsh terminal,
+run <code>source "$HOME/emsdk/emsdk_env.sh"</code> again before building. Windows users can
+use an existing WSL Linux environment; native Windows builds have not been tested.
+On a managed machine, ask course staff about any missing native build tools.</p>
+<p>Return to the repository root and check the installation:</p>
+<pre><code class="language-sh">python3 --version
+command -v emcc
+emcc --version
+emcc --check
+rustup target list --installed
+</code></pre>
+<p>These should identify Python 3, the Emscripten compiler and version, and
+<code>wasm32-unknown-emscripten</code> in the installed target list. <code>emcc --check</code> verifies
+Emscripten’s supporting tools. If <code>emcc</code> is not found, source the SDK environment
+in this terminal. Resolve any check errors before running <code>bash tools/build-wasm.sh</code>.</p>
+<h2 id="tree-sitter-dependency-fix"><a class="header" href="#tree-sitter-dependency-fix">Tree-sitter dependency fix</a></h2>
+<p>Tree-sitter 0.27.0 incorrectly enables its bare-Wasm libc replacements for
+Emscripten. The workspace and lockfile pin upstream revision
+<code>b2f00cb0b5942ff10c45dc77d3a9c7e9c7515da8</code>, which limits those replacements to
+<code>wasm32-unknown-unknown</code>. The runtime declares version 0.28.0. Its language crate
+is pinned to the same source to keep grammar and runtime types consistent.
+No manifest edits, local vendor patch, or command-line Cargo override are needed.
+Downstream Rust workspaces must carry the same patches until an upstream release
+contains this fix; Cargo does not inherit patches from dependencies.</p>
+<h2 id="engine-linking"><a class="header" href="#engine-linking">Engine linking</a></h2>
+<p>If <code>CARGO_TARGET_DIR</code> is overridden, use that output directory instead of <code>target</code>.
+Use the Python configured by the Emscripten SDK; set <code>EMSDK_PYTHON</code> explicitly if
+its launcher picks an incompatible Python installation.</p>
+<p>The linker wrapper uses <code>--whole-archive</code> for the built-in rules archive, retaining
+objects referenced only through inventory constructors. Additional downstream
+rule crates would need equivalent retention. Emscripten runs the constructors at
+startup; no explicit registry or initialisation call is needed in Rust.</p>
+<p>The C++ link setting supplies Minion’s runtime. The larger stack supports parser,
+rewriter and solver recursion. Memory growth allows Minion to allocate its search
+storage rather than abort at the default fixed heap limit. <code>std::time::Instant</code>
+works through Emscripten, so this path does not need a Wasm timing replacement.</p>
 
                     </main>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
-                            <a rel="prev" href="../../developers-guide/architecture/domain_pruning.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                            <a rel="prev" href="../contributors-guide/ci-cd/test-ci-locally.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../developers-guide/testing/the-ideal-scenario.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../developers-guide/project-overview/main-concepts/flatten.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -222,11 +332,11 @@
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
-                    <a rel="prev" href="../../developers-guide/architecture/domain_pruning.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                    <a rel="prev" href="../contributors-guide/ci-cd/test-ci-locally.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../developers-guide/testing/the-ideal-scenario.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../developers-guide/project-overview/main-concepts/flatten.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>
@@ -246,13 +356,13 @@
         </script>
 
 
-        <script src="../../elasticlunr-ef4e11c1.min.js"></script>
-        <script src="../../mark-09e88c2c.min.js"></script>
-        <script src="../../searcher-09f2665d.js"></script>
+        <script src="../elasticlunr-ef4e11c1.min.js"></script>
+        <script src="../mark-09e88c2c.min.js"></script>
+        <script src="../searcher-09f2665d.js"></script>
 
-        <script src="../../clipboard-1626706a.min.js"></script>
-        <script src="../../highlight-f33deea9.js"></script>
-        <script src="../../book-609e4cb8.js"></script>
+        <script src="../clipboard-1626706a.min.js"></script>
+        <script src="../highlight-f33deea9.js"></script>
+        <script src="../book-609e4cb8.js"></script>
 
         <!-- Custom JS scripts -->
 
