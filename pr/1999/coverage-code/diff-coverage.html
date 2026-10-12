@@ -1,0 +1,437 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
+        <title>Diff Coverage</title>
+        <style>
+            .src-snippet { margin-top: 2em; }
+            .src-name { font-weight: bold; }
+            .snippets {
+                border-top: 1px solid #bdbdbd;
+                border-bottom: 1px solid #bdbdbd;
+            }
+            pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.hll { background-color: #ffcccc }
+.c { color: #3D7B7B; font-style: italic } /* Comment */
+.err { border: 1px solid #F00 } /* Error */
+.k { color: #008000; font-weight: bold } /* Keyword */
+.o { color: #666 } /* Operator */
+.ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
+.cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
+.cp { color: #9C6500 } /* Comment.Preproc */
+.cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
+.c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
+.cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
+.gd { color: #A00000 } /* Generic.Deleted */
+.ge { font-style: italic } /* Generic.Emph */
+.ges { font-weight: bold; font-style: italic } /* Generic.EmphStrong */
+.gr { color: #E40000 } /* Generic.Error */
+.gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.gi { color: #008400 } /* Generic.Inserted */
+.go { color: #717171 } /* Generic.Output */
+.gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.gs { font-weight: bold } /* Generic.Strong */
+.gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.gt { color: #04D } /* Generic.Traceback */
+.kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.kp { color: #008000 } /* Keyword.Pseudo */
+.kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.kt { color: #B00040 } /* Keyword.Type */
+.m { color: #666 } /* Literal.Number */
+.s { color: #BA2121 } /* Literal.String */
+.na { color: #687822 } /* Name.Attribute */
+.nb { color: #008000 } /* Name.Builtin */
+.nc { color: #00F; font-weight: bold } /* Name.Class */
+.no { color: #800 } /* Name.Constant */
+.nd { color: #A2F } /* Name.Decorator */
+.ni { color: #717171; font-weight: bold } /* Name.Entity */
+.ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
+.nf { color: #00F } /* Name.Function */
+.nl { color: #767600 } /* Name.Label */
+.nn { color: #00F; font-weight: bold } /* Name.Namespace */
+.nt { color: #008000; font-weight: bold } /* Name.Tag */
+.nv { color: #19177C } /* Name.Variable */
+.ow { color: #A2F; font-weight: bold } /* Operator.Word */
+.w { color: #BBB } /* Text.Whitespace */
+.mb { color: #666 } /* Literal.Number.Bin */
+.mf { color: #666 } /* Literal.Number.Float */
+.mh { color: #666 } /* Literal.Number.Hex */
+.mi { color: #666 } /* Literal.Number.Integer */
+.mo { color: #666 } /* Literal.Number.Oct */
+.sa { color: #BA2121 } /* Literal.String.Affix */
+.sb { color: #BA2121 } /* Literal.String.Backtick */
+.sc { color: #BA2121 } /* Literal.String.Char */
+.dl { color: #BA2121 } /* Literal.String.Delimiter */
+.sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.s2 { color: #BA2121 } /* Literal.String.Double */
+.se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
+.sh { color: #BA2121 } /* Literal.String.Heredoc */
+.si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
+.sx { color: #008000 } /* Literal.String.Other */
+.sr { color: #A45A77 } /* Literal.String.Regex */
+.s1 { color: #BA2121 } /* Literal.String.Single */
+.ss { color: #19177C } /* Literal.String.Symbol */
+.bp { color: #008000 } /* Name.Builtin.Pseudo */
+.fm { color: #00F } /* Name.Function.Magic */
+.vc { color: #19177C } /* Name.Variable.Class */
+.vg { color: #19177C } /* Name.Variable.Global */
+.vi { color: #19177C } /* Name.Variable.Instance */
+.vm { color: #19177C } /* Name.Variable.Magic */
+.il { color: #666 } /* Literal.Number.Integer.Long */
+.diff-cover-covered-line { background-color: #ddffdd; }
+        </style>
+    </head>
+    <body>
+        <h1>Diff Coverage</h1>
+        <p>Diff: upstream/main...HEAD, staged and unstaged changes</p>
+        <ul>
+            <li><b>Total</b>: 160 lines</li>
+            <li><b>Missing</b>: 34 lines</li>
+            <li><b>Coverage</b>: 78%</li>
+        </ul>
+        <table border="1">
+            <tr>
+                <th>Source File</th>
+                <th>Diff Coverage (%)</th>
+                <th>Missing Lines</th>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-cli/src/cli.rs</td>
+                <td>78.6%</td>
+                <td>418,435-437,439,442</td>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-cli/src/solve.rs</td>
+                <td>0.0%</td>
+                <td>292</td>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs</td>
+                <td>80.8%</td>
+                <td>66,773,777,804,818-819,825-827,836,839-840,844-846</td>
+            </tr>
+            <tr>
+                <td>crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs</td>
+                <td>77.4%</td>
+                <td>72-76,78-79,94-95,97,99,104</td>
+            </tr>
+        </table>
+        <div class="src-snippet">
+            <div class="src-name">crates/conjure-cp-cli/src/cli.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">414</span>
+<span class="normal">415</span>
+<span class="normal">416</span>
+<span class="normal">417</span>
+<span class="normal">418</span>
+<span class="normal">419</span>
+<span class="normal">420</span>
+<span class="normal">421</span>
+<span class="normal">422</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-cli/src/cli.rs-414" name="crates/conjure-cp-cli/src/cli.rs-414"></a><span class="w">        </span><span class="cp">#[cfg(not(all(feature = </span><span class="s">"sat-cadical"</span><span class="cp">, not(target_family = </span><span class="s">"wasm"</span><span class="cp">))))]</span>
+<a id="crates/conjure-cp-cli/src/cli.rs-415" name="crates/conjure-cp-cli/src/cli.rs-415"></a><span class="w">        </span><span class="fm">assert_eq!</span><span class="p">(</span><span class="n">cli</span><span class="p">.</span><span class="n">global_args</span><span class="p">.</span><span class="n">sat_backend</span><span class="p">,</span><span class="w"> </span><span class="n">SatBackend</span><span class="p">::</span><span class="n">Batsat</span><span class="p">);</span>
+<a id="crates/conjure-cp-cli/src/cli.rs-416" name="crates/conjure-cp-cli/src/cli.rs-416"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/conjure-cp-cli/src/cli.rs-417" name="crates/conjure-cp-cli/src/cli.rs-417"></a>
+<a id="crates/conjure-cp-cli/src/cli.rs-418" name="crates/conjure-cp-cli/src/cli.rs-418"></a><span class="hll"><span class="w">    </span><span class="cp">#[test]</span>
+</span><a id="crates/conjure-cp-cli/src/cli.rs-419" name="crates/conjure-cp-cli/src/cli.rs-419"></a><span class="w">    </span><span class="k">fn</span><span class="w"> </span><span class="nf">sat_backend_option_accepts_only_compiled_backends</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-cli/src/cli.rs-420" name="crates/conjure-cp-cli/src/cli.rs-420"></a><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="p">[</span><span class="s">"cadical"</span><span class="p">,</span><span class="w"> </span><span class="s">"batsat"</span><span class="p">]</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-cli/src/cli.rs-421" name="crates/conjure-cp-cli/src/cli.rs-421"></a><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Cli</span><span class="p">::</span><span class="n">try_parse_from</span><span class="p">([</span>
+<a id="crates/conjure-cp-cli/src/cli.rs-422" name="crates/conjure-cp-cli/src/cli.rs-422"></a><span class="w">                </span><span class="s">"conjure-oxide"</span><span class="p">,</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">431</span>
+<span class="normal">432</span>
+<span class="normal">433</span>
+<span class="normal">434</span>
+<span class="normal">435</span>
+<span class="normal">436</span>
+<span class="normal">437</span>
+<span class="normal">438</span>
+<span class="normal">439</span>
+<span class="normal">440</span>
+<span class="normal">441</span>
+<span class="normal">442</span>
+<span class="normal">443</span>
+<span class="normal">444</span>
+<span class="normal">445</span>
+<span class="normal">446</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-cli/src/cli.rs-431" name="crates/conjure-cp-cli/src/cli.rs-431"></a><span class="w">                </span><span class="p">.</span><span class="n">iter</span><span class="p">()</span>
+<a id="crates/conjure-cp-cli/src/cli.rs-432" name="crates/conjure-cp-cli/src/cli.rs-432"></a><span class="w">                </span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="o">|</span><span class="n">backend</span><span class="o">|</span><span class="w"> </span><span class="n">backend</span><span class="p">.</span><span class="n">to_string</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">name</span><span class="p">);</span>
+<a id="crates/conjure-cp-cli/src/cli.rs-433" name="crates/conjure-cp-cli/src/cli.rs-433"></a><span class="w">            </span><span class="k">match</span><span class="w"> </span><span class="n">available</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-cli/src/cli.rs-434" name="crates/conjure-cp-cli/src/cli.rs-434"></a><span class="w">                </span><span class="nb">Some</span><span class="p">(</span><span class="n">backend</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="fm">assert_eq!</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">unwrap</span><span class="p">().</span><span class="n">global_args</span><span class="p">.</span><span class="n">sat_backend</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="n">backend</span><span class="p">),</span>
+<a id="crates/conjure-cp-cli/src/cli.rs-435" name="crates/conjure-cp-cli/src/cli.rs-435"></a><span class="hll"><span class="w">                </span><span class="nb">None</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="fm">assert_eq!</span><span class="p">(</span>
+</span><a id="crates/conjure-cp-cli/src/cli.rs-436" name="crates/conjure-cp-cli/src/cli.rs-436"></a><span class="hll"><span class="w">                    </span><span class="n">result</span><span class="p">.</span><span class="n">unwrap_err</span><span class="p">().</span><span class="n">kind</span><span class="p">(),</span>
+</span><a id="crates/conjure-cp-cli/src/cli.rs-437" name="crates/conjure-cp-cli/src/cli.rs-437"></a><span class="hll"><span class="w">                    </span><span class="n">clap</span><span class="p">::</span><span class="n">error</span><span class="p">::</span><span class="n">ErrorKind</span><span class="p">::</span><span class="n">InvalidValue</span>
+</span><a id="crates/conjure-cp-cli/src/cli.rs-438" name="crates/conjure-cp-cli/src/cli.rs-438"></a><span class="w">                </span><span class="p">),</span>
+<a id="crates/conjure-cp-cli/src/cli.rs-439" name="crates/conjure-cp-cli/src/cli.rs-439"></a><span class="hll"><span class="w">            </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-cli/src/cli.rs-440" name="crates/conjure-cp-cli/src/cli.rs-440"></a><span class="w">        </span><span class="p">}</span>
+<a id="crates/conjure-cp-cli/src/cli.rs-441" name="crates/conjure-cp-cli/src/cli.rs-441"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/conjure-cp-cli/src/cli.rs-442" name="crates/conjure-cp-cli/src/cli.rs-442"></a><span class="hll">
+</span><a id="crates/conjure-cp-cli/src/cli.rs-443" name="crates/conjure-cp-cli/src/cli.rs-443"></a><span class="w">    </span><span class="cp">#[cfg(not(feature = </span><span class="s">"z3"</span><span class="cp">))]</span>
+<a id="crates/conjure-cp-cli/src/cli.rs-444" name="crates/conjure-cp-cli/src/cli.rs-444"></a><span class="w">    </span><span class="cp">#[test]</span>
+<a id="crates/conjure-cp-cli/src/cli.rs-445" name="crates/conjure-cp-cli/src/cli.rs-445"></a><span class="w">    </span><span class="k">fn</span><span class="w"> </span><span class="nf">selecting_z3_without_support_reports_the_missing_feature</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-cli/src/cli.rs-446" name="crates/conjure-cp-cli/src/cli.rs-446"></a><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">error</span><span class="w"> </span><span class="o">=</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/conjure-cp-cli/src/solve.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-cli/src/solve.rs-288" name="crates/conjure-cp-cli/src/solve.rs-288"></a><span class="w">                </span><span class="p">.</span><span class="n">with_solver_seed</span><span class="p">(</span><span class="n">global_args</span><span class="p">.</span><span class="n">solver_seed</span><span class="p">)</span>
+<a id="crates/conjure-cp-cli/src/solve.rs-289" name="crates/conjure-cp-cli/src/solve.rs-289"></a><span class="w">                </span><span class="p">.</span><span class="n">with_timeout</span><span class="p">(</span><span class="n">timeout</span><span class="p">),</span>
+<a id="crates/conjure-cp-cli/src/solve.rs-290" name="crates/conjure-cp-cli/src/solve.rs-290"></a><span class="w">        </span><span class="p">),</span>
+<a id="crates/conjure-cp-cli/src/solve.rs-291" name="crates/conjure-cp-cli/src/solve.rs-291"></a><span class="w">        </span><span class="n">SolverFamily</span><span class="p">::</span><span class="n">Sat</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">Solver</span><span class="p">::</span><span class="n">new</span><span class="p">(</span>
+<a id="crates/conjure-cp-cli/src/solve.rs-292" name="crates/conjure-cp-cli/src/solve.rs-292"></a><span class="hll"><span class="w">            </span><span class="n">Sat</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="n">global_args</span><span class="p">.</span><span class="n">sat_backend</span><span class="p">)</span>
+</span><a id="crates/conjure-cp-cli/src/solve.rs-293" name="crates/conjure-cp-cli/src/solve.rs-293"></a><span class="w">                </span><span class="p">.</span><span class="n">with_solver_seed</span><span class="p">(</span><span class="n">global_args</span><span class="p">.</span><span class="n">solver_seed</span><span class="p">)</span>
+<a id="crates/conjure-cp-cli/src/solve.rs-294" name="crates/conjure-cp-cli/src/solve.rs-294"></a><span class="w">                </span><span class="p">.</span><span class="n">with_timeout</span><span class="p">(</span><span class="n">timeout</span><span class="p">),</span>
+<a id="crates/conjure-cp-cli/src/solve.rs-295" name="crates/conjure-cp-cli/src/solve.rs-295"></a><span class="w">        </span><span class="p">),</span>
+<a id="crates/conjure-cp-cli/src/solve.rs-296" name="crates/conjure-cp-cli/src/solve.rs-296"></a><span class="w">        </span><span class="cp">#[cfg(feature = </span><span class="s">"z3"</span><span class="cp">)]</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-62" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-62"></a><span class="w">        </span><span class="bp">Self</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="n">SatBackend</span><span class="p">::</span><span class="n">default</span><span class="p">())</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-63" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-63"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-64" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-64"></a><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-65" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-65"></a>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-66" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-66"></a><span class="hll"><span class="k">impl</span><span class="w"> </span><span class="n">Sat</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-67" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-67"></a><span class="w">    </span><span class="sd">/// Creates an adaptor using a specific compiled backend.</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-68" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-68"></a><span class="w">    </span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">new</span><span class="p">(</span><span class="n">backend</span><span class="p">:</span><span class="w"> </span><span class="nc">SatBackend</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">Self</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-69" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-69"></a><span class="w">        </span><span class="bp">Self</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-70" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-70"></a><span class="w">            </span><span class="n">__non_constructable</span><span class="p">:</span><span class="w"> </span><span class="nc">private</span><span class="p">::</span><span class="n">Internal</span><span class="p">,</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">769</span>
+<span class="normal">770</span>
+<span class="normal">771</span>
+<span class="normal">772</span>
+<span class="normal">773</span>
+<span class="normal">774</span>
+<span class="normal">775</span>
+<span class="normal">776</span>
+<span class="normal">777</span>
+<span class="normal">778</span>
+<span class="normal">779</span>
+<span class="normal">780</span>
+<span class="normal">781</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-769" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-769"></a><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">sat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Sat</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="n">backend</span><span class="p">).</span><span class="n">with_timeout</span><span class="p">(</span><span class="nb">Some</span><span class="p">(</span><span class="n">Duration</span><span class="p">::</span><span class="n">ZERO</span><span class="p">));</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-770" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-770"></a><span class="w">            </span><span class="n">sat</span><span class="p">.</span><span class="n">model_inst</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">SatInstance</span><span class="p">::</span><span class="n">default</span><span class="p">());</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-771" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-771"></a><span class="w">            </span><span class="n">sat</span><span class="p">.</span><span class="n">var_map</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">HashMap</span><span class="p">::</span><span class="n">new</span><span class="p">());</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-772" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-772"></a><span class="w">            </span><span class="n">sat</span><span class="p">.</span><span class="n">decision_refs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="nb">Vec</span><span class="p">::</span><span class="n">new</span><span class="p">());</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-773" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-773"></a><span class="hll">
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-774" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-774"></a><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sat</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-775" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-775"></a><span class="w">                </span><span class="p">.</span><span class="n">solve</span><span class="p">(</span><span class="nb">Box</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="o">|</span><span class="n">_</span><span class="o">|</span><span class="w"> </span><span class="kc">true</span><span class="p">),</span><span class="w"> </span><span class="n">private</span><span class="p">::</span><span class="n">Internal</span><span class="p">)</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-776" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-776"></a><span class="w">                </span><span class="p">.</span><span class="n">expect</span><span class="p">(</span><span class="s">"a timeout is a non-crashing incomplete search"</span><span class="p">);</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-777" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-777"></a><span class="hll">
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-778" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-778"></a><span class="w">            </span><span class="fm">assert_eq!</span><span class="p">(</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-779" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-779"></a><span class="w">                </span><span class="n">result</span><span class="p">.</span><span class="n">status</span><span class="p">,</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-780" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-780"></a><span class="w">                </span><span class="n">SearchStatus</span><span class="p">::</span><span class="n">Incomplete</span><span class="p">(</span><span class="n">solver</span><span class="p">::</span><span class="n">SearchIncomplete</span><span class="p">::</span><span class="n">Timeout</span><span class="p">)</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-781" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-781"></a><span class="w">            </span><span class="p">);</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">800</span>
+<span class="normal">801</span>
+<span class="normal">802</span>
+<span class="normal">803</span>
+<span class="normal">804</span>
+<span class="normal">805</span>
+<span class="normal">806</span>
+<span class="normal">807</span>
+<span class="normal">808</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-800" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-800"></a><span class="w">            </span><span class="n">sat</span><span class="p">.</span><span class="n">decision_refs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="fm">vec!</span><span class="p">[</span><span class="n">x</span><span class="p">.</span><span class="n">clone</span><span class="p">(),</span><span class="w"> </span><span class="n">y</span><span class="p">.</span><span class="n">clone</span><span class="p">()]);</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-801" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-801"></a><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="n">solutions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Arc</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="n">Mutex</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="nb">Vec</span><span class="p">::</span><span class="n">new</span><span class="p">()));</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-802" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-802"></a><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="n">collected</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">solutions</span><span class="p">.</span><span class="n">clone</span><span class="p">();</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-803" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-803"></a><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sat</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-804" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-804"></a><span class="hll"><span class="w">                </span><span class="p">.</span><span class="n">solve</span><span class="p">(</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-805" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-805"></a><span class="w">                    </span><span class="nb">Box</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="k">move</span><span class="w"> </span><span class="o">|</span><span class="n">solution</span><span class="o">|</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-806" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-806"></a><span class="w">                        </span><span class="n">collected</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-807" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-807"></a><span class="w">                            </span><span class="p">.</span><span class="n">lock</span><span class="p">()</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-808" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-808"></a><span class="w">                            </span><span class="p">.</span><span class="n">unwrap</span><span class="p">()</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">814</span>
+<span class="normal">815</span>
+<span class="normal">816</span>
+<span class="normal">817</span>
+<span class="normal">818</span>
+<span class="normal">819</span>
+<span class="normal">820</span>
+<span class="normal">821</span>
+<span class="normal">822</span>
+<span class="normal">823</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-814" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-814"></a><span class="w">                </span><span class="p">.</span><span class="n">unwrap</span><span class="p">();</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-815" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-815"></a><span class="w">            </span><span class="fm">assert_eq!</span><span class="p">(</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-816" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-816"></a><span class="w">                </span><span class="n">result</span><span class="p">.</span><span class="n">status</span><span class="p">,</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-817" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-817"></a><span class="w">                </span><span class="n">SearchStatus</span><span class="p">::</span><span class="n">Complete</span><span class="p">(</span><span class="n">solver</span><span class="p">::</span><span class="n">SearchComplete</span><span class="p">::</span><span class="n">HasSolutions</span><span class="p">),</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-818" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-818"></a><span class="hll"><span class="w">                </span><span class="s">"{backend}"</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-819" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-819"></a><span class="hll"><span class="w">            </span><span class="p">);</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-820" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-820"></a><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="n">solutions</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">solutions</span><span class="p">.</span><span class="n">lock</span><span class="p">().</span><span class="n">unwrap</span><span class="p">();</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-821" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-821"></a><span class="w">            </span><span class="fm">assert_eq!</span><span class="p">(</span><span class="n">solutions</span><span class="p">.</span><span class="n">len</span><span class="p">(),</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="s">"{backend}"</span><span class="p">);</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-822" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-822"></a><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)]</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-823" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-823"></a><span class="w">                </span><span class="fm">assert!</span><span class="p">(</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">821</span>
+<span class="normal">822</span>
+<span class="normal">823</span>
+<span class="normal">824</span>
+<span class="normal">825</span>
+<span class="normal">826</span>
+<span class="normal">827</span>
+<span class="normal">828</span>
+<span class="normal">829</span>
+<span class="normal">830</span>
+<span class="normal">831</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-821" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-821"></a><span class="w">            </span><span class="fm">assert_eq!</span><span class="p">(</span><span class="n">solutions</span><span class="p">.</span><span class="n">len</span><span class="p">(),</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="s">"{backend}"</span><span class="p">);</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-822" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-822"></a><span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)]</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-823" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-823"></a><span class="w">                </span><span class="fm">assert!</span><span class="p">(</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-824" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-824"></a><span class="w">                    </span><span class="n">solutions</span><span class="p">.</span><span class="n">contains</span><span class="p">(</span><span class="o">&amp;</span><span class="p">(</span><span class="n">Literal</span><span class="p">::</span><span class="n">Int</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="w"> </span><span class="n">Literal</span><span class="p">::</span><span class="n">Int</span><span class="p">(</span><span class="n">y</span><span class="p">))),</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-825" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-825"></a><span class="hll"><span class="w">                    </span><span class="s">"{backend}"</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-826" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-826"></a><span class="hll"><span class="w">                </span><span class="p">);</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-827" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-827"></a><span class="hll"><span class="w">            </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-828" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-828"></a>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-829" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-829"></a><span class="w">            </span><span class="n">inst</span><span class="p">.</span><span class="n">add_clause</span><span class="p">([</span><span class="n">x_lit</span><span class="p">].</span><span class="n">into_iter</span><span class="p">().</span><span class="n">collect</span><span class="p">());</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-830" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-830"></a><span class="w">            </span><span class="n">inst</span><span class="p">.</span><span class="n">add_clause</span><span class="p">([</span><span class="o">!</span><span class="n">x_lit</span><span class="p">].</span><span class="n">into_iter</span><span class="p">().</span><span class="n">collect</span><span class="p">());</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-831" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-831"></a><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">sat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Sat</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="n">backend</span><span class="p">);</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">832</span>
+<span class="normal">833</span>
+<span class="normal">834</span>
+<span class="normal">835</span>
+<span class="normal">836</span>
+<span class="normal">837</span>
+<span class="normal">838</span>
+<span class="normal">839</span>
+<span class="normal">840</span>
+<span class="normal">841</span>
+<span class="normal">842</span>
+<span class="normal">843</span>
+<span class="normal">844</span>
+<span class="normal">845</span>
+<span class="normal">846</span>
+<span class="normal">847</span>
+<span class="normal">848</span>
+<span class="normal">849</span>
+<span class="normal">850</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-832" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-832"></a><span class="w">            </span><span class="n">sat</span><span class="p">.</span><span class="n">model_inst</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">inst</span><span class="p">);</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-833" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-833"></a><span class="w">            </span><span class="n">sat</span><span class="p">.</span><span class="n">var_map</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="n">HashMap</span><span class="p">::</span><span class="n">new</span><span class="p">());</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-834" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-834"></a><span class="w">            </span><span class="n">sat</span><span class="p">.</span><span class="n">decision_refs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">Some</span><span class="p">(</span><span class="nb">Vec</span><span class="p">::</span><span class="n">new</span><span class="p">());</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-835" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-835"></a><span class="w">            </span><span class="kd">let</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sat</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-836" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-836"></a><span class="hll"><span class="w">                </span><span class="p">.</span><span class="n">solve</span><span class="p">(</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-837" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-837"></a><span class="w">                    </span><span class="nb">Box</span><span class="p">::</span><span class="n">new</span><span class="p">(</span><span class="o">|</span><span class="n">_</span><span class="o">|</span><span class="w"> </span><span class="fm">panic!</span><span class="p">(</span><span class="s">"unsatisfiable CNF has no solutions"</span><span class="p">)),</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-838" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-838"></a><span class="w">                    </span><span class="n">private</span><span class="p">::</span><span class="n">Internal</span><span class="p">,</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-839" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-839"></a><span class="hll"><span class="w">                </span><span class="p">)</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-840" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-840"></a><span class="hll"><span class="w">                </span><span class="p">.</span><span class="n">unwrap</span><span class="p">();</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-841" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-841"></a><span class="w">            </span><span class="fm">assert_eq!</span><span class="p">(</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-842" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-842"></a><span class="w">                </span><span class="n">result</span><span class="p">.</span><span class="n">status</span><span class="p">,</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-843" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-843"></a><span class="w">                </span><span class="n">SearchStatus</span><span class="p">::</span><span class="n">Complete</span><span class="p">(</span><span class="n">NoSolutions</span><span class="p">),</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-844" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-844"></a><span class="hll"><span class="w">                </span><span class="s">"{backend}"</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-845" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-845"></a><span class="hll"><span class="w">            </span><span class="p">);</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-846" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-846"></a><span class="hll"><span class="w">        </span><span class="p">}</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-847" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-847"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-848" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-848"></a>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-849" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-849"></a><span class="w">    </span><span class="cp">#[test]</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-850" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/adaptor.rs-850"></a><span class="w">    </span><span class="k">fn</span><span class="w"> </span><span class="nf">from_solution_substitution_replaces_reference_with_literal</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+        <div class="src-snippet">
+            <div class="src-name">crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs</div>
+            <div class="snippets">
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-68" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-68"></a><span class="w">        </span><span class="k">match</span><span class="w"> </span><span class="bp">self</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-69" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-69"></a><span class="w">            </span><span class="cp">#[cfg(all(feature = </span><span class="s">"sat-cadical"</span><span class="cp">, not(target_family = </span><span class="s">"wasm"</span><span class="cp">)))]</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-70" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-70"></a><span class="w">            </span><span class="bp">Self</span><span class="p">::</span><span class="n">Cadical</span><span class="p">(</span><span class="n">solver</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-71" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-71"></a><span class="w">                </span><span class="kd">let</span><span class="w"> </span><span class="n">seed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">i32</span><span class="p">::</span><span class="n">try_from</span><span class="p">(</span><span class="n">seed</span><span class="p">).</span><span class="n">map_err</span><span class="p">(</span><span class="o">|</span><span class="n">_</span><span class="o">|</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-72" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-72"></a><span class="hll"><span class="w">                    </span><span class="n">SolverError</span><span class="p">::</span><span class="n">Runtime</span><span class="p">(</span><span class="fm">format!</span><span class="p">(</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-73" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-73"></a><span class="hll"><span class="w">                        </span><span class="s">"solver seed {seed} exceeds CaDiCaL's maximum supported value ({})"</span><span class="p">,</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-74" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-74"></a><span class="hll"><span class="w">                        </span><span class="kt">i32</span><span class="p">::</span><span class="n">MAX</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-75" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-75"></a><span class="hll"><span class="w">                    </span><span class="p">))</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-76" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-76"></a><span class="hll"><span class="w">                </span><span class="p">})</span><span class="o">?</span><span class="p">;</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-77" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-77"></a><span class="w">                </span><span class="n">solver</span><span class="p">.</span><span class="n">set_option</span><span class="p">(</span><span class="s">"seed"</span><span class="p">,</span><span class="w"> </span><span class="n">seed</span><span class="p">).</span><span class="n">map_err</span><span class="p">(</span><span class="o">|</span><span class="n">err</span><span class="o">|</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-78" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-78"></a><span class="hll"><span class="w">                    </span><span class="n">SolverError</span><span class="p">::</span><span class="n">Runtime</span><span class="p">(</span><span class="fm">format!</span><span class="p">(</span><span class="s">"Failed setting CaDiCaL solver seed: {err}"</span><span class="p">))</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-79" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-79"></a><span class="hll"><span class="w">                </span><span class="p">})</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-80" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-80"></a><span class="w">            </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-81" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-81"></a><span class="w">            </span><span class="cp">#[cfg(feature = </span><span class="s">"sat-batsat"</span><span class="cp">)]</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-82" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-82"></a><span class="w">            </span><span class="bp">Self</span><span class="p">::</span><span class="n">Batsat</span><span class="p">(</span><span class="n">_</span><span class="p">)</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">seed</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nb">Err</span><span class="p">(</span><span class="n">SolverError</span><span class="p">::</span><span class="n">Runtime</span><span class="p">(</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-83" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-83"></a><span class="w">                </span><span class="s">"BatSat does not support configuring the solver seed through this adaptor"</span><span class="p">.</span><span class="n">into</span><span class="p">(),</span>
+</pre></div></td></tr></table></div>
+
+            <div class="snippet"><table class="snippettable"><tr><td class="linenos"><div class="linenodiv"><pre><span class="normal"> 90</span>
+<span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span></pre></div></td><td class="code"><div><pre><span></span><a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-90" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-90"></a><span class="w">    </span><span class="k">pub</span><span class="p">(</span><span class="k">super</span><span class="p">)</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">set_budget</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="bp">self</span><span class="p">,</span><span class="w"> </span><span class="n">budget</span><span class="p">:</span><span class="w"> </span><span class="nc">SolveTimeBudget</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-91" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-91"></a><span class="w">        </span><span class="k">match</span><span class="w"> </span><span class="bp">self</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-92" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-92"></a><span class="w">            </span><span class="cp">#[cfg(all(feature = </span><span class="s">"sat-cadical"</span><span class="cp">, not(target_family = </span><span class="s">"wasm"</span><span class="cp">)))]</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-93" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-93"></a><span class="w">            </span><span class="bp">Self</span><span class="p">::</span><span class="n">Cadical</span><span class="p">(</span><span class="n">solver</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">solver</span><span class="p">.</span><span class="n">attach_terminator</span><span class="p">(</span><span class="k">move</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-94" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-94"></a><span class="hll"><span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="n">budget</span><span class="p">.</span><span class="n">expired</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-95" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-95"></a><span class="hll"><span class="w">                    </span><span class="n">ControlSignal</span><span class="p">::</span><span class="n">Terminate</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-96" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-96"></a><span class="w">                </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-97" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-97"></a><span class="hll"><span class="w">                    </span><span class="n">ControlSignal</span><span class="p">::</span><span class="n">Continue</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-98" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-98"></a><span class="w">                </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-99" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-99"></a><span class="hll"><span class="w">            </span><span class="p">}),</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-100" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-100"></a><span class="w">            </span><span class="cp">#[cfg(feature = </span><span class="s">"sat-batsat"</span><span class="cp">)]</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-101" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-101"></a><span class="w">            </span><span class="bp">Self</span><span class="p">::</span><span class="n">Batsat</span><span class="p">(</span><span class="n">solver</span><span class="p">)</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="n">solver</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-102" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-102"></a><span class="w">                </span><span class="p">.</span><span class="n">batsat_mut</span><span class="p">()</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-103" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-103"></a><span class="w">                </span><span class="p">.</span><span class="n">cb_mut</span><span class="p">()</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-104" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-104"></a><span class="hll"><span class="w">                </span><span class="p">.</span><span class="n">set_stop</span><span class="p">(</span><span class="k">move</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">budget</span><span class="p">.</span><span class="n">expired</span><span class="p">()),</span>
+</span><a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-105" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-105"></a><span class="w">        </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-106" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-106"></a><span class="w">    </span><span class="p">}</span>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-107" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-107"></a>
+<a id="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-108" name="crates/conjure-cp-core/src/solver/adaptors/rustsat/backend.rs-108"></a><span class="w">    </span><span class="k">pub</span><span class="p">(</span><span class="k">super</span><span class="p">)</span><span class="w"> </span><span class="k">fn</span><span class="w"> </span><span class="nf">reserve</span><span class="p">(</span><span class="o">&amp;</span><span class="k">mut</span><span class="w"> </span><span class="bp">self</span><span class="p">,</span><span class="w"> </span><span class="n">var</span><span class="p">:</span><span class="w"> </span><span class="nc">Var</span><span class="p">)</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nc">anyhow</span><span class="p">::</span><span class="nb">Result</span><span class="o">&lt;</span><span class="p">()</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+</pre></div></td></tr></table></div>
+
+            </div>
+        </div>
+    </body>
+</html>
