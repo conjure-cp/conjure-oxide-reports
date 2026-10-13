@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["Sat"]};
+window.SIDEBAR_ITEMS = {"enum":["SatBackend"],"struct":["Sat"]};
