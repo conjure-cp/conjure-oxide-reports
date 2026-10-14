@@ -37,10 +37,10 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../searchindex-23ed8a75.js";
+            window.path_to_searchindex_js = "../searchindex-336e8575.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-b476c482.js"></script>
+        <script src="../toc-883a7e83.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -237,22 +237,28 @@ parameters, solution limits, output formats, and help use the same code as nativ
 builds. Commands that launch external programs, such as <code>--parser via-conjure</code>,
 compile but return an operating-system error in a browser.</p>
 <h2 id="library-backend-features"><a class="header" href="#library-backend-features">Library backend features</a></h2>
-<p>Minion remains available unconditionally. SAT is also always available in a
-successful library build: select exactly one backend at compile time, <code>sat-cadical</code> or <code>sat-batsat</code>.
-Native defaults select CaDiCaL and enable Z3. To select BatSat, disable defaults
-and enable <code>sat-batsat</code> on <code>conjure-cp</code> / <code>conjure-cp-rules</code>. Re-enable <code>z3</code>
-explicitly if needed on native builds. Selecting neither or both SAT features is
-a compile error; consequently <code>--all-features</code> is not a supported configuration.</p>
-<p>Wasm requires <code>sat-batsat</code>. CaDiCaL is a native-only dependency. Cargo features
-are additive, so dependencies must agree on the target backend. Parser features
-forward the same choice. Procedural macros run on the host and use the parser’s
-native default backend independently of the Wasm target’s selection.</p>
-<p>The common <code>Sat</code> adaptor API is unchanged. BatSat supports timeout termination
-through its callback API; nonzero solver seeds return an explicit unsupported
-error rather than being ignored. Default seed zero uses BatSat’s defaults.
-These features select the library backend. CLI builds expose the same backend
-choices, together with optional <code>z3</code>, <code>lsp</code>, and <code>mimalloc</code> features. Defaults
-retain CaDiCaL, Z3, the language server, and mimalloc on native builds. The
+<p>Minion remains available unconditionally. SAT requires at least one compiled
+backend: <code>sat-cadical</code> or <code>sat-batsat</code>. Native defaults include both and enable
+Z3. <code>Sat::default()</code> selects CaDiCaL when available, otherwise BatSat;
+<code>Sat::new(SatBackend::Batsat)</code> selects a backend explicitly.</p>
+<p>The CLI selects the backend at runtime:</p>
+<pre><code class="language-sh">conjure-oxide solve model.essence --solver sat --sat-backend cadical
+conjure-oxide solve model.essence --solver sat --sat-backend batsat
+</code></pre>
+<p><code>--sat-backend</code> defaults to CaDiCaL on native builds and BatSat on Wasm.
+Its help lists only the compiled backends, and selecting an unavailable backend
+is a command-line error. Both backends share SAT encoding and solution enumeration.</p>
+<p>To build with only BatSat, disable defaults and enable <code>sat-batsat</code> on
+<code>conjure-cp</code> / <code>conjure-cp-rules</code>. Re-enable <code>z3</code> explicitly if needed on native
+builds. Selecting neither SAT feature is a compile error.</p>
+<p>Wasm requires <code>sat-batsat</code>; CaDiCaL remains a native-only dependency. Parser
+features forward the backend features. Procedural macros run on the host and
+use the parser’s native defaults independently of the Wasm target’s selection.</p>
+<p>BatSat supports timeout termination through its callback API; nonzero solver
+seeds return an explicit unsupported error rather than being ignored. Default
+seed zero uses BatSat’s defaults. CaDiCaL retains its seed and timeout support.
+CLI builds also expose optional <code>z3</code>, <code>lsp</code>, and <code>mimalloc</code> features. Native
+defaults include Z3, the language server, and mimalloc. The
 language server itself still uses its native dependencies.</p>
 <h2 id="install-the-build-tools"><a class="header" href="#install-the-build-tools">Install the build tools</a></h2>
 <p>If you have an already-built package, you can serve it and use the JavaScript
