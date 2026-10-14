@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-99f5e4d8.js";
+            window.path_to_searchindex_js = "searchindex-8025cc44.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-dc5db849.js"></script>
+        <script src="toc-6d1c97b0.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -262,15 +262,16 @@ This <a href="https://git-scm.com/cheat-sheet">Git Cheat Sheet</a> also contains
 <h3 id="dependencies"><a class="header" href="#dependencies">Dependencies</a></h3>
 <p>The following dependencies are required to build and use Conjure Oxide:</p>
 <ul>
-<li><a href="https://conjure.readthedocs.io/en/latest/installation.html">Conjure</a> including solvers.
+<li><a href="https://clang.llvm.org/">Clang</a> and libclang.</li>
+<li><a href="https://cmake.org/download/">CMake</a>.</li>
+<li><a href="https://rust-lang.org/tools/install/">Rust</a> installed using rustup.</li>
+<li><a href="https://github.com/Z3Prover/z3">Z3</a> Z3 solver.</li>
+<li><a href="https://conjure.readthedocs.io/en/latest/installation.html">Conjure</a> including solvers. (optional)
 <ul>
 <li>Conjure is currently required for some components of Conjure Oxide. This is something that will change in the future as Conjure Oxide becomes more independent.</li>
 <li>Ensure that Conjure is placed early in your PATH to avoid conflicts with ImageMagick’s <code>conjure</code> command!</li>
 </ul>
 </li>
-<li><a href="https://clang.llvm.org/">Clang</a> and libclang.</li>
-<li><a href="https://cmake.org/download/">CMake</a>.</li>
-<li><a href="https://rust-lang.org/tools/install/">Rust</a> installed using rustup.</li>
 </ul>
 <h3 id="building"><a class="header" href="#building">Building</a></h3>
 <ol>
@@ -328,44 +329,38 @@ cd conjure-oxide
 <h1 id="quick-start-guide-to-running-your-first-essence-model"><a class="header" href="#quick-start-guide-to-running-your-first-essence-model">Quick Start Guide to Running your first Essence Model</a></h1>
 <p>This guide walks you through running your first Essence model with Conjure Oxide.</p>
 <h2 id="your-first-problem"><a class="header" href="#your-first-problem">Your First Problem</a></h2>
+<p>Once you have gone through the <a href="#installation">installation</a> process and got Conjure Oxide on your computer you can solve your first problem.</p>
+<p>Suppose you want to find two numbers <code>x</code> and <code>y</code> so that they add up to 15 and the difference between them is 3. The mathematicians will immediately reach for their simultaneous equations and start doing arithmetic.</p>
+<p>\[ x + y = 15 \]
+\[ x - y = 3 \]</p>
+<p>We, however, take the lazier approach.</p>
 <p>Create a file called <code>my_problem.essence</code> with the following content:</p>
-<pre><code class="language-essence">find x : int(1..3)
-find y : int(2..5)
+<pre><code class="language-essence">find x : int(1..20)
+find y : int(2..20)
 
-such that x &gt; y
+such that x + y = 15,
+          x - y = 3
 </code></pre>
-<p>If you are curious about more complex models, you can check out the models that we use to test Conjure Oxide, available in the <code>test-suite/tests/integration</code> directory of the repository.</p>
-<h2 id="running-with-different-solvers"><a class="header" href="#running-with-different-solvers">Running with Different Solvers</a></h2>
-<p><code>--solver</code> takes <code>minion</code>, <code>sat</code>, or <code>z3</code>.</p>
-<p>How a model is <em>expressed</em> for the chosen solver is separate from which solver it is. SAT has no
-integers, so each integer variable is encoded into Booleans as <code>int_log</code>, <code>int_direct</code> or
-<code>int_order</code>; Z3 has integers but two theories to hold them in, <code>lia</code> or <code>bv</code>. Both are
-representation choices made per declaration, exactly like choosing <code>occurrence</code> or <code>explicit</code> for a
-set, and both are steered with <code>--heuristic</code> (see the modelling-choices guide). Variables in
-different encodings are channelled together automatically where a constraint needs them to agree.</p>
-<h3 id="sat-solver"><a class="header" href="#sat-solver">SAT Solver</a></h3>
-<pre><code class="language-bash">cargo run -- solve --solver sat my_problem.essence
+<p>In your terminal run this command:</p>
+<pre><code class="language-bash">$ conjure-oxide solve my_problem.essence
 </code></pre>
-<h3 id="z3-smt"><a class="header" href="#z3-smt">Z3 (SMT)</a></h3>
-<pre><code class="language-bash">cargo run -- solve --solver z3 my_problem.essence
+<p><strong>Expected output:</strong></p>
+<pre><code>$ Solution: 000001
+language Essence 1.3
+
+letting x be 9
+letting y be 6
 </code></pre>
-<h3 id="minion-solver"><a class="header" href="#minion-solver">Minion Solver</a></h3>
-<pre><code class="language-bash">cargo run -- solve --solver minion my_problem.essence
+<p>We see that this indeed satisfies our constraints with \[ 9 + 6 = 15 \] and \[9 - 6 = 3\]</p>
+<h2 id="understanding-the-structure-of-the-problem-specification"><a class="header" href="#understanding-the-structure-of-the-problem-specification">Understanding the structure of the problem specification</a></h2>
+<p>The first two lines are where we declare our <em>decision variables</em>. These are the things which we want to find.</p>
+<p>These are declared as:</p>
+<pre><code>find &lt;name&gt; : &lt;domain&gt;
 </code></pre>
-<p><strong>Expected output for both solvers:</strong></p>
-<pre><code class="language-json">Solutions:
-[
-  {
-    "x": {
-      "Int": 3
-    },
-    "y": {
-      "Int": 2
-    }
-  }
-]
-</code></pre>
-<h2 id="understanding-what-happened"><a class="header" href="#understanding-what-happened">Understanding What Happened</a></h2>
+<p>Where the domain tells Conjure Oxide what type and specifically what values the variable could possibly take on.</p>
+<p>The last statement contains our constraints as a comma-separated list of boolean expressions.</p>
+<p>The goal of Conjure Oxide is to give you values for all of your decision variables, within the allowed domains, that also make all of the boolean expressions evaluate to true.</p>
+<h2 id="understanding-what-conjure-oxide-did"><a class="header" href="#understanding-what-conjure-oxide-did">Understanding What Conjure Oxide did</a></h2>
 <p>Conjure Oxide transformed your high-level Essence model through several steps:</p>
 <ol>
 <li><strong>Parsing</strong> - Your Essence file was parsed into an internal AST</li>
@@ -374,8 +369,6 @@ different encodings are channelled together automatically where a constraint nee
 <li><strong>Solution Extraction</strong> - The solver’s output was converted back to Essence format</li>
 </ol>
 <p>Want to see exactly what rules were applied? Check out the <a href="#logging">Logging guide</a>.</p>
-<h2 id="functional-programming-style"><a class="header" href="#functional-programming-style">Functional Programming Style</a></h2>
-<p>For developers who come from programming languages like Scala or Haskell, or those who favour a functional programming style, we have a <a href="#functional-rust-1">Functional Rust</a> guide that you might find useful.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="logging"><a class="header" href="#logging">Logging</a></h1>
 <p><strong>This document is a work in progress - for a full list of logging options,
@@ -1439,6 +1432,150 @@ jobs:
 <li>Matrix and concurrency: complex matrices, concurrency groups, and reusable workflows can be partially supported but may require extra configuration or run differently.</li>
 </ul>
 <p>When in doubt, use <code>act</code> for fast iteration, then confirm changes with a real GitHub Actions run.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="webassembly-interface-and-emscripten-builds"><a class="header" href="#webassembly-interface-and-emscripten-builds">WebAssembly interface and Emscripten builds</a></h1>
+<p>The WebAssembly build compiles the standard <code>conjure-oxide</code> executable for
+<code>wasm32-unknown-emscripten</code>. A small browser wrapper passes CLI arguments and
+input files, then returns the exit code, stdout, and stderr. The normal Essence
+parser, released <code>minion-sys</code> 0.1.2, and BatSat are included.</p>
+<h2 id="build-and-try-the-minimal-page"><a class="header" href="#build-and-try-the-minimal-page">Build and try the minimal page</a></h2>
+<p>First follow <a href="#install-the-build-tools">Install the build tools</a>, then run from
+the repository root:</p>
+<pre><code class="language-sh">bash tools/build-wasm.sh
+python3 -m http.server 8767 --bind 127.0.0.1 --directory target/wasm-package
+</code></pre>
+<p>Open <code>http://127.0.0.1:8767/minimal.html</code>. It has three text boxes and a Submit
+button, with no CSS or npm setup. The build writes a self-contained
+<code>target/wasm-package</code> directory. An optional first argument to the build script
+chooses another package directory. Copy the whole directory into your application.</p>
+<h2 id="use-the-javascript-interface"><a class="header" href="#use-the-javascript-interface">Use the JavaScript interface</a></h2>
+<pre><code class="language-js">import { run } from "./conjure/index.mjs";
+const result = await run(
+  ["solve", "/model.essence", "--solver", "sat", "-n", "20"],
+  { "/model.essence": "find x, y : bool\nsuch that x != y\n" },
+);
+console.log(result.exitCode, result.stdout, result.stderr);
+</code></pre>
+<p><code>run(args, files?, options?)</code> accepts ordinary CLI arguments without the executable
+name and a map of input paths to text. Files live in each worker’s private
+in-memory filesystem. For a parameter file, supply its text in <code>files</code> and add
+its path after the model path, just as with the native CLI. Use
+<code>--output-format json</code> if your page wants to parse JSON instead of displaying
+the usual Essence output. <code>await run(["--help"])</code> returns CLI help.</p>
+<p>Results contain <code>exitCode</code>, <code>stdout</code>, <code>stderr</code>, <code>elapsedMs</code>, and <code>files</code>. Pass
+<code>captureFiles: ["/solutions.json"]</code> in the options to return that file’s UTF-8
+text in <code>result.files["/solutions.json"]</code>, for example after writing JSON solutions
+with <code>--output-format json -o /solutions.json</code>. Requested files are read before
+the worker terminates; missing files reject with an error identifying the path
+and CLI exit code. With no requested files, <code>files</code> is an empty object.
+A nonzero exit code resolves normally with the CLI’s diagnostics if requested
+files can be read. Worker, Wasm loading, and
+filesystem failures reject the Promise. Optional <code>signal</code> supports cancellation;
+<code>timeoutMs</code> defaults to 30000 and includes startup. Cancellation and timeout
+terminate the worker, discard partial output, and reject with <code>AbortError</code> and
+<code>TimeoutError</code> respectively. <code>onStage</code> receives <code>"loading"</code> and <code>"running"</code>.
+Each invocation has a fresh worker and engine; concurrent calls are independent
+and leave the page responsive.</p>
+<p>See <a href="../../tools/wasm/README.html"><code>tools/wasm/README.md</code></a> for the full API and
+student integration instructions. To run the browser regression suite, serve
+the repository root over HTTP and open <code>/tools/wasm/tests/browser.html</code>.
+The full React playground is maintained in the separate <code>conjure-oxide-web</code>
+repository, which imports the built package without Rust dependencies.</p>
+<h2 id="cli-build-features"><a class="header" href="#cli-build-features">CLI build features</a></h2>
+<p>The script compiles <code>conjure-cp-cli</code> with
+<code>--no-default-features --features wasm-target</code>. This selects BatSat; Minion
+remains available. Z3, the language server, mimalloc, and extra rule checks are
+omitted. Requesting Z3 or <code>server-lsp</code> reports that support was not compiled in,
+with the feature needed to enable it. These feature choices also work natively.</p>
+<p>The generated <code>conjure.mjs</code> exposes Emscripten’s <code>FS</code> and <code>callMain</code> to
+<code>worker.mjs</code>, which writes the input files, runs the standard <code>main</code>, and captures
+stdout and stderr. There is no dedicated Wasm Rust executable. CLI parsing,
+parameters, solution limits, output formats, and help use the same code as native
+builds. Commands that launch external programs, such as <code>--parser via-conjure</code>,
+compile but return an operating-system error in a browser.</p>
+<h2 id="library-backend-features"><a class="header" href="#library-backend-features">Library backend features</a></h2>
+<p>Minion remains available unconditionally. SAT requires at least one compiled
+backend: <code>sat-cadical</code> or <code>sat-batsat</code>. Native defaults include both and enable
+Z3. <code>Sat::default()</code> selects CaDiCaL when available, otherwise BatSat;
+<code>Sat::new(SatBackend::Batsat)</code> selects a backend explicitly.</p>
+<p>The CLI selects the backend at runtime:</p>
+<pre><code class="language-sh">conjure-oxide solve model.essence --solver sat --sat-backend cadical
+conjure-oxide solve model.essence --solver sat --sat-backend batsat
+</code></pre>
+<p><code>--sat-backend</code> defaults to CaDiCaL on native builds and BatSat on Wasm.
+Its help lists only the compiled backends, and selecting an unavailable backend
+is a command-line error. Both backends share SAT encoding and solution enumeration.</p>
+<p>To build with only BatSat, disable defaults and enable <code>sat-batsat</code> on
+<code>conjure-cp</code> / <code>conjure-cp-rules</code>. Re-enable <code>z3</code> explicitly if needed on native
+builds. Selecting neither SAT feature is a compile error.</p>
+<p>Wasm requires <code>sat-batsat</code>; CaDiCaL remains a native-only dependency. Parser
+features forward the backend features. Procedural macros run on the host and
+use the parser’s native defaults independently of the Wasm target’s selection.</p>
+<p>BatSat supports timeout termination through its callback API; nonzero solver
+seeds return an explicit unsupported error rather than being ignored. Default
+seed zero uses BatSat’s defaults. CaDiCaL retains its seed and timeout support.
+CLI builds also expose optional <code>z3</code>, <code>lsp</code>, and <code>mimalloc</code> features. Native
+defaults include Z3, the language server, and mimalloc. The
+language server itself still uses its native dependencies.</p>
+<h2 id="install-the-build-tools"><a class="header" href="#install-the-build-tools">Install the build tools</a></h2>
+<p>If you have an already-built package, you can serve it and use the JavaScript
+interface without installing Rust or Emscripten. Building from source needs
+Python 3 and native C/C++ build tools, libclang, and CMake for Rust dependencies.</p>
+<p>With Rust installed through <a href="https://rustup.rs/">rustup</a>, run this from the
+repository root to install the target for the repository’s selected Rust version:</p>
+<pre><code class="language-sh">rustup target add wasm32-unknown-emscripten
+</code></pre>
+<p>This installs Rust’s target standard library. Install Emscripten separately.
+On macOS with Homebrew available, use the
+<a href="https://formulae.brew.sh/formula/emscripten">Homebrew package</a>:</p>
+<pre><code class="language-sh">brew install emscripten
+</code></pre>
+<p>For macOS or Linux without administrator access, use the official
+<a href="https://emscripten.org/docs/getting_started/downloads.html">Emscripten SDK installation instructions</a>.
+With Git and Python 3 available, these commands install the SDK in your home
+directory without <code>sudo</code>:</p>
+<pre><code class="language-sh">git clone https://github.com/emscripten-core/emsdk.git "$HOME/emsdk"
+cd "$HOME/emsdk"
+./emsdk install 6.0.10
+./emsdk activate 6.0.10
+source ./emsdk_env.sh
+</code></pre>
+<p>The commands select a tested Emscripten version. In each new Bash or Zsh terminal,
+run <code>source "$HOME/emsdk/emsdk_env.sh"</code> again before building. Windows users can
+use an existing WSL Linux environment; native Windows builds have not been tested.
+On a managed machine, ask course staff about any missing native build tools.</p>
+<p>Return to the repository root and check the installation:</p>
+<pre><code class="language-sh">python3 --version
+command -v emcc
+emcc --version
+emcc --check
+rustup target list --installed
+</code></pre>
+<p>These should identify Python 3, the Emscripten compiler and version, and
+<code>wasm32-unknown-emscripten</code> in the installed target list. <code>emcc --check</code> verifies
+Emscripten’s supporting tools. If <code>emcc</code> is not found, source the SDK environment
+in this terminal. Resolve any check errors before running <code>bash tools/build-wasm.sh</code>.</p>
+<h2 id="tree-sitter-dependency-fix"><a class="header" href="#tree-sitter-dependency-fix">Tree-sitter dependency fix</a></h2>
+<p>Tree-sitter 0.27.0 incorrectly enables its bare-Wasm libc replacements for
+Emscripten. The workspace and lockfile pin upstream revision
+<code>b2f00cb0b5942ff10c45dc77d3a9c7e9c7515da8</code>, which limits those replacements to
+<code>wasm32-unknown-unknown</code>. The runtime declares version 0.28.0. Its language crate
+is pinned to the same source to keep grammar and runtime types consistent.
+No manifest edits, local vendor patch, or command-line Cargo override are needed.
+Downstream Rust workspaces must carry the same patches until an upstream release
+contains this fix; Cargo does not inherit patches from dependencies.</p>
+<h2 id="engine-linking"><a class="header" href="#engine-linking">Engine linking</a></h2>
+<p>If <code>CARGO_TARGET_DIR</code> is overridden, use that output directory instead of <code>target</code>.
+Use the Python configured by the Emscripten SDK; set <code>EMSDK_PYTHON</code> explicitly if
+its launcher picks an incompatible Python installation.</p>
+<p>The linker wrapper uses <code>--whole-archive</code> for the built-in rules archive, retaining
+objects referenced only through inventory constructors. Additional downstream
+rule crates would need equivalent retention. Emscripten runs the constructors at
+startup; no explicit registry or initialisation call is needed in Rust.</p>
+<p>The C++ link setting supplies Minion’s runtime. The larger stack supports parser,
+rewriter and solver recursion. Memory growth allows Minion to allocate its search
+storage rather than abort at the default fixed heap limit. <code>std::time::Instant</code>
+works through Emscripten, so this path does not need a Wasm timing replacement.</p>
 <div style="break-before: page; page-break-before: always;"></div><!-- maturity: draft
 authors: Edward Lowe
 created: 21-12-25
@@ -1684,8 +1821,6 @@ Rules are grouped into files and directories based on their purpose: for example
 It uses our Tree-sitter grammar, which is defined <em>separately</em> in<code>tree-sitter-essence</code></li>
 <li><code>conjure_essence_macros</code> implements the <code>essence_expr!</code> procedural macro.</li>
 <li><code>enum_compatability_macro</code> is a macro that allows us to indicate whether certain features of Essence are compatible with certain solvers, for documentation purposes.</li>
-<li><code>randicheck</code> is a somewhat separate project developed by Ty (@TAswan) and others.
-It aims to use Conjure to automatically validate Haskell code and generate minimal failing tests. (TODO is this accurate?)</li>
 </ul>
 <p>Also:</p>
 <ul>

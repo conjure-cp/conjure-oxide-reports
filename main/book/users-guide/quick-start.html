@@ -37,10 +37,10 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../searchindex-99f5e4d8.js";
+            window.path_to_searchindex_js = "../searchindex-8025cc44.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-dc5db849.js"></script>
+        <script src="../toc-6d1c97b0.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -179,44 +179,38 @@
                         <h1 id="quick-start-guide-to-running-your-first-essence-model"><a class="header" href="#quick-start-guide-to-running-your-first-essence-model">Quick Start Guide to Running your first Essence Model</a></h1>
 <p>This guide walks you through running your first Essence model with Conjure Oxide.</p>
 <h2 id="your-first-problem"><a class="header" href="#your-first-problem">Your First Problem</a></h2>
+<p>Once you have gone through the <a href="installation.html">installation</a> process and got Conjure Oxide on your computer you can solve your first problem.</p>
+<p>Suppose you want to find two numbers <code>x</code> and <code>y</code> so that they add up to 15 and the difference between them is 3. The mathematicians will immediately reach for their simultaneous equations and start doing arithmetic.</p>
+<p>\[ x + y = 15 \]
+\[ x - y = 3 \]</p>
+<p>We, however, take the lazier approach.</p>
 <p>Create a file called <code>my_problem.essence</code> with the following content:</p>
-<pre><code class="language-essence">find x : int(1..3)
-find y : int(2..5)
+<pre><code class="language-essence">find x : int(1..20)
+find y : int(2..20)
 
-such that x &gt; y
+such that x + y = 15,
+          x - y = 3
 </code></pre>
-<p>If you are curious about more complex models, you can check out the models that we use to test Conjure Oxide, available in the <code>test-suite/tests/integration</code> directory of the repository.</p>
-<h2 id="running-with-different-solvers"><a class="header" href="#running-with-different-solvers">Running with Different Solvers</a></h2>
-<p><code>--solver</code> takes <code>minion</code>, <code>sat</code>, or <code>z3</code>.</p>
-<p>How a model is <em>expressed</em> for the chosen solver is separate from which solver it is. SAT has no
-integers, so each integer variable is encoded into Booleans as <code>int_log</code>, <code>int_direct</code> or
-<code>int_order</code>; Z3 has integers but two theories to hold them in, <code>lia</code> or <code>bv</code>. Both are
-representation choices made per declaration, exactly like choosing <code>occurrence</code> or <code>explicit</code> for a
-set, and both are steered with <code>--heuristic</code> (see the modelling-choices guide). Variables in
-different encodings are channelled together automatically where a constraint needs them to agree.</p>
-<h3 id="sat-solver"><a class="header" href="#sat-solver">SAT Solver</a></h3>
-<pre><code class="language-bash">cargo run -- solve --solver sat my_problem.essence
+<p>In your terminal run this command:</p>
+<pre><code class="language-bash">$ conjure-oxide solve my_problem.essence
 </code></pre>
-<h3 id="z3-smt"><a class="header" href="#z3-smt">Z3 (SMT)</a></h3>
-<pre><code class="language-bash">cargo run -- solve --solver z3 my_problem.essence
+<p><strong>Expected output:</strong></p>
+<pre><code>$ Solution: 000001
+language Essence 1.3
+
+letting x be 9
+letting y be 6
 </code></pre>
-<h3 id="minion-solver"><a class="header" href="#minion-solver">Minion Solver</a></h3>
-<pre><code class="language-bash">cargo run -- solve --solver minion my_problem.essence
+<p>We see that this indeed satisfies our constraints with \[ 9 + 6 = 15 \] and \[9 - 6 = 3\]</p>
+<h2 id="understanding-the-structure-of-the-problem-specification"><a class="header" href="#understanding-the-structure-of-the-problem-specification">Understanding the structure of the problem specification</a></h2>
+<p>The first two lines are where we declare our <em>decision variables</em>. These are the things which we want to find.</p>
+<p>These are declared as:</p>
+<pre><code>find &lt;name&gt; : &lt;domain&gt;
 </code></pre>
-<p><strong>Expected output for both solvers:</strong></p>
-<pre><code class="language-json">Solutions:
-[
-  {
-    "x": {
-      "Int": 3
-    },
-    "y": {
-      "Int": 2
-    }
-  }
-]
-</code></pre>
-<h2 id="understanding-what-happened"><a class="header" href="#understanding-what-happened">Understanding What Happened</a></h2>
+<p>Where the domain tells Conjure Oxide what type and specifically what values the variable could possibly take on.</p>
+<p>The last statement contains our constraints as a comma-separated list of boolean expressions.</p>
+<p>The goal of Conjure Oxide is to give you values for all of your decision variables, within the allowed domains, that also make all of the boolean expressions evaluate to true.</p>
+<h2 id="understanding-what-conjure-oxide-did"><a class="header" href="#understanding-what-conjure-oxide-did">Understanding What Conjure Oxide did</a></h2>
 <p>Conjure Oxide transformed your high-level Essence model through several steps:</p>
 <ol>
 <li><strong>Parsing</strong> - Your Essence file was parsed into an internal AST</li>
@@ -225,8 +219,6 @@ different encodings are channelled together automatically where a constraint nee
 <li><strong>Solution Extraction</strong> - The solver’s output was converted back to Essence format</li>
 </ol>
 <p>Want to see exactly what rules were applied? Check out the <a href="command-line-guide/logging.html">Logging guide</a>.</p>
-<h2 id="functional-programming-style"><a class="header" href="#functional-programming-style">Functional Programming Style</a></h2>
-<p>For developers who come from programming languages like Scala or Haskell, or those who favour a functional programming style, we have a <a href="../developers-guide/resources-conventions/functional-rust.html">Functional Rust</a> guide that you might find useful.</p>
 
                     </main>
 
