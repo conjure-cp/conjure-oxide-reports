@@ -37,7 +37,7 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../searchindex-8025cc44.js";
+            window.path_to_searchindex_js = "../../searchindex-ca90a7ab.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-6d1c97b0.js"></script>
@@ -202,6 +202,23 @@
 <p>This template contains the code to call a new function which carries out the test. The values passed to the template determines its test name, through sanitation of the path, and determine the arguments to this test function.</p>
 <p>Finally, the test function itself includes the line <code>include!(concat!(env!("OUT_DIR"), "/gen_tests_&lt;test type&gt;.rs"));</code>, such that it is accessible during the test through insertion using the include macro.</p>
 <p>This format improves scalability and allows new tests to be created by just creating the input file.</p>
+<h2 id="scheduling-longer-tests-first"><a class="header" href="#scheduling-longer-tests-first">Scheduling longer tests first</a></h2>
+<p><code>make test</code>, <code>make test-accept</code>, <code>make test-accept-with-max-times</code>, and the coverage
+script use <code>tools/nextest.py</code> to run tests with longer <code>expected-time</code> values first.
+This requires Python 3.11 or newer. Integration test timings come from
+<code>stats.toml</code>; custom test timings come from <code>config.toml</code>. Tests without timings
+(including roundtrip and unit tests) retain nextest’s default priority.</p>
+<p>For a direct nextest run with the same scheduling, use:</p>
+<pre><code class="language-bash">python3 tools/nextest.py --release --workspace
+# Optional Cargo toolchain selector:
+python3 tools/nextest.py +nightly --workspace
+</code></pre>
+<p>The wrapper reads current timings on every invocation and passes a temporary
+configuration to nextest. Repository and command-line settings take precedence.
+Nextest 0.9.91 or newer is required. Tests with equal expected times share a
+priority; if there are more than 100 distinct times, adjacent duration buckets
+share priorities. This changes scheduling only; test filtering, concurrency,
+and timeouts still work as usual.</p>
 
                     </main>
 
