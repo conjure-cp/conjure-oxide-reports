@@ -37,7 +37,7 @@
             const path_to_root = "../../../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../../../searchindex-ca90a7ab.js";
+            window.path_to_searchindex_js = "../../../../searchindex-aaa8d1a5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../../../toc-6d1c97b0.js"></script>
@@ -176,84 +176,19 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="creating-sat-transformation-rules"><a class="header" href="#creating-sat-transformation-rules">Creating SAT Transformation Rules</a></h1>
-<h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
-<p>Most SAT rules in conjure-oxide follow the same small set of implementation patterns. The details change from rule to rule, but the structure is usually the same: validate the input, normalise the operands, build a compact Boolean construction, convert it to CNF with Tseytin helpers, and propagate the output domain if the result is an integer.</p>
-<h2 id="general-workflow"><a class="header" href="#general-workflow">General Workflow</a></h2>
-<p>Regardless of which encoding type is being used, a SAT transformation rule should follow these steps:</p>
+                        <h1 id="creating-sat-transformation-rules"><a class="header" href="#creating-sat-transformation-rules">Creating SAT transformation rules</a></h1>
+<p>SAT rules refine semantic expressions and record encoding decisions. They do not create CNF clauses or solver literals. Prefer an existing numeric view and a library-backed decision over a new circuit implementation.</p>
 <ol>
-<li><strong>Input validation</strong> - Standard for any rule; check that the input expression is the target for this rule and that sub-components are valid.</li>
-<li><strong>Extract raw data</strong> - Extract operand bit vectors and ranges (especially for integer operations).</li>
-<li><strong>Normalise operands</strong> - Most integer rules should pad bit-vectors to a shared range so later zips or index lookups are safe.</li>
-<li><strong>Create the new expression with CNF clauses</strong> - Use dedicated <code>tseytin_...</code> functions to construct boolean expressions. These functions directly generate CNF clauses and manage auxiliary variables, significantly reducing the rule applications needed for solver-ready input. For the logic behind boolean-to-CNF conversion, refer to the next chapter: <a href="booleans.html">Booleans</a>.</li>
-<li><strong>Domain propagation (Integers only)</strong> - Update the range of the returned <code>SATInt</code> to reflect the new interval. The bit-width of the <code>SATInt</code> should also be updated for the new range.</li>
-<li><strong>Return the result</strong> - Use <code>Reduction::cnf(..)</code> to return the created expression along with the new CNF clauses and symbol table.</li>
+<li>Validate the target expression and operand types; decline until required representations are available.</li>
+<li>Extract ordered operands or actual-value integer views using shared helpers. Preserve sparse domain values, matrix order and any guaranteed representation groups.</li>
+<li>Construct the semantic result. Linear comparisons use integer-relation or PB decisions; table, element and allDifferent have dedicated decisions. Nonlinear rules can still build Boolean expressions for their circuits.</li>
+<li>If a result needs a named Boolean or integer auxiliary, allocate it in the symbol table and record its definition. Do not assign a solver literal here.</li>
+<li>Return <code>RuleEffect::sat</code> when adding SAT decisions, or <code>RuleEffect::pure</code> for a semantic decomposition. Propagate output domains and representation constraints separately.</li>
 </ol>
-<blockquote>
-<p>All three integer encodings share the one <code>SAT</code> rule set, because which encoding a variable gets
-is chosen per declaration and a single model can hold more than one. A rule must therefore decline
-when its operands are not in its own encoding – which is what the <code>validate_*_int_operands</code>
-helpers do. An operation whose operands disagree, or whose shared encoding has no rule for it, is
-re-encoded into the log form by the channelling fallback before it reaches here.</p>
-</blockquote>
-<h2 id="example---negation-of-log-integers"><a class="header" href="#example---negation-of-log-integers">Example - negation of log integers</a></h2>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>/// Converts negation of a SATInt to a SATInt
-///
-/// ```text
-/// -SATInt(a) ~&gt; SATInt(b)
-///
-/// ```
-#[register_rule("SAT", 4100, [Neg])]
-fn cnf_int_neg(expr: &amp;Expr, symbols: &amp;SymbolTable) -&gt; ApplicationResult {
-    let Expr::Neg(_, expr) = expr else {
-        return Err(RuleNotApplicable);
-    };
-
-    let Expr::SATInt(_, _, _, (min, max)) = expr.as_ref() else {
-        return Err(RuleNotApplicable);
-    };
-
-    let binding = validate_log_int_operands(vec![expr.as_ref().clone()], None)?;
-    let [bits] = binding.as_slice() else {
-        return Err(RuleNotApplicable);
-    };
-
-    let mut new_clauses = vec![];
-    let mut new_symbols = symbols.clone();
-
-    let result = tseytin_negate(bits, bits.len(), &amp;mut new_clauses, &amp;mut new_symbols);
-
-    Ok(Reduction::cnf(
-        Expr::SATInt(
-            Metadata::new(),
-            SATIntEncoding::Log,
-            Moo::new(into_matrix_expr!(result)),
-            (-max, -min),
-        ),
-        new_clauses,
-        new_symbols,
-    ))
-}
-<span class="boring">}</span></code></pre>
-<h3 id="assigning-rule-priorities"><a class="header" href="#assigning-rule-priorities">Assigning Rule Priorities</a></h3>
-<p>Following the general conventions for rule priorities, SAT specific rules should have priorities at the 4000 level. As rules are applied in priority order (high to low), the following convention has been developed that roughly follows the expected order of rule application.</p>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>Rule Type</th><th>Priority</th><th>Description</th></tr>
-</thead>
-<tbody>
-<tr><td>Integer Decision Variable -&gt; SATInt</td><td>4800</td><td>These are the rules that create the SATInt expressions that the other rules can understand.</td></tr>
-<tr><td>SATInt -&gt; SATInt</td><td>4700</td><td>These are rules that represent standard integer-to-integer operations; summation, abs, pow, etc.</td></tr>
-<tr><td>SATInt -&gt; Boolean</td><td>4600</td><td>These are rules that produce a boolean from integer inputs; equality, comparison, all-different, etc.</td></tr>
-<tr><td>Literal -&gt; SATInt</td><td>4500</td><td>These are the rules that convert literals integer to SATInts, they should be applied last to allow for other rules to perform optimisations, for example multiplying by a known constant requires significantly less clauses and auxillary variables then treating the literal as an unkown integer.</td></tr>
-<tr><td>Boolean -&gt; Boolean</td><td>4400</td><td>These are the rules for boolean-to-boolean operations; and, or, not, xor, etc.</td></tr>
-<tr><td>Boolean -&gt; Nothing</td><td>4300</td><td>These are rules that take booleans and fully remove them from the constraints, this occurs when an expression if fully represented in the clauses.</td></tr>
-</tbody>
-</table>
-</div>
+<p>Leave an encoding selection unresolved unless the rule itself fixes an algorithm. After rewriting, <code>rule_engine/encoding_selection.rs</code> applies explicit family pins or the configured heuristic and records the selection’s provenance. The adaptor then validates and compiles the decisions directly through RustSAT and Pindakaas.</p>
+<p>All integer representations share the <code>SAT</code> rule set. Representation-specific rules must decline mismatched operands; native weighted views let common linear rules handle several representations together. Two’s-complement fallback remains useful for nonlinear operations, rather than being the default path for linear arithmetic.</p>
+<p>Use the current registered rules as priority examples: representation materialisation must precede rules that inspect numeric views, compound decomposition must precede scalar-only lowering, and final assertion handling must preserve Boolean context. The former fixed 4000-level priority table no longer describes this pipeline.</p>
+<p>Useful starting points are <code>backends/sat/pseudo_boolean.rs</code>, <code>backends/sat/table.rs</code> and <code>backends/sat/boolean.rs</code>. Representation-dependent refinement belongs under the corresponding type’s representation-specific vertical rules. See <a href="booleans.html">Boolean compilation</a> for assertion and full-equivalence requirements.</p>
 
                     </main>
 

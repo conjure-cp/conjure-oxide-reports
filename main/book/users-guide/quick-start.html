@@ -37,7 +37,7 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../searchindex-ca90a7ab.js";
+            window.path_to_searchindex_js = "../searchindex-aaa8d1a5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-6d1c97b0.js"></script>
@@ -219,6 +219,46 @@ letting y be 6
 <li><strong>Solution Extraction</strong> - The solver’s output was converted back to Essence format</li>
 </ol>
 <p>Want to see exactly what rules were applied? Check out the <a href="command-line-guide/logging.html">Logging guide</a>.</p>
+<p>If you are curious about more complex models, you can check out the models that we use to test Conjure Oxide, available in the <code>test-suite/tests/exhaustive</code> directory of the repository.</p>
+<h2 id="running-with-different-solvers"><a class="header" href="#running-with-different-solvers">Running with Different Solvers</a></h2>
+<p><code>--solver</code> takes <code>minion</code>, <code>sat</code>, or <code>z3</code>.</p>
+<p>How a model is <em>expressed</em> for the chosen solver is separate from which solver it is. SAT has no
+integers, so each integer variable is encoded into Booleans as <code>direct</code>, <code>order</code>, or one of four
+binary forms – <code>twos_complement</code>, <code>sign_magnitude</code>, <code>offset</code> (the distance from the domain minimum)
+or <code>rank</code> (the position among the allowed values); Z3 has integers but two theories to hold them in, <code>lia</code> or <code>bv</code>. Both are
+representation choices made per declaration, exactly like choosing <code>occurrence</code> or <code>explicit</code> for a
+set, and both are steered with <code>--heuristic</code> (see the modelling-choices guide). Variables in
+different encodings are channelled together automatically where a constraint needs them to agree.</p>
+<h3 id="choosing-a-representation-in-the-model"><a class="header" href="#choosing-a-representation-in-the-model">Choosing a representation in the model</a></h3>
+<p>Any domain can carry a representation preference, written as an attribute straight after the
+domain’s first word, so the choice sits next to the declaration it applies to. A declaration with a
+preference is given that representation instead of asking the heuristic.</p>
+<pre><code class="language-essence">find a : int(representation order, 1..4)
+find s : set (representation occurrence) of int(1..9)
+find m : matrix (representation packed) indexed by [int(1..3)] of bool
+find t : tuple (representation components, int(1..3), bool)
+find r : record (representation packed) {x: int(1..3), y: bool}
+find f : function (representation explicit, total) int(1..3) --&gt; int(1..3)
+</code></pre>
+<p><code>int</code> and <code>tuple</code> put the preference first inside their parentheses, because those already hold the
+ranges or the member domains; <code>int(representation order)</code> leaves the ranges unbounded. Every other
+domain keeps it in the attribute list that follows the keyword (<code>matrix</code>, <code>record</code> and <code>variant</code>
+take it as their only attribute). The interactive heuristic (<code>-hi</code>) prints each option in this
+syntax, so a choice you make at the prompt can be pasted into the model to make it permanent.</p>
+<h3 id="uniform-representation-choices"><a class="header" href="#uniform-representation-choices">Uniform representation choices</a></h3>
+<p>Use <code>--channelling uniform</code> to choose one representation kind for each type family throughout
+one model. All integers use the same encoding regardless of their bounds; all sets use the same
+layout regardless of their element domains. Nested representation variables follow the same
+policy. Matrix layout and integer encoding are separate choices.</p>
+<pre><code class="language-bash">cargo run -- solve --solver sat --channelling uniform --heuristic i my_problem.essence
+</code></pre>
+<p>The interactive heuristic prompts once for each undecided type family. An incompatible domain is reported
+rather than silently switching representation. <code>--channelling no</code> keeps the existing policy of
+one representation per variable, and <code>yes</code> permits multiple channelled representations.</p>
+<p>Exhaustive-test configurations can use <code>channelling = "uniform"</code> with <code>heuristic = "x"</code> to
+exercise the available combinations without choosing independently for each integer variable.</p>
+<h3 id="sat-solver"><a class="header" href="#sat-solver">SAT Solver</a></h3>
+<p>Use <code>--solver sat</code> and select a compiled backend with <code>--sat-backend cadical</code> or <code>--sat-backend batsat</code>.</p>
 
                     </main>
 

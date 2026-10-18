@@ -37,7 +37,7 @@
             const path_to_root = "../../../../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../../../../searchindex-ca90a7ab.js";
+            window.path_to_searchindex_js = "../../../../../searchindex-aaa8d1a5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../../../../toc-6d1c97b0.js"></script>
@@ -176,47 +176,11 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="log-encoding-summation"><a class="header" href="#log-encoding-summation">Log Encoding Summation</a></h1>
-<h2 id="overview"><a class="header" href="#overview">Overview</a></h2>
-<pre><code class="language-text">Sum(SATInt(a), SATInt(b), ...) ~&gt; SATInt(c)
-</code></pre>
-<h2 id="rule-method"><a class="header" href="#rule-method">Rule Method</a></h2>
-<ul>
-<li>Determine the output range</li>
-<li>Pad all operands to match the output bitwidth to prevent overflow</li>
-<li>Split the expression into a series of 2-nary summations</li>
-<li>Use an binary adder circuit to perform each summation</li>
-</ul>
-<h3 id="2-nary-summation-logic"><a class="header" href="#2-nary-summation-logic">2-nary Summation Logic</a></h3>
-<p>For two bitvectors that have been made the same length:</p>
-<p>$$
-\begin{align}
-A = [a_1, a_2, \dots, a_{n}],\
-B = [b_1, b_2, \dots, b_{n}]
-\end{align}
-$$</p>
-<p>Specifying the output</p>
-<p>$$
-S = A + B = [s_1, s_2, \dots, s_{n}]
-$$</p>
-<p><strong>Carry</strong></p>
-<p>$$
-\begin{align}
-c_1 &amp;= a_1 \land b_1 \
-c_2 &amp;= (a_2 \land b_2) \lor ((a_2 \oplus b_2) \land c_1) \
-\vdots \
-c_{n-1} &amp;= (a_{n-1} \land b_{n-1}) \lor ((a_{n-1} \oplus b_{n-1}) \land c_{n-2})
-\end{align}
-$$</p>
-<p><strong>Sum</strong></p>
-<p>$$
-\begin{align}
-s_1 &amp;\equiv \boxed{a_1 \oplus b_1} \
-s_2 &amp;\equiv \boxed{a_2 \oplus b_2 \oplus c_1} \
-\vdots \
-s_{n} &amp;\equiv \boxed{a_{n} \oplus b_{n} \oplus c_{n-1}}
-\end{align}
-$$</p>
+                        <h1 id="integer-summation"><a class="header" href="#integer-summation">Integer summation</a></h1>
+<p>Linear sums compile through actual-value weighted views rather than materialised ripple-adder results. Each operand contributes its constant and signed Boolean terms. A comparison of the sum becomes an integer-relation or pseudo-Boolean decision, and the selected RustSAT or Pindakaas provider creates CNF in the adaptor.</p>
+<p>For example, <code>x + y &lt;= k</code> combines the two views and subtracts their constant contributions from <code>k</code>. The adaptor folds constants, aggregates repeated literals and complements, and converts signed coefficients into positive weights over appropriately polarised literals. Guaranteed representation groups are retained for structured Pindakaas inputs where possible.</p>
+<p>When a sum is itself an operand of a nonlinear operation, Oxide introduces an integer auxiliary in the selected representation and a PB equality relating its view to the sum. Multiplication, division, remainder and power can then use the existing nonlinear bit circuits. Addition internal to those circuits remains circuit logic; ordinary model-level summation does not pass through that path.</p>
+<p>The relevant implementations are <code>backends/sat/pseudo_boolean.rs</code> and <code>backends/sat/linear.rs</code> in the rules crate, and <code>solver/adaptors/rustsat/decisions/pseudo_boolean.rs</code> in core.</p>
 
                     </main>
 

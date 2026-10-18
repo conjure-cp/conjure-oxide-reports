@@ -37,7 +37,7 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../searchindex-ca90a7ab.js";
+            window.path_to_searchindex_js = "../../searchindex-aaa8d1a5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../toc-6d1c97b0.js"></script>
@@ -180,32 +180,61 @@
 <h2 id="types-of-tests"><a class="header" href="#types-of-tests">Types of Tests</a></h2>
 <p>Conjure-Oxide currently has four forms of tests:</p>
 <ul>
-<li>Integration tests</li>
+<li>Exhaustive tests</li>
 <li><a href="writing-custom-tests.html">Custom tests</a></li>
 <li><a href="roundtrip-testing.html">Roundtrip tests</a></li>
 <li>A small number of unit tests</li>
 </ul>
 <h2 id="test-generation"><a class="header" href="#test-generation">Test generation</a></h2>
-<p>The test generation occurs in the file <code>./test-suite/build.rs</code>. This generates the integration, custom and roundtrip tests all in a similar manner.</p>
+<p>The test generation occurs in the file <code>./test-suite/build.rs</code>. This generates the exhaustive, custom and roundtrip tests all in a similar manner.</p>
 <p>For each test framework we define a base directory for all these tests:</p>
 <ul>
-<li><code>./test-suite/tests/integration</code></li>
+<li><code>./test-suite/tests/exhaustive</code></li>
 <li><code>./test-suite/tests/custom</code></li>
 <li><code>./test-suite/tests/roundtrip</code></li>
 </ul>
 <p>Any sub-directory of these defined directories containing the necessary files to make a test, will be considered a test.</p>
 <ul>
-<li>For integration and roundtrip tests this is containing a singular file with a <code>.essence</code> or <code>.eprime</code> extension.</li>
+<li>For exhaustive and roundtrip tests this is containing a singular file with a <code>.essence</code> or <code>.eprime</code> extension.</li>
 <li>For custom tests this is containing a <code>run.sh</code> script file.</li>
 </ul>
 <p>Once these tests are identified a Rust <code>#[test]</code> is created using the defined templates (<code>&lt;test type&gt;_test_template</code>). This test is within the pre-generated file <code>gen_tests_&lt;test type&gt;.rs</code> within the specified output directory (<code>OUT_DIR</code>).</p>
 <p>This template contains the code to call a new function which carries out the test. The values passed to the template determines its test name, through sanitation of the path, and determine the arguments to this test function.</p>
 <p>Finally, the test function itself includes the line <code>include!(concat!(env!("OUT_DIR"), "/gen_tests_&lt;test type&gt;.rs"));</code>, such that it is accessible during the test through insertion using the include macro.</p>
 <p>This format improves scalability and allows new tests to be created by just creating the input file.</p>
+<h2 id="running-a-subset-of-tests"><a class="header" href="#running-a-subset-of-tests">Running a subset of tests</a></h2>
+<p>Pass <code>TEST_ARGS</code> to select tests by name or pass other arguments directly to
+both <code>cargo test</code> (doctests) and <code>cargo nextest run</code>:</p>
+<pre><code class="language-bash">make test TEST_ARGS="alldiff"
+make test-accept TEST_ARGS="tests_exhaustive_basic_alldiff"
+make test-accept-with-max-times TEST_ARGS="tests_exhaustive_basic_alldiff"
+make test TEST_ARGS="-p conjure-cp-core"
+</code></pre>
+<p>With no <code>TEST_ARGS</code>, these targets run all tests. Arguments must be supported by
+both runners; for nextest-specific options such as <code>-E</code>, use <code>tools/nextest.py</code>
+directly as described below.</p>
+<p>Timing and concurrency settings use the same Make argument syntax and work with
+all three targets:</p>
+<pre><code class="language-bash">make test TEST_ARGS="alldiff" MAX_EXPECTED_TIME=10 TEST_CASE_TIMEOUT=30 NEXTEST_TEST_THREADS=4
+make test-accept TEST_ARGS="alldiff" MAX_EXPECTED_TIME=10 TEST_CASE_TIMEOUT=30 NEXTEST_TEST_THREADS=4
+</code></pre>
+<p><code>MAX_EXPECTED_TIME</code> skips exhaustive and custom tests with a recorded
+<code>expected-time</code> above the given number of seconds. Tests without a recorded time
+still run; roundtrip and unit tests are unaffected. Omit it or use <code>0</code> to disable
+this filter.</p>
+<p><code>TEST_CASE_TIMEOUT</code> stops and fails each exhaustive test that exceeds the given
+number of seconds. It does not apply to other test types. Omit it to disable the
+timeout; <code>0</code> means an immediate timeout.</p>
+<p><code>NEXTEST_TEST_THREADS</code> sets how many tests nextest runs simultaneously, for
+example <code>4</code> for four tests or <code>1</code> for sequential execution. It does not control
+doctest concurrency. Omit it to use nextest’s configured default.</p>
+<p>Make exports these settings to the test runners. For direct Cargo runs, set
+them as environment variables instead, for example
+<code>MAX_EXPECTED_TIME=10 TEST_CASE_TIMEOUT=30 cargo nextest run -p test-suite</code>.</p>
 <h2 id="scheduling-longer-tests-first"><a class="header" href="#scheduling-longer-tests-first">Scheduling longer tests first</a></h2>
 <p><code>make test</code>, <code>make test-accept</code>, <code>make test-accept-with-max-times</code>, and the coverage
 script use <code>tools/nextest.py</code> to run tests with longer <code>expected-time</code> values first.
-This requires Python 3.11 or newer. Integration test timings come from
+This requires Python 3.11 or newer. Exhaustive test timings come from
 <code>stats.toml</code>; custom test timings come from <code>config.toml</code>. Tests without timings
 (including roundtrip and unit tests) retain nextest’s default priority.</p>
 <p>For a direct nextest run with the same scheduling, use:</p>

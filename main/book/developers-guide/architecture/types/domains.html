@@ -37,7 +37,7 @@
             const path_to_root = "../../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../../searchindex-ca90a7ab.js";
+            window.path_to_searchindex_js = "../../../searchindex-aaa8d1a5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../../toc-6d1c97b0.js"></script>
@@ -218,6 +218,16 @@ NameDomain := Name ":" Domain
 <p>When defining a Set type, it may have attributes and an inner domain. For example, the domain <code>set (size 2) of int(1..3)</code> could have valid values like <code>{1,2}</code>, <code>{1,3}</code>, <code>{2,3}</code>. The ‘inner’ domain is <code>int(1..3)</code>, from which the values that make up the set are pulled.</p>
 </blockquote>
 <p>The most common attribute is cardinality (which restricts the range objects in an object), but they are type-specific and there is a large variety.</p>
+<h2 id="representation-preferences"><a class="header" href="#representation-preferences">Representation preferences</a></h2>
+<p>Any domain can carry a <em>representation preference</em>: the short name of the representation a declaration should be given, rather than leaving the choice to the heuristic. It is stored on the domain node it was written on and is not inherited by the domains inside it, so <code>matrix (representation components) indexed by [int(1..3)] of int(representation order, 1..4)</code> pins the matrix layout and, separately, the encoding of its entries.</p>
+<p>Where it lives depends on the domain:</p>
+<ul>
+<li><code>int</code>, <code>tuple</code>, <code>record</code>, <code>variant</code> and <code>matrix</code> carry it as an <code>Option&lt;String&gt;</code> field on their [<code>GroundDomain</code>] and [<code>UnresolvedDomain</code>] variants.</li>
+<li><code>set</code>, <code>mset</code>, <code>sequence</code>, <code>function</code>, <code>relation</code>, <code>partition</code> and <code>permutation</code> carry it in their attribute struct (<code>SetAttr::representation</code> and so on).</li>
+</ul>
+<p>[<code>Domain::representation_preference</code>] reads it, [<code>Domain::set_representation_preference</code>] writes it and [<code>Domain::has_representation_preference</code>] looks for one anywhere in a domain tree.</p>
+<p>In Essence it is the attribute <code>representation &lt;name&gt;</code>, written just after the first word of the domain. <code>int</code> and <code>tuple</code> already use their parentheses for ranges and members, so it goes first inside them (<code>int(representation order, 1..4)</code>, <code>tuple (representation packed, int(1..3), bool)</code>); <code>matrix</code>, <code>record</code> and <code>variant</code> take it as their only attribute (<code>record (representation packed) {...}</code>); every other domain adds it to its attribute list (<code>function (representation explicit, total) ...</code>). <code>Display</code> and the grammar agree, so a printed domain parses back to an equal one. The interactive heuristic uses this to print each option as a declaration you can paste into the model.</p>
+<p>A preference is honoured when that representation is applicable to the declaration; otherwise selection falls back to the heuristic, exactly as for sets.</p>
 
                     </main>
 

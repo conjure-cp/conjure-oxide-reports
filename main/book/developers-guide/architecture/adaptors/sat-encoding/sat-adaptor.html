@@ -37,7 +37,7 @@
             const path_to_root = "../../../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../../../searchindex-ca90a7ab.js";
+            window.path_to_searchindex_js = "../../../../searchindex-aaa8d1a5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../../../toc-6d1c97b0.js"></script>
@@ -176,13 +176,31 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h1 id="sat-adaptor"><a class="header" href="#sat-adaptor">SAT Adaptor</a></h1>
-<p>The <strong>SAT Adaptor</strong>:</p>
-<ul>
-<li><strong>Lowers IR to CNF:</strong> Converts boolean and integer constraints (via SAT encodings) into Conjunctive Normal Form.</li>
-<li><strong>Interfaces with RustSAT:</strong> Utilizes the <code>rustsat</code> library to communicate with SAT solvers like CaDiCaL.</li>
-<li><strong>Maps Literals:</strong> Maintains the mapping between high-level variable names and low-level SAT literals to decode solutions back into Essence values.</li>
-</ul>
+                        <h1 id="sat-adaptor"><a class="header" href="#sat-adaptor">SAT adaptor</a></h1>
+<p>The adaptor owns the mapping from model names to SAT literals, clause generation and solution decoding. <code>SatEncodingDecision</code> records assertions, Boolean definitions, cardinality and weighted constraints, integer relations, objectives, allDifferent, tables and element operations. Algorithm selection lives in the rule engine, separate from those data types.</p>
+<h2 id="library-providers"><a class="header" href="#library-providers">Library providers</a></h2>
+<p>The <code>--sat-encoding-*</code> options pin an encoding family. Unpinned families are selected by the modelling heuristic. Exact labels and ordering are defined alongside the IR enums in <code>ast/sat_decision.rs</code>.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Family</th><th>Providers and algorithms</th></tr>
+</thead>
+<tbody>
+<tr><td>AMO</td><td>RustSAT pairwise, ladder, bitwise, commander, bimander and two-product; Pindakaas pairwise, ladder and bitwise</td></tr>
+<tr><td>Cardinality</td><td>RustSAT totalizer; Pindakaas sorting network</td></tr>
+<tr><td>Pseudo-Boolean</td><td>RustSAT generalized totalizer, binary adder and dynamic poly watchdog; Pindakaas BDD and sequential weight counter</td></tr>
+<tr><td>allDifferent</td><td>Oxide pairwise numeric disequalities or per-value AMO compositions</td></tr>
+<tr><td>Table</td><td>Oxide tuple, shared-suffix MDD or binary-support compositions</td></tr>
+<tr><td>Element</td><td>Oxide implication or support compositions</td></tr>
+</tbody>
+</table>
+</div>
+<p>The last three families compose library-backed numeric comparisons and Boolean operations. Structured Pindakaas inputs preserve guaranteed choice, chain and bounded-binary groups as native integer views. Oxide validates those groups and normalises constants, signed coefficients, repeated literals and complements before calling a provider. Direct views merge equal-valued choices and include the none-selected alternative; monotone chains use order views and bounded binary groups retain their supplied bits. Supplied binary views are constrained through Pindakaas before their bounds are used for simplification, since those bounds can also describe the domain constraint being compiled. Structured equalities use the same native relation path as inequalities.</p>
+<p>Oxide temporarily pins Pindakaas to a tested fork commit containing the development API and the direct-view guard fix in <a href="https://github.com/pindakaashq/pindakaas/pull/238">Pindakaas PR #238</a>. Return to a crates.io dependency when a release contains this API and its encoding fixes.</p>
+<h2 id="shared-state-and-incremental-solving"><a class="header" href="#shared-state-and-incremental-solving">Shared state and incremental solving</a></h2>
+<p>One <code>EncodingCache</code> belongs to a loaded solver. It retains Boolean gates and aliases, occurrence inputs, native cardinality and weighted counters, and fully equivalent threshold predicates. Incremental dominance constraints and objective expressions share that cache and the solver’s allocation frontier. Repeated or opposite-polarity occurrences receive distinct equivalent variables when a provider requires unique inputs; their multiplicity is preserved.</p>
+<p>An objective owns its native upper-bound encoder separately. Tightening extends that encoder and uses its enforcement literals as transient solve assumptions. In particular, dynamic poly watchdog control literals must not be permanently asserted across bounds. Pindakaas’s one-shot objective constraints still share Boolean compilation state.</p>
+<p>Stateless compiler contexts are retained inside certain cached-counter fallbacks to prevent recursively selecting the same caching path. A fresh cache is appropriate only when compiling an independent solver instance.</p>
 
                     </main>
 

@@ -38,7 +38,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-ca90a7ab.js";
+            window.path_to_searchindex_js = "searchindex-aaa8d1a5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-6d1c97b0.js"></script>
@@ -369,6 +369,46 @@ letting y be 6
 <li><strong>Solution Extraction</strong> - The solver’s output was converted back to Essence format</li>
 </ol>
 <p>Want to see exactly what rules were applied? Check out the <a href="#logging">Logging guide</a>.</p>
+<p>If you are curious about more complex models, you can check out the models that we use to test Conjure Oxide, available in the <code>test-suite/tests/exhaustive</code> directory of the repository.</p>
+<h2 id="running-with-different-solvers"><a class="header" href="#running-with-different-solvers">Running with Different Solvers</a></h2>
+<p><code>--solver</code> takes <code>minion</code>, <code>sat</code>, or <code>z3</code>.</p>
+<p>How a model is <em>expressed</em> for the chosen solver is separate from which solver it is. SAT has no
+integers, so each integer variable is encoded into Booleans as <code>direct</code>, <code>order</code>, or one of four
+binary forms – <code>twos_complement</code>, <code>sign_magnitude</code>, <code>offset</code> (the distance from the domain minimum)
+or <code>rank</code> (the position among the allowed values); Z3 has integers but two theories to hold them in, <code>lia</code> or <code>bv</code>. Both are
+representation choices made per declaration, exactly like choosing <code>occurrence</code> or <code>explicit</code> for a
+set, and both are steered with <code>--heuristic</code> (see the modelling-choices guide). Variables in
+different encodings are channelled together automatically where a constraint needs them to agree.</p>
+<h3 id="choosing-a-representation-in-the-model"><a class="header" href="#choosing-a-representation-in-the-model">Choosing a representation in the model</a></h3>
+<p>Any domain can carry a representation preference, written as an attribute straight after the
+domain’s first word, so the choice sits next to the declaration it applies to. A declaration with a
+preference is given that representation instead of asking the heuristic.</p>
+<pre><code class="language-essence">find a : int(representation order, 1..4)
+find s : set (representation occurrence) of int(1..9)
+find m : matrix (representation packed) indexed by [int(1..3)] of bool
+find t : tuple (representation components, int(1..3), bool)
+find r : record (representation packed) {x: int(1..3), y: bool}
+find f : function (representation explicit, total) int(1..3) --&gt; int(1..3)
+</code></pre>
+<p><code>int</code> and <code>tuple</code> put the preference first inside their parentheses, because those already hold the
+ranges or the member domains; <code>int(representation order)</code> leaves the ranges unbounded. Every other
+domain keeps it in the attribute list that follows the keyword (<code>matrix</code>, <code>record</code> and <code>variant</code>
+take it as their only attribute). The interactive heuristic (<code>-hi</code>) prints each option in this
+syntax, so a choice you make at the prompt can be pasted into the model to make it permanent.</p>
+<h3 id="uniform-representation-choices"><a class="header" href="#uniform-representation-choices">Uniform representation choices</a></h3>
+<p>Use <code>--channelling uniform</code> to choose one representation kind for each type family throughout
+one model. All integers use the same encoding regardless of their bounds; all sets use the same
+layout regardless of their element domains. Nested representation variables follow the same
+policy. Matrix layout and integer encoding are separate choices.</p>
+<pre><code class="language-bash">cargo run -- solve --solver sat --channelling uniform --heuristic i my_problem.essence
+</code></pre>
+<p>The interactive heuristic prompts once for each undecided type family. An incompatible domain is reported
+rather than silently switching representation. <code>--channelling no</code> keeps the existing policy of
+one representation per variable, and <code>yes</code> permits multiple channelled representations.</p>
+<p>Exhaustive-test configurations can use <code>channelling = "uniform"</code> with <code>heuristic = "x"</code> to
+exercise the available combinations without choosing independently for each integer variable.</p>
+<h3 id="sat-solver"><a class="header" href="#sat-solver">SAT Solver</a></h3>
+<p>Use <code>--solver sat</code> and select a compiled backend with <code>--sat-backend cadical</code> or <code>--sat-backend batsat</code>.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="logging"><a class="header" href="#logging">Logging</a></h1>
 <p><strong>This document is a work in progress - for a full list of logging options,
@@ -427,7 +467,7 @@ debugging):</p>
 <li>All rules that were tried and applied</li>
 </ul>
 <blockquote>
-<p>Which integer encoding each variable gets – <code>int_log</code>, <code>int_direct</code> or <code>int_order</code> – is a
+<p>Which integer encoding each variable gets – <code>direct</code>, <code>order</code>, <code>twos_complement</code>, <code>sign_magnitude</code>, <code>offset</code> or <code>rank</code> – is a
 representation choice made per declaration rather than part of the solver name. Use
 <code>--heuristic</code> to steer it: <code>-h i</code> prompts for each choice, and <code>-h c</code> (the default) takes the
 most compact.</p>
@@ -545,14 +585,14 @@ such as lengths, predicates, lookups, and traversal; clone only data that must e
 <h3 id="test-runs"><a class="header" href="#test-runs">Test Runs</a></h3>
 <ul>
 <li>Use <code>MAX_EXPECTED_TIME=N</code> to only run test cases that are expected to take up to <code>N</code> seconds. Omit or use <code>MAX_EXPECTED_TIME=0</code> to run all tests.</li>
-<li>Use <code>TEST_CASE_TIMEOUT=N</code> to set a per-test timeout for integration tests.</li>
+<li>Use <code>TEST_CASE_TIMEOUT=N</code> to set a per-test timeout for exhaustive tests.</li>
 <li>When recording artefacts from a timeout-bounded run, record the timeout value explicitly in the relevant <code>config.toml</code> file.</li>
 </ul>
 <h3 id="test-artefacts"><a class="header" href="#test-artefacts">Test Artefacts</a></h3>
 <ul>
 <li>Update trace files when the test output has changed for a good reason. Do not try to keep trace files unchanged for their own sake.</li>
 <li>Update <code>stats.toml</code> files when the recorded statistics have changed for a good reason, especially when non-time features change.</li>
-<li><code>make test-accept</code> / <code>ACCEPT=true</code> also rewrites <code>expected-time</code> (and other timing fields) from the current run. Do <strong>not</strong> blindly commit those timing updates: runtimes are noisy across machines and load, and tiny time-only diffs create pointless churn. Prefer leaving small timing wobbles uncommitted; only land timing changes when they reflect a real, intentional shift (for example a new slow test, or a deliberate budget change). Use <code>make test-accept-with-max-times</code> when recording budgets over several runs: each run keeps the max of the current budget and the observed time, so a fast fluke does not lower it. To discard files whose only local edits are timing fields, run <code>./tools/discard-config-time-changes.sh</code> (see <code>--help</code> for <code>--dry-run</code>). Files with any non-time edits are left alone.</li>
+<li><code>make test-accept</code> / <code>ACCEPT=true</code> also rewrites <code>expected-time</code> (and other timing fields) from the current run. Do <strong>not</strong> blindly commit those timing updates: runtimes are noisy across machines and load, and tiny time-only diffs create pointless churn. Prefer leaving small timing wobbles uncommitted; only land timing changes when they reflect a real, intentional shift (for example a new slow test, or a deliberate budget change). Use <code>make test-accept-with-max-times</code> when recording budgets over several runs: each run keeps the max of the current budget and the observed time, so a fast fluke does not lower it. To discard small timing-only changes, run <code>./tools/discard-config-time-changes.sh</code>. A file is restored from HEAD only when every changed <code>*-time</code> value either has both old and new times &lt;= 1 second or has an absolute change &lt;= 10% of the HEAD value. Override these defaults with <code>--max-time SECONDS</code> and <code>--max-change-percent PERCENT</code>; use <code>--dry-run</code> to preview restorations. Files with larger timing changes, non-time edits, added/removed timing fields, or non-numeric timing changes are left alone.</li>
 </ul>
 <h3 id="commits"><a class="header" href="#commits">Commits</a></h3>
 <ul>
@@ -1772,7 +1812,7 @@ jobs:
 This makes it easier to integrate them and test our entire project all at once.</p>
 <p>Our repository can be broken down into four key components:</p>
 <ol>
-<li>The user-facing <code>conjure-oxide</code> command line tool and library, and its integration tests.
+<li>The user-facing <code>conjure-oxide</code> command line tool and library, and its exhaustive tests.
 This is stored in <code>conjure-oxide/conjure_oxide</code>.</li>
 <li>The AST type definitions, rewrite engine, and related implementation code.
 These are broken up into separate crates and stored in <code>conjure-oxide/crates/</code>.</li>
@@ -1798,10 +1838,10 @@ This is our public, user-facing API that could eventually be used by other peopl
 <p>There are some <code>examples/</code> illustrating how various parts of the project are used.
 Finally, for historical reasons, this folder contains some utility code that may be refactored or moved elsewhere in the future.</p>
 <h2 id="tests"><a class="header" href="#tests">Tests</a></h2>
-<p>Our suite of integration tests runs automatically on every commit to the main repository.
+<p>Our suite of exhaustive tests runs automatically on every commit to the main repository.
 It tests <code>conjure-oxide</code> end-to-end: parsing an example Essence file, running the rewriter, calling the solver, and validating the solution.</p>
-<p>The test files are stored in <code>conjure_oxide/tests/integration/</code>, sorted into sub-directories.
-Code to run our project on these files is contained in <code>integration_tests.rs</code>.</p>
+<p>The test files are stored in <code>test-suite/tests/exhaustive/</code>, sorted into sub-directories.
+Code to run our project on these files is contained in <code>exhaustive_tests.rs</code>.</p>
 <h2 id="crates"><a class="header" href="#crates">Crates</a></h2>
 <p>Most of our implementation is contained in the <code>crates/</code> directory. Here is an overview of what each crate does:</p>
 <ul>
@@ -2322,8 +2362,8 @@ fn display_message(message: String, file_path: Option&lt;String&gt;, kind: Kind)
 
 
 <span class="boring">}</span></code></pre>
-<h1 id="tracing-in-integration-tests"><a class="header" href="#tracing-in-integration-tests">Tracing in integration tests</a></h1>
-<p>Similar to how a <code>Consumer</code> is created in solve.rs for <code>cargo run solve</code>, a <code>combined_consumer</code> is manually constructed for each integration test, with its fields explicitly set rather than being derived from command-line arguments. This consumer is configured to log successful rule applications to two separate files—one in a human-readable format and the other in JSON. It is then passed to the <code>rewrite_model</code> function. By establishing a uniform internal interface for tracing in both <code>cargo run</code> and <code>cargo test</code>, we were able to significantly reduce code duplication and streamline the overall tracing logic.</p>
+<h1 id="tracing-in-exhaustive-tests"><a class="header" href="#tracing-in-exhaustive-tests">Tracing in exhaustive tests</a></h1>
+<p>Similar to how a <code>Consumer</code> is created in solve.rs for <code>cargo run solve</code>, a <code>combined_consumer</code> is manually constructed for each exhaustive test, with its fields explicitly set rather than being derived from command-line arguments. This consumer is configured to log successful rule applications to two separate files—one in a human-readable format and the other in JSON. It is then passed to the <code>rewrite_model</code> function. By establishing a uniform internal interface for tracing in both <code>cargo run</code> and <code>cargo test</code>, we were able to significantly reduce code duplication and streamline the overall tracing logic.</p>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>   let combined_consumer = create_consumer(
@@ -3028,7 +3068,7 @@ last updated: 3-3-2026
 <h3 id="parser"><a class="header" href="#parser">Parser</a></h3>
 <!-- TODO: Roundtrip testing does not exist -- waiting on an update from LSP team -->
 <p>Test cases that test the coverage of the Native parser use <a href="#roundtrip-testing">Roundtrip testing</a>. The <code>syntax-error</code> and <code>semantic-error</code> test directories exist in the <code>test-suite</code> crate as child directories of <code>roundtrip\native-errors</code>. Furthermore, <code>config.toml</code> sets only the Native parser to be used when testing test cases.</p>
-<p>These test cases will run alongside all the integration tests in the <code>test-suite</code> crate, which can be done by using:</p>
+<p>These test cases will run alongside all the exhaustive tests in the <code>test-suite</code> crate, which can be done by using:</p>
 <pre><code class="language-bash">cargo nextest run
 </code></pre>
 <p>Alternatively, to run only the Roundtrip tests, use the command:</p>
@@ -3149,207 +3189,78 @@ last updated: 3-3-2026
 <li>greater than or equal to all elements in v</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="sat"><a href="#sat" class="header">SAT</a></h1>
-<h2 id="sat-encoding"><a class="header" href="#sat-encoding">SAT Encoding</a></h2>
-<p>This book chapter explains how the SAT adapter is built, the generic patterns that SAT rules follow, and the concrete SAT rule implementations, including references to the code files where you can find each rule.</p>
-<p><strong>Important note:</strong> The concrete SAT rule implementation part of this chapter will change frequently, as the rules are still in the process of implementation and optimisation. The general principles of how the adapter and the SAT rules are built, on the other hand, are more likely to stay the same. Please keep this in mind when reading this chapter.</p>
+<h1 id="sat-encoding"><a class="header" href="#sat-encoding">SAT encoding</a></h1>
+<p>Oxide records modelling and encoding decisions in a semantic SAT IR. The model contains Boolean expressions, numeric views and selected algorithms; it contains no CNF clauses or solver literals. The SAT adaptor compiles those decisions directly into a RustSAT <code>SatInstance</code>, using RustSAT and Pindakaas encoders where their public interfaces fit.</p>
+<p>Representation rules first expose Boolean operands and actual-value integer views. The rule engine then resolves unpinned encoding choices through the configured heuristic. Command-line choices take precedence and their provenance is retained in the IR. See <a href="#sat-integer-representations">integer representations</a>, <a href="#sat-booleans">Boolean compilation</a> and <a href="#sat-adaptor">the adaptor</a>.</p>
+<p>Uniform channelling chooses one representation for each type family across a model. Integer representation is independent of matrix layout. SAT exhaustive test coverage currently concentrates on this mode; broader channelling coverage remains future work.</p>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="sat-adaptor"><a class="header" href="#sat-adaptor">SAT Adaptor</a></h1>
-<p>The <strong>SAT Adaptor</strong>:</p>
-<ul>
-<li><strong>Lowers IR to CNF:</strong> Converts boolean and integer constraints (via SAT encodings) into Conjunctive Normal Form.</li>
-<li><strong>Interfaces with RustSAT:</strong> Utilizes the <code>rustsat</code> library to communicate with SAT solvers like CaDiCaL.</li>
-<li><strong>Maps Literals:</strong> Maintains the mapping between high-level variable names and low-level SAT literals to decode solutions back into Essence values.</li>
-</ul>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="encoding-types"><a href="#encoding-types" class="header">Encoding Types</a></h1>
-<h2 id="types-of-sat-encodings"><a class="header" href="#types-of-sat-encodings">Types of SAT Encodings</a></h2>
-<p>Conjure-oxide represents three SAT encoding styles in the AST. The three types are:</p>
-<ul>
-<li>Direct Encodings</li>
-<li>Logarithmic Encodings</li>
-<li>Order Encodings</li>
-</ul>
-<p>Each type of encoding has pros and cons, and a different one may be selected based on the type of constraint problem.</p>
-<h3 id="satint-expression"><a class="header" href="#satint-expression">SATInt Expression</a></h3>
-<p>All encodings are represented by the <code>SATInt</code> expression. This is represented by a 4-tuple variant with the following shape:</p>
-<ul>
-<li><code>Metadata</code>: standard AST metadata (source location, typing info, etc.).</li>
-<li><code>SATIntEncoding</code>: an enum selecting the encoding (<code>Direct</code>, <code>Log</code>, <code>Order</code>).</li>
-<li><code>bits</code>: a (possibly nested) list/matrix of boolean expressions (literals, variables or composed expressions) encoded as <code>Moo&lt;Expression&gt;</code>.</li>
-<li><code>range</code>: the inclusive (min, max) bounds for the integer, expressed as a pair of <code>i32</code>.</li>
-</ul>
-<h3 id="logarithmic-encoding"><a class="header" href="#logarithmic-encoding">Logarithmic Encoding</a></h3>
-<p>The base principle is quite simple: encode an integer as a bitvector. This allows us to represent integers as a series of boolean constraints – one for each bit.</p>
-<p>For example, the integer <code>6</code> can be represented in binary as <code>0110</code>. We can then represent this as <code>P = 0 ∨ 1, Q = 0 ∨ 1, R = 0 ∨ 1, S = 0 ∨ 1</code>. The connection that is missing, however, is that this isn’t actually a representation of a constraint problem, but of a solution to a problem.</p>
-<h3 id="direct-encoding"><a class="header" href="#direct-encoding">Direct Encoding</a></h3>
-<p>Direct encodings are the most straightforward type of encoding - it involves creating a vector of boolean variables, one corresponding to each member of the domain. Only one of these variables can be true at a time, and it is the one corresponding to the value of the integer.</p>
-<h3 id="order-encoding"><a class="header" href="#order-encoding">Order Encoding</a></h3>
-<p>Order follows the same principle as direct encoding, but instead of each boolean variable ‘specifying’ a value in the way that direct encodings do, each bit specifies whether the integer corresponding to it is less than or equal to the integer variable’s value.</p>
-<h3 id="why-have-multiple-types-of-encoding"><a class="header" href="#why-have-multiple-types-of-encoding">Why have multiple types of encoding?</a></h3>
-<p>Only logarithmic encodings are currently implemented in conjure-oxide. We’re planning to include other encodings such as direct and order encodings. This is motivated by their potential advantages over the log encoding in some cases.</p>
-<p>Direct encodings should perform well for equality-heavy constraints but may scale poorly with larger domains or inequalities. Logarithmic encodings are expected to handle inequalities more efficiently. Order encodings are often viewed as a compromise, potentially balancing these trade-offs.</p>
-<h3 id="performance-comparison"><a class="header" href="#performance-comparison">Performance Comparison</a></h3>
-<p>The choice of encoding significantly impacts performance depending on the constraint types used.</p>
-<h4 id="direct-encoding-better-for-equality-and-disequality"><a class="header" href="#direct-encoding-better-for-equality-and-disequality">Direct Encoding: Better for Equality and Disequality</a></h4>
-<p>Direct encoding excels in models dominated by <code>=</code> and <code>!=</code> constraints, such as graph coloring. It enables immediate unit propagation in the SAT solver, pruning values faster than bitwise reasoning.</p>
-<p><strong>Example: Graph Coloring</strong></p>
-<pre><code class="language-essence">find c1, c2, c3, c4, c5 : int(1..3)
-such that
-    c1 != c2, c1 != c3, c2 != c3, c2 != c4,
-    c3 != c4, c3 != c5, c4 != c5
-</code></pre>
-<ul>
-<li><strong>Direct:</strong> <code>~0.55s</code> Rewriting / <code>0.001s</code> Solving</li>
-<li><strong>Log:</strong> <code>~1.61s</code> Rewriting / <code>0.002s</code> Solving</li>
-</ul>
-<h4 id="logarithmic-encoding-better-for-inequalities"><a class="header" href="#logarithmic-encoding-better-for-inequalities">Logarithmic Encoding: Better for Inequalities</a></h4>
-<p>Logarithmic encoding is superior for arithmetic and inequalities (<code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, <code>&gt;=</code>) over large or sparse domains. Binary bit-vectors result in a more compact representation and reduced overhead.</p>
-<p><strong>Example: Sparse Domain with Inequalities</strong></p>
-<pre><code class="language-essence">find x : int(1, 10, 20, 30, 40, 50)
-such that x &gt; 10
-</code></pre>
-<ul>
-<li><strong>Direct:</strong> <code>~1.24s</code> Rewriting / <code>0.005s</code> Solving</li>
-<li><strong>Log:</strong> <code>~0.07s</code> Rewriting / <code>0.000s</code> Solving</li>
-</ul>
-<h4 id="order-encoding-middle-ground-for-rangeinequality-heavy-models"><a class="header" href="#order-encoding-middle-ground-for-rangeinequality-heavy-models">Order Encoding: Middle ground for range/inequality-heavy models</a></h4>
-<p>Order encoding often sits between <code>Direct</code> and <code>Log</code> encodings in terms of performance and representation size. <code>Order</code> encodings are a pragmatic choice for models with many range/threshold constraints over moderate domains: they can outperform <code>Log</code> encodings on some inequality-heavy problems while avoiding the quadratic blow-up of very large <code>Direct</code> encodings.</p>
-<p>TODO: Add benchmark here.</p>
-<h3 id="current-encoding-support-status"><a class="header" href="#current-encoding-support-status">Current Encoding Support Status</a></h3>
-<p>Currently, logarithmic encoding is mostly implemented; Direct and Order encodings have partial support in the SAT rules.</p>
-<p>As of 27 April 2026 the Logarithmic encoding is the most feature-complete and is used for the bulk of SAT arithmetic and comparison rules. The Direct and Order encodings are partially implemented: both support core comparison functionality, while Direct has additional support for some arithmetic helpers and Order provides a foundation for inequalities. Several non-core features and edge-case helpers remain in development or unimplemented across the three encodings.</p>
-<div style="break-before: page; page-break-before: always;"></div>
-<h1 id="creating-sat-transformation-rules"><a class="header" href="#creating-sat-transformation-rules">Creating SAT Transformation Rules</a></h1>
-<h2 id="overview-9"><a class="header" href="#overview-9">Overview</a></h2>
-<p>Most SAT rules in conjure-oxide follow the same small set of implementation patterns. The details change from rule to rule, but the structure is usually the same: validate the input, normalise the operands, build a compact Boolean construction, convert it to CNF with Tseytin helpers, and propagate the output domain if the result is an integer.</p>
-<h2 id="general-workflow"><a class="header" href="#general-workflow">General Workflow</a></h2>
-<p>Regardless of which encoding type is being used, a SAT transformation rule should follow these steps:</p>
-<ol>
-<li><strong>Input validation</strong> - Standard for any rule; check that the input expression is the target for this rule and that sub-components are valid.</li>
-<li><strong>Extract raw data</strong> - Extract operand bit vectors and ranges (especially for integer operations).</li>
-<li><strong>Normalise operands</strong> - Most integer rules should pad bit-vectors to a shared range so later zips or index lookups are safe.</li>
-<li><strong>Create the new expression with CNF clauses</strong> - Use dedicated <code>tseytin_...</code> functions to construct boolean expressions. These functions directly generate CNF clauses and manage auxiliary variables, significantly reducing the rule applications needed for solver-ready input. For the logic behind boolean-to-CNF conversion, refer to the next chapter: <a href="#booleans">Booleans</a>.</li>
-<li><strong>Domain propagation (Integers only)</strong> - Update the range of the returned <code>SATInt</code> to reflect the new interval. The bit-width of the <code>SATInt</code> should also be updated for the new range.</li>
-<li><strong>Return the result</strong> - Use <code>Reduction::cnf(..)</code> to return the created expression along with the new CNF clauses and symbol table.</li>
-</ol>
-<blockquote>
-<p>All three integer encodings share the one <code>SAT</code> rule set, because which encoding a variable gets
-is chosen per declaration and a single model can hold more than one. A rule must therefore decline
-when its operands are not in its own encoding – which is what the <code>validate_*_int_operands</code>
-helpers do. An operation whose operands disagree, or whose shared encoding has no rule for it, is
-re-encoded into the log form by the channelling fallback before it reaches here.</p>
-</blockquote>
-<h2 id="example---negation-of-log-integers"><a class="header" href="#example---negation-of-log-integers">Example - negation of log integers</a></h2>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>/// Converts negation of a SATInt to a SATInt
-///
-/// ```text
-/// -SATInt(a) ~&gt; SATInt(b)
-///
-/// ```
-#[register_rule("SAT", 4100, [Neg])]
-fn cnf_int_neg(expr: &amp;Expr, symbols: &amp;SymbolTable) -&gt; ApplicationResult {
-    let Expr::Neg(_, expr) = expr else {
-        return Err(RuleNotApplicable);
-    };
-
-    let Expr::SATInt(_, _, _, (min, max)) = expr.as_ref() else {
-        return Err(RuleNotApplicable);
-    };
-
-    let binding = validate_log_int_operands(vec![expr.as_ref().clone()], None)?;
-    let [bits] = binding.as_slice() else {
-        return Err(RuleNotApplicable);
-    };
-
-    let mut new_clauses = vec![];
-    let mut new_symbols = symbols.clone();
-
-    let result = tseytin_negate(bits, bits.len(), &amp;mut new_clauses, &amp;mut new_symbols);
-
-    Ok(Reduction::cnf(
-        Expr::SATInt(
-            Metadata::new(),
-            SATIntEncoding::Log,
-            Moo::new(into_matrix_expr!(result)),
-            (-max, -min),
-        ),
-        new_clauses,
-        new_symbols,
-    ))
-}
-<span class="boring">}</span></code></pre>
-<h3 id="assigning-rule-priorities"><a class="header" href="#assigning-rule-priorities">Assigning Rule Priorities</a></h3>
-<p>Following the general conventions for rule priorities, SAT specific rules should have priorities at the 4000 level. As rules are applied in priority order (high to low), the following convention has been developed that roughly follows the expected order of rule application.</p>
+<h1 id="sat-adaptor"><a class="header" href="#sat-adaptor">SAT adaptor</a></h1>
+<p>The adaptor owns the mapping from model names to SAT literals, clause generation and solution decoding. <code>SatEncodingDecision</code> records assertions, Boolean definitions, cardinality and weighted constraints, integer relations, objectives, allDifferent, tables and element operations. Algorithm selection lives in the rule engine, separate from those data types.</p>
+<h2 id="library-providers"><a class="header" href="#library-providers">Library providers</a></h2>
+<p>The <code>--sat-encoding-*</code> options pin an encoding family. Unpinned families are selected by the modelling heuristic. Exact labels and ordering are defined alongside the IR enums in <code>ast/sat_decision.rs</code>.</p>
 <div class="table-wrapper">
 <table>
 <thead>
-<tr><th>Rule Type</th><th>Priority</th><th>Description</th></tr>
+<tr><th>Family</th><th>Providers and algorithms</th></tr>
 </thead>
 <tbody>
-<tr><td>Integer Decision Variable -&gt; SATInt</td><td>4800</td><td>These are the rules that create the SATInt expressions that the other rules can understand.</td></tr>
-<tr><td>SATInt -&gt; SATInt</td><td>4700</td><td>These are rules that represent standard integer-to-integer operations; summation, abs, pow, etc.</td></tr>
-<tr><td>SATInt -&gt; Boolean</td><td>4600</td><td>These are rules that produce a boolean from integer inputs; equality, comparison, all-different, etc.</td></tr>
-<tr><td>Literal -&gt; SATInt</td><td>4500</td><td>These are the rules that convert literals integer to SATInts, they should be applied last to allow for other rules to perform optimisations, for example multiplying by a known constant requires significantly less clauses and auxillary variables then treating the literal as an unkown integer.</td></tr>
-<tr><td>Boolean -&gt; Boolean</td><td>4400</td><td>These are the rules for boolean-to-boolean operations; and, or, not, xor, etc.</td></tr>
-<tr><td>Boolean -&gt; Nothing</td><td>4300</td><td>These are rules that take booleans and fully remove them from the constraints, this occurs when an expression if fully represented in the clauses.</td></tr>
+<tr><td>AMO</td><td>RustSAT pairwise, ladder, bitwise, commander, bimander and two-product; Pindakaas pairwise, ladder and bitwise</td></tr>
+<tr><td>Cardinality</td><td>RustSAT totalizer; Pindakaas sorting network</td></tr>
+<tr><td>Pseudo-Boolean</td><td>RustSAT generalized totalizer, binary adder and dynamic poly watchdog; Pindakaas BDD and sequential weight counter</td></tr>
+<tr><td>allDifferent</td><td>Oxide pairwise numeric disequalities or per-value AMO compositions</td></tr>
+<tr><td>Table</td><td>Oxide tuple, shared-suffix MDD or binary-support compositions</td></tr>
+<tr><td>Element</td><td>Oxide implication or support compositions</td></tr>
 </tbody>
 </table>
 </div>
+<p>The last three families compose library-backed numeric comparisons and Boolean operations. Structured Pindakaas inputs preserve guaranteed choice, chain and bounded-binary groups as native integer views. Oxide validates those groups and normalises constants, signed coefficients, repeated literals and complements before calling a provider. Direct views merge equal-valued choices and include the none-selected alternative; monotone chains use order views and bounded binary groups retain their supplied bits. Supplied binary views are constrained through Pindakaas before their bounds are used for simplification, since those bounds can also describe the domain constraint being compiled. Structured equalities use the same native relation path as inequalities.</p>
+<p>Oxide temporarily pins Pindakaas to a tested fork commit containing the development API and the direct-view guard fix in <a href="https://github.com/pindakaashq/pindakaas/pull/238">Pindakaas PR #238</a>. Return to a crates.io dependency when a release contains this API and its encoding fixes.</p>
+<h2 id="shared-state-and-incremental-solving"><a class="header" href="#shared-state-and-incremental-solving">Shared state and incremental solving</a></h2>
+<p>One <code>EncodingCache</code> belongs to a loaded solver. It retains Boolean gates and aliases, occurrence inputs, native cardinality and weighted counters, and fully equivalent threshold predicates. Incremental dominance constraints and objective expressions share that cache and the solver’s allocation frontier. Repeated or opposite-polarity occurrences receive distinct equivalent variables when a provider requires unique inputs; their multiplicity is preserved.</p>
+<p>An objective owns its native upper-bound encoder separately. Tightening extends that encoder and uses its enforcement literals as transient solve assumptions. In particular, dynamic poly watchdog control literals must not be permanently asserted across bounds. Pindakaas’s one-shot objective constraints still share Boolean compilation state.</p>
+<p>Stateless compiler contexts are retained inside certain cached-counter fallbacks to prevent recursively selecting the same caching path. A fresh cache is appropriate only when compiling an independent solver instance.</p>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="booleans"><a href="#booleans" class="header">Booleans</a></h1>
-<h2 id="sat-booleans"><a class="header" href="#sat-booleans">SAT Booleans</a></h2>
-<p>The most basic form of a constraint is a boolean expression. SAT solvers work with boolean variables, but require input in Conjunctive Normal Form (which will be referred to as CNF). This means that any boolean expression must be converted to a series of clauses composed entirely of atoms (true/false values or variables). Here’s an example:</p>
-<p>Original Expression:</p>
-<p>$$((A \land B) \to (C \lor \lnot D)) \land E$$</p>
-<p>In CNF:</p>
-<p>$$(\lnot A \lor \lnot B \lor C \lor \lnot D) \land (E)$$</p>
-<p>The simplest approach to this conversion is by repeatedly applying rules (De Morgan’s, double negation, distributivity, etc) until the expression is in CNF. This works well for smaller expressions but slows down massively when dealing with larger expressions (like the ones generated when dealing with integers). To solve this, we use Tseytin transformations (see <a href="https://en.wikipedia.org/wiki/Tseytin_transformation">https://en.wikipedia.org/wiki/Tseytin_transformation</a>).</p>
-<p>Boolean expressions are encoded via Tseytin transformations.</p>
-<h3 id="tseytin-transfomations"><a class="header" href="#tseytin-transfomations">Tseytin Transfomations</a></h3>
-<p>These transformations allow us to convert an operation straight into CNF by introducing new auxiliary variables. This method makes rule applications significantly faster but with the downside of producing longer CNF with more variables to give to the solver. Modern SAT solvers, however, are very efficient and this extra performance cost is negligible compared to the time saved in conversion.</p>
-<p>The idea is that for a given boolean expression, an auxillary variable is created for each subexpression which is then substituted back into the main expression.</p>
-<h4 id="example-2"><a class="header" href="#example-2">Example</a></h4>
-<p>Takes the following expression $\phi$:</p>
-<pre><code class="language-math">\phi := ((p\lor q) \land r) \rightarrow (\neg s)
-</code></pre>
-<p>Only subexpressions of literals can be encoded so we must look at the inner-most subexpressions, $((p\lor q)$ and $(\neg s))$, first:</p>
-<p>$$
-\begin{align}
-x_1 \iff (p\lor q) \
-x_2 \iff (\neg s) \
-\end{align}
-$$</p>
-<p>$$
-(((p\lor q) \land r) \rightarrow (\neg s)) \leadsto ((x_1 \land r) \rightarrow x_2)
-$$</p>
-<p>No we can transform $(x_1 \land r)$:</p>
-<p>$$
-x_3 \iff (x_1 \land r)
-$$</p>
-<p>$$
-((x_1 \land r) \rightarrow x_2) \leadsto (x_3 \rightarrow x_2)
-$$</p>
-<p>And finally $(x_3 \rightarrow x_2)$:</p>
-<p>$$
-x_4 \iff (x_3 \rightarrow x_2)
-$$</p>
-<p>$$
-(x_3 \rightarrow x_2) \leadsto x_4
-$$</p>
-<p>So we have:</p>
-<p>$$
-\begin{align}
-x_1 \iff (p\lor q) \
-x_2 \iff (\neg s) \
-x_3 \iff (x_1 \land r) \
-x_4 \iff (x_3 \rightarrow x_2) \
-\phi \iff x_4
-\end{align}
-$$</p>
-<p>And now to find solutions to $\phi$ we need to solve for $p,q,s, x_1, x_2, x_3, x_4$ under these constraints and the under additional constraint that $x_4$ is true.</p>
+<h1 id="sat-integer-representations"><a class="header" href="#sat-integer-representations">SAT integer representations</a></h1>
+<p>Oxide supports six integer representations. Every representation supplies an actual-value view consisting of a constant and signed weights over Boolean expressions. Representation constraints independently restrict the possible values; numeric relation and pseudo-Boolean encoders consume the view rather than the representation’s bit layout.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Representation</th><th>Meaning</th><th>Sparse domains</th></tr>
+</thead>
+<tbody>
+<tr><td>Direct</td><td>One indicator for each domain value, with exactly one true</td><td>Only actual domain values have indicators</td></tr>
+<tr><td>Order</td><td>A chain of thresholds between consecutive domain values</td><td>Threshold differences use the gaps between actual values</td></tr>
+<tr><td>BinaryValue (<code>Log</code> in the AST)</td><td>Actual numeric value in binary, using two’s complement for signed domains</td><td>Domain constraints exclude holes</td></tr>
+<tr><td>BinaryOffset</td><td>Unsigned displacement from the domain minimum</td><td>Domain constraints exclude disallowed displacements</td></tr>
+<tr><td>BinaryRank</td><td>Unsigned ordinal in the sorted domain</td><td>Each ordinal denotes an actual domain value</td></tr>
+<tr><td>SignMagnitude</td><td>Magnitude bits and a sign bit</td><td>Domain constraints exclude holes and duplicate zero</td></tr>
+</tbody>
+</table>
+</div>
+<p><code>SATInt</code> records metadata, a <code>SATIntEncoding</code>, Boolean representation operands and inclusive bounds. Rank additionally retains the canonical domain intervals in its encoding variant. These are semantic expressions, not solver literals.</p>
+<p>Direct and Order yield weighted views over their indicators and thresholds. BinaryValue and BinaryOffset give affine weighted views over their bits. Dense BinaryRank is affine too; sparse BinaryRank requires decoding ordinals into values. Rank and offset therefore remain distinct even when their bit widths coincide.</p>
+<p>For SignMagnitude, each magnitude bit contributes <code>2^i * bit - 2^(i+1) * (sign AND bit)</code>. Shared Boolean gates represent the conjunctions. This avoids converting linear relations through two’s complement merely to compare or sum signed values.</p>
+<p>Linear constraints use the selected PB provider across these representations. Nonlinear multiplication, division, remainder and power still use Oxide’s bit circuits where the libraries expose no suitable public result-value encoder. There is no universal fastest representation: domain size, gaps and constraint structure all matter. Compact makes basic structural choices; explicit pins and portfolio heuristics allow alternatives.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="creating-sat-transformation-rules"><a class="header" href="#creating-sat-transformation-rules">Creating SAT transformation rules</a></h1>
+<p>SAT rules refine semantic expressions and record encoding decisions. They do not create CNF clauses or solver literals. Prefer an existing numeric view and a library-backed decision over a new circuit implementation.</p>
+<ol>
+<li>Validate the target expression and operand types; decline until required representations are available.</li>
+<li>Extract ordered operands or actual-value integer views using shared helpers. Preserve sparse domain values, matrix order and any guaranteed representation groups.</li>
+<li>Construct the semantic result. Linear comparisons use integer-relation or PB decisions; table, element and allDifferent have dedicated decisions. Nonlinear rules can still build Boolean expressions for their circuits.</li>
+<li>If a result needs a named Boolean or integer auxiliary, allocate it in the symbol table and record its definition. Do not assign a solver literal here.</li>
+<li>Return <code>RuleEffect::sat</code> when adding SAT decisions, or <code>RuleEffect::pure</code> for a semantic decomposition. Propagate output domains and representation constraints separately.</li>
+</ol>
+<p>Leave an encoding selection unresolved unless the rule itself fixes an algorithm. After rewriting, <code>rule_engine/encoding_selection.rs</code> applies explicit family pins or the configured heuristic and records the selection’s provenance. The adaptor then validates and compiles the decisions directly through RustSAT and Pindakaas.</p>
+<p>All integer representations share the <code>SAT</code> rule set. Representation-specific rules must decline mismatched operands; native weighted views let common linear rules handle several representations together. Two’s-complement fallback remains useful for nonlinear operations, rather than being the default path for linear arithmetic.</p>
+<p>Use the current registered rules as priority examples: representation materialisation must precede rules that inspect numeric views, compound decomposition must precede scalar-only lowering, and final assertion handling must preserve Boolean context. The former fixed 4000-level priority table no longer describes this pipeline.</p>
+<p>Useful starting points are <code>backends/sat/pseudo_boolean.rs</code>, <code>backends/sat/table.rs</code> and <code>backends/sat/boolean.rs</code>. Representation-dependent refinement belongs under the corresponding type’s representation-specific vertical rules. See <a href="#sat-booleans">Boolean compilation</a> for assertion and full-equivalence requirements.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="sat-booleans"><a class="header" href="#sat-booleans">SAT Booleans</a></h1>
+<p>CNF is generated only in the adaptor. Assertion context is preserved: an asserted conjunction compiles its children directly, and a disjunction or implication can become a clause without an auxiliary output for every subexpression.</p>
+<p>For example, asserting <code>((a AND b) -&gt; (c OR NOT d)) AND e</code> produces the clauses <code>(NOT a OR NOT b OR c OR NOT d)</code> and <code>(e)</code>. Larger asserted formulas may need witnesses, but a witness used only positively needs only the direction from the witness to its formula.</p>
+<p>Boolean expressions used as values, numeric operands or named definitions require full equivalence. A shared gate therefore records both directions, as in <code>x &lt;-&gt; (p OR q)</code>. Negation uses the opposite literal instead of a new gate. Constants, duplicates, complements and known aliases simplify inputs before clause generation through RustSAT’s atomic encodings.</p>
+<p>The cache distinguishes positive assertion witnesses from equivalent gates. If a later incremental batch needs a witness as a value, compilation adds the missing reverse implication before reusing it. This distinction preserves both truth values for reification while avoiding unnecessary clauses for assertions.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="tricks-for-sat"><a class="header" href="#tricks-for-sat">Tricks for SAT</a></h1>
 <p>This page documents the clever implementation patterns and “tricks” used across different SAT rules in conjure-oxide. You might reuse them in other rules.</p>
@@ -3372,21 +3283,17 @@ $$</p>
 <li><strong>Example:</strong> For <code>abs(x)</code>, the output bit for value <code>5</code> is the result of <code>input_bit(-5) OR input_bit(5)</code>.</li>
 </ul>
 <h2 id="static-outcome-construction-order-encoded-division"><a class="header" href="#static-outcome-construction-order-encoded-division">Static Outcome Construction (Order-Encoded Division)</a></h2>
-<p>This thing is in an upcoming division rule PR for <a href="https://github.com/conjure-cp/conjure-oxide/pull/1775">order encoding</a> is…</p>
 <p>Instead of dynamically scanning for the boundary, the code uses adjacent bits to construct a negated condition for every exact pair $(i, j)$ and directly appends the statically computed outcome ($Q \ge m$ or $\neg(Q \ge m)$) to enforce the entire order-encoded quotient array simultaneously via De Morgan’s clauses.</p>
-<h2 id="pairwise-dnf-style-accumulation"><a class="header" href="#pairwise-dnf-style-accumulation">Pairwise DNF-style Accumulation</a></h2>
-<p>For operations involving multiple operands like <code>sum(...)</code>, implementing a single massive circuit is difficult.</p>
-<ul>
-<li><strong>Logic:</strong> Accumulate the result pairwise. Start with the first operand as the “accumulator,” then for each subsequent operand, perform a pairwise “addition” where every possible sum $k = i + j$ is represented as an OR of ANDs.</li>
-</ul>
+<h2 id="weighted-view-accumulation"><a class="header" href="#weighted-view-accumulation">Weighted-view accumulation</a></h2>
+<p>Linear sums combine signed weighted Boolean terms without enumerating every pair of possible operand values. The adaptor folds constants, repeated literals and complements before invoking the selected PB provider. This also lets native representations share one numeric relation implementation.</p>
 <h2 id="common-range-normalisation-zerosign-padding"><a class="header" href="#common-range-normalisation-zerosign-padding">Common-Range Normalisation (Zero/Sign Padding)</a></h2>
-<p>To simplify rule logic (especially zips and index lookups), we normalize all operands to a shared range before processing.</p>
+<p>To simplify rule logic (especially zips and index lookups), we normalise all operands to a shared range before processing.</p>
 <ul>
 <li><strong>Logic:</strong> Calculate a global min/max across all operands. Pad Direct-encoded integers with <code>false</code> bits and Order-encoded integers with <code>true</code> (prefix) or <code>false</code> (postfix) bits to ensure all bit-vectors have the same length and align to the same values.</li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="direct-encoding-absolute-value"><a class="header" href="#direct-encoding-absolute-value">Direct Encoding Absolute Value</a></h1>
-<h2 id="overview-10"><a class="header" href="#overview-10">Overview</a></h2>
+<h2 id="overview-9"><a class="header" href="#overview-9">Overview</a></h2>
 <pre><code class="language-text">|SATInt(a)| ~&gt; SATInt(b)
 </code></pre>
 <h2 id="what-this-rule-does"><a class="header" href="#what-this-rule-does">What this rule does</a></h2>
@@ -3407,7 +3314,7 @@ $$</p>
 <p>The code is the best place to check the exact bucket construction and the special-case handling for single-element buckets.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="direct-encoding-division"><a class="header" href="#direct-encoding-division">Direct Encoding Division</a></h1>
-<h2 id="overview-11"><a class="header" href="#overview-11">Overview</a></h2>
+<h2 id="overview-10"><a class="header" href="#overview-10">Overview</a></h2>
 <pre><code class="language-text">SafeDiv(SATInt(a), SATInt(b)) ~&gt; SATInt(c)
 </code></pre>
 <h2 id="what-this-rule-does-1"><a class="header" href="#what-this-rule-does-1">What this rule does</a></h2>
@@ -3427,29 +3334,21 @@ $$</p>
 </ol>
 <p>This exploits the fact that exactly one numerator bit and exactly one denominator bit will be true, driving exactly one quotient bit to be true.</p>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="direct-encoding-sat-summation"><a class="header" href="#direct-encoding-sat-summation">Direct Encoding SAT Summation</a></h1>
-<h2 id="overview-12"><a class="header" href="#overview-12">Overview</a></h2>
-<pre><code class="language-text">Sum(SATInt(a), SATInt(b), ...) ~&gt; SATInt(c)
-</code></pre>
-<h2 id="what-this-rule-does-2"><a class="header" href="#what-this-rule-does-2">What this rule does</a></h2>
-<ul>
-<li>Normalises all operands to a shared value range.</li>
-<li>Builds the sum pairwise, using <code>tseytin_and</code> for each value pair and <code>tseytin_or</code> to accumulate matching terms.</li>
-<li>Propagates the resulting range after every addition step.</li>
-<li>Handles the empty-input case by returning the constant zero.</li>
-</ul>
+<h1 id="direct-encoding-summation"><a class="header" href="#direct-encoding-summation">Direct encoding summation</a></h1>
+<p>A direct-encoded operand contributes one weighted indicator for each actual domain value. A sum combines these weighted views and uses the chosen PB provider, rather than enumerating every pair of possible summands into a new direct-encoded result.</p>
+<p>When the sum needs an integer result for a nonlinear operation, a represented auxiliary and a PB equality connect that result to the weighted sum. See <a href="#integer-summation">integer summation</a> for the shared lowering path.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="direct-encoding-toint"><a class="header" href="#direct-encoding-toint">Direct Encoding toInt</a></h1>
-<h2 id="overview-13"><a class="header" href="#overview-13">Overview</a></h2>
+<h2 id="overview-11"><a class="header" href="#overview-11">Overview</a></h2>
 <pre><code class="language-text">toInt(bool) ~&gt; SATInt
 </code></pre>
 <h2 id="method"><a class="header" href="#method">Method</a></h2>
 <ul>
 <li>Given a Boolean condition P, we want to set <code>r0</code> true when the condition does not hold: $r_0 \leftrightarrow ¬P$; and set <code>r1</code> true when condition P does hold: $r_1 \leftrightarrow P$.</li>
 <li>Each of these biconditionals are encoded as two clauses: one for each direction of the biconditional.</li>
-<li>We return a new CNF reduction with the vector <code>[r_0, r_1]</code> encoded as a direct SATInt.</li>
+<li>The model retains the semantic indicators; the adaptor compiles their Boolean definitions into clauses.</li>
 </ul>
-<h2 id="example-3"><a class="header" href="#example-3">Example</a></h2>
+<h2 id="example-2"><a class="header" href="#example-2">Example</a></h2>
 <p>Consider the following problem -</p>
 <pre><code class="language-essence">find x, y : int(0..3)
 such that x = toInt(y=2)
@@ -3471,7 +3370,7 @@ such that x = toInt(y=2)
 <p><code>x=1</code> only when the condition <code>y=2</code> holds, and <code>x=0</code> otherwise.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="log-encoding-absolute-value"><a class="header" href="#log-encoding-absolute-value">Log Encoding Absolute Value</a></h1>
-<h2 id="overview-14"><a class="header" href="#overview-14">Overview</a></h2>
+<h2 id="overview-12"><a class="header" href="#overview-12">Overview</a></h2>
 <pre><code class="language-text">|SATInt(a)| -&gt; SATInt(b)
 </code></pre>
 <h2 id="rule-method"><a class="header" href="#rule-method">Rule Method</a></h2>
@@ -3481,7 +3380,8 @@ such that x = toInt(y=2)
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="log-encoding-comparison-inequalities"><a class="header" href="#log-encoding-comparison-inequalities">Log Encoding Comparison inequalities</a></h1>
-<h2 id="overview-15"><a class="header" href="#overview-15">Overview</a></h2>
+<p>Model-level comparisons now use actual-value integer views and the selected PB provider. The bitwise construction below describes circuit logic used when binary operands are required; signed operands need sign extension rather than unconditional zero padding. See <a href="#sat-integer-representations">integer representations</a>.</p>
+<h2 id="overview-13"><a class="header" href="#overview-13">Overview</a></h2>
 <pre><code class="language-text">SATInt(a) &lt; SATInt(b) ~&gt; Bool
 SATInt(a) &lt;= SATInt(b) ~&gt; Bool
 SATInt(a) &gt; SATInt(b) ~&gt; Bool
@@ -3536,7 +3436,7 @@ $$</p>
 <p>Note that in the final expression, $(a_i &gt; b_i)$ is swapped for $(b_i &gt; a_i)$ - this is because the sign bit should be treated inversely.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="log-encoding-division--modulo"><a class="header" href="#log-encoding-division--modulo">Log Encoding Division &amp; Modulo</a></h1>
-<h2 id="overview-16"><a class="header" href="#overview-16">Overview</a></h2>
+<h2 id="overview-14"><a class="header" href="#overview-14">Overview</a></h2>
 <pre><code class="language-text">SafeDiv(SATInt(a), SATInt(b)) ~&gt; SATInt(c)
 SafeMod(SATInt(a), SATInt(b)) ~&gt; SATInt(c)
 </code></pre>
@@ -3560,7 +3460,8 @@ $$</p>
 $$</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="log-encoding-equality-and-inequality"><a class="header" href="#log-encoding-equality-and-inequality">Log Encoding Equality and Inequality</a></h1>
-<h2 id="overview-17"><a class="header" href="#overview-17">Overview</a></h2>
+<p>Model-level comparisons now use actual-value integer views and the selected PB provider. The bitwise construction below describes circuit logic used when binary operands are required; signed operands need sign extension rather than unconditional zero padding. See <a href="#sat-integer-representations">integer representations</a>.</p>
+<h2 id="overview-15"><a class="header" href="#overview-15">Overview</a></h2>
 <pre><code class="language-text">SATInt(a) = SATInt(b) ~&gt; Bool
 SATInt(a) != SATInt(b) ~&gt; Bool
 </code></pre>
@@ -3592,7 +3493,7 @@ $$</p>
 $$</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="log-encoding-multiplication"><a class="header" href="#log-encoding-multiplication">Log Encoding Multiplication</a></h1>
-<h2 id="overview-18"><a class="header" href="#overview-18">Overview</a></h2>
+<h2 id="overview-16"><a class="header" href="#overview-16">Overview</a></h2>
 <pre><code class="language-text">Poduct(SATInt(a), SATInt(b), ...) ~&gt; SATInt(c)
 </code></pre>
 <h2 id="rule-method-3"><a class="header" href="#rule-method-3">Rule Method</a></h2>
@@ -3604,55 +3505,19 @@ $$</p>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="log-encoding-negation"><a class="header" href="#log-encoding-negation">Log Encoding Negation</a></h1>
-<h2 id="overview-19"><a class="header" href="#overview-19">Overview</a></h2>
+<h2 id="overview-17"><a class="header" href="#overview-17">Overview</a></h2>
 <pre><code class="language-text">-SATInt(a) ~&gt; SATInt(b)
 </code></pre>
 <p>Negating a 2s complement integer is very simple by design, negative a log integer just means inverting all bits and adding 1.</p>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="log-encoding-summation"><a class="header" href="#log-encoding-summation">Log Encoding Summation</a></h1>
-<h2 id="overview-20"><a class="header" href="#overview-20">Overview</a></h2>
-<pre><code class="language-text">Sum(SATInt(a), SATInt(b), ...) ~&gt; SATInt(c)
-</code></pre>
-<h2 id="rule-method-4"><a class="header" href="#rule-method-4">Rule Method</a></h2>
-<ul>
-<li>Determine the output range</li>
-<li>Pad all operands to match the output bitwidth to prevent overflow</li>
-<li>Split the expression into a series of 2-nary summations</li>
-<li>Use an binary adder circuit to perform each summation</li>
-</ul>
-<h3 id="2-nary-summation-logic"><a class="header" href="#2-nary-summation-logic">2-nary Summation Logic</a></h3>
-<p>For two bitvectors that have been made the same length:</p>
-<p>$$
-\begin{align}
-A = [a_1, a_2, \dots, a_{n}],\
-B = [b_1, b_2, \dots, b_{n}]
-\end{align}
-$$</p>
-<p>Specifying the output</p>
-<p>$$
-S = A + B = [s_1, s_2, \dots, s_{n}]
-$$</p>
-<p><strong>Carry</strong></p>
-<p>$$
-\begin{align}
-c_1 &amp;= a_1 \land b_1 \
-c_2 &amp;= (a_2 \land b_2) \lor ((a_2 \oplus b_2) \land c_1) \
-\vdots \
-c_{n-1} &amp;= (a_{n-1} \land b_{n-1}) \lor ((a_{n-1} \oplus b_{n-1}) \land c_{n-2})
-\end{align}
-$$</p>
-<p><strong>Sum</strong></p>
-<p>$$
-\begin{align}
-s_1 &amp;\equiv \boxed{a_1 \oplus b_1} \
-s_2 &amp;\equiv \boxed{a_2 \oplus b_2 \oplus c_1} \
-\vdots \
-s_{n} &amp;\equiv \boxed{a_{n} \oplus b_{n} \oplus c_{n-1}}
-\end{align}
-$$</p>
+<h1 id="integer-summation"><a class="header" href="#integer-summation">Integer summation</a></h1>
+<p>Linear sums compile through actual-value weighted views rather than materialised ripple-adder results. Each operand contributes its constant and signed Boolean terms. A comparison of the sum becomes an integer-relation or pseudo-Boolean decision, and the selected RustSAT or Pindakaas provider creates CNF in the adaptor.</p>
+<p>For example, <code>x + y &lt;= k</code> combines the two views and subtracts their constant contributions from <code>k</code>. The adaptor folds constants, aggregates repeated literals and complements, and converts signed coefficients into positive weights over appropriately polarised literals. Guaranteed representation groups are retained for structured Pindakaas inputs where possible.</p>
+<p>When a sum is itself an operand of a nonlinear operation, Oxide introduces an integer auxiliary in the selected representation and a PB equality relating its view to the sum. Multiplication, division, remainder and power can then use the existing nonlinear bit circuits. Addition internal to those circuits remains circuit logic; ordinary model-level summation does not pass through that path.</p>
+<p>The relevant implementations are <code>backends/sat/pseudo_boolean.rs</code> and <code>backends/sat/linear.rs</code> in the rules crate, and <code>solver/adaptors/rustsat/decisions/pseudo_boolean.rs</code> in core.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="order-encoding-division"><a class="header" href="#order-encoding-division">Order Encoding Division</a></h1>
-<h2 id="overview-21"><a class="header" href="#overview-21">Overview</a></h2>
+<h2 id="overview-18"><a class="header" href="#overview-18">Overview</a></h2>
 <p>Ongoing work in <a href="https://github.com/conjure-cp/conjure-oxide/pull/1775/changes#diff-9bedf2e9d7c33b08fce00ef157ab3f72197bd811e0f482045aaa3efe7aaf4441R243-R358">#1775</a></p>
 <pre><code class="language-text">SafeDiv(SATInt(a), SATInt(b)) ~&gt; SATInt(c)
 </code></pre>
@@ -3676,11 +3541,11 @@ When the division results in a quotient <code>k</code>, we must create a valid o
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="order-encoding-equality-and-inequality"><a class="header" href="#order-encoding-equality-and-inequality">Order Encoding Equality and Inequality</a></h1>
-<h2 id="overview-22"><a class="header" href="#overview-22">Overview</a></h2>
+<h2 id="overview-19"><a class="header" href="#overview-19">Overview</a></h2>
 <pre><code class="language-text">SATInt(a) = SATInt(b) ~&gt; Bool
 SATInt(a) != SATInt(b) ~&gt; Bool
 </code></pre>
-<h2 id="rule-method-5"><a class="header" href="#rule-method-5">Rule Method</a></h2>
+<h2 id="rule-method-4"><a class="header" href="#rule-method-4">Rule Method</a></h2>
 <ul>
 <li>Ensure both operands are in order encoding and have the same number of bits.</li>
 <li>Form a boolean expression by iterating over both bitvectors and asserting that corresponding bits are equivalent.</li>
@@ -3709,10 +3574,10 @@ $$</p>
 $$</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="order-encoding-inequality"><a class="header" href="#order-encoding-inequality">Order Encoding Inequality</a></h1>
-<h2 id="overview-23"><a class="header" href="#overview-23">Overview</a></h2>
+<h2 id="overview-20"><a class="header" href="#overview-20">Overview</a></h2>
 <pre><code class="language-text">SATInt(a) &lt; / &gt; / &lt;= / &gt;= SATInt(b) ~&gt; Bool
 </code></pre>
-<h2 id="what-this-rule-does-3"><a class="header" href="#what-this-rule-does-3">What this rule does</a></h2>
+<h2 id="what-this-rule-does-2"><a class="header" href="#what-this-rule-does-2">What this rule does</a></h2>
 <ul>
 <li>Normalises both operands to a shared range before comparing them.</li>
 <li>Uses <code>&lt;</code> as the primitive comparison.</li>
@@ -3724,10 +3589,10 @@ $$</p>
 <p>That idea becomes a small Tseytin chain: negate the left bit, AND it with the right bit, then OR the result into the accumulator.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="order-encoding-negation"><a class="header" href="#order-encoding-negation">Order Encoding Negation</a></h1>
-<h2 id="overview-24"><a class="header" href="#overview-24">Overview</a></h2>
+<h2 id="overview-21"><a class="header" href="#overview-21">Overview</a></h2>
 <pre><code class="language-text">-SATInt(a) ~&gt; SATInt(b)
 </code></pre>
-<h2 id="rule-method-6"><a class="header" href="#rule-method-6">Rule Method</a></h2>
+<h2 id="rule-method-5"><a class="header" href="#rule-method-5">Rule Method</a></h2>
 <ul>
 <li>Computes the new domain for the resultant value (the old min and old max both get negated).</li>
 <li>Creates a new output bitvector initially containing a single <code>true</code> bit (add padding to the front).</li>
@@ -3740,7 +3605,7 @@ $$</p>
 <li>But order encoding wants $a \geq b$, so we convert the above to $(x \leq k) \leftrightarrow ¬(x \geq k+1)$.</li>
 <li>The $+1$ creates an out-of-range index, so we need to account for this by inserting a <code>false</code> (which is then negated to <code>true</code>).</li>
 </ul>
-<h2 id="example-4"><a class="header" href="#example-4">Example</a></h2>
+<h2 id="example-3"><a class="header" href="#example-3">Example</a></h2>
 <p>Consider the following example which illustrates what this rule does with a given input.</p>
 <p>Say we have domain <code>D = [-3..2]</code>, and <code>x = 1</code>, so we want to find <code>y = -x = -1</code>. We start with <code>[1, 1, 1, 1, 1, 0]</code>.</p>
 <p>We take the negation of the domain <code>D</code> to get the new domain <code>D' = [-2..3]</code>, and our target bitvector for <code>y</code> is <code>[1, 1, 0, 0, 0, 0]</code>.</p>
@@ -3752,7 +3617,7 @@ $$</p>
 <p>We now have an order representation for <code>-1</code> as desired.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="order-encoding-toint"><a class="header" href="#order-encoding-toint">Order Encoding toInt</a></h1>
-<h2 id="overview-25"><a class="header" href="#overview-25">Overview</a></h2>
+<h2 id="overview-22"><a class="header" href="#overview-22">Overview</a></h2>
 <pre><code class="language-text">toInt(bool) ~&gt; SATInt
 </code></pre>
 <h2 id="method-1"><a class="header" href="#method-1">Method</a></h2>
@@ -3870,9 +3735,9 @@ $$</p>
 <li>dedicated regression tests around mid-search variable/constraint injection behaviour.</li>
 </ul>
 <h2 id="testing-coverage"><a class="header" href="#testing-coverage">Testing Coverage</a></h2>
-<p>CDP behaviour is exercised in integration tests under:</p>
+<p>CDP behaviour is exercised in exhaustive tests under:</p>
 <ul>
-<li><code>test-suite/tests/integration/dominance/</code></li>
+<li><code>test-suite/tests/exhaustive/dominance/</code></li>
 </ul>
 <p>These include both explicit dominance formulas and <code>pareto(...)</code> syntax, across integer and boolean cases, and across multiple solver families.</p>
 <div style="break-before: page; page-break-before: always;"></div>
@@ -3918,7 +3783,7 @@ $$</p>
             )
     theRule _ = na "rule_Comprehension"
 </code></pre>
-<h3 id="example-5"><a class="header" href="#example-5">Example:</a></h3>
+<h3 id="example-4"><a class="header" href="#example-4">Example:</a></h3>
 <ul>
 <li>here the quantified variable is q3, the set is A, the domain of the matrix is int(0..6). the GenInExpr “q3 &lt;- A” is rewritten using the domain and the Occurrence matrix.</li>
 <li>the larger context is an and() comprehension representing the statement “for all q3 in A: q3 in B”, where “for all q3 in A” comes from the GenInExpr (see <a href="https://github.com/conjure-cp/conjure-oxide/wiki/Conjure-Horizontal-Set-Rules#notes">Horizontal Rules - Notes</a>)</li>
@@ -4150,7 +4015,7 @@ and([C_Occurrence[q4] -&gt; or([A_Occurrence[q5] ∧ B_Occurrence[q5] ∧ q5 = q
                       ++ gocAfter
              )
 </code></pre>
-<h3 id="example-6"><a class="header" href="#example-6">Example:</a></h3>
+<h3 id="example-5"><a class="header" href="#example-5">Example:</a></h3>
 <ul>
 <li>set-comprehension-literal rule appears within model: “letting A be {1,5,3}, find B : set of int(0..6), such that B subsetEq A”</li>
 <li>here the body of the comprehension is “q3 = q2”, the gensOrConds is the single Generator “q3 &lt;- {1,3,5}”</li>
@@ -4335,7 +4200,7 @@ This means the body of the and() comprehension must apply to all members (q3) of
              )
      theRule _ = na "rule_SupsetEq"
 </code></pre>
-<h3 id="example-6-1"><a class="header" href="#example-6-1">Example:</a></h3>
+<h3 id="example-6"><a class="header" href="#example-6">Example:</a></h3>
 <pre><code>Picking the first option: Question 1: A supsetEq B
      Answer 1: set-subsetEq: Horizontal rule for set supsetEq
                A supsetEq B ~~&gt; B subsetEq A
@@ -4642,7 +4507,7 @@ created: 16-02-24
 <blockquote>
 <p>NOTE: Once the rewrite engine API is finalised, we should possibly make a separate page for it.</p>
 </blockquote>
-<h1 id="overview-26"><a class="header" href="#overview-26">Overview</a></h1>
+<h1 id="overview-23"><a class="header" href="#overview-23">Overview</a></h1>
 <p>Conjure uses Essence, a high-level DSL for constraints modelling, and converts it into a solver-specific representation of the problem.
 To do that, we parse the Essence file into an AST, then use a rule engine to walk the expression tree and rewrite constraints into a format that is accepted by the solver before passing the AST to a solver adapter.</p>
 <p>The high-level process is as follows:</p>
@@ -4971,6 +4836,16 @@ NameDomain := Name ":" Domain
 <p>When defining a Set type, it may have attributes and an inner domain. For example, the domain <code>set (size 2) of int(1..3)</code> could have valid values like <code>{1,2}</code>, <code>{1,3}</code>, <code>{2,3}</code>. The ‘inner’ domain is <code>int(1..3)</code>, from which the values that make up the set are pulled.</p>
 </blockquote>
 <p>The most common attribute is cardinality (which restricts the range objects in an object), but they are type-specific and there is a large variety.</p>
+<h2 id="representation-preferences"><a class="header" href="#representation-preferences">Representation preferences</a></h2>
+<p>Any domain can carry a <em>representation preference</em>: the short name of the representation a declaration should be given, rather than leaving the choice to the heuristic. It is stored on the domain node it was written on and is not inherited by the domains inside it, so <code>matrix (representation components) indexed by [int(1..3)] of int(representation order, 1..4)</code> pins the matrix layout and, separately, the encoding of its entries.</p>
+<p>Where it lives depends on the domain:</p>
+<ul>
+<li><code>int</code>, <code>tuple</code>, <code>record</code>, <code>variant</code> and <code>matrix</code> carry it as an <code>Option&lt;String&gt;</code> field on their [<code>GroundDomain</code>] and [<code>UnresolvedDomain</code>] variants.</li>
+<li><code>set</code>, <code>mset</code>, <code>sequence</code>, <code>function</code>, <code>relation</code>, <code>partition</code> and <code>permutation</code> carry it in their attribute struct (<code>SetAttr::representation</code> and so on).</li>
+</ul>
+<p>[<code>Domain::representation_preference</code>] reads it, [<code>Domain::set_representation_preference</code>] writes it and [<code>Domain::has_representation_preference</code>] looks for one anywhere in a domain tree.</p>
+<p>In Essence it is the attribute <code>representation &lt;name&gt;</code>, written just after the first word of the domain. <code>int</code> and <code>tuple</code> already use their parentheses for ranges and members, so it goes first inside them (<code>int(representation order, 1..4)</code>, <code>tuple (representation packed, int(1..3), bool)</code>); <code>matrix</code>, <code>record</code> and <code>variant</code> take it as their only attribute (<code>record (representation packed) {...}</code>); every other domain adds it to its attribute list (<code>function (representation explicit, total) ...</code>). <code>Display</code> and the grammar agree, so a printed domain parses back to an equal one. The interactive heuristic uses this to print each option as a declaration you can paste into the model.</p>
+<p>A preference is honoured when that representation is applicable to the declaration; otherwise selection falls back to the heuristic, exactly as for sets.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="functions"><a class="header" href="#functions">Functions</a></h1>
 <h2 id="what-are-functions"><a class="header" href="#what-are-functions">What Are Functions</a></h2>
@@ -5213,32 +5088,61 @@ This was quickly attempted in <a href="https://github.com/conjure-cp/conjure-oxi
 <h2 id="types-of-tests"><a class="header" href="#types-of-tests">Types of Tests</a></h2>
 <p>Conjure-Oxide currently has four forms of tests:</p>
 <ul>
-<li>Integration tests</li>
-<li><a href="#overview-28">Custom tests</a></li>
+<li>Exhaustive tests</li>
+<li><a href="#overview-25">Custom tests</a></li>
 <li><a href="#roundtrip-testing">Roundtrip tests</a></li>
 <li>A small number of unit tests</li>
 </ul>
 <h2 id="test-generation"><a class="header" href="#test-generation">Test generation</a></h2>
-<p>The test generation occurs in the file <code>./test-suite/build.rs</code>. This generates the integration, custom and roundtrip tests all in a similar manner.</p>
+<p>The test generation occurs in the file <code>./test-suite/build.rs</code>. This generates the exhaustive, custom and roundtrip tests all in a similar manner.</p>
 <p>For each test framework we define a base directory for all these tests:</p>
 <ul>
-<li><code>./test-suite/tests/integration</code></li>
+<li><code>./test-suite/tests/exhaustive</code></li>
 <li><code>./test-suite/tests/custom</code></li>
 <li><code>./test-suite/tests/roundtrip</code></li>
 </ul>
 <p>Any sub-directory of these defined directories containing the necessary files to make a test, will be considered a test.</p>
 <ul>
-<li>For integration and roundtrip tests this is containing a singular file with a <code>.essence</code> or <code>.eprime</code> extension.</li>
+<li>For exhaustive and roundtrip tests this is containing a singular file with a <code>.essence</code> or <code>.eprime</code> extension.</li>
 <li>For custom tests this is containing a <code>run.sh</code> script file.</li>
 </ul>
 <p>Once these tests are identified a Rust <code>#[test]</code> is created using the defined templates (<code>&lt;test type&gt;_test_template</code>). This test is within the pre-generated file <code>gen_tests_&lt;test type&gt;.rs</code> within the specified output directory (<code>OUT_DIR</code>).</p>
 <p>This template contains the code to call a new function which carries out the test. The values passed to the template determines its test name, through sanitation of the path, and determine the arguments to this test function.</p>
 <p>Finally, the test function itself includes the line <code>include!(concat!(env!("OUT_DIR"), "/gen_tests_&lt;test type&gt;.rs"));</code>, such that it is accessible during the test through insertion using the include macro.</p>
 <p>This format improves scalability and allows new tests to be created by just creating the input file.</p>
+<h2 id="running-a-subset-of-tests"><a class="header" href="#running-a-subset-of-tests">Running a subset of tests</a></h2>
+<p>Pass <code>TEST_ARGS</code> to select tests by name or pass other arguments directly to
+both <code>cargo test</code> (doctests) and <code>cargo nextest run</code>:</p>
+<pre><code class="language-bash">make test TEST_ARGS="alldiff"
+make test-accept TEST_ARGS="tests_exhaustive_basic_alldiff"
+make test-accept-with-max-times TEST_ARGS="tests_exhaustive_basic_alldiff"
+make test TEST_ARGS="-p conjure-cp-core"
+</code></pre>
+<p>With no <code>TEST_ARGS</code>, these targets run all tests. Arguments must be supported by
+both runners; for nextest-specific options such as <code>-E</code>, use <code>tools/nextest.py</code>
+directly as described below.</p>
+<p>Timing and concurrency settings use the same Make argument syntax and work with
+all three targets:</p>
+<pre><code class="language-bash">make test TEST_ARGS="alldiff" MAX_EXPECTED_TIME=10 TEST_CASE_TIMEOUT=30 NEXTEST_TEST_THREADS=4
+make test-accept TEST_ARGS="alldiff" MAX_EXPECTED_TIME=10 TEST_CASE_TIMEOUT=30 NEXTEST_TEST_THREADS=4
+</code></pre>
+<p><code>MAX_EXPECTED_TIME</code> skips exhaustive and custom tests with a recorded
+<code>expected-time</code> above the given number of seconds. Tests without a recorded time
+still run; roundtrip and unit tests are unaffected. Omit it or use <code>0</code> to disable
+this filter.</p>
+<p><code>TEST_CASE_TIMEOUT</code> stops and fails each exhaustive test that exceeds the given
+number of seconds. It does not apply to other test types. Omit it to disable the
+timeout; <code>0</code> means an immediate timeout.</p>
+<p><code>NEXTEST_TEST_THREADS</code> sets how many tests nextest runs simultaneously, for
+example <code>4</code> for four tests or <code>1</code> for sequential execution. It does not control
+doctest concurrency. Omit it to use nextest’s configured default.</p>
+<p>Make exports these settings to the test runners. For direct Cargo runs, set
+them as environment variables instead, for example
+<code>MAX_EXPECTED_TIME=10 TEST_CASE_TIMEOUT=30 cargo nextest run -p test-suite</code>.</p>
 <h2 id="scheduling-longer-tests-first"><a class="header" href="#scheduling-longer-tests-first">Scheduling longer tests first</a></h2>
 <p><code>make test</code>, <code>make test-accept</code>, <code>make test-accept-with-max-times</code>, and the coverage
 script use <code>tools/nextest.py</code> to run tests with longer <code>expected-time</code> values first.
-This requires Python 3.11 or newer. Integration test timings come from
+This requires Python 3.11 or newer. Exhaustive test timings come from
 <code>stats.toml</code>; custom test timings come from <code>config.toml</code>. Tests without timings
 (including roundtrip and unit tests) retain nextest’s default priority.</p>
 <p>For a direct nextest run with the same scheduling, use:</p>
@@ -5288,7 +5192,7 @@ last-updated: 21-12-25
 <p>There are several areas which should be tested for correctness in Conjure-Oxide: that the Essence is correctly parsed; that the correct Essence translation is generated; that the correct rules are applied in the correct order; and finally that the correct solution is reached by Minion. For something to be ‘correct’ in Conjure-Oxide, it means it must behave as expected. As Conjure-Oxide reimplements Conjure and Savile Row, the expected behaviour is that of the Conjure suite. As such, correctness testing is performed exclusively comparative to the results produced by this suite.
 Correctness testing as implemented is looking to ensure that all expected files match the files which are actually produced. Where there is a difference, the initial assumption is that Conjure-Oxide has the mistake. This is not necessarily always correct - the Conjure suite may have bugs or areas where it is not producing the expected outcome - but usually is.</p>
 <h3 id="current-correctness-testing"><a class="header" href="#current-correctness-testing">Current Correctness Testing</a></h3>
-<p>Correctness testing is the main form of testing performed in Conjure-Oxide at present, mainly through integration testing. Integration testing tests how the whole application works together as a whole, and as such is the most applicable to test all areas of testing needing to be done in Conjure-Oxide. In the current testing implementation, a test model is produced, and then the parse, rule-based transformation and result file are compared against those produced by calling the same test case on Conjure. In this, we assume that the result produced by the Conjure suite is always going to be correct.  Theoretically, this is completely functional - as Conjure-Oxide is a reimplementation, any bugs which exist in Conjure or Savile Row could also exist in Conjure-Oxide without causing Conjure-Oxide to violate it’s correctness. However, this defeats the point of an evolving project, so assuming the complete correctness of the Conjure suite is not sufficient for testing.</p>
+<p>Correctness testing is the main form of testing performed in Conjure-Oxide at present, mainly through exhaustive testing. These tests check how the whole application works together, and as such are the most applicable to test all areas of testing needing to be done in Conjure-Oxide. In the current testing implementation, a test model is produced, and then the parse, rule-based transformation and result file are compared against those produced by calling the same test case on Conjure. In this, we assume that the result produced by the Conjure suite is always going to be correct.  Theoretically, this is completely functional - as Conjure-Oxide is a reimplementation, any bugs which exist in Conjure or Savile Row could also exist in Conjure-Oxide without causing Conjure-Oxide to violate it’s correctness. However, this defeats the point of an evolving project, so assuming the complete correctness of the Conjure suite is not sufficient for testing.</p>
 <h3 id="comparative-correctness-testing"><a class="header" href="#comparative-correctness-testing">Comparative Correctness Testing</a></h3>
 <p>As it is possible to perform the testing comparatively, the current implementation forms a functional basis for any ideal implementation, because it is built on this comparison. The current implementation functions well (although with limitations, as addressed below) in showing a degree of correctness, however it is not necessarily holistic enough to show the full correctness of the project. The primary solution for this issue is simply increasing the test coverage through developing a broader repository of models to be tested. Conjure has a very broad set of translation rules, meaning that there is a large number of rules which can be reimplemented in Conjure-Oxide. This enables a demonstration of the functionality of Conjure-Oxide in more scenarios, by ensuring not only are all rules tested individually, but rules in combination, with specific priority, are also tested and return results as expected.
 There may be some benefit to having tests that are not solved and compared against results from the Conjure suite, but rather solved independently (e.g., by mathematicians) and then compared to the results of the same model produced by Conjure-Oxide. By proving these results as correct, it is possible to go beyond simply assuming Conjure and Savile Row are always right. However, this is not particularly feasible in a broader implementation and would be fairly limited in scale due to this, especially as Conjure-Oxide is not a large project.
@@ -5341,7 +5245,7 @@ Another issue present in performance testing is that completely decoupling size 
 <h2 id="brief-outline-of-possible-future-sub-projects"><a class="header" href="#brief-outline-of-possible-future-sub-projects">Brief Outline of Possible Future Sub-Projects</a></h2>
 <p>Having outlined at least a portion of the ideal testing scenario above, as well as some limitations of this scenario, it is now possible to outline to some degree future sub-projects which could be added to the overall Conjure-Oxide project.</p>
 <h3 id="improving-code-coverage"><a class="header" href="#improving-code-coverage">Improving Code Coverage</a></h3>
-<p>One method of improving the code coverage is by creating a broader repository of integration tests. This project focuses on the correctness aspect of the testing, and in itself can be split into several sub-projects or subsumed into other projects (e.g., if someone is writing a parser, they may decide to write the tests for this parser). The code coverage report is updated every-time a PR is made, and by examining the coverage report (see: {Code Coverage Report}), it is possible to see which areas would benefit from additional testing. Although code coverage testing itself is not concerned with correctness, increasing the amount of correctness testing increases code coverage, and so they are related. It may be beneficial to target areas of the code which have a very low line or function coverage, as this is likely easier to increase.</p>
+<p>One method of improving the code coverage is by creating a broader repository of exhaustive tests. This project focuses on the correctness aspect of the testing, and in itself can be split into several sub-projects or subsumed into other projects (e.g., if someone is writing a parser, they may decide to write the tests for this parser). The code coverage report is updated every-time a PR is made, and by examining the coverage report (see: {Code Coverage Report}), it is possible to see which areas would benefit from additional testing. Although code coverage testing itself is not concerned with correctness, increasing the amount of correctness testing increases code coverage, and so they are related. It may be beneficial to target areas of the code which have a very low line or function coverage, as this is likely easier to increase.</p>
 <h3 id="producing-proofs-for-correctness"><a class="header" href="#producing-proofs-for-correctness">Producing Proofs for Correctness</a></h3>
 <p>As established, one of the limitations of the current correctness testing is that there is an assumption of correctness, that being that we either assume the Conjure suite is correct, or we assume that the rules we are applying are correct. These assumptions are largely valid, but do limit the factual correctness of the project. One possible sub-project, which would have a heavy reliance on mathematical knowledge, is to produce these proofs. This does not necessarily have to be exhaustive: in the case of the correctness testing exhausting the proofs would be extremely time consuming, but having proofs to additionally prove correctness overcomes one of the project limitations. In the case of proving the existing rules, though there are a currently increasing set of rules, they are finite, so this may be more manageable as a project.</p>
 <h3 id="measuring-performance-through-load-testing"><a class="header" href="#measuring-performance-through-load-testing">Measuring Performance Through Load Testing</a></h3>
@@ -5378,7 +5282,7 @@ In the future, it may also be worth examining the possibility and likelihood of 
 </ol>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="roundtrip-testing"><a class="header" href="#roundtrip-testing">Roundtrip Testing</a></h1>
-<h2 id="overview-27"><a class="header" href="#overview-27">Overview</a></h2>
+<h2 id="overview-24"><a class="header" href="#overview-24">Overview</a></h2>
 <p>Roundtrip tests check that parsing is valid and that there is no unexpected behaviour during a full roundtrip of an Essence file.
 Roundtrip tests do not consider rewriting or solving.</p>
 <h2 id="full-test-structure"><a class="header" href="#full-test-structure">Full Test Structure</a></h2>
@@ -5405,8 +5309,8 @@ Both parsers will be used by default for each test unless specified and will use
 Any directories within here than contain a singular <code>.essence</code> or <code>.eprime</code> file will be treated as a test.
 After creating the Essence or Essence’ file for your test you should run the test suite with <code>ACCEPT=true</code> to generate the expected files.</p>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="overview-28"><a class="header" href="#overview-28">Overview</a></h1>
-<p>Custom tests were created as a solution to the problem that integration tests do not allow for testing of error messages, which automatically return from the integration test method and therefore cannot be analyzed. The custom tests, however, work for both erroneous and non-erroneous code. Each test contains an input, a <code>run.sh</code> file to execute the test, and an expected standard output/error (or both) to compare against. Conjure Oxide is set up to automatically create and execute a test for each test folder in the <code>tests/custom </code>directory when <code>cargo nextest run</code> is run, so to add a test case all one must do is add a folder in the directory which contains the necessary components.</p>
+<h1 id="overview-25"><a class="header" href="#overview-25">Overview</a></h1>
+<p>Custom tests were created as a solution to the problem that exhaustive tests do not allow for testing of error messages, which automatically return from the exhaustive test method and therefore cannot be analyzed. The custom tests, however, work for both erroneous and non-erroneous code. Each test contains an input, a <code>run.sh</code> file to execute the test, and an expected standard output/error (or both) to compare against. Conjure Oxide is set up to automatically create and execute a test for each test folder in the <code>tests/custom </code>directory when <code>cargo nextest run</code> is run, so to add a test case all one must do is add a folder in the directory which contains the necessary components.</p>
 <h1 id="how-to-add-a-test-case"><a class="header" href="#how-to-add-a-test-case">How to add a test case</a></h1>
 <p>Adding a test case is simple. First add a folder with the test case name to the <code>tests/custom</code> directory. Tests can be organized within folders in the directory–only folders with a <code>run.sh</code> file will be treated as a test case. Within the test folder, add these components:</p>
 <ol>
@@ -5422,9 +5326,9 @@ After creating the Essence or Essence’ file for your test you should run the t
 <p><code>stdout.expected</code>/<code>stderr.expected</code>: These files will be what the output is compared against. They will also be what is overwritten if the test is run with <code>ACCEPT=true</code>. Avoid creating empty files: if there is no expected error from the input, do not create a <code>stderr.expected</code> file and if there is no output, do not create a <code>stdout.expected</code> file.</p>
 </li>
 </ol>
-<p>The custom tests are run automatically when <code>cargo nextest run</code> is run. You can run just the custom tests with <code>cargo nextest run -E 'test(custom)'</code> and a specific test with <code>cargo nextest run -E 'test(custom_&lt;test_path&gt;)'</code>. To run one of several tests, use <code>or</code>, for example <code>cargo nextest run -E 'test(custom_foo) or test(custom_bar)'</code>. To overwrite the expected output/error with the actual output/error (and refresh <code>expected-time</code> in <code>config.toml</code>), run the tests with <code>ACCEPT=true</code>. Integration tests keep the same timing metadata in <code>stats.toml</code> instead. See <code>test-suite/README.md</code> and <code>CONTRIBUTING.md</code> for accept modes and guidance on avoiding timing-only churn in <code>config.toml</code> / <code>stats.toml</code>; <code>./tools/discard-config-time-changes.sh</code> can restore files from HEAD when their only local edits are <code>*-time</code> fields.</p>
+<p>The custom tests are run automatically when <code>cargo nextest run</code> is run. You can run just the custom tests with <code>cargo nextest run -E 'test(custom)'</code> and a specific test with <code>cargo nextest run -E 'test(custom_&lt;test_path&gt;)'</code>. To run one of several tests, use <code>or</code>, for example <code>cargo nextest run -E 'test(custom_foo) or test(custom_bar)'</code>. To overwrite the expected output/error with the actual output/error (and refresh <code>expected-time</code> in <code>config.toml</code>), run the tests with <code>ACCEPT=true</code>. Exhaustive tests keep the same timing metadata in <code>stats.toml</code> instead. See <code>test-suite/README.md</code> and <code>CONTRIBUTING.md</code> for accept modes and guidance on avoiding timing-only churn in <code>config.toml</code> / <code>stats.toml</code>; <code>./tools/discard-config-time-changes.sh</code> restores timing-only files from HEAD when every changed <code>*-time</code> value has both old and new times &lt;= 1 second or an absolute change &lt;= 10% of the HEAD value. Configure the thresholds with <code>--max-time SECONDS</code> and <code>--max-change-percent PERCENT</code>, and preview with <code>--dry-run</code>.</p>
 <h1 id="code-structure"><a class="header" href="#code-structure">Code structure</a></h1>
-<p>The code to run the custom tests is integrated into the <code>build.rs</code> file. Much like for the integration tests, the custom tests directory is traversed and a test is dynamically written at compile time for any folder containing a <code>run.sh</code> file. Tests are based on a custom test template (shown below) which calls the <code>custom_test</code> function (passing in the test folder path). They are written into a generated file, which is included at the bottom of the <code>custom_tests.rs</code> file (which contains the <code>custom_test</code> function).</p>
+<p>The code to run the custom tests is integrated into the <code>build.rs</code> file. Much like for the exhaustive tests, the custom tests directory is traversed and a test is dynamically written at compile time for any folder containing a <code>run.sh</code> file. Tests are based on a custom test template (shown below) which calls the <code>custom_test</code> function (passing in the test folder path). They are written into a generated file, which is included at the bottom of the <code>custom_tests.rs</code> file (which contains the <code>custom_test</code> function).</p>
 <pre><code>#[test]
 fn {test_name}() -&gt; Result&lt;(), Box&lt;dyn Error&gt;&gt; {{
     custom_test("{test_dir}")
@@ -5470,7 +5374,7 @@ created: 19-09-24
 <!-- TODO edit more -->
 <!-- syntax highlighting -->
 <h1 id="semantics-of-rewriting-expressions-with-sideeffects"><a class="header" href="#semantics-of-rewriting-expressions-with-sideeffects">Semantics of Rewriting Expressions with Side‐Effects</a></h1>
-<h2 id="overview-29"><a class="header" href="#overview-29">Overview</a></h2>
+<h2 id="overview-26"><a class="header" href="#overview-26">Overview</a></h2>
 <hr>
 <p>When rewriting expressions, a rule may occasionally introduce new variables and constraints. For example, a rule which handles the <code>Min</code> expression may introduce a new variable <code>aux</code> which represents the minimum value itself, and introduce constraints <code>aux &lt;= x</code> for each <code>x</code> in the original <code>Min</code> expression. Conjure and Conjure Oxide provide similar methods of achieving these “side-effects”.</p>
 <h2 id="reductions"><a class="header" href="#reductions">Reductions</a></h2>

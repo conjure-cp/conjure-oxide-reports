@@ -37,7 +37,7 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../searchindex-ca90a7ab.js";
+            window.path_to_searchindex_js = "../searchindex-aaa8d1a5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../toc-6d1c97b0.js"></script>
@@ -260,14 +260,14 @@ such as lengths, predicates, lookups, and traversal; clone only data that must e
 <h3 id="test-runs"><a class="header" href="#test-runs">Test Runs</a></h3>
 <ul>
 <li>Use <code>MAX_EXPECTED_TIME=N</code> to only run test cases that are expected to take up to <code>N</code> seconds. Omit or use <code>MAX_EXPECTED_TIME=0</code> to run all tests.</li>
-<li>Use <code>TEST_CASE_TIMEOUT=N</code> to set a per-test timeout for integration tests.</li>
+<li>Use <code>TEST_CASE_TIMEOUT=N</code> to set a per-test timeout for exhaustive tests.</li>
 <li>When recording artefacts from a timeout-bounded run, record the timeout value explicitly in the relevant <code>config.toml</code> file.</li>
 </ul>
 <h3 id="test-artefacts"><a class="header" href="#test-artefacts">Test Artefacts</a></h3>
 <ul>
 <li>Update trace files when the test output has changed for a good reason. Do not try to keep trace files unchanged for their own sake.</li>
 <li>Update <code>stats.toml</code> files when the recorded statistics have changed for a good reason, especially when non-time features change.</li>
-<li><code>make test-accept</code> / <code>ACCEPT=true</code> also rewrites <code>expected-time</code> (and other timing fields) from the current run. Do <strong>not</strong> blindly commit those timing updates: runtimes are noisy across machines and load, and tiny time-only diffs create pointless churn. Prefer leaving small timing wobbles uncommitted; only land timing changes when they reflect a real, intentional shift (for example a new slow test, or a deliberate budget change). Use <code>make test-accept-with-max-times</code> when recording budgets over several runs: each run keeps the max of the current budget and the observed time, so a fast fluke does not lower it. To discard files whose only local edits are timing fields, run <code>./tools/discard-config-time-changes.sh</code> (see <code>--help</code> for <code>--dry-run</code>). Files with any non-time edits are left alone.</li>
+<li><code>make test-accept</code> / <code>ACCEPT=true</code> also rewrites <code>expected-time</code> (and other timing fields) from the current run. Do <strong>not</strong> blindly commit those timing updates: runtimes are noisy across machines and load, and tiny time-only diffs create pointless churn. Prefer leaving small timing wobbles uncommitted; only land timing changes when they reflect a real, intentional shift (for example a new slow test, or a deliberate budget change). Use <code>make test-accept-with-max-times</code> when recording budgets over several runs: each run keeps the max of the current budget and the observed time, so a fast fluke does not lower it. To discard small timing-only changes, run <code>./tools/discard-config-time-changes.sh</code>. A file is restored from HEAD only when every changed <code>*-time</code> value either has both old and new times &lt;= 1 second or has an absolute change &lt;= 10% of the HEAD value. Override these defaults with <code>--max-time SECONDS</code> and <code>--max-change-percent PERCENT</code>; use <code>--dry-run</code> to preview restorations. Files with larger timing changes, non-time edits, added/removed timing fields, or non-numeric timing changes are left alone.</li>
 </ul>
 <h3 id="commits"><a class="header" href="#commits">Commits</a></h3>
 <ul>

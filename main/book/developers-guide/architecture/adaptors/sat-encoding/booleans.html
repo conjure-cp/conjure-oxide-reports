@@ -37,7 +37,7 @@
             const path_to_root = "../../../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../../../searchindex-ca90a7ab.js";
+            window.path_to_searchindex_js = "../../../../searchindex-aaa8d1a5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="../../../../toc-6d1c97b0.js"></script>
@@ -176,56 +176,11 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <h2 id="sat-booleans"><a class="header" href="#sat-booleans">SAT Booleans</a></h2>
-<p>The most basic form of a constraint is a boolean expression. SAT solvers work with boolean variables, but require input in Conjunctive Normal Form (which will be referred to as CNF). This means that any boolean expression must be converted to a series of clauses composed entirely of atoms (true/false values or variables). Here’s an example:</p>
-<p>Original Expression:</p>
-<p>$$((A \land B) \to (C \lor \lnot D)) \land E$$</p>
-<p>In CNF:</p>
-<p>$$(\lnot A \lor \lnot B \lor C \lor \lnot D) \land (E)$$</p>
-<p>The simplest approach to this conversion is by repeatedly applying rules (De Morgan’s, double negation, distributivity, etc) until the expression is in CNF. This works well for smaller expressions but slows down massively when dealing with larger expressions (like the ones generated when dealing with integers). To solve this, we use Tseytin transformations (see <a href="https://en.wikipedia.org/wiki/Tseytin_transformation">https://en.wikipedia.org/wiki/Tseytin_transformation</a>).</p>
-<p>Boolean expressions are encoded via Tseytin transformations.</p>
-<h3 id="tseytin-transfomations"><a class="header" href="#tseytin-transfomations">Tseytin Transfomations</a></h3>
-<p>These transformations allow us to convert an operation straight into CNF by introducing new auxiliary variables. This method makes rule applications significantly faster but with the downside of producing longer CNF with more variables to give to the solver. Modern SAT solvers, however, are very efficient and this extra performance cost is negligible compared to the time saved in conversion.</p>
-<p>The idea is that for a given boolean expression, an auxillary variable is created for each subexpression which is then substituted back into the main expression.</p>
-<h4 id="example"><a class="header" href="#example">Example</a></h4>
-<p>Takes the following expression $\phi$:</p>
-<pre><code class="language-math">\phi := ((p\lor q) \land r) \rightarrow (\neg s)
-</code></pre>
-<p>Only subexpressions of literals can be encoded so we must look at the inner-most subexpressions, $((p\lor q)$ and $(\neg s))$, first:</p>
-<p>$$
-\begin{align}
-x_1 \iff (p\lor q) \
-x_2 \iff (\neg s) \
-\end{align}
-$$</p>
-<p>$$
-(((p\lor q) \land r) \rightarrow (\neg s)) \leadsto ((x_1 \land r) \rightarrow x_2)
-$$</p>
-<p>No we can transform $(x_1 \land r)$:</p>
-<p>$$
-x_3 \iff (x_1 \land r)
-$$</p>
-<p>$$
-((x_1 \land r) \rightarrow x_2) \leadsto (x_3 \rightarrow x_2)
-$$</p>
-<p>And finally $(x_3 \rightarrow x_2)$:</p>
-<p>$$
-x_4 \iff (x_3 \rightarrow x_2)
-$$</p>
-<p>$$
-(x_3 \rightarrow x_2) \leadsto x_4
-$$</p>
-<p>So we have:</p>
-<p>$$
-\begin{align}
-x_1 \iff (p\lor q) \
-x_2 \iff (\neg s) \
-x_3 \iff (x_1 \land r) \
-x_4 \iff (x_3 \rightarrow x_2) \
-\phi \iff x_4
-\end{align}
-$$</p>
-<p>And now to find solutions to $\phi$ we need to solve for $p,q,s, x_1, x_2, x_3, x_4$ under these constraints and the under additional constraint that $x_4$ is true.</p>
+                        <h1 id="sat-booleans"><a class="header" href="#sat-booleans">SAT Booleans</a></h1>
+<p>CNF is generated only in the adaptor. Assertion context is preserved: an asserted conjunction compiles its children directly, and a disjunction or implication can become a clause without an auxiliary output for every subexpression.</p>
+<p>For example, asserting <code>((a AND b) -&gt; (c OR NOT d)) AND e</code> produces the clauses <code>(NOT a OR NOT b OR c OR NOT d)</code> and <code>(e)</code>. Larger asserted formulas may need witnesses, but a witness used only positively needs only the direction from the witness to its formula.</p>
+<p>Boolean expressions used as values, numeric operands or named definitions require full equivalence. A shared gate therefore records both directions, as in <code>x &lt;-&gt; (p OR q)</code>. Negation uses the opposite literal instead of a new gate. Constants, duplicates, complements and known aliases simplify inputs before clause generation through RustSAT’s atomic encodings.</p>
+<p>The cache distinguishes positive assertion witnesses from equivalent gates. If a later incremental batch needs a witness as a value, compilation adds the missing reverse implication before reusing it. This distinction preserves both truth values for reification while avoiding unnecessary clauses for assertions.</p>
 
                     </main>
 
