@@ -15,8 +15,8 @@
         <link rel="icon" href="../favicon-de23e50b.svg">
         <link rel="shortcut icon" href="../favicon-8114d1fc.png">
         <link rel="stylesheet" href="../css/variables-8adf115d.css">
-        <link rel="stylesheet" href="../css/general-0392ca55.css">
-        <link rel="stylesheet" href="../css/chrome-fc474251.css">
+        <link rel="stylesheet" href="../css/general-e96d0476.css">
+        <link rel="stylesheet" href="../css/chrome-d279d366.css">
         <link rel="stylesheet" href="../css/print-9e4910d8.css" media="print">
 
         <!-- Fonts -->
@@ -37,10 +37,10 @@
             const path_to_root = "../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../searchindex-5e7b8a83.js";
+            window.path_to_searchindex_js = "../searchindex-aaa8d1a5.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../toc-e8157c2d.js"></script>
+        <script src="../toc-6d1c97b0.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -179,51 +179,38 @@
                         <h1 id="quick-start-guide-to-running-your-first-essence-model"><a class="header" href="#quick-start-guide-to-running-your-first-essence-model">Quick Start Guide to Running your first Essence Model</a></h1>
 <p>This guide walks you through running your first Essence model with Conjure Oxide.</p>
 <h2 id="your-first-problem"><a class="header" href="#your-first-problem">Your First Problem</a></h2>
+<p>Once you have gone through the <a href="installation.html">installation</a> process and got Conjure Oxide on your computer you can solve your first problem.</p>
+<p>Suppose you want to find two numbers <code>x</code> and <code>y</code> so that they add up to 15 and the difference between them is 3. The mathematicians will immediately reach for their simultaneous equations and start doing arithmetic.</p>
+<p>\[ x + y = 15 \]
+\[ x - y = 3 \]</p>
+<p>We, however, take the lazier approach.</p>
 <p>Create a file called <code>my_problem.essence</code> with the following content:</p>
-<pre><code class="language-essence">find x : int(1..3)
-find y : int(2..5)
+<pre><code class="language-essence">find x : int(1..20)
+find y : int(2..20)
 
-such that x &gt; y
+such that x + y = 15,
+          x - y = 3
 </code></pre>
-<p>If you are curious about more complex models, you can check out the models that we use to test Conjure Oxide, available in the <code>tests-integration/tests/integration</code> directory of the repository.</p>
-<h2 id="running-with-different-solvers"><a class="header" href="#running-with-different-solvers">Running with Different Solvers</a></h2>
-<h3 id="sat-solver"><a class="header" href="#sat-solver">SAT Solver</a></h3>
-<p><code>--sat-encoding</code> specifies the encoding strategy used by the SAT solver. This affects performance and solution structure.</p>
-<p>Supported options:</p>
-<ul>
-<li><code>log</code> (default)</li>
-<li><code>direct</code></li>
-<li><code>order</code></li>
-</ul>
-<p>Default usage (uses <code>log</code>):</p>
-<pre><code class="language-bash">cargo run -- solve --solver sat my_problem.essence
+<p>In your terminal run this command:</p>
+<pre><code class="language-bash">$ conjure-oxide solve my_problem.essence
 </code></pre>
-<p>Specify an encoding:</p>
-<pre><code class="language-bash">cargo run -- solve --solver sat --sat-encoding direct my_problem.essence
+<p><strong>Expected output:</strong></p>
+<pre><code>$ Solution: 000001
+language Essence 1.3
+
+letting x be 9
+letting y be 6
 </code></pre>
-<blockquote class="blockquote-tag blockquote-tag-warning">
-<p class="blockquote-tag-title"><svg viewbox="0 0 16 16" width="18" height="18"><path d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575Zm1.763.707a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368Zm.53 3.996v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"></path></svg>Warning</p>
-<p>Currently, running the command above will cause the following error:</p>
-<p><code>model invalid: Only Boolean Decision Variables supported</code></p>
-<p>This because the SAT option for the solver argument only currently enables the base (boolean) rule set and does not specify an integer SAT ruleset to include. This is something we are currently working on, and should be resolved soon.</p>
-</blockquote>
-<h3 id="minion-solver"><a class="header" href="#minion-solver">Minion Solver</a></h3>
-<pre><code class="language-bash">cargo run -- solve --solver minion my_problem.essence
+<p>We see that this indeed satisfies our constraints with \[ 9 + 6 = 15 \] and \[9 - 6 = 3\]</p>
+<h2 id="understanding-the-structure-of-the-problem-specification"><a class="header" href="#understanding-the-structure-of-the-problem-specification">Understanding the structure of the problem specification</a></h2>
+<p>The first two lines are where we declare our <em>decision variables</em>. These are the things which we want to find.</p>
+<p>These are declared as:</p>
+<pre><code>find &lt;name&gt; : &lt;domain&gt;
 </code></pre>
-<p><strong>Expected output for both solvers:</strong></p>
-<pre><code class="language-json">Solutions:
-[
-  {
-    "x": {
-      "Int": 3
-    },
-    "y": {
-      "Int": 2
-    }
-  }
-]
-</code></pre>
-<h2 id="understanding-what-happened"><a class="header" href="#understanding-what-happened">Understanding What Happened</a></h2>
+<p>Where the domain tells Conjure Oxide what type and specifically what values the variable could possibly take on.</p>
+<p>The last statement contains our constraints as a comma-separated list of boolean expressions.</p>
+<p>The goal of Conjure Oxide is to give you values for all of your decision variables, within the allowed domains, that also make all of the boolean expressions evaluate to true.</p>
+<h2 id="understanding-what-conjure-oxide-did"><a class="header" href="#understanding-what-conjure-oxide-did">Understanding What Conjure Oxide did</a></h2>
 <p>Conjure Oxide transformed your high-level Essence model through several steps:</p>
 <ol>
 <li><strong>Parsing</strong> - Your Essence file was parsed into an internal AST</li>
@@ -232,8 +219,46 @@ such that x &gt; y
 <li><strong>Solution Extraction</strong> - The solver’s output was converted back to Essence format</li>
 </ol>
 <p>Want to see exactly what rules were applied? Check out the <a href="command-line-guide/logging.html">Logging guide</a>.</p>
-<h2 id="functional-programming-style"><a class="header" href="#functional-programming-style">Functional Programming Style</a></h2>
-<p>For developers who come from programming languages like Scala or Haskell, or those who favour a functional programming style, we have a <a href="../developers-guide/resources-conventions/functional-rust.html">Functional Rust</a> guide that you might find useful.</p>
+<p>If you are curious about more complex models, you can check out the models that we use to test Conjure Oxide, available in the <code>test-suite/tests/exhaustive</code> directory of the repository.</p>
+<h2 id="running-with-different-solvers"><a class="header" href="#running-with-different-solvers">Running with Different Solvers</a></h2>
+<p><code>--solver</code> takes <code>minion</code>, <code>sat</code>, or <code>z3</code>.</p>
+<p>How a model is <em>expressed</em> for the chosen solver is separate from which solver it is. SAT has no
+integers, so each integer variable is encoded into Booleans as <code>direct</code>, <code>order</code>, or one of four
+binary forms – <code>twos_complement</code>, <code>sign_magnitude</code>, <code>offset</code> (the distance from the domain minimum)
+or <code>rank</code> (the position among the allowed values); Z3 has integers but two theories to hold them in, <code>lia</code> or <code>bv</code>. Both are
+representation choices made per declaration, exactly like choosing <code>occurrence</code> or <code>explicit</code> for a
+set, and both are steered with <code>--heuristic</code> (see the modelling-choices guide). Variables in
+different encodings are channelled together automatically where a constraint needs them to agree.</p>
+<h3 id="choosing-a-representation-in-the-model"><a class="header" href="#choosing-a-representation-in-the-model">Choosing a representation in the model</a></h3>
+<p>Any domain can carry a representation preference, written as an attribute straight after the
+domain’s first word, so the choice sits next to the declaration it applies to. A declaration with a
+preference is given that representation instead of asking the heuristic.</p>
+<pre><code class="language-essence">find a : int(representation order, 1..4)
+find s : set (representation occurrence) of int(1..9)
+find m : matrix (representation packed) indexed by [int(1..3)] of bool
+find t : tuple (representation components, int(1..3), bool)
+find r : record (representation packed) {x: int(1..3), y: bool}
+find f : function (representation explicit, total) int(1..3) --&gt; int(1..3)
+</code></pre>
+<p><code>int</code> and <code>tuple</code> put the preference first inside their parentheses, because those already hold the
+ranges or the member domains; <code>int(representation order)</code> leaves the ranges unbounded. Every other
+domain keeps it in the attribute list that follows the keyword (<code>matrix</code>, <code>record</code> and <code>variant</code>
+take it as their only attribute). The interactive heuristic (<code>-hi</code>) prints each option in this
+syntax, so a choice you make at the prompt can be pasted into the model to make it permanent.</p>
+<h3 id="uniform-representation-choices"><a class="header" href="#uniform-representation-choices">Uniform representation choices</a></h3>
+<p>Use <code>--channelling uniform</code> to choose one representation kind for each type family throughout
+one model. All integers use the same encoding regardless of their bounds; all sets use the same
+layout regardless of their element domains. Nested representation variables follow the same
+policy. Matrix layout and integer encoding are separate choices.</p>
+<pre><code class="language-bash">cargo run -- solve --solver sat --channelling uniform --heuristic i my_problem.essence
+</code></pre>
+<p>The interactive heuristic prompts once for each undecided type family. An incompatible domain is reported
+rather than silently switching representation. <code>--channelling no</code> keeps the existing policy of
+one representation per variable, and <code>yes</code> permits multiple channelled representations.</p>
+<p>Exhaustive-test configurations can use <code>channelling = "uniform"</code> with <code>heuristic = "x"</code> to
+exercise the available combinations without choosing independently for each integer variable.</p>
+<h3 id="sat-solver"><a class="header" href="#sat-solver">SAT Solver</a></h3>
+<p>Use <code>--solver sat</code> and select a compiled backend with <code>--sat-backend cadical</code> or <code>--sat-backend batsat</code>.</p>
 
                     </main>
 
@@ -282,8 +307,8 @@ such that x &gt; y
         <script src="../searcher-09f2665d.js"></script>
 
         <script src="../clipboard-1626706a.min.js"></script>
-        <script src="../highlight-abc7f01d.js"></script>
-        <script src="../book-c22b7243.js"></script>
+        <script src="../highlight-f33deea9.js"></script>
+        <script src="../book-609e4cb8.js"></script>
 
         <!-- Custom JS scripts -->
 
