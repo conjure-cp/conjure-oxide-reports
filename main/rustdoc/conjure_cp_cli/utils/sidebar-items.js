@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["conjure","json","misc","simplified_json","testing"]};
+window.SIDEBAR_ITEMS = {"mod":["conjure","json","misc","rule_trace","simplified_json","testing"]};

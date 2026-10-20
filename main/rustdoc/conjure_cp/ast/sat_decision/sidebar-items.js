@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["AllDifferentEncoding","AmoEncoding","CardinalityEncoding","CardinalityRelation","ElementEncoding","IntegerRelation","PbEncoding","PbTermStructure","SatEncodingDecision","SelectionProvenance","TableEncoding"],"struct":["EncodingSelection","PbTermGroup","SatIntegerView"]};

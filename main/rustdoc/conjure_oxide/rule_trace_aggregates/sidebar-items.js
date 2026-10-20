@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["temporary_output_path"],"struct":["RuleNameVisitor","RuleTraceAggregatesHandle","RuleTraceAggregatesLayer","RuleTraceAggregatesState"]};
+window.SIDEBAR_ITEMS = {"struct":["RuleTraceAggregatesHandle"]};
