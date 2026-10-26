@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-33482159.js";
+            window.path_to_searchindex_js = "searchindex-035e1e9f.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-cf977b57.js"></script>
+        <script src="toc-dde59fc9.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -468,6 +468,65 @@ most compact.</p>
 </code></pre>
 <p>This generates <code>.json</code> and <code>.txt</code> files containing rule traces, parsed Essence, solutions, and the rewritten model.</p>
 <div style="break-before: page; page-break-before: always;"></div>
+<h1 id="problem-specification"><a class="header" href="#problem-specification">Problem Specification</a></h1>
+<pre><code class="language-bnf">&lt;ProblemSpecification&gt; ::= { &lt;Statement&gt; }
+</code></pre>
+<p>A problem specification in Essence is composed of a list of <a href="reference/reference/statements/statements.html">statements</a> Statements can declare <a href="reference/reference/statements/find.html">decision variables</a>, <a href="reference/reference/statements/given.html">parameters</a>, or <a href="reference/reference/statements/letting.html">aliases</a>. They can also post <a href="reference/reference/statements/such-that.html">constraints</a>, <a href="reference/reference/statements/where.html">parameter conditions</a>, and <a href="reference/reference/statements/dominance-relations.html">dominance relations</a></p>
+<h2 id="comments"><a class="header" href="#comments">Comments</a></h2>
+<p>Single-line comments begin with a <code>$</code> character.</p>
+<pre><code class="language-bnf">&lt;SingleLineComment&gt; ::= "$" `.*`
+</code></pre>
+<pre><code>$ this is a comment
+
+letting a be 1    $ this is also a comment
+</code></pre>
+<p>Essence does not currently support multi-line comments.</p>
+<h2 id="parameter-files"><a class="header" href="#parameter-files">Parameter File(s)</a></h2>
+<p>A parameter file is an Essence file containing <a href="reference/reference/statements/letting.html"><code>letting</code> statements</a> <strong>only</strong>. Passing one or more parameter files to Conjure Oxide will bind all parameter files’ <code>letting</code>s to their respective <code>given</code> statements in the problem specification.</p>
+<pre><code class="language-essence">$ problem.essence
+given a: int(0..10)
+
+$ params.essence
+letting a be 5
+</code></pre>
+<p>Passing a parameter value which falls outside the parameter’s domain or breaks a <a href="reference/reference/statements/where.html"><code>where</code> constraint</a> will result in an error.</p>
+<pre><code class="language-essence">$ problem.essence
+given a: int(0..10)
+
+$ params.essence
+letting a be 13   $ error!
+</code></pre>
+<pre>
+  <code class="language-bnf"><a href="#problem-specification">&lt;Domain&gt;</a> ::= hi </code>
+</pre>
+
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="identifiers"><a class="header" href="#identifiers">Identifiers</a></h1>
+<p>An identifier is a unique name assigned to a <a href="/docs/src/reference/statements/letting.html#value-declaration">value</a>, <a href="/docs/src/reference/statements/given.html">parameter</a>, <a href="/docs/src/reference/statements/find.html">decision variable</a>, or <a href="/docs/src/reference/statements/letting.html#domain-declaration">named domain</a>.</p>
+<pre><code class="language-bnf">&lt;Identifier&gt; ::= `[a-zA-Z_][a-zA-Z0-9_]*'*`
+</code></pre>
+<p>Put simply:</p>
+<ul>
+<li>Identifiers consists of letters, numbers and underscores.</li>
+<li>Identifiers must start with a letter or underscore.</li>
+<li>Identifiers can optionally end with any number of apostrophes (for Haskell-like or mathematical notation).</li>
+</ul>
+<p>Examples of valid identifiers:</p>
+<pre><code class="language-essence">a
+my_2nd_var
+x0'
+_
+__ab__c''
+___'''
+</code></pre>
+<p>Examples of invalid identifiers:</p>
+<pre><code class="language-essence">2             $ refers to the integer 2 (use e.g. _2 or var2 instead)
+8queens       $ cannot start with number
+abc'def       $ apostrophe can only be at the end
+my#var        $ cannot contain non-alphanumeric characters
+hello-world   $ use hello_world instead
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div>
 <h1 id="statements"><a class="header" href="#statements">Statements</a></h1>
 <pre><code class="language-bnf">&lt;Statement&gt; ::= &lt;DeclarationStatement&gt;
               | &lt;SuchThatStatement&gt;
@@ -486,19 +545,25 @@ most compact.</p>
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="letting-statements"><a class="header" href="#letting-statements">Letting Statements</a></h1>
-<pre><code class="language-bnf">; enum not included
-&lt;LettingStatement&gt; ::= "letting" list(&lt;LettingVariableDeclaration&gt;)
-&lt;LettingVariableDeclaration&gt; ::= list(&lt;Identifier&gt;) "be" (&lt;Expression&gt; |                                                       | &lt;DomainDeclaration&gt;
+<p>Letting statements assign a value or domain to an <a href="/docs/src/reference/identifiers.html">identifier</a>.</p>
+<pre><code class="language-bnf">&lt;LettingStatement&gt; ::= "letting" list(&lt;LettingVariableDeclaration&gt;)
+&lt;LettingVariableDeclaration&gt; ::= list(&lt;Identifier&gt;) "be" (&lt;Expression&gt;
+                                                        | &lt;DomainDeclaration&gt;
                                                         | &lt;EnumDeclaration&gt;
                                                         | &lt;UnnamedTypeDeclaration&gt;)
 
-&lt;DomainDeclaration&gt;      ::= "domain" &lt;Domain&gt;
 </code></pre>
+<h2 id="value-declaration"><a class="header" href="#value-declaration">Value Declaration</a></h2>
 <pre><code class="language-essence">letting x be y + z
-letting d be domain set of int(a..b)
+letting a, b be 1    $ a &lt;- 1, b &lt;- 1
+</code></pre>
+<h2 id="domain-declaration"><a class="header" href="#domain-declaration">Domain Declaration</a></h2>
+<pre><code class="language-bnf">&lt;DomainDeclaration&gt; ::= "domain" &lt;Domain&gt;
+</code></pre>
+<pre><code class="language-essence">letting d be domain set of int(a..b)
 </code></pre>
 <h2 id="enumerated-type-declaration"><a class="header" href="#enumerated-type-declaration">Enumerated Type Declaration</a></h2>
-<pre><code class="language-bnf">&lt;EnumDeclaration&gt;        ::= "new type enum" "{" list(&lt;Identifier&gt;) "}"
+<pre><code class="language-bnf">&lt;EnumDeclaration&gt; ::= "new type enum" "{" list(&lt;Identifier&gt;) "}"
 </code></pre>
 <p>The given-enum syntax defers the specification of actual values of the enumerated type until instantiation (which can be in a parameter file).</p>
 <pre><code class="language-essence">letting direction be new type enum {North, East, South, West}
@@ -640,9 +705,10 @@ given d: int(1, 3, 7)   $ d = 1 | d = 3 | d = 7
 given e: int(-2..)      $ e &gt;= -2
 given f: int(-5..5)     $ -5 &lt;= f &lt; 5
 given g: int(1, 3..6)   $ g = 1 | 3 &lt;= g &lt; 6
+given h: int(x..y)      $ where x and y are integers
 </code></pre>
 <p>Integer domains are instantiated with values in their range.</p>
-<pre><code class="language-bnf">&lt;Integer&gt; ::= `[0-9]+`
+<pre><code class="language-bnf">&lt;Integer&gt; ::= `-?[0-9]+`
 </code></pre>
 <pre><code class="language-essence">letting a be 100
 letting b be 32
@@ -740,8 +806,16 @@ letting b be (10, (true, true))
 <h2 id="matrix-domains"><a class="header" href="#matrix-domains">Matrix Domains</a></h2>
 <pre><code class="language-bnf">&lt;MatrixDomain&gt; ::= "matrix" "indexed by" "[" list(&lt;Domain.IntBoolEnum&gt;) "]" "of" &lt;Domain&gt;
 </code></pre>
+<pre><code class="language-essence">letting x be domain matrix indexed by [int] of int
+</code></pre>
 <h2 id="matrix-literal"><a class="header" href="#matrix-literal">Matrix Literal</a></h2>
 <pre><code class="language-bnf">&lt;MatrixLiteral&gt; ::= "[" list(&lt;Expression&gt;) [";" &lt;Domain.IntBoolEnum&gt;] "]"
+</code></pre>
+<pre><code class="language-essence">letting x be [0,1]
+</code></pre>
+<p>Matriced defined without an explicit index domain will default to <code>int</code>for 1D matrices, <code>int, int</code> for 2D matrices, etc.</p>
+<p>Alternatively, define the index domain as follows:</p>
+<pre><code class="language-essence">letting y be [0,1; int(1..2)]
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="partitions"><a class="header" href="#partitions">Partitions</a></h1>
@@ -756,6 +830,8 @@ letting b be (10, (true, true))
                        | "minPartSize" &lt;Expression.Integer&gt;
                        | "maxPartSize" &lt;Expression.Integer&gt;
                        | "regular"
+</code></pre>
+<pre><code class="language-essence">letting a be domain partition (partSize 5, regular) from int(0..10)
 </code></pre>
 <h3 id="attributes-1"><a class="header" href="#attributes-1">Attributes</a></h3>
 <div class="table-wrapper">
@@ -794,6 +870,8 @@ letting b be (10, (true, true))
 </div>
 <h2 id="partition-literals"><a class="header" href="#partition-literals">Partition Literals</a></h2>
 <pre><code class="language-bnf">&lt;PartitionLiteral&gt; ::= "partition" "(" [list(&lt;SetLiteral&gt;)] ")"
+</code></pre>
+<pre><code class="language-essence">letting a be partition({1, 2}, {3}, {4, 5, 6})
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="functions"><a class="header" href="#functions">Functions</a></h1>
@@ -861,7 +939,7 @@ given b: function (maxSize 10, surjective) int(0..) --&gt; set of int
 <h2 id="relation-domains"><a class="header" href="#relation-domains">Relation Domains</a></h2>
 <p>; QUESTION: should accept expressions? argue yes.</p>
 <pre><code class="language-bnf">&lt;RelationDomain&gt; ::= "relation" ["(" list(&lt;RelationAttribute&gt;) ")"] "of" "(" &lt;RelationDomainList&gt; ")"
-&lt;RelationDomainList&gt; ::= &lt;Domain&gt; [{ "*" &lt;domain&gt; }]
+&lt;RelationDomainList&gt; ::= &lt;Domain&gt; [{ "*" &lt;Domain&gt; }]
 &lt;RelationAttribute&gt; ::= "size" &lt;Expression.Integer&gt;
                       | "minSize" &lt;Expression.Integer&gt;
                       | "maxSize" &lt;Expression.Integer&gt;
@@ -890,7 +968,15 @@ given b: function (maxSize 10, surjective) int(0..) --&gt; set of int
 <li>Every tuple in the relation must have the same arity and internal domains.</li>
 <li>If a relation is binary (arity 2) we can also add additional attributes to define properties of the relation.</li>
 </ul>
+<pre><code class="language-essence">$ binary relations
+letting a be domain relation of (int * bool)"
+letting b be domain relation (partialOrder) of (int(1..2) * int(1..2))"
+
+$ n-ary relation
+letting c be domain relation(int, int, int)
+</code></pre>
 <h3 id="attributes-2"><a class="header" href="#attributes-2">Attributes</a></h3>
+<p><em>N.B.: in this section <code>A ~ B</code> denotes “<code>A</code> is related to <code>B</code>”, and <code>A !~ B</code> denotes <code>!(A ~ B)</code>.</em></p>
 <h4 id="size-1"><a class="header" href="#size-1">Size</a></h4>
 <div class="table-wrapper">
 <table>
@@ -905,33 +991,59 @@ given b: function (maxSize 10, surjective) int(0..) --&gt; set of int
 </table>
 </div>
 <p>A range of sizes may be specified using <code>maxSize x minSize y</code>.</p>
-<h4 id="binary"><a class="header" href="#binary">Binary</a></h4>
-<p>Binary attributes determine properties of <strong>binary relations only</strong> (relations with tuple arity 2).</p>
+<h4 id="reflexivity"><a class="header" href="#reflexivity">Reflexivity</a></h4>
+<p>Only applicable to relations of domain <code>D * D</code>.</p>
 <div class="table-wrapper">
 <table>
 <thead>
 <tr><th>Attribute</th><th>Domain</th><th>Description</th></tr>
 </thead>
 <tbody>
-<tr><td><code>reflexive</code></td><td><code>bool</code></td><td>TODO</td></tr>
-<tr><td><code>irreflexive</code></td><td><code>bool</code></td><td>TODO</td></tr>
-<tr><td><code>coreflexive</code></td><td><code>bool</code></td><td>TODO</td></tr>
-<tr><td><code>symmetric</code></td><td><code>bool</code></td><td>TODO</td></tr>
-<tr><td><code>antiSymmetric</code></td><td><code>bool</code></td><td>TODO</td></tr>
-<tr><td><code>aSymmetric</code></td><td><code>bool</code></td><td>TODO</td></tr>
-<tr><td><code>transitive</code></td><td><code>bool</code></td><td>TODO</td></tr>
-<tr><td><code>total</code></td><td><code>bool</code></td><td>TODO</td></tr>
-<tr><td><code>connex</code></td><td><code>bool</code></td><td>TODO</td></tr>
-<tr><td><code>euclidean</code></td><td><code>bool</code></td><td>TODO</td></tr>
+<tr><td><code>reflexive</code></td><td><code>bool</code></td><td>For all <code>a</code>, <code>a ~ a</code>.</td></tr>
+<tr><td><code>irreflexive</code></td><td><code>bool</code></td><td>For all <code>a</code>, <code>a !~ a</code>.</td></tr>
+<tr><td><code>coreflexive</code></td><td><code>bool</code></td><td>If <code>a ~ b</code>, then <code>a = b</code>.</td></tr>
+</tbody>
+</table>
+</div>
+<h4 id="symmetry"><a class="header" href="#symmetry">Symmetry</a></h4>
+<p>TODO binary and categorisation</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Attribute</th><th>Domain</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>symmetric</code></td><td><code>bool</code></td><td>If <code>a ~ b</code>, then <code>b ~ a</code>.</td></tr>
+<tr><td><code>antiSymmetric</code></td><td><code>bool</code></td><td>If <code>a ~ b</code> and <code>a != b</code>, then <code>b !~ a</code>.</td></tr>
+<tr><td><code>aSymmetric</code></td><td><code>bool</code></td><td>If <code>a ~ b</code>, then <code>b !~ a</code>.</td></tr>
+</tbody>
+</table>
+</div>
+<h4 id="transitivity"><a class="header" href="#transitivity">Transitivity</a></h4>
+<p>TODO binary and categorisation</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Attribute</th><th>Domain</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>transitive</code></td><td><code>bool</code></td><td>If <code>a ~ b</code> and <code>b ~ c</code>, then <code>a ~ c</code>.</td></tr>
+<tr><td><code>euclidean</code></td><td><code>bool</code></td><td>If <code>a ~ b</code> and <code>a ~ c</code>, then <code>b ~ c</code>.</td></tr>
+<tr><td><code>total</code></td><td><code>bool</code></td><td>Every element of the first domain must be related to an element of the second domain.</td></tr>
+<tr><td><code>connex</code></td><td><code>bool</code></td><td>All elements in either domain are related (TODO).</td></tr>
 <tr><td><code>serial</code></td><td><code>bool</code></td><td>TODO</td></tr>
-<tr><td><code>equivalence</code></td><td><code>bool</code></td><td>TODO</td></tr>
-<tr><td><code>partialOrder</code></td><td><code>bool</code></td><td>TODO</td></tr>
+<tr><td><code>equivalence</code></td><td><code>bool</code></td><td>Equivalent to setting both <code>reflexive</code> and <code>symmetric</code>.</td></tr>
+<tr><td><code>partialOrder</code></td><td><code>bool</code></td><td>Equivalent to setting both <code>reflective</code> and <code>antiSymmetric</code>.</td></tr>
 </tbody>
 </table>
 </div>
 <h3 id="relation-literals"><a class="header" href="#relation-literals">Relation Literals</a></h3>
 <pre><code class="language-bnf">&lt;RelationLiteral&gt; ::= "relation" "(" [list(&lt;RelationLiteralTuple&gt;)] ")"
 &lt;RelationLiteralTuple&gt; ::= "(" list(&lt;Expression&gt;) ")"
+</code></pre>
+<pre><code class="language-essence">$ binary relation domains
+letting a be relation((1,1,0),(1,0,1),(0,1,1))
+letting b be relation((true, false), (false, true))
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="sequences"><a class="header" href="#sequences">Sequences</a></h1>
@@ -981,13 +1093,22 @@ given b: function (maxSize 10, surjective) int(0..) --&gt; set of int
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="records"><a class="header" href="#records">Records</a></h1>
+<p>A record is an unordered TODO list of key-value pairs.</p>
+<p>A record may not have duplicate keys.</p>
+<p>Other languages may refer to this concept as a “struct” (C, C++, Rust, etc.), “dataclass” (Python), or otherwise.</p>
 <h2 id="record-domains"><a class="header" href="#record-domains">Record Domains</a></h2>
 <pre><code class="language-bnf">&lt;RecordDomain&gt; ::= "record" "{" list(&lt;NameDomainPair&gt;) "}"
 &lt;NameDomainPair&gt; ::= &lt;Identifier&gt; ":" &lt;Domain&gt;
 </code></pre>
+<pre><code class="language-essence">letting a be domain record {}
+letting b be domain record { A : int(0..1), B : int(0..2) }
+</code></pre>
 <h2 id="record-literals"><a class="header" href="#record-literals">Record Literals</a></h2>
-<pre><code class="language-bnf">&lt;NameValuePair&gt; ::= &lt;Identifier&gt; "=" &lt;Expression&gt;
-&lt;RecordLiteral&gt; ::= "record" "{" list(&lt;NameValuePair&gt;) "}"
+<pre><code class="language-bnf">&lt;RecordLiteral&gt; ::= "record" "{" list(&lt;NameValuePair&gt;) "}"
+&lt;NameValuePair&gt; ::= &lt;Identifier&gt; "=" &lt;Expression&gt;
+</code></pre>
+<pre><code class="language-essence">letting a be record { }
+letting b be record { A = 1, B = 0 }
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="variants"><a class="header" href="#variants">Variants</a></h1>
@@ -1110,6 +1231,7 @@ given b: function (maxSize 10, surjective) int(0..) --&gt; set of int
 <pre><code class="language-bnf">&lt;IffExpr&gt; ::= &lt;Expression.Boolean&gt; "&lt;-&gt;" &lt;Expression.Boolean&gt;
 </code></pre>
 <p><code>a &lt;-&gt; b</code> is <code>true</code> if both <code>a</code> and <code>b</code> are <code>true</code>, or both <code>a</code> and <code>b</code> are <code>false</code>.</p>
+<p><code>a &lt;-&gt; b</code> is logically equivalent to <code>a = b</code>, but can <strong>only</strong> be applied to boolean expressions.</p>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -1123,13 +1245,41 @@ given b: function (maxSize 10, surjective) int(0..) --&gt; set of int
 </tbody>
 </table>
 </div>
-<h2 id="quantifiers"><a class="header" href="#quantifiers">Quantifiers</a></h2>
-<pre><code class="language-bnf">&lt;QuantifierExpr&gt; ::= ("forAll"
-| "exists") list(&lt;identifier&gt;
-| &lt;tuple&gt;) ("in" &lt;Expression.Collection&gt;
-| ":" &lt;Domain&gt;) ["," &lt;Expression&gt;] "." &lt;Expression.Boolean&gt;
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="arithmetic-expressions"><a class="header" href="#arithmetic-expressions">Arithmetic Expressions</a></h1>
+<pre><code class="language-bnf">&lt;ArithmeticExpr&gt; ::= &lt;BinaryArithExpr&gt;
+                    | &lt;NegativeExpr&gt;
+                    | &lt;AbsValueExpr&gt;
+                    | &lt;FactorialExpr&gt;
 
+
+&lt;BinaryArithExpr&gt; = ::= &lt;Expression.Integer&gt; ("+" | "-" | "*" | "/" | "%" | "**") &lt;Expression.Integer&gt;
+&lt;NegativeExpr&gt; ::= "-" &lt;Expression.Integer&gt;
+&lt;AbsValueExpr&gt; ::= "|" &lt;Expression.Integer&gt; "|"
+&lt;FactorialExpr&gt; ::= &lt;Expression.Integer&gt; "!"
+                 | "factorial" "(" &lt;Expression.Integer&gt; ")"
 </code></pre>
+<h2 id="addition"><a class="header" href="#addition">Addition</a></h2>
+<p><code>a + b</code> returns the sum of <code>a</code> and <code>b</code>.</p>
+<h2 id="subtraction"><a class="header" href="#subtraction">Subtraction</a></h2>
+<p><code>a - b</code> returns the result of subtracting <code>b</code> from <code>a</code>.</p>
+<h2 id="multiplication"><a class="header" href="#multiplication">Multiplication</a></h2>
+<p><code>a * b</code> returns the product of <code>a</code> and <code>b</code>.</p>
+<h2 id="division"><a class="header" href="#division">Division</a></h2>
+<p><code>a / b</code> returns the result of dividing <code>a</code> by <code>b</code>, <strong>rounded down to the nearest integer</strong>.</p>
+<h3 id="division-by-zero"><a class="header" href="#division-by-zero">Division by Zero</a></h3>
+<p>The value of <code>x / 0</code> is undefined for all <code>x</code>. Therefore,</p>
+<p>TODO: what is supposed to happen with division by zero?</p>
+<h2 id="modulus"><a class="header" href="#modulus">Modulus</a></h2>
+<p><code>a % b</code> returns the remainder of dividing <code>a</code> by <code>b</code> (e.g. <code>10 % 3</code> is <code>1</code>).</p>
+<h2 id="exponent"><a class="header" href="#exponent">Exponent</a></h2>
+<p><code>a ** b</code> returns <code>a</code> to the power <code>b</code> (e.g. <code>2 ** 5</code> is <code>32</code>).</p>
+<h2 id="negation"><a class="header" href="#negation">Negation</a></h2>
+<p><code>-a</code> returns the arithmetic negation of <code>a</code> (<code>a * -1</code>).</p>
+<h2 id="absolute"><a class="header" href="#absolute">Absolute</a></h2>
+<p><code>|a|</code> returns the absolute value of <code>a</code> (i.e. its distance from the value zero).</p>
+<h2 id="factorial"><a class="header" href="#factorial">Factorial</a></h2>
+<p><code>a!</code> or <code>factorial(a)</code> returns the factorial of <code>a</code> (i.e. the product of all integers from <code>1</code> to <code>a</code> inclusive).</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="comprehensions"><a class="header" href="#comprehensions">Comprehensions</a></h1>
 <pre><code class="language-bnf">&lt;Comprehension&gt; ::= "[" &lt;Expression&gt; "|" list(&lt;Generator&gt;
@@ -6249,7 +6399,7 @@ and should not affect how the solver crates are written. See <a href="#solver-ad
         <script src="searcher-09f2665d.js"></script>
 
         <script src="clipboard-1626706a.min.js"></script>
-        <script src="highlight-f33deea9.js"></script>
+        <script src="highlight-f219e117.js"></script>
         <script src="book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->

@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../searchindex-33482159.js";
+            window.path_to_searchindex_js = "../../searchindex-035e1e9f.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-cf977b57.js"></script>
+        <script src="../../toc-dde59fc9.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -180,7 +180,7 @@
 <h2 id="relation-domains"><a class="header" href="#relation-domains">Relation Domains</a></h2>
 <p>; QUESTION: should accept expressions? argue yes.</p>
 <pre><code class="language-bnf">&lt;RelationDomain&gt; ::= "relation" ["(" list(&lt;RelationAttribute&gt;) ")"] "of" "(" &lt;RelationDomainList&gt; ")"
-&lt;RelationDomainList&gt; ::= &lt;Domain&gt; [{ "*" &lt;domain&gt; }]
+&lt;RelationDomainList&gt; ::= &lt;Domain&gt; [{ "*" &lt;Domain&gt; }]
 &lt;RelationAttribute&gt; ::= "size" &lt;Expression.Integer&gt;
                       | "minSize" &lt;Expression.Integer&gt;
                       | "maxSize" &lt;Expression.Integer&gt;
@@ -209,7 +209,15 @@
 <li>Every tuple in the relation must have the same arity and internal domains.</li>
 <li>If a relation is binary (arity 2) we can also add additional attributes to define properties of the relation.</li>
 </ul>
+<pre><code class="language-essence">$ binary relations
+letting a be domain relation of (int * bool)"
+letting b be domain relation (partialOrder) of (int(1..2) * int(1..2))"
+
+$ n-ary relation
+letting c be domain relation(int, int, int)
+</code></pre>
 <h3 id="attributes"><a class="header" href="#attributes">Attributes</a></h3>
+<p><em>N.B.: in this section <code>A ~ B</code> denotes “<code>A</code> is related to <code>B</code>”, and <code>A !~ B</code> denotes <code>!(A ~ B)</code>.</em></p>
 <h4 id="size"><a class="header" href="#size">Size</a></h4>
 <div class="table-wrapper">
 <table>
@@ -224,33 +232,59 @@
 </table>
 </div>
 <p>A range of sizes may be specified using <code>maxSize x minSize y</code>.</p>
-<h4 id="binary"><a class="header" href="#binary">Binary</a></h4>
-<p>Binary attributes determine properties of <strong>binary relations only</strong> (relations with tuple arity 2).</p>
+<h4 id="reflexivity"><a class="header" href="#reflexivity">Reflexivity</a></h4>
+<p>Only applicable to relations of domain <code>D * D</code>.</p>
 <div class="table-wrapper">
 <table>
 <thead>
 <tr><th>Attribute</th><th>Domain</th><th>Description</th></tr>
 </thead>
 <tbody>
-<tr><td><code>reflexive</code></td><td><code>bool</code></td><td>TODO</td></tr>
-<tr><td><code>irreflexive</code></td><td><code>bool</code></td><td>TODO</td></tr>
-<tr><td><code>coreflexive</code></td><td><code>bool</code></td><td>TODO</td></tr>
-<tr><td><code>symmetric</code></td><td><code>bool</code></td><td>TODO</td></tr>
-<tr><td><code>antiSymmetric</code></td><td><code>bool</code></td><td>TODO</td></tr>
-<tr><td><code>aSymmetric</code></td><td><code>bool</code></td><td>TODO</td></tr>
-<tr><td><code>transitive</code></td><td><code>bool</code></td><td>TODO</td></tr>
-<tr><td><code>total</code></td><td><code>bool</code></td><td>TODO</td></tr>
-<tr><td><code>connex</code></td><td><code>bool</code></td><td>TODO</td></tr>
-<tr><td><code>euclidean</code></td><td><code>bool</code></td><td>TODO</td></tr>
+<tr><td><code>reflexive</code></td><td><code>bool</code></td><td>For all <code>a</code>, <code>a ~ a</code>.</td></tr>
+<tr><td><code>irreflexive</code></td><td><code>bool</code></td><td>For all <code>a</code>, <code>a !~ a</code>.</td></tr>
+<tr><td><code>coreflexive</code></td><td><code>bool</code></td><td>If <code>a ~ b</code>, then <code>a = b</code>.</td></tr>
+</tbody>
+</table>
+</div>
+<h4 id="symmetry"><a class="header" href="#symmetry">Symmetry</a></h4>
+<p>TODO binary and categorisation</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Attribute</th><th>Domain</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>symmetric</code></td><td><code>bool</code></td><td>If <code>a ~ b</code>, then <code>b ~ a</code>.</td></tr>
+<tr><td><code>antiSymmetric</code></td><td><code>bool</code></td><td>If <code>a ~ b</code> and <code>a != b</code>, then <code>b !~ a</code>.</td></tr>
+<tr><td><code>aSymmetric</code></td><td><code>bool</code></td><td>If <code>a ~ b</code>, then <code>b !~ a</code>.</td></tr>
+</tbody>
+</table>
+</div>
+<h4 id="transitivity"><a class="header" href="#transitivity">Transitivity</a></h4>
+<p>TODO binary and categorisation</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Attribute</th><th>Domain</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><code>transitive</code></td><td><code>bool</code></td><td>If <code>a ~ b</code> and <code>b ~ c</code>, then <code>a ~ c</code>.</td></tr>
+<tr><td><code>euclidean</code></td><td><code>bool</code></td><td>If <code>a ~ b</code> and <code>a ~ c</code>, then <code>b ~ c</code>.</td></tr>
+<tr><td><code>total</code></td><td><code>bool</code></td><td>Every element of the first domain must be related to an element of the second domain.</td></tr>
+<tr><td><code>connex</code></td><td><code>bool</code></td><td>All elements in either domain are related (TODO).</td></tr>
 <tr><td><code>serial</code></td><td><code>bool</code></td><td>TODO</td></tr>
-<tr><td><code>equivalence</code></td><td><code>bool</code></td><td>TODO</td></tr>
-<tr><td><code>partialOrder</code></td><td><code>bool</code></td><td>TODO</td></tr>
+<tr><td><code>equivalence</code></td><td><code>bool</code></td><td>Equivalent to setting both <code>reflexive</code> and <code>symmetric</code>.</td></tr>
+<tr><td><code>partialOrder</code></td><td><code>bool</code></td><td>Equivalent to setting both <code>reflective</code> and <code>antiSymmetric</code>.</td></tr>
 </tbody>
 </table>
 </div>
 <h3 id="relation-literals"><a class="header" href="#relation-literals">Relation Literals</a></h3>
 <pre><code class="language-bnf">&lt;RelationLiteral&gt; ::= "relation" "(" [list(&lt;RelationLiteralTuple&gt;)] ")"
 &lt;RelationLiteralTuple&gt; ::= "(" list(&lt;Expression&gt;) ")"
+</code></pre>
+<pre><code class="language-essence">$ binary relation domains
+letting a be relation((1,1,0),(1,0,1),(0,1,1))
+letting b be relation((true, false), (false, true))
 </code></pre>
 
                     </main>
@@ -300,7 +334,7 @@
         <script src="../../searcher-09f2665d.js"></script>
 
         <script src="../../clipboard-1626706a.min.js"></script>
-        <script src="../../highlight-f33deea9.js"></script>
+        <script src="../../highlight-f219e117.js"></script>
         <script src="../../book-a0b12cfe.js"></script>
 
         <!-- Custom JS scripts -->
