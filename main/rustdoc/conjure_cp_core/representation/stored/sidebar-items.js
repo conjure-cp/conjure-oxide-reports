@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"trait":["ReprRuleStored","ReprStateStored"]};
+window.SIDEBAR_ITEMS = {"struct":["ReprStructureProbe"],"trait":["ReprRuleStored","ReprStateStored"]};
