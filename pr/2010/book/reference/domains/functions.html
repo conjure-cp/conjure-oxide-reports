@@ -15,7 +15,7 @@
         <link rel="icon" href="../../favicon-de23e50b.svg">
         <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
         <link rel="stylesheet" href="../../css/variables-8adf115d.css">
-        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/general-01a8fb6c.css">
         <link rel="stylesheet" href="../../css/chrome-ae938929.css">
         <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
 
@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../searchindex-035e1e9f.js";
+            window.path_to_searchindex_js = "../../searchindex-13eb75e3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-dde59fc9.js"></script>
+        <script src="../../toc-e79b7e05.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -232,10 +232,45 @@ given b: function (maxSize 10, surjective) int(0..) --&gt; set of int
 </table>
 </div>
 <h2 id="function-literals"><a class="header" href="#function-literals">Function Literals</a></h2>
-<!-- QUESTION: any constraints on possible types here? -->
 <pre><code class="language-bnf">&lt;FunctionLiteral&gt; ::= "function" "(" [list(&lt;FunctionLiteralPair&gt;)] ")"
 &lt;FunctionLiteralPair&gt; ::= &lt;Expression&gt; "--&gt;" &lt;Expression&gt;
 </code></pre>
+<h2 id="function-operations"><a class="header" href="#function-operations">Function Operations</a></h2>
+<h3 id="function-application"><a class="header" href="#function-application">Function Application</a></h3>
+<p>User-defined functions can be applied just like built-in functions.</p>
+<pre><code class="language-essence">given myFunc: function int -&gt; int
+find b: int(1..10) = myFunc(3)
+</code></pre>
+<h3 id="image"><a class="header" href="#image"><code>image</code></a></h3>
+<pre><code class="language-rs">image(f: function T --&gt; V, x: T): V
+</code></pre>
+<p>Returns the application of function <code>f</code> to value <code>x</code> (i.e. <code>apply(f, x) = f(x)</code>).</p>
+<h3 id="imageset"><a class="header" href="#imageset"><code>imageSet</code></a></h3>
+<pre><code class="language-rs">imageSet(f: function T --&gt; V, x: T): set of V
+</code></pre>
+<p>Applies function <code>f</code> to value <code>x</code>, returning the set of codomain values (i.e. set of possible output values of <code>f(x)</code>).</p>
+<p>Returns the empty set if <code>f(x)</code> is not defined.</p>
+<h3 id="preimage"><a class="header" href="#preimage"><code>preImage</code></a></h3>
+<pre><code class="language-rs">preImage(f: Function T --&gt; V, x: V): set of T;
+</code></pre>
+<p>Applies the function <code>f</code> in reverse.</p>
+<p>Returns the set containing every value <code>y</code> for which <code>f(y) = x</code>.</p>
+<h3 id="inverse"><a class="header" href="#inverse"><code>inverse</code></a></h3>
+<pre><code class="language-rs">inverse(f1: function T --&gt; V, f2: function V --&gt; T): bool
+</code></pre>
+<p>Returns true if functions <code>f1</code> and <code>f2</code> are the inverse of each other.</p>
+<h3 id="defined"><a class="header" href="#defined"><code>defined</code></a></h3>
+<pre><code class="language-rs">defined(f: function T --&gt; V): set of T
+</code></pre>
+<p>Returns the set of domain values for which function <code>f</code> is defined.</p>
+<h3 id="range"><a class="header" href="#range"><code>range</code></a></h3>
+<pre><code class="language-rs">range(f: function T --&gt; V): set of V
+</code></pre>
+<p>Returns the set of codomain values which function <code>f</code> can output.</p>
+<h3 id="restrict"><a class="header" href="#restrict"><code>restrict</code></a></h3>
+<pre><code class="language-rs">restrict(f: function T --&gt; V, domain: domain in T): function T --&gt; V;
+</code></pre>
+<p>Returns a sub-function of <code>f</code> which has its mapping restricted to values in <code>domain</code>.</p>
 
                     </main>
 

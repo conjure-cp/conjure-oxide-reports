@@ -15,7 +15,7 @@
         <link rel="icon" href="../../favicon-de23e50b.svg">
         <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
         <link rel="stylesheet" href="../../css/variables-8adf115d.css">
-        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/general-01a8fb6c.css">
         <link rel="stylesheet" href="../../css/chrome-ae938929.css">
         <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
 
@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../searchindex-035e1e9f.js";
+            window.path_to_searchindex_js = "../../searchindex-13eb75e3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-dde59fc9.js"></script>
+        <script src="../../toc-e79b7e05.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -180,15 +180,33 @@
 <p>A variant domain stores named domain pair fields.</p>
 <p>However, unlike a [[record TODO]], a variant literal can only use one of these fields at once. This field is referred to as <strong>active</strong>.</p>
 <h2 id="variant-domains"><a class="header" href="#variant-domains">Variant Domains</a></h2>
-<pre><code>&lt;VariantDomain&gt; ::= "variant" "{" list(&lt;NameDomainPair&gt;) "}"
+<pre><code class="language-bnf">&lt;VariantDomain&gt; ::= "variant" "{" list(&lt;NameDomainPair&gt;) "}"
 &lt;NameDomainPair&gt; ::= &lt;Identifier&gt; ":" &lt;Domain&gt;
+</code></pre>
+<pre><code class="language-essence">given a: variant { first: bool, second: int(0..10), third: set of int }
 </code></pre>
 <h3 id="attributes"><a class="header" href="#attributes">Attributes</a></h3>
 <p>Variants take no attributes.</p>
 <h2 id="variant-literals"><a class="header" href="#variant-literals">Variant Literals</a></h2>
 <pre><code class="language-bnf">&lt;VariantLiteral&gt; ::= "variant" "{" &lt;NameValuePair&gt; "}"
+&lt;NameValuePair&gt; ::= &lt;Identifier&gt; ":" &lt;Expression&gt;
+</code></pre>
+<pre><code class="language-essence">letting a be variant { second: 5 }
 </code></pre>
 <h2 id="operators"><a class="header" href="#operators">Operators</a></h2>
+<h3 id="active"><a class="header" href="#active">active</a></h3>
+<pre><code class="language-rs">active(v: variant, f: identifier): bool;
+</code></pre>
+<p>Returns true if field <code>f</code> is currently the field active in variant <code>v</code>.</p>
+<pre><code class="language-essence">letting V be domain variant { first: bool, second: int(0..10), third: set of int }
+letting a: V be variant { second: 5 }
+
+letting is_first_active be active(a, first)
+$ is_first_active = false
+
+letting is_second_active be active(a, second)
+$ is_second_active = true
+</code></pre>
 
                     </main>
 

@@ -15,7 +15,7 @@
         <link rel="icon" href="../../favicon-de23e50b.svg">
         <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
         <link rel="stylesheet" href="../../css/variables-8adf115d.css">
-        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/general-01a8fb6c.css">
         <link rel="stylesheet" href="../../css/chrome-ae938929.css">
         <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
 
@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../searchindex-035e1e9f.js";
+            window.path_to_searchindex_js = "../../searchindex-13eb75e3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-dde59fc9.js"></script>
+        <script src="../../toc-e79b7e05.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -177,11 +177,24 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="relations"><a class="header" href="#relations">Relations</a></h1>
+<p>A relation is effectively a set of tuples which relate elements of different domains.</p>
+<ul>
+<li>Every tuple in the relation must have the same arity and internal domains.</li>
+<li>If a relation is binary (arity 2) we can also add additional attributes to define properties of the relation.</li>
+</ul>
 <h2 id="relation-domains"><a class="header" href="#relation-domains">Relation Domains</a></h2>
-<p>; QUESTION: should accept expressions? argue yes.</p>
 <pre><code class="language-bnf">&lt;RelationDomain&gt; ::= "relation" ["(" list(&lt;RelationAttribute&gt;) ")"] "of" "(" &lt;RelationDomainList&gt; ")"
 &lt;RelationDomainList&gt; ::= &lt;Domain&gt; [{ "*" &lt;Domain&gt; }]
-&lt;RelationAttribute&gt; ::= "size" &lt;Expression.Integer&gt;
+</code></pre>
+<pre><code class="language-essence">$ binary relations
+letting a be domain relation of (int * bool)
+letting b be domain relation (partialOrder) of (int(1..2) * int(1..2))"
+
+$ n-ary relation
+letting c be domain relation(int, int, int)
+</code></pre>
+<h3 id="attributes"><a class="header" href="#attributes">Attributes</a></h3>
+<pre><code class="language-bnf">&lt;RelationAttribute&gt; ::= "size" &lt;Expression.Integer&gt;
                       | "minSize" &lt;Expression.Integer&gt;
                       | "maxSize" &lt;Expression.Integer&gt;
                       | "reflexive"
@@ -204,19 +217,6 @@
                       | "preOrder"
                       | "strictPartialOrder"
 </code></pre>
-<p>A relation is effectively a set of tuples which relate elements of different domains.</p>
-<ul>
-<li>Every tuple in the relation must have the same arity and internal domains.</li>
-<li>If a relation is binary (arity 2) we can also add additional attributes to define properties of the relation.</li>
-</ul>
-<pre><code class="language-essence">$ binary relations
-letting a be domain relation of (int * bool)"
-letting b be domain relation (partialOrder) of (int(1..2) * int(1..2))"
-
-$ n-ary relation
-letting c be domain relation(int, int, int)
-</code></pre>
-<h3 id="attributes"><a class="header" href="#attributes">Attributes</a></h3>
 <p><em>N.B.: in this section <code>A ~ B</code> denotes “<code>A</code> is related to <code>B</code>”, and <code>A !~ B</code> denotes <code>!(A ~ B)</code>.</em></p>
 <h4 id="size"><a class="header" href="#size">Size</a></h4>
 <div class="table-wrapper">
@@ -283,8 +283,8 @@ letting c be domain relation(int, int, int)
 &lt;RelationLiteralTuple&gt; ::= "(" list(&lt;Expression&gt;) ")"
 </code></pre>
 <pre><code class="language-essence">$ binary relation domains
-letting a be relation((1,1,0),(1,0,1),(0,1,1))
-letting b be relation((true, false), (false, true))
+letting a be relation ((1, 1, 0), (1, 0, 1), (0, 1, 1))
+letting b be relation ((true, false), (false, true))
 </code></pre>
 
                     </main>

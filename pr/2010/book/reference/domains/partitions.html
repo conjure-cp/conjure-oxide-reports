@@ -15,7 +15,7 @@
         <link rel="icon" href="../../favicon-de23e50b.svg">
         <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
         <link rel="stylesheet" href="../../css/variables-8adf115d.css">
-        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/general-01a8fb6c.css">
         <link rel="stylesheet" href="../../css/chrome-ae938929.css">
         <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
 
@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../searchindex-035e1e9f.js";
+            window.path_to_searchindex_js = "../../searchindex-13eb75e3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-dde59fc9.js"></script>
+        <script src="../../toc-e79b7e05.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -179,8 +179,7 @@
                         <h1 id="partitions"><a class="header" href="#partitions">Partitions</a></h1>
 <p>A partition is a datatype that splits some domain into parts.</p>
 <h2 id="partition-domains"><a class="header" href="#partition-domains">Partition Domains</a></h2>
-<pre><code class="language-bnf">; QUESTION: should accept expressions? argue yes.
-&lt;PartitionDomain&gt; ::= "partition" ["(" list(&lt;PartitionAttribute&gt;) ")"] "from" &lt;Domain&gt;
+<pre><code class="language-bnf">&lt;PartitionDomain&gt; ::= "partition" ["(" list(&lt;PartitionAttribute&gt;) ")"] "from" &lt;Domain&gt;
 &lt;PartitionAttribute&gt; ::= "numParts" &lt;Expression.Integer&gt;
                        | "minNumParts" &lt;Expression.Integer&gt;
                        | "maxNumParts" &lt;Expression.Integer&gt;
@@ -192,6 +191,7 @@
 <pre><code class="language-essence">letting a be domain partition (partSize 5, regular) from int(0..10)
 </code></pre>
 <h3 id="attributes"><a class="header" href="#attributes">Attributes</a></h3>
+<p>Certain attributes control the number of parts a partition may have.</p>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -204,6 +204,7 @@
 </tbody>
 </table>
 </div>
+<p>Attributes may also define the size of the parts.</p>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -213,15 +214,6 @@
 <tr><td><code>partSize</code></td><td><code>int(0..)</code></td><td>The exact cardinality (number of elements) of each part.</td></tr>
 <tr><td><code>minPartSize</code></td><td><code>int(0..)</code></td><td>The minimum cardinality of each part.</td></tr>
 <tr><td><code>maxPartSize</code></td><td><code>int(0..)</code></td><td>The maximum cardinality of each part.</td></tr>
-</tbody>
-</table>
-</div>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>Attribute</th><th>Domain</th><th>Description</th></tr>
-</thead>
-<tbody>
 <tr><td><code>regular</code></td><td><code>bool</code></td><td>If set, every part must have the same cardinality (i.e. be the same size).</td></tr>
 </tbody>
 </table>
@@ -231,6 +223,27 @@
 </code></pre>
 <pre><code class="language-essence">letting a be partition({1, 2}, {3}, {4, 5, 6})
 </code></pre>
+<h2 id="partition-operations"><a class="header" href="#partition-operations">Partition Operations</a></h2>
+<h3 id="together"><a class="header" href="#together"><code>together</code></a></h3>
+<pre><code class="language-rs">together(s: set of T, p: partition from T): bool
+</code></pre>
+<p>Returns <code>true</code> if a list of elements are all in the same part of the partition.</p>
+<h3 id="apart"><a class="header" href="#apart"><code>apart</code></a></h3>
+<pre><code class="language-rs">apart(s: set of T, p: partition from T): bool
+</code></pre>
+<p>Returns <code>true</code> if a list of elements are <em>not</em> all contained in one part of the partition.</p>
+<h3 id="party"><a class="header" href="#party"><code>party</code></a></h3>
+<pre><code class="language-rs">party(e: T, p: partition of T): set of T
+</code></pre>
+<p>Returns the part of partition (as a set) that contains the specified element.</p>
+<h3 id="parts"><a class="header" href="#parts"><code>parts</code></a></h3>
+<pre><code class="language-rs">parts(p: partition from T): set of (set of T);
+</code></pre>
+<p>Takes a partition and returns its set of parts.</p>
+<h3 id="participants"><a class="header" href="#participants"><code>participants</code></a></h3>
+<pre><code class="language-rs">participants(p: partition from T): set of T;
+</code></pre>
+<p>Returns the union of all parts of a partition.</p>
 
                     </main>
 

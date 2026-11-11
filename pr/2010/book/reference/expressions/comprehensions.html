@@ -15,7 +15,7 @@
         <link rel="icon" href="../../favicon-de23e50b.svg">
         <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
         <link rel="stylesheet" href="../../css/variables-8adf115d.css">
-        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/general-01a8fb6c.css">
         <link rel="stylesheet" href="../../css/chrome-ae938929.css">
         <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
 
@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../searchindex-035e1e9f.js";
+            window.path_to_searchindex_js = "../../searchindex-13eb75e3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-dde59fc9.js"></script>
+        <script src="../../toc-e79b7e05.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -177,17 +177,54 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="comprehensions"><a class="header" href="#comprehensions">Comprehensions</a></h1>
-<pre><code class="language-bnf">&lt;Comprehension&gt; ::= "[" &lt;Expression&gt; "|" list(&lt;Generator&gt;
-                                            | &lt;Condition&gt;
-                                            | &lt;ComprehensionLetting&gt;) "]"
+<pre><code class="language-bnf">&lt;Comprehension&gt; ::= "[" &lt;Expression&gt; "|" &lt;ComprehensionGenerator&gt; ["," list(&lt;Generator&gt;)] ["," list(&lt;ComprehensionLettingOrCondition&gt;)] "]"
+</code></pre>
+<p>Comprehensions allow the creation of lists via mapping and filtering of values in an existing list or domain.</p>
+<h2 id="generators"><a class="header" href="#generators">Generators</a></h2>
+<pre><code class="language-bnf">&lt;ComprehensionGenerator&gt; ::= (&lt;Identifier&gt; | &lt;Tuple&gt;) ":" &lt;Domain&gt;
+                           | (&lt;Identifier&gt; | &lt;Tuple&gt;) "&lt;-" &lt;Expression.List&gt;
+</code></pre>
+<h3 id="list-generators"><a class="header" href="#list-generators">List Generators</a></h3>
+<p>Comprehensions may iterate over a list to produce their output values.</p>
+<p>The following generator takes the elements of <code>[1, 2, 3]</code>, and adds 1 to each:</p>
+<pre><code class="language-essence">letting a be [x + 1 | i &lt;- [1, 2, 3]]
+$ a = [2, 3, 4]
+</code></pre>
+<h3 id="domain-generators"><a class="header" href="#domain-generators">Domain Generators</a></h3>
+<p>Comprehensions may also accept domains as the generator source using <code>:</code>.</p>
+<p>The following comprehension <code>b</code> is equivalent to <code>a</code>:</p>
+<pre><code class="language-essence">letting b be [x + 1 | i : int(1..3)]
+$ b = [2, 3, 4]
+</code></pre>
+<h3 id="generator-value-unpacking"><a class="header" href="#generator-value-unpacking">Generator Value Unpacking</a></h3>
+<p>The comprehension expression may also unpack (aka. destructure) the value provided by the generator for the generator expression:</p>
+<pre><code class="language-essence">letting c be [u &lt; v | (u,v) &lt;- [(0,1), (4, 2), (8, 8)] ]
+$ c = [true, false, false]
 
-&lt;ComprehensionLetting&gt; ::= "letting" &lt;Identifier&gt; "be" &lt;Expression&gt;
+letting d be [x | (x, _) &lt;- [(1, 4), (7, 9), (5, 3)] ]
+$ d = [1, 7, 5]
+</code></pre>
+<h2 id="conditions"><a class="header" href="#conditions">Conditions</a></h2>
+<pre><code class="language-bnf">&lt;ComprehensionLettingOrCondition&gt; ::= &lt;Expression.Boolean&gt; | &lt;ComprehensionLetting&gt;
+</code></pre>
+<p>Comprehensions may also define conditions upon which the generator values are included in the output, listed after the generator expression.</p>
+<pre><code class="language-essence">$ returns the even integers from 1-10.
+letting e be [x | x: int(1..10), x % 2 == 0]
+$ e = [2, 4, 6, 8, 10]
 
-&lt;ComprehensionGenerator&gt; ::= (&lt;Identifier&gt; | &lt;Tuple&gt;) ":" &lt;Domain&gt;
-                           | (&lt;Identifier&gt; | &lt;Tuple&gt;) "&lt;-" (&lt;Expression.Integer&gt;
-                                                          | &lt;Identifier&gt;
-                                                          | &lt;Matrix&gt;
-                                                          | &lt;SetOperation&gt;)
+$ returns the squares of integers 1-6, excluding 3^2 and 5^2.
+letting f be [x * x | x: int(1..6), x != 3, x != 7]
+$ f = [1, 4, 16, 36]
+</code></pre>
+<h2 id="temporary-lettings"><a class="header" href="#temporary-lettings">Temporary Lettings</a></h2>
+<pre><code class="language-bnf">&lt;ComprehensionLetting&gt; ::= "letting" &lt;Identifier&gt; "be" &lt;Expression&gt;
+</code></pre>
+<p>To aid readability, lettings can also be defined within the scope of comprehensions.</p>
+<pre><code class="language-essence">letting M be [5, 10, 32, -9]
+
+$ returns a list containing i + M[i] for all i in domain I.
+letting g be [x + y | i : int(0..3), letting x be i, letting y be M[i] ]
+$ g = [5, 11, 34, -6]
 </code></pre>
 
                     </main>
@@ -198,7 +235,7 @@
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                             </a>
 
-                            <a rel="next prefetch" href="../../contributors-guide/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                            <a rel="next prefetch" href="../../reference/expressions/comparison.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                             </a>
 
@@ -212,7 +249,7 @@
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M41.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.3 256 246.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg></span>
                     </a>
 
-                    <a rel="next prefetch" href="../../contributors-guide/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                    <a rel="next prefetch" href="../../reference/expressions/comparison.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M278.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L210.7 256 73.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"/></svg></span>
                     </a>
             </nav>

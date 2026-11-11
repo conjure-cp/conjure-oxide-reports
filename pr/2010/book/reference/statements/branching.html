@@ -15,7 +15,7 @@
         <link rel="icon" href="../../favicon-de23e50b.svg">
         <link rel="shortcut icon" href="../../favicon-8114d1fc.png">
         <link rel="stylesheet" href="../../css/variables-8adf115d.css">
-        <link rel="stylesheet" href="../../css/general-2459343d.css">
+        <link rel="stylesheet" href="../../css/general-01a8fb6c.css">
         <link rel="stylesheet" href="../../css/chrome-ae938929.css">
         <link rel="stylesheet" href="../../css/print-9e4910d8.css" media="print">
 
@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../searchindex-035e1e9f.js";
+            window.path_to_searchindex_js = "../../searchindex-13eb75e3.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-dde59fc9.js"></script>
+        <script src="../../toc-e79b7e05.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -177,11 +177,21 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="branching-statements"><a class="header" href="#branching-statements">Branching Statements</a></h1>
-<pre><code class="language-bnf">; TODO: not included in Essence docs
-&lt;BranchingStatement&gt; ::= "branching" "on" "[" list(&lt;Identifier&gt; | &lt;Expression.?&gt;) "]"
+<pre><code class="language-bnf">&lt;BranchingStatement&gt; ::= "branching" "on" "[" list(&lt;Identifier&gt; | &lt;Expression.Boolean&gt;) "]"
 </code></pre>
-<p>A problem specification can contain at most one branching statement.</p>
-<p>TODO</p>
+<p>Specifies the search order during constraint satisfaction.</p>
+<p>Given the below branching statement, the solver will first branch on <code>x</code>, then <code>y</code>, then <code>z</code>.</p>
+<pre><code class="language-essence">branching on [x,y,z]
+</code></pre>
+<p>Branching order may also be specified in terms of boolean expressions.</p>
+<pre><code class="language-essence">find solution: set of int(0..10)
+$ first branch on solutions containing 3, then 5.
+branching on [3 in solution, 5 in solution]
+</code></pre>
+<p>A problem specification can contain <strong>at most one</strong> branching statement.</p>
+<p>TODO differentiating between boolean expressions and identifiers?
+TODO mixing identifiers and booleans?
+TODO pareto?</p>
 
                     </main>
 
