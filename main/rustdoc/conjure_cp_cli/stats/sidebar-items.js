@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["StatsFormat"],"fn":["canonical_float","read_stats_or_default","replace_config_run_stats","update_canonical_stats","write_canonical_stats","write_stats"],"struct":["RecordedRuleTraceStats","RecordedRunConfig","RecordedRunStats","RecordedToolStats","TestRunStats"]};

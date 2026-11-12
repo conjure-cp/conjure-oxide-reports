@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["RuleTraceAggregatesHandle"]};
+window.SIDEBAR_ITEMS = {"fn":["write_rule_trace_aggregates"]};

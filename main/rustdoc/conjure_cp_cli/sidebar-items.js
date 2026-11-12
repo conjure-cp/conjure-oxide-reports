@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["find_conjure","utils"]};
+window.SIDEBAR_ITEMS = {"mod":["find_conjure","stats","utils"]};
