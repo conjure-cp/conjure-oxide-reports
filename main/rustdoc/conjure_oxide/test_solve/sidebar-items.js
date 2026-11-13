@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["run_test_solve_command"],"struct":["Args"]};
+window.SIDEBAR_ITEMS = {"fn":["run_test_solve","run_test_solve_command"],"struct":["Args"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["get_solutions","get_solutions_with_timings"],"struct":["SolutionCollectionTimings","SolutionOptions"]};
