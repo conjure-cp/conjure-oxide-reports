@@ -38,7 +38,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-aaa8d1a5.js";
+            window.path_to_searchindex_js = "searchindex-d1dbc8de.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-6d1c97b0.js"></script>
@@ -476,6 +476,15 @@ most compact.</p>
 <pre><code class="language-bash">cargo nextest run -E 'test(&lt;test_name&gt;)'
 </code></pre>
 <p>This generates <code>.json</code> and <code>.txt</code> files containing rule traces, parsed Essence, solutions, and the rewritten model.</p>
+<h2 id="execution-statistics"><a class="header" href="#execution-statistics">Execution statistics</a></h2>
+<p>Use <code>--stats &lt;PATH&gt;</code> to save execution timings, configuration, modelling choices, and rewrite-rule
+counts. The filename extension selects TOML or JSON; both formats contain the same statistics:</p>
+<pre><code class="language-sh">conjure-oxide solve model.essence --stats stats.toml
+conjure-oxide solve model.essence --stats stats.json
+</code></pre>
+<p>The path must end in <code>.toml</code> or <code>.json</code>. An existing statistics file retains other configurations
+and replaces the rows for the current configuration. <code>--no-run-solver</code> records translation
+statistics without solver timings.</p>
 <div style="break-before: page; page-break-before: always;"></div><!-- maturity: draft
 authors: Jamie Melton, Georgii Skorokhod, Özgür Akgün
 created: 24-10-25
@@ -1304,11 +1313,11 @@ fn optimisations_enabled() -&gt; bool { ... }
 </ol>
 <h3 id="doc-coverage"><a class="header" href="#doc-coverage">Doc Coverage</a></h3>
 <p><strong>Text:</strong> This prints a doc coverage table for all crates in the repo:</p>
-<pre><code class="language-sh">RUSTDOCFLAGS='-Z unstable-options --show-coverage' cargo +nightly doc --workspace --no-deps 
+<pre><code class="language-sh">RUSTDOCFLAGS='-Z unstable-options --coverage' cargo +nightly doc --workspace --no-deps
 </code></pre>
 <p><strong>JSON:</strong>
 Although we don’t use it yet, we can get doc coverage information as JSON. This will be useful for prettier and more useful output:</p>
-<pre><code class="language-sh">RUSTDOCFLAGS='-Z unstable-options --show-coverage --output-format json' cargo +nightly doc --workspace --no-deps 
+<pre><code class="language-sh">RUSTDOCFLAGS='-Z unstable-options --coverage --output-format json' cargo +nightly doc --workspace --no-deps
 </code></pre>
 <p><strong>Reading</strong></p>
 <p>See the unstable options section of the rustdoc book. <a href="https://doc.rust-lang.org/rustdoc/unstable-features.html">Link</a>.</p>
@@ -1331,7 +1340,7 @@ Although we don’t use it yet, we can get doc coverage information as JSON. Thi
 <pre><code class="language-yml">- name: Calculate PR doc coverage
   id: prddoc
   run: |
-    RUSTDOCFLAGS='-Z unstable-options --show-coverage' cargo +nightly doc --workspace --no-deps &gt; coverage.md
+    RUSTDOCFLAGS='-Z unstable-options --coverage' cargo +nightly doc --workspace --no-deps &gt; coverage.md
     echo 'coverage&lt;&lt;EOFABC' &gt;&gt; $GITHUB_OUTPUT
     echo "$(cat coverage.md)" &gt;&gt; $GITHUB_OUTPUT
     echo 'EOFABC' &gt;&gt; $GITHUB_OUTPUT```
