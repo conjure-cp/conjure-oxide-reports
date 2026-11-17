@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/conjure-cp-cli/src/solve.rs`."><title>solve.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-1f5a765c.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="conjure_oxide" data-themes="" data-resource-suffix="" data-rustdoc-version="1.102.0-nightly (8eb778d04 2026-11-12)" data-channel="nightly" data-search-js="search-69faa2c4.js" data-stringdex-js="stringdex-b5109af9.js" data-settings-js="settings-9b351432.js" ><script src="../../static.files/storage-41dd4d93.js"></script><script defer src="../../static.files/src-script-813739b1.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-419f3a3f.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-101b5a15.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><a class="skip-main-content" href="#main-content">Skip to main content</a><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><section id="main-content" class="content" tabindex="-1"><div class="main-heading"><h1><div class="sub-heading">conjure_oxide/</div>solve.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-3"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="doccomment">//! conjure_oxide solve sub-command
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `crates/conjure-cp-cli/src/solve.rs`."><title>solve.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-1f5a765c.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="conjure_oxide" data-themes="" data-resource-suffix="" data-rustdoc-version="1.102.0-nightly (5df8c02af 2026-11-16)" data-channel="nightly" data-search-js="search-69faa2c4.js" data-stringdex-js="stringdex-b5109af9.js" data-settings-js="settings-9b351432.js" ><script src="../../static.files/storage-41dd4d93.js"></script><script defer src="../../static.files/src-script-813739b1.js"></script><script defer src="../../src-files.js"></script><script defer src="../../static.files/main-419f3a3f.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-101b5a15.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><a class="skip-main-content" href="#main-content">Skip to main content</a><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><section id="main-content" class="content" tabindex="-1"><div class="main-heading"><h1><div class="sub-heading">conjure_oxide/</div>solve.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap digits-3"><pre class="rust"><code><a href=#1 id=1 data-nosnippet>1</a><span class="doccomment">//! conjure_oxide solve sub-command
 <a href=#2 id=2 data-nosnippet>2</a></span><span class="attr">#![allow(clippy::unwrap_used)]
 <a href=#3 id=3 data-nosnippet>3</a></span><span class="kw">use </span>std::collections::{BTreeMap, BTreeSet};
 <a href=#4 id=4 data-nosnippet>4</a><span class="kw">use </span>std::time::Instant;
@@ -217,294 +217,292 @@
 <a href=#217 id=217 data-nosnippet>217</a>    <span class="comment">// Still write translation statistics when the solver was not run.
 <a href=#218 id=218 data-nosnippet>218</a>    </span><span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref </span>path) = solve_args.stats {
 <a href=#219 id=219 data-nosnippet>219</a>        <span class="kw">let </span>config = RecordedRunConfig {
-<a href=#220 id=220 data-nosnippet>220</a>            parser: global_args.parser.to_string(),
-<a href=#221 id=221 data-nosnippet>221</a>            rewriter: global_args.rewriter.to_string(),
-<a href=#222 id=222 data-nosnippet>222</a>            comprehension_expander: global_args.comprehension_expander.to_string(),
-<a href=#223 id=223 data-nosnippet>223</a>            heuristic: global_args.heuristic.to_string(),
-<a href=#224 id=224 data-nosnippet>224</a>            channelling: global_args.channelling.to_string(),
-<a href=#225 id=225 data-nosnippet>225</a>            seed: global_args.seed,
-<a href=#226 id=226 data-nosnippet>226</a>            solver_seed: global_args.solver_seed,
-<a href=#227 id=227 data-nosnippet>227</a>            solver: global_args.solver.as_str(),
-<a href=#228 id=228 data-nosnippet>228</a>        };
-<a href=#229 id=229 data-nosnippet>229</a>
-<a href=#230 id=230 data-nosnippet>230</a>        <span class="kw">let </span>case_name = solve_args
-<a href=#231 id=231 data-nosnippet>231</a>            .essence_file
-<a href=#232 id=232 data-nosnippet>232</a>            .file_stem()
-<a href=#233 id=233 data-nosnippet>233</a>            .map(|s| s.to_string_lossy().into_owned())
-<a href=#234 id=234 data-nosnippet>234</a>            .unwrap_or_else(|| <span class="string">"input"</span>.to_owned());
-<a href=#235 id=235 data-nosnippet>235</a>
-<a href=#236 id=236 data-nosnippet>236</a>        <span class="kw">let </span><span class="kw-2">mut </span>row = RecordedRunStats {
-<a href=#237 id=237 data-nosnippet>237</a>            parser: config.parser.clone(),
-<a href=#238 id=238 data-nosnippet>238</a>            rewriter: config.rewriter.clone(),
-<a href=#239 id=239 data-nosnippet>239</a>            comprehension_expander: config.comprehension_expander.clone(),
-<a href=#240 id=240 data-nosnippet>240</a>            heuristic: config.heuristic.clone(),
-<a href=#241 id=241 data-nosnippet>241</a>            channelling: config.channelling.clone(),
-<a href=#242 id=242 data-nosnippet>242</a>            seed: config.seed,
-<a href=#243 id=243 data-nosnippet>243</a>            solver_seed: config.solver_seed,
-<a href=#244 id=244 data-nosnippet>244</a>            solver: config.solver.clone(),
-<a href=#245 id=245 data-nosnippet>245</a>            minion_discrete_threshold: global_args.minion_discrete_threshold,
-<a href=#246 id=246 data-nosnippet>246</a>
-<a href=#247 id=247 data-nosnippet>247</a>            case_name,
-<a href=#248 id=248 data-nosnippet>248</a>            model_index: <span class="number">0</span>,
-<a href=#249 id=249 data-nosnippet>249</a>            status: <span class="string">"ok"</span>.to_owned(),
-<a href=#250 id=250 data-nosnippet>250</a>
-<a href=#251 id=251 data-nosnippet>251</a>            solution_limit: (!solve_args.no_run_solver)
-<a href=#252 id=252 data-nosnippet>252</a>                .then(|| solve_args.number_of_solutions.as_solver_limit()),
-<a href=#253 id=253 data-nosnippet>253</a>
-<a href=#254 id=254 data-nosnippet>254</a>            translation_time: <span class="prelude-val">Some</span>(translation_time),
-<a href=#255 id=255 data-nosnippet>255</a>            solve_time,
-<a href=#256 id=256 data-nosnippet>256</a>            backend_time,
-<a href=#257 id=257 data-nosnippet>257</a>            search_time,
-<a href=#258 id=258 data-nosnippet>258</a>            solution_processing_time,
-<a href=#259 id=259 data-nosnippet>259</a>
-<a href=#260 id=260 data-nosnippet>260</a>            ..Default::default()
-<a href=#261 id=261 data-nosnippet>261</a>        };
+<a href=#220 id=220 data-nosnippet>220</a>            rewriter: global_args.rewriter.to_string(),
+<a href=#221 id=221 data-nosnippet>221</a>            comprehension_expander: global_args.comprehension_expander.to_string(),
+<a href=#222 id=222 data-nosnippet>222</a>            heuristic: global_args.heuristic.to_string(),
+<a href=#223 id=223 data-nosnippet>223</a>            channelling: global_args.channelling.to_string(),
+<a href=#224 id=224 data-nosnippet>224</a>            seed: global_args.seed,
+<a href=#225 id=225 data-nosnippet>225</a>            solver_seed: global_args.solver_seed,
+<a href=#226 id=226 data-nosnippet>226</a>            solver: global_args.solver.as_str(),
+<a href=#227 id=227 data-nosnippet>227</a>        };
+<a href=#228 id=228 data-nosnippet>228</a>
+<a href=#229 id=229 data-nosnippet>229</a>        <span class="kw">let </span>case_name = solve_args
+<a href=#230 id=230 data-nosnippet>230</a>            .essence_file
+<a href=#231 id=231 data-nosnippet>231</a>            .file_stem()
+<a href=#232 id=232 data-nosnippet>232</a>            .map(|s| s.to_string_lossy().into_owned())
+<a href=#233 id=233 data-nosnippet>233</a>            .unwrap_or_else(|| <span class="string">"input"</span>.to_owned());
+<a href=#234 id=234 data-nosnippet>234</a>
+<a href=#235 id=235 data-nosnippet>235</a>        <span class="kw">let </span><span class="kw-2">mut </span>row = RecordedRunStats {
+<a href=#236 id=236 data-nosnippet>236</a>            rewriter: config.rewriter.clone(),
+<a href=#237 id=237 data-nosnippet>237</a>            comprehension_expander: config.comprehension_expander.clone(),
+<a href=#238 id=238 data-nosnippet>238</a>            heuristic: config.heuristic.clone(),
+<a href=#239 id=239 data-nosnippet>239</a>            channelling: config.channelling.clone(),
+<a href=#240 id=240 data-nosnippet>240</a>            seed: config.seed,
+<a href=#241 id=241 data-nosnippet>241</a>            solver_seed: config.solver_seed,
+<a href=#242 id=242 data-nosnippet>242</a>            solver: config.solver.clone(),
+<a href=#243 id=243 data-nosnippet>243</a>            minion_discrete_threshold: global_args.minion_discrete_threshold,
+<a href=#244 id=244 data-nosnippet>244</a>
+<a href=#245 id=245 data-nosnippet>245</a>            case_name,
+<a href=#246 id=246 data-nosnippet>246</a>            model_index: <span class="number">0</span>,
+<a href=#247 id=247 data-nosnippet>247</a>            status: <span class="string">"ok"</span>.to_owned(),
+<a href=#248 id=248 data-nosnippet>248</a>
+<a href=#249 id=249 data-nosnippet>249</a>            solution_limit: (!solve_args.no_run_solver)
+<a href=#250 id=250 data-nosnippet>250</a>                .then(|| solve_args.number_of_solutions.as_solver_limit()),
+<a href=#251 id=251 data-nosnippet>251</a>
+<a href=#252 id=252 data-nosnippet>252</a>            translation_time: <span class="prelude-val">Some</span>(translation_time),
+<a href=#253 id=253 data-nosnippet>253</a>            solve_time,
+<a href=#254 id=254 data-nosnippet>254</a>            backend_time,
+<a href=#255 id=255 data-nosnippet>255</a>            search_time,
+<a href=#256 id=256 data-nosnippet>256</a>            solution_processing_time,
+<a href=#257 id=257 data-nosnippet>257</a>
+<a href=#258 id=258 data-nosnippet>258</a>            ..Default::default()
+<a href=#259 id=259 data-nosnippet>259</a>        };
+<a href=#260 id=260 data-nosnippet>260</a>
+<a href=#261 id=261 data-nosnippet>261</a>        row.representations = model_choices.representations;
 <a href=#262 id=262 data-nosnippet>262</a>
-<a href=#263 id=263 data-nosnippet>263</a>        row.representations = model_choices.representations;
-<a href=#264 id=264 data-nosnippet>264</a>
-<a href=#265 id=265 data-nosnippet>265</a>        row.sat_encoding_amo = model_choices.sat_encoding_amo;
-<a href=#266 id=266 data-nosnippet>266</a>        row.sat_encoding_cardinality = model_choices.sat_encoding_cardinality;
-<a href=#267 id=267 data-nosnippet>267</a>        row.sat_encoding_pb = model_choices.sat_encoding_pb;
-<a href=#268 id=268 data-nosnippet>268</a>        row.sat_encoding_table = model_choices.sat_encoding_table;
-<a href=#269 id=269 data-nosnippet>269</a>        row.sat_encoding_element = model_choices.sat_encoding_element;
-<a href=#270 id=270 data-nosnippet>270</a>        row.sat_encoding_alldifferent = model_choices.sat_encoding_alldifferent;
-<a href=#271 id=271 data-nosnippet>271</a>
-<a href=#272 id=272 data-nosnippet>272</a>        <span class="comment">// Read the same rewrite-attempt counters used by exhaustive testing.
-<a href=#273 id=273 data-nosnippet>273</a>        </span><span class="kw">let </span>context_json = serde_json::to_value(context.read().unwrap().clone())<span class="question-mark">?</span>;
-<a href=#274 id=274 data-nosnippet>274</a>
-<a href=#275 id=275 data-nosnippet>275</a>        <span class="kw">let </span>attempt_counts: Vec&lt;u64&gt; = context_json
-<a href=#276 id=276 data-nosnippet>276</a>            .get(<span class="string">"stats"</span>)
-<a href=#277 id=277 data-nosnippet>277</a>            .and_then(|stats| stats.get(<span class="string">"rewriterRuns"</span>))
-<a href=#278 id=278 data-nosnippet>278</a>            .and_then(serde_json::Value::as_array)
-<a href=#279 id=279 data-nosnippet>279</a>            .into_iter()
-<a href=#280 id=280 data-nosnippet>280</a>            .flatten()
-<a href=#281 id=281 data-nosnippet>281</a>            .filter_map(|run| {
-<a href=#282 id=282 data-nosnippet>282</a>                run.get(<span class="string">"rewriterRuleApplicationAttempts"</span>)
-<a href=#283 id=283 data-nosnippet>283</a>                    .and_then(serde_json::Value::as_u64)
-<a href=#284 id=284 data-nosnippet>284</a>            })
-<a href=#285 id=285 data-nosnippet>285</a>            .collect();
-<a href=#286 id=286 data-nosnippet>286</a>
-<a href=#287 id=287 data-nosnippet>287</a>        <span class="kw">if </span>!attempt_counts.is_empty() {
-<a href=#288 id=288 data-nosnippet>288</a>            row.rule_trace.total_rule_attempts = <span class="prelude-val">Some</span>(attempt_counts.iter().sum());
-<a href=#289 id=289 data-nosnippet>289</a>        }
-<a href=#290 id=290 data-nosnippet>290</a>
-<a href=#291 id=291 data-nosnippet>291</a>        <span class="kw">let </span>counts = rule_application_counts.snapshot();
-<a href=#292 id=292 data-nosnippet>292</a>        row.rule_trace.total_rule_applications = <span class="prelude-val">Some</span>(counts.values().copied().sum());
-<a href=#293 id=293 data-nosnippet>293</a>        row.rule_trace.rules = counts;
-<a href=#294 id=294 data-nosnippet>294</a>
-<a href=#295 id=295 data-nosnippet>295</a>        <span class="comment">// Write the completed statistics record only after all fields are populated.
-<a href=#296 id=296 data-nosnippet>296</a>        </span>replace_config_run_stats(path, <span class="kw-2">&amp;</span>config, <span class="macro">vec!</span>[row])<span class="question-mark">?</span>;
-<a href=#297 id=297 data-nosnippet>297</a>    }
-<a href=#298 id=298 data-nosnippet>298</a>    <span class="prelude-val">Ok</span>(())
-<a href=#299 id=299 data-nosnippet>299</a>}
-<a href=#300 id=300 data-nosnippet>300</a><span class="kw">fn </span>record_model_choices(model: <span class="kw-2">&amp;</span>Model, row: <span class="kw-2">&amp;mut </span>RecordedRunStats) {
-<a href=#301 id=301 data-nosnippet>301</a>    row.representations = model
-<a href=#302 id=302 data-nosnippet>302</a>        .symbols()
-<a href=#303 id=303 data-nosnippet>303</a>        .iter_local()
-<a href=#304 id=304 data-nosnippet>304</a>        .flat_map(|(<span class="kw">_</span>, decl)| {
-<a href=#305 id=305 data-nosnippet>305</a>            decl.reprs()
-<a href=#306 id=306 data-nosnippet>306</a>                .iter()
-<a href=#307 id=307 data-nosnippet>307</a>                .map(|(name, <span class="kw">_</span>)| name.to_owned())
-<a href=#308 id=308 data-nosnippet>308</a>                .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;()
-<a href=#309 id=309 data-nosnippet>309</a>        })
-<a href=#310 id=310 data-nosnippet>310</a>        .collect::&lt;BTreeSet&lt;<span class="kw">_</span>&gt;&gt;()
-<a href=#311 id=311 data-nosnippet>311</a>        .into_iter()
-<a href=#312 id=312 data-nosnippet>312</a>        .collect();
-<a href=#313 id=313 data-nosnippet>313</a>    <span class="kw">let </span><span class="kw-2">mut </span>families: BTreeMap&lt;<span class="kw-2">&amp;</span>str, BTreeSet&lt;String&gt;&gt; = BTreeMap::new();
-<a href=#314 id=314 data-nosnippet>314</a>    <span class="macro">macro_rules!</span> record {
-<a href=#315 id=315 data-nosnippet>315</a>        (<span class="macro-nonterminal">$family</span>:expr, <span class="macro-nonterminal">$selection</span>:expr) =&gt; {{
-<a href=#316 id=316 data-nosnippet>316</a>            <span class="macro-nonterminal">$selection</span>.iter().for_each(|selection| {
-<a href=#317 id=317 data-nosnippet>317</a>                families
-<a href=#318 id=318 data-nosnippet>318</a>                    .entry(<span class="macro-nonterminal">$family</span>)
-<a href=#319 id=319 data-nosnippet>319</a>                    .or_default()
-<a href=#320 id=320 data-nosnippet>320</a>                    .insert(selection.algorithm.to_string());
-<a href=#321 id=321 data-nosnippet>321</a>            });
-<a href=#322 id=322 data-nosnippet>322</a>        }};
-<a href=#323 id=323 data-nosnippet>323</a>    }
-<a href=#324 id=324 data-nosnippet>324</a>    <span class="kw">for </span>decision <span class="kw">in </span>model.sat_decisions() {
-<a href=#325 id=325 data-nosnippet>325</a>        <span class="kw">match </span>decision {
-<a href=#326 id=326 data-nosnippet>326</a>            SatEncodingDecision::AtMostOne { encoding, .. } =&gt; {
-<a href=#327 id=327 data-nosnippet>327</a>                <span class="macro">record!</span>(<span class="string">"amo"</span>, encoding);
-<a href=#328 id=328 data-nosnippet>328</a>            }
-<a href=#329 id=329 data-nosnippet>329</a>            SatEncodingDecision::Cardinality { encoding, .. } =&gt; {
-<a href=#330 id=330 data-nosnippet>330</a>                <span class="macro">record!</span>(<span class="string">"cardinality"</span>, encoding);
-<a href=#331 id=331 data-nosnippet>331</a>            }
-<a href=#332 id=332 data-nosnippet>332</a>            SatEncodingDecision::CountRelation {
-<a href=#333 id=333 data-nosnippet>333</a>                encoding,
-<a href=#334 id=334 data-nosnippet>334</a>                amo_encoding,
-<a href=#335 id=335 data-nosnippet>335</a>                ..
-<a href=#336 id=336 data-nosnippet>336</a>            } =&gt; {
-<a href=#337 id=337 data-nosnippet>337</a>                <span class="macro">record!</span>(<span class="string">"cardinality"</span>, encoding);
-<a href=#338 id=338 data-nosnippet>338</a>                <span class="macro">record!</span>(<span class="string">"amo"</span>, amo_encoding);
-<a href=#339 id=339 data-nosnippet>339</a>            }
-<a href=#340 id=340 data-nosnippet>340</a>            SatEncodingDecision::PseudoBoolean { encoding, .. }
-<a href=#341 id=341 data-nosnippet>341</a>            | SatEncodingDecision::IntegerRelation { encoding, .. }
-<a href=#342 id=342 data-nosnippet>342</a>            | SatEncodingDecision::Objective { encoding, .. } =&gt; <span class="macro">record!</span>(<span class="string">"pb"</span>, encoding),
-<a href=#343 id=343 data-nosnippet>343</a>            SatEncodingDecision::AllDifferent {
-<a href=#344 id=344 data-nosnippet>344</a>                encoding,
-<a href=#345 id=345 data-nosnippet>345</a>                amo_encoding,
-<a href=#346 id=346 data-nosnippet>346</a>                pb_encoding,
-<a href=#347 id=347 data-nosnippet>347</a>                ..
-<a href=#348 id=348 data-nosnippet>348</a>            } =&gt; {
-<a href=#349 id=349 data-nosnippet>349</a>                <span class="macro">record!</span>(<span class="string">"alldifferent"</span>, encoding);
-<a href=#350 id=350 data-nosnippet>350</a>                <span class="macro">record!</span>(<span class="string">"amo"</span>, amo_encoding);
-<a href=#351 id=351 data-nosnippet>351</a>                <span class="macro">record!</span>(<span class="string">"pb"</span>, pb_encoding);
-<a href=#352 id=352 data-nosnippet>352</a>            }
-<a href=#353 id=353 data-nosnippet>353</a>            SatEncodingDecision::Table {
-<a href=#354 id=354 data-nosnippet>354</a>                encoding,
-<a href=#355 id=355 data-nosnippet>355</a>                pb_encoding,
-<a href=#356 id=356 data-nosnippet>356</a>                ..
-<a href=#357 id=357 data-nosnippet>357</a>            } =&gt; {
-<a href=#358 id=358 data-nosnippet>358</a>                <span class="macro">record!</span>(<span class="string">"table"</span>, encoding);
-<a href=#359 id=359 data-nosnippet>359</a>                <span class="macro">record!</span>(<span class="string">"pb"</span>, pb_encoding);
-<a href=#360 id=360 data-nosnippet>360</a>            }
-<a href=#361 id=361 data-nosnippet>361</a>            SatEncodingDecision::Element {
-<a href=#362 id=362 data-nosnippet>362</a>                encoding,
-<a href=#363 id=363 data-nosnippet>363</a>                pb_encoding,
-<a href=#364 id=364 data-nosnippet>364</a>                ..
-<a href=#365 id=365 data-nosnippet>365</a>            } =&gt; {
-<a href=#366 id=366 data-nosnippet>366</a>                <span class="macro">record!</span>(<span class="string">"element"</span>, encoding);
-<a href=#367 id=367 data-nosnippet>367</a>                <span class="macro">record!</span>(<span class="string">"pb"</span>, pb_encoding);
-<a href=#368 id=368 data-nosnippet>368</a>            }
-<a href=#369 id=369 data-nosnippet>369</a>            <span class="kw">_ </span>=&gt; {}
-<a href=#370 id=370 data-nosnippet>370</a>        }
-<a href=#371 id=371 data-nosnippet>371</a>    }
-<a href=#372 id=372 data-nosnippet>372</a>    row.sat_encoding_amo = families
-<a href=#373 id=373 data-nosnippet>373</a>        .remove(<span class="string">"amo"</span>)
-<a href=#374 id=374 data-nosnippet>374</a>        .unwrap_or_default()
-<a href=#375 id=375 data-nosnippet>375</a>        .into_iter()
-<a href=#376 id=376 data-nosnippet>376</a>        .collect();
-<a href=#377 id=377 data-nosnippet>377</a>    row.sat_encoding_cardinality = families
-<a href=#378 id=378 data-nosnippet>378</a>        .remove(<span class="string">"cardinality"</span>)
-<a href=#379 id=379 data-nosnippet>379</a>        .unwrap_or_default()
-<a href=#380 id=380 data-nosnippet>380</a>        .into_iter()
-<a href=#381 id=381 data-nosnippet>381</a>        .collect();
-<a href=#382 id=382 data-nosnippet>382</a>    row.sat_encoding_pb = families
-<a href=#383 id=383 data-nosnippet>383</a>        .remove(<span class="string">"pb"</span>)
-<a href=#384 id=384 data-nosnippet>384</a>        .unwrap_or_default()
-<a href=#385 id=385 data-nosnippet>385</a>        .into_iter()
-<a href=#386 id=386 data-nosnippet>386</a>        .collect();
-<a href=#387 id=387 data-nosnippet>387</a>    row.sat_encoding_table = families
-<a href=#388 id=388 data-nosnippet>388</a>        .remove(<span class="string">"table"</span>)
-<a href=#389 id=389 data-nosnippet>389</a>        .unwrap_or_default()
-<a href=#390 id=390 data-nosnippet>390</a>        .into_iter()
-<a href=#391 id=391 data-nosnippet>391</a>        .collect();
-<a href=#392 id=392 data-nosnippet>392</a>    row.sat_encoding_element = families
-<a href=#393 id=393 data-nosnippet>393</a>        .remove(<span class="string">"element"</span>)
-<a href=#394 id=394 data-nosnippet>394</a>        .unwrap_or_default()
-<a href=#395 id=395 data-nosnippet>395</a>        .into_iter()
-<a href=#396 id=396 data-nosnippet>396</a>        .collect();
-<a href=#397 id=397 data-nosnippet>397</a>    row.sat_encoding_alldifferent = families
-<a href=#398 id=398 data-nosnippet>398</a>        .remove(<span class="string">"alldifferent"</span>)
-<a href=#399 id=399 data-nosnippet>399</a>        .unwrap_or_default()
-<a href=#400 id=400 data-nosnippet>400</a>        .into_iter()
-<a href=#401 id=401 data-nosnippet>401</a>        .collect();
-<a href=#402 id=402 data-nosnippet>402</a>}
-<a href=#403 id=403 data-nosnippet>403</a><span class="doccomment">/// Parse an Essence or simplified-JSON parameter file.
-<a href=#404 id=404 data-nosnippet>404</a></span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>parse_param(
-<a href=#405 id=405 data-nosnippet>405</a>    pipeline: <span class="kw-2">&amp;</span>Pipeline,
-<a href=#406 id=406 data-nosnippet>406</a>    file_path: <span class="kw-2">&amp;</span>Path,
-<a href=#407 id=407 data-nosnippet>407</a>    problem_model: <span class="kw-2">&amp;</span>Model,
-<a href=#408 id=408 data-nosnippet>408</a>) -&gt; anyhow::Result&lt;Model&gt; {
-<a href=#409 id=409 data-nosnippet>409</a>    <span class="kw">if </span>file_path
-<a href=#410 id=410 data-nosnippet>410</a>        .extension()
-<a href=#411 id=411 data-nosnippet>411</a>        .is_some_and(|extension| extension == <span class="string">"json"</span>)
-<a href=#412 id=412 data-nosnippet>412</a>    {
-<a href=#413 id=413 data-nosnippet>413</a>        <span class="macro">tracing::info!</span>(target: <span class="string">"conjure::stage"</span>, path = %file_path.display(), <span class="string">"parsing parameter file"</span>);
-<a href=#414 id=414 data-nosnippet>414</a>        <span class="kw">let </span>text = std::fs::read_to_string(file_path)<span class="question-mark">?</span>;
-<a href=#415 id=415 data-nosnippet>415</a>        <span class="kw">let </span>given_domains = domains_from_model(problem_model);
-<a href=#416 id=416 data-nosnippet>416</a>        <span class="kw">let </span>params = params_from_simplified_json_str(<span class="kw-2">&amp;</span>text, <span class="kw-2">&amp;</span>given_domains)<span class="question-mark">?</span>;
-<a href=#417 id=417 data-nosnippet>417</a>        <span class="kw">return </span><span class="prelude-val">Ok</span>(param_model_from_assignments(
-<a href=#418 id=418 data-nosnippet>418</a>            params,
-<a href=#419 id=419 data-nosnippet>419</a>            <span class="kw-2">&amp;</span>given_domains,
-<a href=#420 id=420 data-nosnippet>420</a>            pipeline.context(),
-<a href=#421 id=421 data-nosnippet>421</a>        ));
-<a href=#422 id=422 data-nosnippet>422</a>    }
-<a href=#423 id=423 data-nosnippet>423</a>    pipeline.parse_file(file_path)
-<a href=#424 id=424 data-nosnippet>424</a>}
-<a href=#425 id=425 data-nosnippet>425</a>
-<a href=#426 id=426 data-nosnippet>426</a><span class="kw">fn </span>run_solver(
-<a href=#427 id=427 data-nosnippet>427</a>    pipeline: <span class="kw-2">&amp;</span>Pipeline,
-<a href=#428 id=428 data-nosnippet>428</a>    global_args: <span class="kw-2">&amp;</span>GlobalArgs,
-<a href=#429 id=429 data-nosnippet>429</a>    cmd_args: <span class="kw-2">&amp;</span>Args,
-<a href=#430 id=430 data-nosnippet>430</a>    model: Model,
-<a href=#431 id=431 data-nosnippet>431</a>) -&gt; anyhow::Result&lt;(f64, f64, f64)&gt; {
-<a href=#432 id=432 data-nosnippet>432</a>    <span class="kw">let </span>(solutions, measured) = pipeline.solve_with_timings(
-<a href=#433 id=433 data-nosnippet>433</a>        model,
-<a href=#434 id=434 data-nosnippet>434</a>        <span class="kw-2">&amp;</span>SolutionOptions {
-<a href=#435 id=435 data-nosnippet>435</a>            number_of_solutions: cmd_args.number_of_solutions.as_solver_limit(),
-<a href=#436 id=436 data-nosnippet>436</a>            keep_intermediate_solutions: cmd_args.keep_intermediate_solutions,
-<a href=#437 id=437 data-nosnippet>437</a>            solver_input_file: global_args.save_solver_input_file.clone(),
-<a href=#438 id=438 data-nosnippet>438</a>            rule_trace_cdp: global_args.rule_trace_cdp,
-<a href=#439 id=439 data-nosnippet>439</a>        },
-<a href=#440 id=440 data-nosnippet>440</a>    )<span class="question-mark">?</span>;
+<a href=#263 id=263 data-nosnippet>263</a>        row.sat_encoding_amo = model_choices.sat_encoding_amo;
+<a href=#264 id=264 data-nosnippet>264</a>        row.sat_encoding_cardinality = model_choices.sat_encoding_cardinality;
+<a href=#265 id=265 data-nosnippet>265</a>        row.sat_encoding_pb = model_choices.sat_encoding_pb;
+<a href=#266 id=266 data-nosnippet>266</a>        row.sat_encoding_table = model_choices.sat_encoding_table;
+<a href=#267 id=267 data-nosnippet>267</a>        row.sat_encoding_element = model_choices.sat_encoding_element;
+<a href=#268 id=268 data-nosnippet>268</a>        row.sat_encoding_alldifferent = model_choices.sat_encoding_alldifferent;
+<a href=#269 id=269 data-nosnippet>269</a>
+<a href=#270 id=270 data-nosnippet>270</a>        <span class="comment">// Read the same rewrite-attempt counters used by exhaustive testing.
+<a href=#271 id=271 data-nosnippet>271</a>        </span><span class="kw">let </span>context_json = serde_json::to_value(context.read().unwrap().clone())<span class="question-mark">?</span>;
+<a href=#272 id=272 data-nosnippet>272</a>
+<a href=#273 id=273 data-nosnippet>273</a>        <span class="kw">let </span>attempt_counts: Vec&lt;u64&gt; = context_json
+<a href=#274 id=274 data-nosnippet>274</a>            .get(<span class="string">"stats"</span>)
+<a href=#275 id=275 data-nosnippet>275</a>            .and_then(|stats| stats.get(<span class="string">"rewriterRuns"</span>))
+<a href=#276 id=276 data-nosnippet>276</a>            .and_then(serde_json::Value::as_array)
+<a href=#277 id=277 data-nosnippet>277</a>            .into_iter()
+<a href=#278 id=278 data-nosnippet>278</a>            .flatten()
+<a href=#279 id=279 data-nosnippet>279</a>            .filter_map(|run| {
+<a href=#280 id=280 data-nosnippet>280</a>                run.get(<span class="string">"rewriterRuleApplicationAttempts"</span>)
+<a href=#281 id=281 data-nosnippet>281</a>                    .and_then(serde_json::Value::as_u64)
+<a href=#282 id=282 data-nosnippet>282</a>            })
+<a href=#283 id=283 data-nosnippet>283</a>            .collect();
+<a href=#284 id=284 data-nosnippet>284</a>
+<a href=#285 id=285 data-nosnippet>285</a>        <span class="kw">if </span>!attempt_counts.is_empty() {
+<a href=#286 id=286 data-nosnippet>286</a>            row.rule_trace.total_rule_attempts = <span class="prelude-val">Some</span>(attempt_counts.iter().sum());
+<a href=#287 id=287 data-nosnippet>287</a>        }
+<a href=#288 id=288 data-nosnippet>288</a>
+<a href=#289 id=289 data-nosnippet>289</a>        <span class="kw">let </span>counts = rule_application_counts.snapshot();
+<a href=#290 id=290 data-nosnippet>290</a>        row.rule_trace.total_rule_applications = <span class="prelude-val">Some</span>(counts.values().copied().sum());
+<a href=#291 id=291 data-nosnippet>291</a>        row.rule_trace.rules = counts;
+<a href=#292 id=292 data-nosnippet>292</a>
+<a href=#293 id=293 data-nosnippet>293</a>        <span class="comment">// Write the completed statistics record only after all fields are populated.
+<a href=#294 id=294 data-nosnippet>294</a>        </span>replace_config_run_stats(path, <span class="kw-2">&amp;</span>config, <span class="macro">vec!</span>[row])<span class="question-mark">?</span>;
+<a href=#295 id=295 data-nosnippet>295</a>    }
+<a href=#296 id=296 data-nosnippet>296</a>    <span class="prelude-val">Ok</span>(())
+<a href=#297 id=297 data-nosnippet>297</a>}
+<a href=#298 id=298 data-nosnippet>298</a><span class="kw">fn </span>record_model_choices(model: <span class="kw-2">&amp;</span>Model, row: <span class="kw-2">&amp;mut </span>RecordedRunStats) {
+<a href=#299 id=299 data-nosnippet>299</a>    row.representations = model
+<a href=#300 id=300 data-nosnippet>300</a>        .symbols()
+<a href=#301 id=301 data-nosnippet>301</a>        .iter_local()
+<a href=#302 id=302 data-nosnippet>302</a>        .flat_map(|(<span class="kw">_</span>, decl)| {
+<a href=#303 id=303 data-nosnippet>303</a>            decl.reprs()
+<a href=#304 id=304 data-nosnippet>304</a>                .iter()
+<a href=#305 id=305 data-nosnippet>305</a>                .map(|(name, <span class="kw">_</span>)| name.to_owned())
+<a href=#306 id=306 data-nosnippet>306</a>                .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;()
+<a href=#307 id=307 data-nosnippet>307</a>        })
+<a href=#308 id=308 data-nosnippet>308</a>        .collect::&lt;BTreeSet&lt;<span class="kw">_</span>&gt;&gt;()
+<a href=#309 id=309 data-nosnippet>309</a>        .into_iter()
+<a href=#310 id=310 data-nosnippet>310</a>        .collect();
+<a href=#311 id=311 data-nosnippet>311</a>    <span class="kw">let </span><span class="kw-2">mut </span>families: BTreeMap&lt;<span class="kw-2">&amp;</span>str, BTreeSet&lt;String&gt;&gt; = BTreeMap::new();
+<a href=#312 id=312 data-nosnippet>312</a>    <span class="macro">macro_rules!</span> record {
+<a href=#313 id=313 data-nosnippet>313</a>        (<span class="macro-nonterminal">$family</span>:expr, <span class="macro-nonterminal">$selection</span>:expr) =&gt; {{
+<a href=#314 id=314 data-nosnippet>314</a>            <span class="macro-nonterminal">$selection</span>.iter().for_each(|selection| {
+<a href=#315 id=315 data-nosnippet>315</a>                families
+<a href=#316 id=316 data-nosnippet>316</a>                    .entry(<span class="macro-nonterminal">$family</span>)
+<a href=#317 id=317 data-nosnippet>317</a>                    .or_default()
+<a href=#318 id=318 data-nosnippet>318</a>                    .insert(selection.algorithm.to_string());
+<a href=#319 id=319 data-nosnippet>319</a>            });
+<a href=#320 id=320 data-nosnippet>320</a>        }};
+<a href=#321 id=321 data-nosnippet>321</a>    }
+<a href=#322 id=322 data-nosnippet>322</a>    <span class="kw">for </span>decision <span class="kw">in </span>model.sat_decisions() {
+<a href=#323 id=323 data-nosnippet>323</a>        <span class="kw">match </span>decision {
+<a href=#324 id=324 data-nosnippet>324</a>            SatEncodingDecision::AtMostOne { encoding, .. } =&gt; {
+<a href=#325 id=325 data-nosnippet>325</a>                <span class="macro">record!</span>(<span class="string">"amo"</span>, encoding);
+<a href=#326 id=326 data-nosnippet>326</a>            }
+<a href=#327 id=327 data-nosnippet>327</a>            SatEncodingDecision::Cardinality { encoding, .. } =&gt; {
+<a href=#328 id=328 data-nosnippet>328</a>                <span class="macro">record!</span>(<span class="string">"cardinality"</span>, encoding);
+<a href=#329 id=329 data-nosnippet>329</a>            }
+<a href=#330 id=330 data-nosnippet>330</a>            SatEncodingDecision::CountRelation {
+<a href=#331 id=331 data-nosnippet>331</a>                encoding,
+<a href=#332 id=332 data-nosnippet>332</a>                amo_encoding,
+<a href=#333 id=333 data-nosnippet>333</a>                ..
+<a href=#334 id=334 data-nosnippet>334</a>            } =&gt; {
+<a href=#335 id=335 data-nosnippet>335</a>                <span class="macro">record!</span>(<span class="string">"cardinality"</span>, encoding);
+<a href=#336 id=336 data-nosnippet>336</a>                <span class="macro">record!</span>(<span class="string">"amo"</span>, amo_encoding);
+<a href=#337 id=337 data-nosnippet>337</a>            }
+<a href=#338 id=338 data-nosnippet>338</a>            SatEncodingDecision::PseudoBoolean { encoding, .. }
+<a href=#339 id=339 data-nosnippet>339</a>            | SatEncodingDecision::IntegerRelation { encoding, .. }
+<a href=#340 id=340 data-nosnippet>340</a>            | SatEncodingDecision::Objective { encoding, .. } =&gt; <span class="macro">record!</span>(<span class="string">"pb"</span>, encoding),
+<a href=#341 id=341 data-nosnippet>341</a>            SatEncodingDecision::AllDifferent {
+<a href=#342 id=342 data-nosnippet>342</a>                encoding,
+<a href=#343 id=343 data-nosnippet>343</a>                amo_encoding,
+<a href=#344 id=344 data-nosnippet>344</a>                pb_encoding,
+<a href=#345 id=345 data-nosnippet>345</a>                ..
+<a href=#346 id=346 data-nosnippet>346</a>            } =&gt; {
+<a href=#347 id=347 data-nosnippet>347</a>                <span class="macro">record!</span>(<span class="string">"alldifferent"</span>, encoding);
+<a href=#348 id=348 data-nosnippet>348</a>                <span class="macro">record!</span>(<span class="string">"amo"</span>, amo_encoding);
+<a href=#349 id=349 data-nosnippet>349</a>                <span class="macro">record!</span>(<span class="string">"pb"</span>, pb_encoding);
+<a href=#350 id=350 data-nosnippet>350</a>            }
+<a href=#351 id=351 data-nosnippet>351</a>            SatEncodingDecision::Table {
+<a href=#352 id=352 data-nosnippet>352</a>                encoding,
+<a href=#353 id=353 data-nosnippet>353</a>                pb_encoding,
+<a href=#354 id=354 data-nosnippet>354</a>                ..
+<a href=#355 id=355 data-nosnippet>355</a>            } =&gt; {
+<a href=#356 id=356 data-nosnippet>356</a>                <span class="macro">record!</span>(<span class="string">"table"</span>, encoding);
+<a href=#357 id=357 data-nosnippet>357</a>                <span class="macro">record!</span>(<span class="string">"pb"</span>, pb_encoding);
+<a href=#358 id=358 data-nosnippet>358</a>            }
+<a href=#359 id=359 data-nosnippet>359</a>            SatEncodingDecision::Element {
+<a href=#360 id=360 data-nosnippet>360</a>                encoding,
+<a href=#361 id=361 data-nosnippet>361</a>                pb_encoding,
+<a href=#362 id=362 data-nosnippet>362</a>                ..
+<a href=#363 id=363 data-nosnippet>363</a>            } =&gt; {
+<a href=#364 id=364 data-nosnippet>364</a>                <span class="macro">record!</span>(<span class="string">"element"</span>, encoding);
+<a href=#365 id=365 data-nosnippet>365</a>                <span class="macro">record!</span>(<span class="string">"pb"</span>, pb_encoding);
+<a href=#366 id=366 data-nosnippet>366</a>            }
+<a href=#367 id=367 data-nosnippet>367</a>            <span class="kw">_ </span>=&gt; {}
+<a href=#368 id=368 data-nosnippet>368</a>        }
+<a href=#369 id=369 data-nosnippet>369</a>    }
+<a href=#370 id=370 data-nosnippet>370</a>    row.sat_encoding_amo = families
+<a href=#371 id=371 data-nosnippet>371</a>        .remove(<span class="string">"amo"</span>)
+<a href=#372 id=372 data-nosnippet>372</a>        .unwrap_or_default()
+<a href=#373 id=373 data-nosnippet>373</a>        .into_iter()
+<a href=#374 id=374 data-nosnippet>374</a>        .collect();
+<a href=#375 id=375 data-nosnippet>375</a>    row.sat_encoding_cardinality = families
+<a href=#376 id=376 data-nosnippet>376</a>        .remove(<span class="string">"cardinality"</span>)
+<a href=#377 id=377 data-nosnippet>377</a>        .unwrap_or_default()
+<a href=#378 id=378 data-nosnippet>378</a>        .into_iter()
+<a href=#379 id=379 data-nosnippet>379</a>        .collect();
+<a href=#380 id=380 data-nosnippet>380</a>    row.sat_encoding_pb = families
+<a href=#381 id=381 data-nosnippet>381</a>        .remove(<span class="string">"pb"</span>)
+<a href=#382 id=382 data-nosnippet>382</a>        .unwrap_or_default()
+<a href=#383 id=383 data-nosnippet>383</a>        .into_iter()
+<a href=#384 id=384 data-nosnippet>384</a>        .collect();
+<a href=#385 id=385 data-nosnippet>385</a>    row.sat_encoding_table = families
+<a href=#386 id=386 data-nosnippet>386</a>        .remove(<span class="string">"table"</span>)
+<a href=#387 id=387 data-nosnippet>387</a>        .unwrap_or_default()
+<a href=#388 id=388 data-nosnippet>388</a>        .into_iter()
+<a href=#389 id=389 data-nosnippet>389</a>        .collect();
+<a href=#390 id=390 data-nosnippet>390</a>    row.sat_encoding_element = families
+<a href=#391 id=391 data-nosnippet>391</a>        .remove(<span class="string">"element"</span>)
+<a href=#392 id=392 data-nosnippet>392</a>        .unwrap_or_default()
+<a href=#393 id=393 data-nosnippet>393</a>        .into_iter()
+<a href=#394 id=394 data-nosnippet>394</a>        .collect();
+<a href=#395 id=395 data-nosnippet>395</a>    row.sat_encoding_alldifferent = families
+<a href=#396 id=396 data-nosnippet>396</a>        .remove(<span class="string">"alldifferent"</span>)
+<a href=#397 id=397 data-nosnippet>397</a>        .unwrap_or_default()
+<a href=#398 id=398 data-nosnippet>398</a>        .into_iter()
+<a href=#399 id=399 data-nosnippet>399</a>        .collect();
+<a href=#400 id=400 data-nosnippet>400</a>}
+<a href=#401 id=401 data-nosnippet>401</a><span class="doccomment">/// Parse an Essence or simplified-JSON parameter file.
+<a href=#402 id=402 data-nosnippet>402</a></span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>parse_param(
+<a href=#403 id=403 data-nosnippet>403</a>    pipeline: <span class="kw-2">&amp;</span>Pipeline,
+<a href=#404 id=404 data-nosnippet>404</a>    file_path: <span class="kw-2">&amp;</span>Path,
+<a href=#405 id=405 data-nosnippet>405</a>    problem_model: <span class="kw-2">&amp;</span>Model,
+<a href=#406 id=406 data-nosnippet>406</a>) -&gt; anyhow::Result&lt;Model&gt; {
+<a href=#407 id=407 data-nosnippet>407</a>    <span class="kw">if </span>file_path
+<a href=#408 id=408 data-nosnippet>408</a>        .extension()
+<a href=#409 id=409 data-nosnippet>409</a>        .is_some_and(|extension| extension == <span class="string">"json"</span>)
+<a href=#410 id=410 data-nosnippet>410</a>    {
+<a href=#411 id=411 data-nosnippet>411</a>        <span class="macro">tracing::info!</span>(target: <span class="string">"conjure::stage"</span>, path = %file_path.display(), <span class="string">"parsing parameter file"</span>);
+<a href=#412 id=412 data-nosnippet>412</a>        <span class="kw">let </span>text = std::fs::read_to_string(file_path)<span class="question-mark">?</span>;
+<a href=#413 id=413 data-nosnippet>413</a>        <span class="kw">let </span>given_domains = domains_from_model(problem_model);
+<a href=#414 id=414 data-nosnippet>414</a>        <span class="kw">let </span>params = params_from_simplified_json_str(<span class="kw-2">&amp;</span>text, <span class="kw-2">&amp;</span>given_domains)<span class="question-mark">?</span>;
+<a href=#415 id=415 data-nosnippet>415</a>        <span class="kw">return </span><span class="prelude-val">Ok</span>(param_model_from_assignments(
+<a href=#416 id=416 data-nosnippet>416</a>            params,
+<a href=#417 id=417 data-nosnippet>417</a>            <span class="kw-2">&amp;</span>given_domains,
+<a href=#418 id=418 data-nosnippet>418</a>            pipeline.context(),
+<a href=#419 id=419 data-nosnippet>419</a>        ));
+<a href=#420 id=420 data-nosnippet>420</a>    }
+<a href=#421 id=421 data-nosnippet>421</a>    pipeline.parse_file(file_path)
+<a href=#422 id=422 data-nosnippet>422</a>}
+<a href=#423 id=423 data-nosnippet>423</a>
+<a href=#424 id=424 data-nosnippet>424</a><span class="kw">fn </span>run_solver(
+<a href=#425 id=425 data-nosnippet>425</a>    pipeline: <span class="kw-2">&amp;</span>Pipeline,
+<a href=#426 id=426 data-nosnippet>426</a>    global_args: <span class="kw-2">&amp;</span>GlobalArgs,
+<a href=#427 id=427 data-nosnippet>427</a>    cmd_args: <span class="kw-2">&amp;</span>Args,
+<a href=#428 id=428 data-nosnippet>428</a>    model: Model,
+<a href=#429 id=429 data-nosnippet>429</a>) -&gt; anyhow::Result&lt;(f64, f64, f64)&gt; {
+<a href=#430 id=430 data-nosnippet>430</a>    <span class="kw">let </span>(solutions, measured) = pipeline.solve_with_timings(
+<a href=#431 id=431 data-nosnippet>431</a>        model,
+<a href=#432 id=432 data-nosnippet>432</a>        <span class="kw-2">&amp;</span>SolutionOptions {
+<a href=#433 id=433 data-nosnippet>433</a>            number_of_solutions: cmd_args.number_of_solutions.as_solver_limit(),
+<a href=#434 id=434 data-nosnippet>434</a>            keep_intermediate_solutions: cmd_args.keep_intermediate_solutions,
+<a href=#435 id=435 data-nosnippet>435</a>            solver_input_file: global_args.save_solver_input_file.clone(),
+<a href=#436 id=436 data-nosnippet>436</a>            rule_trace_cdp: global_args.rule_trace_cdp,
+<a href=#437 id=437 data-nosnippet>437</a>        },
+<a href=#438 id=438 data-nosnippet>438</a>    )<span class="question-mark">?</span>;
+<a href=#439 id=439 data-nosnippet>439</a>
+<a href=#440 id=440 data-nosnippet>440</a>    <span class="kw">let </span>output_started_at = Instant::now();
 <a href=#441 id=441 data-nosnippet>441</a>
-<a href=#442 id=442 data-nosnippet>442</a>    <span class="kw">let </span>output_started_at = Instant::now();
-<a href=#443 id=443 data-nosnippet>443</a>
-<a href=#444 id=444 data-nosnippet>444</a>    <span class="macro">tracing::debug!</span>(
-<a href=#445 id=445 data-nosnippet>445</a>        solutions = %solutions_to_json(<span class="kw-2">&amp;</span>solutions),
-<a href=#446 id=446 data-nosnippet>446</a>        <span class="string">"solver solutions"
-<a href=#447 id=447 data-nosnippet>447</a>    </span>);
+<a href=#442 id=442 data-nosnippet>442</a>    <span class="macro">tracing::debug!</span>(
+<a href=#443 id=443 data-nosnippet>443</a>        solutions = %solutions_to_json(<span class="kw-2">&amp;</span>solutions),
+<a href=#444 id=444 data-nosnippet>444</a>        <span class="string">"solver solutions"
+<a href=#445 id=445 data-nosnippet>445</a>    </span>);
+<a href=#446 id=446 data-nosnippet>446</a>
+<a href=#447 id=447 data-nosnippet>447</a>    write_solutions(<span class="kw-2">&amp;</span>solutions, cmd_args)<span class="question-mark">?</span>;
 <a href=#448 id=448 data-nosnippet>448</a>
-<a href=#449 id=449 data-nosnippet>449</a>    write_solutions(<span class="kw-2">&amp;</span>solutions, cmd_args)<span class="question-mark">?</span>;
-<a href=#450 id=450 data-nosnippet>450</a>
-<a href=#451 id=451 data-nosnippet>451</a>    <span class="prelude-val">Ok</span>((
-<a href=#452 id=452 data-nosnippet>452</a>        measured.backend_time_s,
-<a href=#453 id=453 data-nosnippet>453</a>        measured.search_time_s,
-<a href=#454 id=454 data-nosnippet>454</a>        measured.solution_processing_time_s + output_started_at.elapsed().as_secs_f64(),
-<a href=#455 id=455 data-nosnippet>455</a>    ))
-<a href=#456 id=456 data-nosnippet>456</a>}
-<a href=#457 id=457 data-nosnippet>457</a>
-<a href=#458 id=458 data-nosnippet>458</a><span class="kw">fn </span>write_solutions(
-<a href=#459 id=459 data-nosnippet>459</a>    solutions: <span class="kw-2">&amp;</span>[std::collections::BTreeMap&lt;conjure_cp::ast::Name, conjure_cp::ast::Literal&gt;],
-<a href=#460 id=460 data-nosnippet>460</a>    cmd_args: <span class="kw-2">&amp;</span>Args,
-<a href=#461 id=461 data-nosnippet>461</a>) -&gt; anyhow::Result&lt;()&gt; {
-<a href=#462 id=462 data-nosnippet>462</a>    <span class="kw">if </span>cmd_args.solutions_in_one_file {
-<a href=#463 id=463 data-nosnippet>463</a>        <span class="kw">let </span>body = <span class="kw">match </span>cmd_args.output_format {
-<a href=#464 id=464 data-nosnippet>464</a>            OutputFormat::Essence =&gt; solutions_to_essence(solutions),
-<a href=#465 id=465 data-nosnippet>465</a>            OutputFormat::Json =&gt; solutions_to_simplified_json_string(solutions)<span class="question-mark">?</span>,
-<a href=#466 id=466 data-nosnippet>466</a>        };
-<a href=#467 id=467 data-nosnippet>467</a>        <span class="kw">match </span><span class="kw-2">&amp;</span>cmd_args.output {
-<a href=#468 id=468 data-nosnippet>468</a>            <span class="prelude-val">None </span>=&gt; <span class="macro">print!</span>(<span class="string">"{body}"</span>),
-<a href=#469 id=469 data-nosnippet>469</a>            <span class="prelude-val">Some</span>(path) =&gt; {
-<a href=#470 id=470 data-nosnippet>470</a>                std::fs::write(path, body.as_bytes())<span class="question-mark">?</span>;
-<a href=#471 id=471 data-nosnippet>471</a>                <span class="macro">println!</span>(<span class="string">"Solutions saved to {:?}"</span>, path.canonicalize()<span class="question-mark">?</span>);
-<a href=#472 id=472 data-nosnippet>472</a>            }
-<a href=#473 id=473 data-nosnippet>473</a>        }
-<a href=#474 id=474 data-nosnippet>474</a>        <span class="kw">return </span><span class="prelude-val">Ok</span>(());
-<a href=#475 id=475 data-nosnippet>475</a>    }
-<a href=#476 id=476 data-nosnippet>476</a>
-<a href=#477 id=477 data-nosnippet>477</a>    <span class="comment">// One file / record per solution.
-<a href=#478 id=478 data-nosnippet>478</a>    </span><span class="kw">for </span>(index, solution) <span class="kw">in </span>solutions.iter().enumerate() {
-<a href=#479 id=479 data-nosnippet>479</a>        <span class="kw">let </span>body = <span class="kw">match </span>cmd_args.output_format {
-<a href=#480 id=480 data-nosnippet>480</a>            OutputFormat::Essence =&gt; solutions_to_essence(std::slice::from_ref(solution)),
-<a href=#481 id=481 data-nosnippet>481</a>            OutputFormat::Json =&gt; {
-<a href=#482 id=482 data-nosnippet>482</a>                <span class="kw">let </span>value = solution_to_simplified_json(solution)<span class="question-mark">?</span>;
-<a href=#483 id=483 data-nosnippet>483</a>                <span class="macro">format!</span>(<span class="string">"{}\n"</span>, serde_json::to_string_pretty(<span class="kw-2">&amp;</span>value)<span class="question-mark">?</span>)
-<a href=#484 id=484 data-nosnippet>484</a>            }
-<a href=#485 id=485 data-nosnippet>485</a>        };
-<a href=#486 id=486 data-nosnippet>486</a>        <span class="kw">match </span><span class="kw-2">&amp;</span>cmd_args.output {
-<a href=#487 id=487 data-nosnippet>487</a>            <span class="prelude-val">None </span>=&gt; <span class="macro">print!</span>(<span class="string">"{body}"</span>),
-<a href=#488 id=488 data-nosnippet>488</a>            <span class="prelude-val">Some</span>(path) =&gt; {
-<a href=#489 id=489 data-nosnippet>489</a>                <span class="kw">let </span>file_path = per_solution_output_path(path, index + <span class="number">1</span>, cmd_args.output_format);
-<a href=#490 id=490 data-nosnippet>490</a>                std::fs::write(<span class="kw-2">&amp;</span>file_path, body.as_bytes())<span class="question-mark">?</span>;
-<a href=#491 id=491 data-nosnippet>491</a>                <span class="macro">println!</span>(<span class="string">"Solution saved to {:?}"</span>, file_path.canonicalize()<span class="question-mark">?</span>);
-<a href=#492 id=492 data-nosnippet>492</a>            }
-<a href=#493 id=493 data-nosnippet>493</a>        }
-<a href=#494 id=494 data-nosnippet>494</a>    }
-<a href=#495 id=495 data-nosnippet>495</a>    <span class="prelude-val">Ok</span>(())
-<a href=#496 id=496 data-nosnippet>496</a>}
-<a href=#497 id=497 data-nosnippet>497</a>
-<a href=#498 id=498 data-nosnippet>498</a><span class="kw">fn </span>per_solution_output_path(base: <span class="kw-2">&amp;</span>Path, index: usize, format: OutputFormat) -&gt; PathBuf {
-<a href=#499 id=499 data-nosnippet>499</a>    <span class="kw">let </span>stem = base
-<a href=#500 id=500 data-nosnippet>500</a>        .file_stem()
-<a href=#501 id=501 data-nosnippet>501</a>        .and_then(|s| s.to_str())
-<a href=#502 id=502 data-nosnippet>502</a>        .unwrap_or(<span class="string">"solution"</span>);
-<a href=#503 id=503 data-nosnippet>503</a>    <span class="kw">let </span>parent = base.parent().unwrap_or_else(|| std::path::Path::new(<span class="string">"."</span>));
-<a href=#504 id=504 data-nosnippet>504</a>    <span class="kw">let </span>extension = <span class="kw">match </span>format {
-<a href=#505 id=505 data-nosnippet>505</a>        OutputFormat::Essence =&gt; <span class="string">"solution"</span>,
-<a href=#506 id=506 data-nosnippet>506</a>        OutputFormat::Json =&gt; <span class="string">"solution.json"</span>,
-<a href=#507 id=507 data-nosnippet>507</a>    };
-<a href=#508 id=508 data-nosnippet>508</a>    parent.join(<span class="macro">format!</span>(<span class="string">"{stem}-{index:06}.{extension}"</span>))
-<a href=#509 id=509 data-nosnippet>509</a>}
+<a href=#449 id=449 data-nosnippet>449</a>    <span class="prelude-val">Ok</span>((
+<a href=#450 id=450 data-nosnippet>450</a>        measured.backend_time_s,
+<a href=#451 id=451 data-nosnippet>451</a>        measured.search_time_s,
+<a href=#452 id=452 data-nosnippet>452</a>        measured.solution_processing_time_s + output_started_at.elapsed().as_secs_f64(),
+<a href=#453 id=453 data-nosnippet>453</a>    ))
+<a href=#454 id=454 data-nosnippet>454</a>}
+<a href=#455 id=455 data-nosnippet>455</a>
+<a href=#456 id=456 data-nosnippet>456</a><span class="kw">fn </span>write_solutions(
+<a href=#457 id=457 data-nosnippet>457</a>    solutions: <span class="kw-2">&amp;</span>[std::collections::BTreeMap&lt;conjure_cp::ast::Name, conjure_cp::ast::Literal&gt;],
+<a href=#458 id=458 data-nosnippet>458</a>    cmd_args: <span class="kw-2">&amp;</span>Args,
+<a href=#459 id=459 data-nosnippet>459</a>) -&gt; anyhow::Result&lt;()&gt; {
+<a href=#460 id=460 data-nosnippet>460</a>    <span class="kw">if </span>cmd_args.solutions_in_one_file {
+<a href=#461 id=461 data-nosnippet>461</a>        <span class="kw">let </span>body = <span class="kw">match </span>cmd_args.output_format {
+<a href=#462 id=462 data-nosnippet>462</a>            OutputFormat::Essence =&gt; solutions_to_essence(solutions),
+<a href=#463 id=463 data-nosnippet>463</a>            OutputFormat::Json =&gt; solutions_to_simplified_json_string(solutions)<span class="question-mark">?</span>,
+<a href=#464 id=464 data-nosnippet>464</a>        };
+<a href=#465 id=465 data-nosnippet>465</a>        <span class="kw">match </span><span class="kw-2">&amp;</span>cmd_args.output {
+<a href=#466 id=466 data-nosnippet>466</a>            <span class="prelude-val">None </span>=&gt; <span class="macro">print!</span>(<span class="string">"{body}"</span>),
+<a href=#467 id=467 data-nosnippet>467</a>            <span class="prelude-val">Some</span>(path) =&gt; {
+<a href=#468 id=468 data-nosnippet>468</a>                std::fs::write(path, body.as_bytes())<span class="question-mark">?</span>;
+<a href=#469 id=469 data-nosnippet>469</a>                <span class="macro">println!</span>(<span class="string">"Solutions saved to {:?}"</span>, path.canonicalize()<span class="question-mark">?</span>);
+<a href=#470 id=470 data-nosnippet>470</a>            }
+<a href=#471 id=471 data-nosnippet>471</a>        }
+<a href=#472 id=472 data-nosnippet>472</a>        <span class="kw">return </span><span class="prelude-val">Ok</span>(());
+<a href=#473 id=473 data-nosnippet>473</a>    }
+<a href=#474 id=474 data-nosnippet>474</a>
+<a href=#475 id=475 data-nosnippet>475</a>    <span class="comment">// One file / record per solution.
+<a href=#476 id=476 data-nosnippet>476</a>    </span><span class="kw">for </span>(index, solution) <span class="kw">in </span>solutions.iter().enumerate() {
+<a href=#477 id=477 data-nosnippet>477</a>        <span class="kw">let </span>body = <span class="kw">match </span>cmd_args.output_format {
+<a href=#478 id=478 data-nosnippet>478</a>            OutputFormat::Essence =&gt; solutions_to_essence(std::slice::from_ref(solution)),
+<a href=#479 id=479 data-nosnippet>479</a>            OutputFormat::Json =&gt; {
+<a href=#480 id=480 data-nosnippet>480</a>                <span class="kw">let </span>value = solution_to_simplified_json(solution)<span class="question-mark">?</span>;
+<a href=#481 id=481 data-nosnippet>481</a>                <span class="macro">format!</span>(<span class="string">"{}\n"</span>, serde_json::to_string_pretty(<span class="kw-2">&amp;</span>value)<span class="question-mark">?</span>)
+<a href=#482 id=482 data-nosnippet>482</a>            }
+<a href=#483 id=483 data-nosnippet>483</a>        };
+<a href=#484 id=484 data-nosnippet>484</a>        <span class="kw">match </span><span class="kw-2">&amp;</span>cmd_args.output {
+<a href=#485 id=485 data-nosnippet>485</a>            <span class="prelude-val">None </span>=&gt; <span class="macro">print!</span>(<span class="string">"{body}"</span>),
+<a href=#486 id=486 data-nosnippet>486</a>            <span class="prelude-val">Some</span>(path) =&gt; {
+<a href=#487 id=487 data-nosnippet>487</a>                <span class="kw">let </span>file_path = per_solution_output_path(path, index + <span class="number">1</span>, cmd_args.output_format);
+<a href=#488 id=488 data-nosnippet>488</a>                std::fs::write(<span class="kw-2">&amp;</span>file_path, body.as_bytes())<span class="question-mark">?</span>;
+<a href=#489 id=489 data-nosnippet>489</a>                <span class="macro">println!</span>(<span class="string">"Solution saved to {:?}"</span>, file_path.canonicalize()<span class="question-mark">?</span>);
+<a href=#490 id=490 data-nosnippet>490</a>            }
+<a href=#491 id=491 data-nosnippet>491</a>        }
+<a href=#492 id=492 data-nosnippet>492</a>    }
+<a href=#493 id=493 data-nosnippet>493</a>    <span class="prelude-val">Ok</span>(())
+<a href=#494 id=494 data-nosnippet>494</a>}
+<a href=#495 id=495 data-nosnippet>495</a>
+<a href=#496 id=496 data-nosnippet>496</a><span class="kw">fn </span>per_solution_output_path(base: <span class="kw-2">&amp;</span>Path, index: usize, format: OutputFormat) -&gt; PathBuf {
+<a href=#497 id=497 data-nosnippet>497</a>    <span class="kw">let </span>stem = base
+<a href=#498 id=498 data-nosnippet>498</a>        .file_stem()
+<a href=#499 id=499 data-nosnippet>499</a>        .and_then(|s| s.to_str())
+<a href=#500 id=500 data-nosnippet>500</a>        .unwrap_or(<span class="string">"solution"</span>);
+<a href=#501 id=501 data-nosnippet>501</a>    <span class="kw">let </span>parent = base.parent().unwrap_or_else(|| std::path::Path::new(<span class="string">"."</span>));
+<a href=#502 id=502 data-nosnippet>502</a>    <span class="kw">let </span>extension = <span class="kw">match </span>format {
+<a href=#503 id=503 data-nosnippet>503</a>        OutputFormat::Essence =&gt; <span class="string">"solution"</span>,
+<a href=#504 id=504 data-nosnippet>504</a>        OutputFormat::Json =&gt; <span class="string">"solution.json"</span>,
+<a href=#505 id=505 data-nosnippet>505</a>    };
+<a href=#506 id=506 data-nosnippet>506</a>    parent.join(<span class="macro">format!</span>(<span class="string">"{stem}-{index:06}.{extension}"</span>))
+<a href=#507 id=507 data-nosnippet>507</a>}
 </code></pre></div></section></main></body></html>
