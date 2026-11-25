@@ -15,8 +15,8 @@
         <link rel="icon" href="../../../favicon-de23e50b.svg">
         <link rel="shortcut icon" href="../../../favicon-8114d1fc.png">
         <link rel="stylesheet" href="../../../css/variables-8adf115d.css">
-        <link rel="stylesheet" href="../../../css/general-0392ca55.css">
-        <link rel="stylesheet" href="../../../css/chrome-fc474251.css">
+        <link rel="stylesheet" href="../../../css/general-e96d0476.css">
+        <link rel="stylesheet" href="../../../css/chrome-d279d366.css">
         <link rel="stylesheet" href="../../../css/print-9e4910d8.css" media="print">
 
         <!-- Fonts -->
@@ -37,10 +37,10 @@
             const path_to_root = "../../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../../searchindex-f912c89f.js";
+            window.path_to_searchindex_js = "../../../searchindex-e3c0bad1.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../../toc-e8157c2d.js"></script>
+        <script src="../../../toc-6d1c97b0.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -176,134 +176,45 @@
 
                 <div id="mdbook-content" class="content">
                     <main>
-                        <p>This page is a collection explaining how the horizontal set rules are implemented in conjure-oxide. Since not all of these rules are implemented, sections of this documentation contain their haskell equivalents that were used in conjure to illustrate the motivation and strategies for how these rules could be implemented.</p>
-<p>Introductory notes on the use of “&lt;-” in generators, and the logic behind and() and or() comprehensions. Followed by horizontal set rules. These are representation-independent rules in conjure-oxide that are used to rewrite models.</p>
-<h1 id="notes"><a class="header" href="#notes">Notes:</a></h1>
+                        <p>This page describes the horizontal set rules currently implemented in conjure-oxide. Horizontal rules rewrite set expressions without choosing a set representation. The Rust snippets and module names below refer to <code>crates/conjure-cp-rules/src/types/set/horizontal</code>.</p>
+<h1 id="comprehension-notes"><a class="header" href="#comprehension-notes">Comprehension notes</a></h1>
+<p>The notation <code>i &lt;- A</code> generates values of <code>i</code> from <code>A</code>. In particular:</p>
 <ul>
-<li>
-<p>“&lt;-” is part of comprehension notation that defines an expression generator</p>
-<ul>
-<li>the left hand side has the type of a member of the right hand side</li>
-<li>It is used to loop over elements of a set, primarily within and() and or() comprehensions</li>
+<li><code>and([P(i) | i &lt;- A])</code> requires <code>P(i)</code> for every generated value.</li>
+<li><code>or([P(i) | i &lt;- A])</code> requires <code>P(i)</code> for at least one generated value.</li>
 </ul>
-</li>
-<li>
-<p>and() - for-all quantifier</p>
-<ul>
-<li>essentially a series of conjunctions (a ∧ b ∧ .. ∧ z)</li>
-<li>states that the body of the contained comprehension must hold <strong>for all</strong> elements specified by the generators and conditions.</li>
-</ul>
-</li>
-<li>
-<p>or() - existential quantifier</p>
-<ul>
-<li>essentially a series of disjunctions (a ∨ b ∨ .. ∨ z)</li>
-<li>states that the body of the contained comprehension must hold <strong>for at least one</strong> element specified by the generators and conditions.</li>
-</ul>
-</li>
-</ul>
-<h1 id="horizontal-rules"><a class="header" href="#horizontal-rules">Horizontal Rules</a></h1>
-<h2 id="eq_to_subset_eq-boolean"><a class="header" href="#eq_to_subset_eq-boolean">eq_to_subset_eq (boolean)</a></h2>
-<pre><code>A = B ~~&gt; A subsetEq B /\ B subsetEq A
-</code></pre>
-<p>rule for set equality, checks if two sets are equal, i.e. they contain the same elements</p>
-<ol>
-<li>identifies pattern: “x = y”</li>
-<li>checks that x and y have set return type</li>
-<li>translates equality into conjunction of two subset-equalities</li>
-</ol>
-<ul>
-<li>i.e. “x = y” becomes “ “x subsetEq y” AND “y subsetEq x”</li>
-</ul>
-<h3 id="code"><a class="header" href="#code">Code:</a></h3>
+<p>These are the <code>And</code> and <code>Or</code> skip operators on comprehensions in the Rust AST.</p>
+<h1 id="boolean-set-relations"><a class="header" href="#boolean-set-relations">Boolean set relations</a></h1>
+<p>The rules below are registered in <code>equals.rs</code>, <code>neq.rs</code>, <code>subset.rs</code>, <code>subseteq.rs</code>, <code>supset.rs</code>, and <code>supseteq.rs</code>.</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Expression</th><th>Rewrite</th></tr>
+</thead>
+<tbody>
+<tr><td><code>A = B</code></td><td><code>A subsetEq B /\ B subsetEq A</code></td></tr>
+<tr><td><code>A != B</code></td><td><code>!(B = A)</code></td></tr>
+<tr><td><code>A subset B</code></td><td><code>(A subsetEq B) /\ (A != B)</code></td></tr>
+<tr><td><code>A supset B</code></td><td><code>B subset A</code></td></tr>
+<tr><td><code>A supsetEq B</code></td><td><code>B subsetEq A</code></td></tr>
+<tr><td><code>A subsetEq B</code></td><td><code>and([i in B | i &lt;- A])</code></td></tr>
+</tbody>
+</table>
+</div>
+<p>For example, set equality is lowered to two subset checks in <code>equals.rs</code>:</p>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
 </span>fn eq_to_subset_eq(expr: &amp;Expression, _: &amp;SymbolTable) -&gt; ApplicationResult {
     match expr {
         Eq(_, a, b)
             if matches!(a.as_ref().return_type(), Set(_))
-                &amp;&amp; matches!(b.as_ref().return_type(), Set(_)) =&gt;
+                &amp;&amp; matches!(b.as_ref().return_type(), Set(_))
+                &amp;&amp; !is_set_valued_index(a)
+                &amp;&amp; !is_set_valued_index(b) =&gt;
         {
             let expr1 = SubsetEq(Metadata::new(), a.clone(), b.clone());
             let expr2 = SubsetEq(Metadata::new(), b.clone(), a.clone());
-            Ok(Reduction::pure(And(
-                Metadata::new(),
-                Moo::new(matrix_expr![expr1, expr2]),
-            )))
-        }
-        _ =&gt; Err(RuleNotApplicable),
-    }
-}
-
-<span class="boring">}</span></code></pre>
-<h2 id="neq_not_eq_sets-boolean"><a class="header" href="#neq_not_eq_sets-boolean">neq_not_eq_sets (boolean)</a></h2>
-<pre><code>A != B ~~&gt; !(A = B)
-</code></pre>
-<p>rule for set inequality</p>
-<ol>
-<li>identifies pattern: “x != y”</li>
-<li>checks that x and y have set return type</li>
-<li>translates inequality to “Not” expression wrapping an equality</li>
-</ol>
-<ul>
-<li>i.e. “x != y” becomes “!(x = y)”, which can then be rewritten using eq_to_subset_eq rule above.</li>
-</ul>
-<h3 id="code-1"><a class="header" href="#code-1">Code:</a></h3>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>fn neq_not_eq_sets(expr: &amp;Expr, _: &amp;SymbolTable) -&gt; ApplicationResult {
-    match expr {
-        Expr::Neq(_, a, b)
-            if matches!(a.as_ref().return_type(), ReturnType::Set(_))
-                &amp;&amp; matches!(b.as_ref().return_type(), ReturnType::Set(_)) =&gt;
-        {
-            Ok(Reduction::pure(Expr::Not(
-                Metadata::new(),
-                Moo::new(Expr::Eq(Metadata::new(), b.clone(), a.clone())),
-            )))
-        }
-        _ =&gt; Err(RuleNotApplicable),
-    }
-}
-<span class="boring">}</span></code></pre>
-<h2 id="subseteq_set-boolean"><a class="header" href="#subseteq_set-boolean">subseteq_set (boolean)</a></h2>
-<pre><code>A subsetEq B ~~&gt; and([i in B | i &lt;- A])
-</code></pre>
-<p>rule for subsetEq, checks if one set is contained in another, <strong>they may be equal</strong></p>
-<ol>
-<li>identifies pattern: “x subsetEq y”</li>
-<li>translates x is subsetEq of y to all elements in x are in y</li>
-</ol>
-<ul>
-<li>i.e. “x subsetEq y” becomes “for all i in x, i in y”</li>
-</ul>
-<blockquote>
-<p>NOTE: Although this rule is in the main branch, it is not implemented correctly and it will be fixed pending major changes to the rule engine.</p>
-</blockquote>
-<h2 id="subset_to_subset_eq_neq-boolean"><a class="header" href="#subset_to_subset_eq_neq-boolean">subset_to_subset_eq_neq (boolean)</a></h2>
-<pre><code>A subset B ~~&gt; A subsetEq B /\ A != B
-</code></pre>
-<p>rule for subset, checks if one set is <strong>strictly</strong> contained in another, they cannot be equal</p>
-<ol>
-<li>identifies pattern: “a subset b”</li>
-<li>checks that a and b are sets</li>
-<li>translates a is subset of b to a is subsetEq of b, and a is not equal to b</li>
-</ol>
-<ul>
-<li>i.e. “a subset b” becomes “ “a subsetEq b” AND “a neq b” “</li>
-</ul>
-<h3 id="code-2"><a class="header" href="#code-2">Code:</a></h3>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>fn subset_to_subset_eq_neq(expr: &amp;Expr, _: &amp;SymbolTable) -&gt; ApplicationResult {
-    match expr {
-        Expr::Subset(_, a, b)
-            if matches!(a.as_ref().return_type(), ReturnType::Set(_))
-                &amp;&amp; matches!(b.as_ref().return_type(), ReturnType::Set(_)) =&gt;
-        {
-            let expr1 = Expr::SubsetEq(Metadata::new(), a.clone(), b.clone());
-            let expr2 = Expr::Neq(Metadata::new(), a.clone(), b.clone());
-            Ok(Reduction::pure(Expr::And(
+            Ok(RuleEffect::pure(And(
                 Metadata::new(),
                 Moo::new(matrix_expr![expr1, expr2]),
             )))
@@ -312,275 +223,103 @@
     }
 }
 <span class="boring">}</span></code></pre>
-<h2 id="supset_to_subset-boolean"><a class="header" href="#supset_to_subset-boolean">supset_to_subset (boolean)</a></h2>
-<pre><code>A supset B ~~&gt; B subset A
-</code></pre>
-<p>rule for superset, checks if one set <strong>strictly</strong> contains another, they cannot be equal</p>
-<ol>
-<li>identifies pattern: “a supset b”</li>
-<li>checks that a and b are sets</li>
-<li>translates a is superset of b to b is subset of a</li>
-</ol>
-<h3 id="code-3"><a class="header" href="#code-3">Code:</a></h3>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>fn supset_to_subset(expr: &amp;Expr, _: &amp;SymbolTable) -&gt; ApplicationResult {
-    match expr {
-        Expr::Supset(_, a, b)
-            if matches!(a.as_ref().return_type(), ReturnType::Set(_))
-                &amp;&amp; matches!(b.as_ref().return_type(), ReturnType::Set(_)) =&gt;
-        {
-            Ok(Reduction::pure(Expr::Subset(
-                Metadata::new(),
-                b.clone(),
-                a.clone(),
-            )))
-        }
-        _ =&gt; Err(RuleNotApplicable),
-    }
-}
-
-<span class="boring">}</span></code></pre>
-<h2 id="supset_eq_to_subset_eq-boolean"><a class="header" href="#supset_eq_to_subset_eq-boolean">supset_eq_to_subset_eq (boolean)</a></h2>
-<pre><code>A supsetEq B ~~&gt; B subsetEq A
-</code></pre>
-<p>rule for supsetEq, checks if one set contains another, <strong>they may be equal</strong></p>
-<ol>
-<li>identifies pattern: “x supsetEq y”</li>
-<li>checks that x and y are sets</li>
-<li>translates x is supsetEq of y to y is subsetEq of x</li>
-</ol>
-<h3 id="code-4"><a class="header" href="#code-4">Code:</a></h3>
-<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
-</span><span class="boring">fn main() {
-</span>fn supset_eq_to_subset_eq(expr: &amp;Expr, _: &amp;SymbolTable) -&gt; ApplicationResult {
-    match expr {
-        Expr::SupsetEq(_, a, b)
-            if matches!(a.as_ref().return_type(), ReturnType::Set(_))
-                &amp;&amp; matches!(b.as_ref().return_type(), ReturnType::Set(_)) =&gt;
-        {
-            Ok(Reduction::pure(Expr::SubsetEq(
-                Metadata::new(),
-                b.clone(),
-                a.clone(),
-            )))
-        }
-        _ =&gt; Err(RuleNotApplicable),
-    }
-}
-<span class="boring">}</span></code></pre>
-<h2 id="set-intersect-describes-a-new-set"><a class="header" href="#set-intersect-describes-a-new-set">Set-intersect (describes a new set)</a></h2>
-<pre><code>[return_expr| A intersect B, ... ] ~~&gt; [return_expr| i in A, i &lt;- B, ...] 
-</code></pre>
-<p>Rule for set intersection, restricts elements to those that are in the intersection of both sets, ie. those elements present in both sets. The rust version of this rule for conjure-oxide is currently a draft-pr (#1203). The rust version function by:</p>
-<ol>
-<li>matches on the pattern “a intersect b”</li>
-<li>creates a new comprehension that contains any additional qualifiers but replaces the pattern with the appropriate generators and conditions</li>
-</ol>
-<p>The version of this rule implemented in conjure was written in Haskell and can be seen below.</p>
-<ol>
-<li>attempts to match generator to pattern and expression: pattern “<em>quantified variable</em> &lt;-” and expression with a modifier operator (if present) applied to a set/multiset/relation “s”</li>
-<li>attempts to match s to “x intersect y”</li>
-<li>checks x is a set, multiset, function, or relation</li>
-<li>replaces generator with same pattern and modifier (if present) applied to x, and adds the condition that the relevant quantified variable must be in y.</li>
-</ol>
+<p><code>subseteq_set</code> builds an expression-generator comprehension. Set-valued matrix indices are left alone so representation-specific rules can handle them later.</p>
+<p><code>concat.rs</code> also contains subset-equality rewrites:</p>
 <ul>
-<li>i.e. “i &lt;- x intersect y” becomes “i &lt;- x, i in y”</li>
+<li><code>A subsetEq (B intersect C)</code> becomes <code>(A subsetEq B) /\ (A subsetEq C)</code>.</li>
+<li><code>union_subseteq</code> matches <code>(A union B) subsetEq C</code>.</li>
 </ul>
-<h3 id="code-5"><a class="header" href="#code-5">Code:</a></h3>
-<pre><code class="language-haskell">theRule (Comprehension body gensOrConds) = do
-         (gocBefore, (pat, iPat, expr), gocAfter) &lt;- matchFirst gensOrConds $ \ goc -&gt; case goc of
-             Generator (GenInExpr pat@(Single iPat) expr) -&gt;
-                 return (pat, iPat, matchDefs [opToSet,opToMSet,opToRelation] expr)
-             _ -&gt; na "rule_Intersect"
-         (mkModifier, s)    &lt;- match opModifier expr
-         (x, y)             &lt;- match opIntersect s
-         tx                 &lt;- typeOf x
-         case tx of
-             TypeSet{}      -&gt; return ()
-             TypeMSet{}     -&gt; return ()
-             TypeFunction{} -&gt; return ()
-             TypeRelation{} -&gt; return ()
-             _              -&gt; failDoc "type incompatibility in intersect operator"
-         let i = Reference iPat Nothing
-         return
-             ( "Horizontal rule for set intersection"
-             , return $
-                 Comprehension body
-                     $  gocBefore
-                     ++ [ Generator (GenInExpr pat (mkModifier x))
-                        , Condition [essence| &amp;i in &amp;y |]
-                        ]
-                     ++ gocAfter
-             )
-</code></pre>
-<h2 id="union_set-describes-a-new-set"><a class="header" href="#union_set-describes-a-new-set">union_set (describes a new set)</a></h2>
-<pre><code>[ return_expr | i &lt;- A union B, qualifiers...] -&gt; flatten([[ return_expr | i &lt;- A, qualifiers...], [ return_expr | i &lt;- B, !(i in A), qualifiers...]; int(1..2)])
-</code></pre>
-<p>rule for set union. defines that an element is in the union of two sets when it is in at least one of the sets.</p>
-<ol>
-<li>attempts to match expression generator that generates from a union expression</li>
-<li>creates two comprehensions, one that generates elements from the first set and one that generates elements from the second set, with an additional condition to prevent double counting</li>
-<li>both comprehensions are combined in a matrix and put into a flatten expression</li>
-</ol>
-<ul>
-<li>both comprehensions have same return expression and other qualifiers from original comprehension</li>
-</ul>
-<h3 id="code-6"><a class="header" href="#code-6">Code:</a></h3>
+<h1 id="set-operations-in-comprehensions"><a class="header" href="#set-operations-in-comprehensions">Set operations in comprehensions</a></h1>
+<p><code>union.rs</code> rewrites a comprehension generator over a union by combining two comprehensions. The second branch excludes values already generated by the first set, avoiding duplicates:</p>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn union_set(expr: &amp;Expr, _: &amp;SymbolTable) -&gt; ApplicationResult {
-    match expr {
-        Expr::Comprehension(_, comp) =&gt; {
-            // find if any of the generators are generating from expressions
-            for qualifier in &amp;comp.qualifiers {
-                if let ComprehensionQualifier::ExpressionGenerator { ptr } = qualifier {
-                    let gen_decl = ptr.clone();
+</span>let (comprehension1, _) =
+    replace_expression_generator_source(comp.as_ref(), &amp;gen_decl, a.clone().into());
+let (mut comprehension2, b_ptr) =
+    replace_expression_generator_source(comp.as_ref(), &amp;gen_decl, b.into());
 
-                    // match on expression being of form A union B
-                    let Some((a, b)) = (match ptr.as_quantified_expr() {
-                        Some(expr_guard) =&gt; match &amp;*expr_guard {
-                            Expr::Union(_, a, b) =&gt; Some((a.clone(), b.clone())),
-                            _ =&gt; None,
-                        },
-                        None =&gt; None,
-                    }) else {
-                        continue;
-                    };
+comprehension2
+    .qualifiers
+    .push(ComprehensionQualifier::Condition(Expr::Not(
+        Metadata::new(),
+        Moo::new(Expr::In(
+            Metadata::new(),
+            Moo::new(Expr::Atomic(Metadata::new(), Atom::new_ref(b_ptr))),
+            a,
+        )),
+    )));
 
-                    // [ return_expr | i &lt;- A, guards...] part
-                    let (comprehension1, _) = replace_expression_generator_source(
-                        comp.as_ref(),
-                        &amp;gen_decl,
-                        a.clone().into(),
-                    );
-
-                    // [ return_expr | i &lt;- B, !(i in A), guards...] part
-                    let (mut comprehension2, b_ptr) =
-                        replace_expression_generator_source(comp.as_ref(), &amp;gen_decl, b.into());
-
-                    // add the condition !(i in A)
-                    comprehension2
-                        .qualifiers
-                        .push(ComprehensionQualifier::Condition(Expr::Not(
-                            Metadata::new(),
-                            Moo::new(Expr::In(
-                                Metadata::new(),
-                                Moo::new(Expr::Atomic(Metadata::new(), Atom::new_ref(b_ptr))),
-                                a,
-                            )),
-                        )));
-
-                    return Ok(Reduction::pure(Expr::Flatten(
-                        Metadata::new(),
-                        None,
-                        Moo::new(into_matrix_expr!(vec![
-                            Expr::Comprehension(Metadata::new(), comprehension1.into()),
-                            Expr::Comprehension(Metadata::new(), comprehension2.into())
-                        ])),
-                    )));
-                }
-            }
-
-            Err(RuleNotApplicable)
-        }
-        _ =&gt; Err(RuleNotApplicable),
-    }
-}
+return Ok(RuleEffect::pure(Expr::Flatten(
+    Metadata::new(),
+    None,
+    Moo::new(into_matrix_expr!(vec![
+        Expr::Comprehension(Metadata::new(), comprehension1.into()),
+        Expr::Comprehension(Metadata::new(), comprehension2.into())
+    ])),
+)));
 <span class="boring">}</span></code></pre>
-<h2 id="difference_set-describes-a-new-set"><a class="header" href="#difference_set-describes-a-new-set">difference_set (describes a new set)</a></h2>
-<pre><code>[ return_expr | i &lt;- A - B, qualifiers...] -&gt; [ return_expr | i &lt;- A, !(i in B), qualifiers...]
-</code></pre>
-<p>rule for set difference. defines that an element is in the difference of two sets when it is in the former but not in the latter.</p>
-<ol>
-<li>attempts to match expression generator that generates from a difference expression “x - y”</li>
-<li>replace the generator’s expression with the first set “x”</li>
-<li>adds the condition that the relevant quantified variable must not be in the second set “y</li>
-</ol>
-<h3 id="code-7"><a class="header" href="#code-7">Code:</a></h3>
+<p><code>difference.rs</code> rewrites a comprehension generator over <code>A - B</code> to generate from <code>A</code> and add a condition excluding members of <code>B</code>:</p>
 <pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
 </span><span class="boring">fn main() {
-</span>fn difference_set(expr: &amp;Expr, _: &amp;SymbolTable) -&gt; ApplicationResult {
-    match expr {
-        Expr::Comprehension(_, comp) =&gt; {
-            // find if any of the generators are generating from expressions
-            for qualifier in &amp;comp.qualifiers {
-                if let ComprehensionQualifier::ExpressionGenerator { ptr } = qualifier {
-                    let gen_decl = ptr.clone();
-
-                    // match on expression being of form A - B
-                    let Some((a, b)) = (match ptr.as_quantified_expr() {
-                        Some(expr_guard) =&gt; match &amp;*expr_guard {
-                            Expr::Minus(_, a, b) =&gt; Some((a.clone(), b.clone())),
-                            _ =&gt; None,
-                        },
-                        None =&gt; None,
-                    }) else {
-                        continue;
-                    };
-
-                    // [ return_expr | i &lt;- A, !(i in B), guards...]
-                    let (mut comprehension, a_ptr) =
-                        replace_expression_generator_source(comp.as_ref(), &amp;gen_decl, a.into());
-
-                    // add the condition !(i in B)
-                    comprehension
-                        .qualifiers
-                        .push(ComprehensionQualifier::Condition(Expr::Not(
-                            Metadata::new(),
-                            Moo::new(Expr::In(
-                                Metadata::new(),
-                                Moo::new(Expr::Atomic(Metadata::new(), Atom::new_ref(a_ptr))),
-                                b,
-                            )),
-                        )));
-
-                    return Ok(Reduction::pure(Expr::Comprehension(
-                        Metadata::new(),
-                        comprehension.into(),
-                    )));
-                }
-            }
-
-            Err(RuleNotApplicable)
-        }
-        _ =&gt; Err(RuleNotApplicable),
-    }
-}
+</span>let (mut comprehension, a_ptr) =
+    replace_expression_generator_source(comp.as_ref(), &amp;gen_decl, a.into());
+comprehension
+    .qualifiers
+    .push(ComprehensionQualifier::Condition(Expr::Not(
+        Metadata::new(),
+        Moo::new(Expr::In(
+            Metadata::new(),
+            Moo::new(Expr::Atomic(Metadata::new(), Atom::new_ref(a_ptr))),
+            b,
+        )),
+    )));
 <span class="boring">}</span></code></pre>
-<h2 id="set-in-boolean"><a class="header" href="#set-in-boolean">Set-in (boolean)</a></h2>
-<p>A in B ~~&gt; or([ a = i | i &lt;- b ])</p>
-<p>rule for set membership, checks whether something is an element of a set. Conjure-oxide’s implementation of this rule is currently in a draft pr (#1203).  It functions by:</p>
-<ol>
-<li>matching on the pattern “x in s”</li>
-<li>checking they are sets</li>
-<li>creating and joining a new comprehension that returns elements of ‘b’ that are equal to elements in set ‘a’, effectively, “a in b”</li>
-</ol>
-<p>Until this rule is implemented on the main branch, this is an example of how the previous rule functioned in conjure.</p>
-<ol>
-<li>identifies pattern: “x in s”</li>
-<li>checks s is a set</li>
-<li>introduces quantified variable to go through set s and check whether any of its elements equal x</li>
-</ol>
-<ul>
-<li>i.e. “x in s” becomes “there exists i in s such that i = x”</li>
-</ul>
-<h3 id="code-8"><a class="header" href="#code-8">Code:</a></h3>
-<pre><code class="language-haskell">     theRule p = do
-         (x,s)     &lt;- match opIn p
-         TypeSet{} &lt;- typeOf s
-         -- do not apply this rule to quantified variables
-         -- or else we might miss the opportunity to apply a more specific vertical rule
-         if referenceToComprehensionVar s
-             then na "rule_In"
-             else return ()
-         return
-             ( "Horizontal rule for set-in."
-             , do
-                  (iPat, i) &lt;- quantifiedVar
-                  return [essence| exists &amp;iPat in &amp;s . &amp;i = &amp;x |]
-             )
-</code></pre>
+<p>The same module lowers direct membership in a difference:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// x in (a - b) ~~&gt; (x in a) /\ !(x in b)
+let in_a = Expr::In(Metadata::new(), member.clone(), a.clone());
+let in_b = Expr::In(Metadata::new(), member.clone(), b.clone());
+Ok(RuleEffect::pure(Expr::And(
+    Metadata::new(),
+    Moo::new(conjure_cp::matrix_expr![
+        in_a,
+        Expr::Not(Metadata::new(), Moo::new(in_b))
+    ]),
+)))
+<span class="boring">}</span></code></pre>
+<p><code>generator.rs</code> handles set-valued expression generators generally. It replaces the expression generator with a generator over the source’s element domain and adds a membership condition. An <code>Or</code> comprehension with a constant source is deliberately left for the dedicated existential-comprehension rule.</p>
+<h1 id="membership-and-cardinality"><a class="header" href="#membership-and-cardinality">Membership and cardinality</a></h1>
+<p><code>membership.rs</code> implements these compound-set and literal cases:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Membership expression</th><th>Rewrite</th></tr>
+</thead>
+<tbody>
+<tr><td><code>x in (A intersect B)</code></td><td><code>(x in A) /\ (x in B)</code></td></tr>
+<tr><td><code>x in (A union B)</code></td><td><code>(x in A) \/ (x in B)</code></td></tr>
+<tr><td><code>x in {a, b, ...}</code></td><td><code>or([x = a, x = b, ...])</code></td></tr>
+</tbody>
+</table>
+</div>
+<p>For an empty set literal, membership becomes <code>false</code>.</p>
+<p><code>cardinality.rs</code> handles cardinality of a compound set expression. It leaves atomic set references, set-valued indices, and non-set expressions to other rules. For a supported compound set, it sums one for each generated member:</p>
+<pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>let mut comprehension = builder
+    .expression_generator(name, source.as_ref().clone())
+    .with_return_value(1.into());
+comprehension.skip_operator = Some(ACOperatorKind::Sum);
+
+Ok(RuleEffect::pure(Expr::Sum(
+    Metadata::new(),
+    Moo::new(Expr::Comprehension(
+        Metadata::new(),
+        Moo::new(comprehension),
+    )),
+)))
+<span class="boring">}</span></code></pre>
 
                     </main>
 
@@ -629,8 +368,8 @@
         <script src="../../../searcher-09f2665d.js"></script>
 
         <script src="../../../clipboard-1626706a.min.js"></script>
-        <script src="../../../highlight-abc7f01d.js"></script>
-        <script src="../../../book-c22b7243.js"></script>
+        <script src="../../../highlight-f33deea9.js"></script>
+        <script src="../../../book-609e4cb8.js"></script>
 
         <!-- Custom JS scripts -->
 
