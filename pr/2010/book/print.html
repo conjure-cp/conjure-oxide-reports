@@ -38,10 +38,10 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "searchindex-dce2097e.js";
+            window.path_to_searchindex_js = "searchindex-8cf3fb48.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="toc-e79b7e05.js"></script>
+        <script src="toc-83fae9fa.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -528,19 +528,39 @@ hello-world   $ use hello_world instead
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="statements"><a class="header" href="#statements">Statements</a></h1>
+<p>A statement is a unit of code which modifies the constraint model in some way. This may be:</p>
+<ul>
+<li>Adding a new decision variable</li>
+<li>Declaring a new concrete value</li>
+<li>Adding a constraint</li>
+</ul>
+<h2 id="declarations"><a class="header" href="#declarations">Declarations</a></h2>
+<p>A declaration gives meaning to an identifier.</p>
+<ul>
+<li><a href="#letting-statements"><code>letting</code></a></li>
+<li><a href="#given-statements"><code>given</code></a></li>
+<li><a href="#find-statements"><code>find</code></a></li>
+</ul>
+<h3 id="statement-order"><a class="header" href="#statement-order">Statement Order</a></h3>
+<p>Every symbol must be declared before it is used, but otherwise statements can be listed in any order.</p>
+<h2 id="constraints"><a class="header" href="#constraints">Constraints</a></h2>
+<p>A constraint restricts the solution space by requiring some condition be met.</p>
+<ul>
+<li><a href="#where-statements"><code>where</code></a></li>
+<li><a href="#such-that-statements"><code>such that</code></a></li>
+<li><a href="#dominance-relation-statements"><code>dominance relation</code></a></li>
+</ul>
+<h2 id="bnf"><a class="header" href="#bnf">BNF</a></h2>
 <pre><code class="language-bnf">&lt;Statement&gt; ::= &lt;DeclarationStatement&gt;
               | &lt;SuchThatStatement&gt;
               | &lt;WhereStatement&gt;
               | &lt;ObjectiveStatement&gt;
               | &lt;BranchingStatement&gt;
-</code></pre>
-<h2 id="declarations"><a class="header" href="#declarations">Declarations</a></h2>
-<pre><code class="language-bnf">&lt;DeclarationStatement&gt; ::= &lt;FindStatement&gt;
+
+&lt;DeclarationStatement&gt; ::= &lt;FindStatement&gt;
                          | &lt;GivenStatement&gt;
                          | &lt;LettingStatement&gt;
 </code></pre>
-<h2 id="statement-order"><a class="header" href="#statement-order">Statement Order</a></h2>
-<p>Every symbol must be declared before it is used, but otherwise statements can be listed in any order.</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="language-declaration-statement"><a class="header" href="#language-declaration-statement">Language Declaration Statement</a></h1>
 <pre><code class="language-bnf">&lt;LanguageDeclaration&gt; ::= "language" `.*`
@@ -647,6 +667,25 @@ TODO pareto?</p>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="domains"><a class="header" href="#domains">Domains</a></h1>
 <p>A domain is the discrete and finite set of values that a variable or expression can take.</p>
+<p>An instantiation of a domain is known as a <strong>literal</strong>. A literal is a representation of <em>one</em> specific value of a domain.</p>
+<pre><code class="language-bnf">
+</code></pre>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Type</th><th>Domain</th><th>Literal</th></tr>
+</thead>
+<tbody>
+<tr><td>Boolean</td><td><code>bool</code></td><td><code>true</code>, <code>false</code></td></tr>
+<tr><td>Integer</td><td><code>int</code>, <code>int(0..5)</code></td><td><code>-5</code>, <code>0</code>, <code>3</code></td></tr>
+<tr><td>Tuple</td><td><code>(int, bool, bool)</code></td><td><code>(1, false, true)</code></td></tr>
+<tr><td>Matrix</td><td><code>matrix indexed by [int, int] of bool</code></td><td><code>[true, false, true, false]</code></td></tr>
+<tr><td>Function</td><td><code>function int --&gt; set of int</code></td><td><code>function</code></td></tr>
+<tr><td>Record</td><td><code>record (</code></td><td><code>[true, false, true, false]</code></td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="bnf-1"><a class="header" href="#bnf-1">BNF</a></h2>
 <pre><code class="language-bnf">&lt;Domain&gt; ::= &lt;Identifier&gt;
            | &lt;BoolDomain&gt;
            | &lt;IntDomain&gt;
@@ -661,9 +700,8 @@ TODO pareto?</p>
            | &lt;RelationDomain&gt;
            | &lt;PartitionDomain&gt;
            | &lt;PermutationDomain&gt;
-</code></pre>
-<p>An instantiation of a domain is known as a <strong>literal</strong>. A literal is a representation of <em>one</em> specific value of a domain.</p>
-<pre><code class="language-bnf">&lt;Literal&gt; ::= &lt;Constant&gt;
+
+&lt;Literal&gt; ::= &lt;Constant&gt;
             | &lt;SetLiteral&gt;
             | &lt;MultiSetLiteral&gt;
             | &lt;SequenceLiteral&gt;
@@ -676,38 +714,19 @@ TODO pareto?</p>
             | &lt;RecordLiteral&gt;
             | &lt;VariantLiteral&gt;
 </code></pre>
-<div class="table-wrapper">
-<table>
-<thead>
-<tr><th>Type</th><th>Domain</th><th>Literal</th></tr>
-</thead>
-<tbody>
-<tr><td>Boolean</td><td><code>bool</code></td><td><code>true</code>, <code>false</code></td></tr>
-<tr><td>Integer</td><td><code>int</code>, <code>int(0..5)</code></td><td><code>-5</code>, <code>0</code>, <code>3</code></td></tr>
-<tr><td>Tuple</td><td><code>(int, bool, bool)</code></td><td><code>(1, false, true)</code></td></tr>
-<tr><td>Matrix</td><td><code>matrix indexed by [int, int] of bool</code></td><td><code>[true, false, true, false]</code></td></tr>
-<tr><td>Record</td><td><code>record (</code></td><td><code>[true, false, true, false]</code></td></tr>
-</tbody>
-</table>
-</div>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="primitives"><a class="header" href="#primitives">Primitives</a></h1>
+<p>Essence supports two primitive domains: booleans and integers.</p>
 <h2 id="booleans"><a class="header" href="#booleans">Booleans</a></h2>
-<pre><code class="language-bnf">&lt;BoolDomain&gt; ::= "bool"
-</code></pre>
 <pre><code class="language-essence">given a: bool
 </code></pre>
 <p>The Boolean domain has values <code>false</code> and <code>true</code>, ordered as such.</p>
-<pre><code class="language-bnf">&lt;BooleanLiteral&gt; ::= "true" | "false"
-</code></pre>
 <pre><code class="language-essence">letting a be true
 letting b be false
 </code></pre>
 <h2 id="integers"><a class="header" href="#integers">Integers</a></h2>
 <p>Integer domains span over the whole numbers, and can be bounded by a list of ranges.</p>
-<pre><code class="language-bnf">&lt;IntDomain&gt; ::= "int" ["(" [list(&lt;IntRange&gt;)] ")"]
-&lt;IntRange&gt;  ::= &lt;Expression.Integer&gt;
-                | [&lt;Expression.Integer&gt;] ".." [&lt;Expression.Integer&gt;]
+<pre><code class="language-bnf">
 </code></pre>
 <p>A range is either a single integer, or a list of sequential integers with a given lower (inclusive) and upper (exclusive) bound.</p>
 <pre><code class="language-essence">given a: int            $ a is any integer
@@ -721,30 +740,38 @@ given h: int(x..y)      $ where x and y are integers
 given i: int(6,2,8..10) $ ranges can be out-of-order
 </code></pre>
 <p>Integer domains are instantiated with values in their range.</p>
-<pre><code class="language-bnf">&lt;Integer&gt; ::= `-?[0-9]+`
+<pre><code class="language-bnf">
 </code></pre>
 <pre><code class="language-essence">letting a be 100
 letting b be 32
 letting c be 4
 $ etc...
 </code></pre>
+<h2 id="bnf-2"><a class="header" href="#bnf-2">BNF</a></h2>
+<pre><code class="language-bnf">&lt;BoolDomain&gt; ::= "bool"
+&lt;BooleanLiteral&gt; ::= "true" | "false"
+
+&lt;IntDomain&gt; ::= "int" ["(" [list(&lt;IntRange&gt;)] ")"]
+&lt;IntRange&gt;  ::= &lt;Expression.Integer&gt;
+              | [&lt;Expression.Integer&gt;] ".." [&lt;Expression.Integer&gt;]
+&lt;Integer&gt; ::= `-?[0-9]+`
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="sets"><a class="header" href="#sets">Sets</a></h1>
+<p>A set is an unordered collection of distinct values.</p>
+<p>A set may not hold more than one of any given value: <a href="#multisets">multisets</a>, however, do support this.</p>
 <h2 id="set-domains"><a class="header" href="#set-domains">Set Domains</a></h2>
-<pre><code class="language-bnf">&lt;SetDomain&gt; ::= "set" ["(" list(&lt;SetAttribute&gt;) ")"] "of" &lt;Domain&gt;
-&lt;SetAttribute&gt; ::= "size" &lt;Expression.Integer&gt;
-                 | "minSize" &lt;Expression.Integer&gt;
-                 | "maxSize" &lt;Expression.Integer&gt;
-                 | "representation" &lt;Identifier&gt;
+<p>A set is declared using the <code>set</code> specifier.</p>
+<pre><code class="language-essence">letting a be set of int
 </code></pre>
+<h3 id="set-attributes"><a class="header" href="#set-attributes">Set Attributes</a></h3>
 <p>Using contradicting values for the attribute values may result in an empty domain.</p>
+<p>TODO</p>
 <h2 id="set-literals"><a class="header" href="#set-literals">Set Literals</a></h2>
-<pre><code class="language-bnf">&lt;SetLiteral&gt; ::= "{" [list(&lt;Expression&gt;)] "}"
+<pre><code class="language-bnf">
 </code></pre>
 <h2 id="set-operations"><a class="header" href="#set-operations">Set Operations</a></h2>
 <h3 id="union--intersect"><a class="header" href="#union--intersect">Union / Intersect</a></h3>
-<pre><code class="language-bnf">&lt;SetOperation&gt; ::= &lt;Expression.Set&gt; ("union" | "intersect") &lt;Expression.Set&gt;
-</code></pre>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -757,12 +784,6 @@ $ etc...
 </table>
 </div>
 <h3 id="comparison"><a class="header" href="#comparison">Comparison</a></h3>
-<pre><code class="language-bnf">&lt;InExpression&gt; ::= &lt;Expression&gt; "in" &lt;Expression.Set&gt;
-&lt;SetComparisonExpression&gt; ::= &lt;Expression.Set&gt; "subset"
-                                    | "subsetEq"
-                                    | "supset"
-                                    | "supsetEq") &lt;Expression.Set&gt;
-</code></pre>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -777,17 +798,30 @@ $ etc...
 </tbody>
 </table>
 </div>
+<h2 id="bnf-3"><a class="header" href="#bnf-3">BNF</a></h2>
+<pre><code class="language-bnf">&lt;SetDomain&gt; ::= "set" ["(" list(&lt;SetAttribute&gt;) ")"] "of" &lt;Domain&gt;
+&lt;SetAttribute&gt; ::= "size" &lt;Expression.Integer&gt;
+                 | "minSize" &lt;Expression.Integer&gt;
+                 | "maxSize" &lt;Expression.Integer&gt;
+                 | "representation" &lt;Identifier&gt;
+
+&lt;SetLiteral&gt; ::= "{" [list(&lt;Expression&gt;)] "}"
+
+&lt;SetOperation&gt; ::= &lt;Expression.Set&gt; ("union" | "intersect") &lt;Expression.Set&gt;
+&lt;InExpression&gt; ::= &lt;Expression&gt; "in" &lt;Expression.Set&gt;
+&lt;SetComparisonExpression&gt; ::= &lt;Expression.Set&gt; "subset"
+                                    | "subsetEq"
+                                    | "supset"
+                                    | "supsetEq") &lt;Expression.Set&gt;
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="multisets"><a class="header" href="#multisets">Multisets</a></h1>
 <p>A multiset is a datatype for storing a set of objects where objects can occur more than once, but the ordering of objects does not matter.</p>
 <h2 id="multiset-domains"><a class="header" href="#multiset-domains">Multiset Domains</a></h2>
-<pre><code class="language-bnf">&lt;MultiSetDomain&gt; ::= "mset" ["(" list(&lt;MultiSetAttribute&gt;) ")"] "of" &lt;Domain&gt;
-&lt;MultiSetAttribute&gt; ::= "size" &lt;Expression.Integer&gt;
-                      | "minSize" &lt;Expression.Integer&gt;
-                      | "maxSize" &lt;Expression.Integer&gt;
-                      | "minOccur" &lt;Expression.Integer&gt;
-                      | "maxOccur" &lt;Expression.Integer&gt;
-                      | "representation" &lt;Identifier&gt;
+<p>Multisets are declared using the <code>mset</code> specifier.</p>
+<pre><code>given a: mset of int(0..10)
+given b: mset (size 10) of int
+given c: mset (maxSize 20, minOccur 2) of int(10..20)
 </code></pre>
 <h3 id="multiset-attributes"><a class="header" href="#multiset-attributes">Multiset Attributes</a></h3>
 <div class="table-wrapper">
@@ -815,56 +849,82 @@ $ etc...
 </table>
 </div>
 <h2 id="multiset-literals"><a class="header" href="#multiset-literals">Multiset Literals</a></h2>
-<pre><code class="language-bnf">&lt;MultiSetLiteral&gt; ::= "mset" "(" [list(&lt;Expression&gt;)] ")"
+<pre><code class="language-essence">letting a be mset (1, 2, 4, 1, 3, 5)
+letting b be mset (true, false, false, false, true)
+</code></pre>
+<h2 id="bnf-4"><a class="header" href="#bnf-4">BNF</a></h2>
+<pre><code class="language-bnf">&lt;MultiSetDomain&gt; ::= "mset" ["(" list(&lt;MultiSetAttribute&gt;) ")"] "of" &lt;Domain&gt;
+&lt;MultiSetAttribute&gt; ::= "size" &lt;Expression.Integer&gt;
+                      | "minSize" &lt;Expression.Integer&gt;
+                      | "maxSize" &lt;Expression.Integer&gt;
+                      | "minOccur" &lt;Expression.Integer&gt;
+                      | "maxOccur" &lt;Expression.Integer&gt;
+                      | "representation" &lt;Identifier&gt;
+
+&lt;MultiSetLiteral&gt; ::= "mset" "(" [list(&lt;Expression&gt;)] ")"
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="tuples"><a class="header" href="#tuples">Tuples</a></h1>
 <p>A tuple is a collection of values of different domains.</p>
 <h2 id="tuple-domain"><a class="header" href="#tuple-domain">Tuple Domain</a></h2>
-<pre><code class="language-bnf">&lt;TupleDomain&gt; ::= "tuple" "(" list(&lt;Domain&gt;) ")"
-                | "(" list(&lt;Domain&gt;, min=2) ")"
-</code></pre>
-<pre><code class="language-essence">$ explicit syntax:
-given a: tuple (bool, int(0..5), bool)
+<p>A tuple can be explicitly declared using the <code>tuple</code> specifier.</p>
+<pre><code class="language-essence">given a: tuple (bool, int(0..5), bool)
 given b: tuple (int, tuple (bool, bool))
 given c: tuple (int)
-
-$ implicit syntax:
-given a: (bool, int(0..5), bool)
+</code></pre>
+<p>For tuples of at least two elements, a shorthand syntax can be used:</p>
+<pre><code>given a: (bool, int(0..5), bool)
 given b: (int, (bool, bool))
 </code></pre>
+<p>Tuples can contain any domain, including other tuples.</p>
 <h3 id="attributes"><a class="header" href="#attributes">Attributes</a></h3>
 <p>Tuples take no attributes.</p>
 <h2 id="tuple-literal"><a class="header" href="#tuple-literal">Tuple Literal</a></h2>
-<pre><code class="language-bnf">&lt;TupleLiteral&gt; ::= "tuple" "(" [list(&lt;Expression&gt;)] ")"
-                 | "(" list(&lt;Expression&gt;, min=2) ")"
-</code></pre>
-<pre><code class="language-essence">$ explicit syntax:
-letting a be tuple (true, 4, false)
+<p>Tuple literals can be declared in the same explicit fashion…</p>
+<pre><code class="language-essence">letting a be tuple (true, 4, false)
 letting b be tuple (10, tuple (true, true))
 letting c be tuple (9)
-
-$ implicit syntax:
-letting a be (true, 4, false)
+</code></pre>
+<p>…or using the shorthand if there are at least two elements.</p>
+<pre><code>letting a be (true, 4, false)
 letting b be (10, (true, true))
 </code></pre>
 <h2 id="tuple-operators"><a class="header" href="#tuple-operators">Tuple Operators</a></h2>
 <p>TODO</p>
+<h2 id="bnf-5"><a class="header" href="#bnf-5">BNF</a></h2>
+<pre><code class="language-bnf">&lt;TupleDomain&gt; ::= "tuple" "(" list(&lt;Domain&gt;) ")"
+                | "(" list(&lt;Domain&gt;, min=2) ")"
+
+&lt;TupleLiteral&gt; ::= "tuple" "(" [list(&lt;Expression&gt;)] ")"
+                 | "(" list(&lt;Expression&gt;, min=2) ")"
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="matrices"><a class="header" href="#matrices">Matrices</a></h1>
+<p>A matrix is a homogeneous n-dimensional array of values.</p>
+<p>Unlike mathematical matrices, which are restricted to 2 dimensions and can only contain integers, Essence matrices can span any number of higher dimensions, be indexed by any primitive value (int or bool), and contain any type of value.</p>
 <h2 id="matrix-domains"><a class="header" href="#matrix-domains">Matrix Domains</a></h2>
-<pre><code class="language-bnf">&lt;MatrixDomain&gt; ::= "matrix" "indexed by" "[" list(&lt;Domain.IntBoolEnum&gt;) "]" "of" &lt;Domain&gt;
-</code></pre>
+<p>The dimensionality of a matrix is specified by the ‘indexed by’ parameter, where the number of indexing domains is equal to the dimensionality.</p>
+<p>A one dimensional ‘list’ of integers can be defined as follows:</p>
 <pre><code class="language-essence">letting x be domain matrix indexed by [int] of int
 </code></pre>
-<h2 id="matrix-literal"><a class="header" href="#matrix-literal">Matrix Literal</a></h2>
-<pre><code class="language-bnf">&lt;MatrixLiteral&gt; ::= "[" list(&lt;Expression&gt;) [";" &lt;Domain.IntBoolEnum&gt;] "]"
+<p>Similarly: a two dimensional matrix of booleans:</p>
+<pre><code class="language-essence">letting x be domain matrix indexed by [int, int] of bool
 </code></pre>
-<pre><code class="language-essence">letting x be [0,1]
+<p>It’s worth nothing that the indexing domains <em>do not have to be the same</em>, and <em>can be restricted</em>:</p>
+<pre><code class="language-essence">letting x be domain matrix indexed by [int(1..10), bool] of int
 </code></pre>
-<p>Matrices defined without an explicit index domain will default to <code>int</code>for 1D matrices, <code>int, int</code> for 2D matrices, etc.</p>
+<p>Matrices may also store other non-primitive literals (e.g. sets, sequences, other matrices).</p>
+<pre><code>letting x be domain matrix indexed by [int] of (set of bool)
+</code></pre>
+<h2 id="matrix-literals"><a class="header" href="#matrix-literals">Matrix Literals</a></h2>
+<p>Matrix literals are defined in square brackets, using nested square brackets to denote higher dimensions:</p>
+<pre><code class="language-essence">letting x be [0, 1] $ 1D matrix / list
+letting y be [[1, 2], [3, 4]] $ 2D matrix
+</code></pre>
+<p>Matrices defined without an explicit index domain will default to <code>int</code> for 1D matrices, <code>int, int</code> for 2D matrices, etc.</p>
 <p>Alternatively, define the index domain as follows:</p>
-<pre><code class="language-essence">letting y be [0,1; int(1..2)]
+<pre><code class="language-essence">letting x be [0,1; int(1..2)]
+letting y be [[1, 2], [3, 4]; int(1..2), int(1..2)]
 </code></pre>
 <h2 id="matrix-operations"><a class="header" href="#matrix-operations">Matrix Operations</a></h2>
 <h3 id="flatten"><a class="header" href="#flatten"><code>flatten</code></a></h3>
@@ -872,28 +932,33 @@ letting b be (10, (true, true))
 </code></pre>
 <p>Returns a list containing the entries of a matrix with any number of dimensions.</p>
 <p>Listed in the lexicographic order of the tuples of indices specifying each entry.</p>
+<pre><code class="language-essence">letting x be [[1, 2], [3, 4]]
+letting a be flatten(x)
+a = [1, 2, 3, 4]
+</code></pre>
 <p><em>A depth-bounded version is also available:</em></p>
 <pre><code class="language-rs">flatten(n: int, m: matrix of T): matrix of T
 </code></pre>
 <p>Flattens the first <code>n+1</code> dimensions into one dimension.</p>
 <p>Argument <code>n</code> must be a constant integer.</p>
 <p>Note that <code>flatten(0,M) = M</code>.</p>
+<pre><code class="language-essence">letting x be [[[1, 2], [3, 4]], [[1, 2], [3, 4]]]
+letting a be flatten(1, x)
+a = [[1, 2, 3, 4], [5, 6, 7, 8]]
+</code></pre>
+<h2 id="bnf-6"><a class="header" href="#bnf-6">BNF</a></h2>
+<pre><code class="language-bnf">&lt;MatrixDomain&gt; ::= "matrix" "indexed by" "[" list(&lt;Domain.IntBoolEnum&gt;) "]" "of" &lt;Domain&gt;
+&lt;MatrixLiteral&gt; ::= "[" list(&lt;Expression&gt;) [";" &lt;Domain.IntBoolEnum&gt;] "]"
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="partitions"><a class="header" href="#partitions">Partitions</a></h1>
 <p>A partition is a datatype that splits some domain into parts.</p>
 <h2 id="partition-domains"><a class="header" href="#partition-domains">Partition Domains</a></h2>
-<pre><code class="language-bnf">&lt;PartitionDomain&gt; ::= "partition" ["(" list(&lt;PartitionAttribute&gt;) ")"] "from" &lt;Domain&gt;
-&lt;PartitionAttribute&gt; ::= "numParts" &lt;Expression.Integer&gt;
-                       | "minNumParts" &lt;Expression.Integer&gt;
-                       | "maxNumParts" &lt;Expression.Integer&gt;
-                       | "partSize" &lt;Expression.Integer&gt;
-                       | "minPartSize" &lt;Expression.Integer&gt;
-                       | "maxPartSize" &lt;Expression.Integer&gt;
-                       | "regular"
+<p>Partitions are declared using the <code>partition</code> specifier.</p>
+<pre><code class="language-essence">given a: partition from int(0..10)
+given b: partition (partSize 5, regular) from int(-10..20)
 </code></pre>
-<pre><code class="language-essence">letting a be domain partition (partSize 5, regular) from int(0..10)
-</code></pre>
-<h3 id="attributes-1"><a class="header" href="#attributes-1">Attributes</a></h3>
+<h3 id="partition-attributes"><a class="header" href="#partition-attributes">Partition Attributes</a></h3>
 <p>Certain attributes control the number of parts a partition may have.</p>
 <div class="table-wrapper">
 <table>
@@ -922,49 +987,70 @@ letting b be (10, (true, true))
 </table>
 </div>
 <h2 id="partition-literals"><a class="header" href="#partition-literals">Partition Literals</a></h2>
-<pre><code class="language-bnf">&lt;PartitionLiteral&gt; ::= "partition" "(" [list(&lt;SetLiteral&gt;)] ")"
-</code></pre>
-<pre><code class="language-essence">letting a be partition({1, 2}, {3}, {4, 5, 6})
+<p>A partition consists of a list of parts, each of which is a set literal.</p>
+<pre><code class="language-essence">letting a be partition({1, 2}, {3}, {4, 5, 6}, {})
 </code></pre>
 <h2 id="partition-operations"><a class="header" href="#partition-operations">Partition Operations</a></h2>
 <h3 id="together"><a class="header" href="#together"><code>together</code></a></h3>
 <pre><code class="language-rs">together(s: set of T, p: partition from T): bool
 </code></pre>
 <p>Returns <code>true</code> if a list of elements are all in the same part of the partition.</p>
+<pre><code class="language-essence">letting x be partition({1, 2}, {3}, {4, 5, 6}, {})
+letting a be together({4, 6}, x)
+$ a = true
+</code></pre>
 <h3 id="apart"><a class="header" href="#apart"><code>apart</code></a></h3>
 <pre><code class="language-rs">apart(s: set of T, p: partition from T): bool
 </code></pre>
 <p>Returns <code>true</code> if a list of elements are <em>not</em> all contained in one part of the partition.</p>
+<pre><code class="language-essence">letting x be partition({1, 2}, {3}, {4, 5, 6}, {})
+letting a be apart({1, 4, 6}, x)
+$ a = true
+</code></pre>
 <h3 id="party"><a class="header" href="#party"><code>party</code></a></h3>
 <pre><code class="language-rs">party(e: T, p: partition of T): set of T
 </code></pre>
 <p>Returns the part of partition (as a set) that contains the specified element.</p>
+<pre><code class="language-essence">letting x be partition({1, 2}, {3}, {4, 5, 6}, {})
+letting a be party(1, x)
+$ a = {1, 2}
+</code></pre>
 <h3 id="parts"><a class="header" href="#parts"><code>parts</code></a></h3>
 <pre><code class="language-rs">parts(p: partition from T): set of (set of T);
 </code></pre>
 <p>Takes a partition and returns its set of parts.</p>
+<pre><code class="language-essence">letting x be partition({1, 2}, {3}, {4, 5, 6}, {})
+letting a be parts(x)
+$ a = {{1, 2}, {3}, {4, 5, 6}, {}}
+</code></pre>
 <h3 id="participants"><a class="header" href="#participants"><code>participants</code></a></h3>
 <pre><code class="language-rs">participants(p: partition from T): set of T;
 </code></pre>
 <p>Returns the union of all parts of a partition.</p>
+<pre><code class="language-essence">letting x be partition({1, 2}, {3}, {4, 5, 6}, {})
+letting a be participants(x)
+$ a = {1, 2, 3, 4, 5, 6}
+</code></pre>
+<h2 id="bnf-7"><a class="header" href="#bnf-7">BNF</a></h2>
+<pre><code class="language-bnf">&lt;PartitionDomain&gt; ::= "partition" ["(" list(&lt;PartitionAttribute&gt;) ")"] "from" &lt;Domain&gt;
+&lt;PartitionAttribute&gt; ::= "numParts" &lt;Expression.Integer&gt;
+                       | "minNumParts" &lt;Expression.Integer&gt;
+                       | "maxNumParts" &lt;Expression.Integer&gt;
+                       | "partSize" &lt;Expression.Integer&gt;
+                       | "minPartSize" &lt;Expression.Integer&gt;
+                       | "maxPartSize" &lt;Expression.Integer&gt;
+                       | "regular"
+
+&lt;PartitionLiteral&gt; ::= "partition" "(" [list(&lt;SetLiteral&gt;)] ")"
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="functions"><a class="header" href="#functions">Functions</a></h1>
 <p>A function is a binary relation on two sets, from elements of an input domain to elements of an output codomain.</p>
 <h2 id="function-domains"><a class="header" href="#function-domains">Function Domains</a></h2>
-<pre><code class="language-bnf">&lt;FunctionDomain&gt; ::= "function" ["(" list(&lt;FunctionAttribute&gt;) ")"] &lt;Domain&gt; "--&gt;" &lt;Domain&gt;
-</code></pre>
 <pre><code class="language-essence">given a: function (injective) bool --&gt; bool
 given b: function (maxSize 10, surjective) int(0..) --&gt; set of int
 </code></pre>
 <h3 id="function-attributes"><a class="header" href="#function-attributes">Function Attributes</a></h3>
-<pre><code class="language-bnf">&lt;FunctionAttribute&gt; ::= "size" &lt;Expression.Integer&gt;
-                      | "minSize" &lt;Expression.Integer&gt;
-                      | "maxSize" &lt;Expression.Integer&gt;
-                      | "total"
-                      | "injective"
-                      | "surjective"
-                      | "bijective"
-</code></pre>
 <h4 id="size"><a class="header" href="#size">Size</a></h4>
 <div class="table-wrapper">
 <table>
@@ -1004,45 +1090,98 @@ given b: function (maxSize 10, surjective) int(0..) --&gt; set of int
 </table>
 </div>
 <h2 id="function-literals"><a class="header" href="#function-literals">Function Literals</a></h2>
-<pre><code class="language-bnf">&lt;FunctionLiteral&gt; ::= "function" "(" [list(&lt;FunctionLiteralPair&gt;)] ")"
-&lt;FunctionLiteralPair&gt; ::= &lt;Expression&gt; "--&gt;" &lt;Expression&gt;
+<p>Instead of being defined programmatically (e.g. <code>f(x) = x + 1</code>), functions are defined by providing a list of mappings from inputs to outputs.</p>
+<pre><code class="language-essence">letting factors be function(1 --&gt; {1}, 2 --&gt; {1, 2}, 3 --&gt; {1, 3}, 4 --&gt; {1, 2, 4})
+
+letting months be new type enum { ... }
+letting daysInMonth be function (January -&gt; 31, February -&gt; 28, March -&gt; 31, ...)
+</code></pre>
+<p>Functions may also supply more than one mapping per input:</p>
+<pre><code class="language-essence">letting sqrt be function(1 --&gt; 1, 1 --&gt; -1, 4 --&gt; 2, 4 --&gt; -2)
 </code></pre>
 <h2 id="function-operations"><a class="header" href="#function-operations">Function Operations</a></h2>
 <h3 id="function-application"><a class="header" href="#function-application">Function Application</a></h3>
 <p>User-defined functions can be applied just like built-in functions.</p>
-<pre><code class="language-essence">given myFunc: function int -&gt; int
+<pre><code class="language-essence">given myFunc: function int --&gt; int
 find b: int(1..10) = myFunc(3)
 </code></pre>
 <h3 id="image"><a class="header" href="#image"><code>image</code></a></h3>
 <pre><code class="language-rs">image(f: function T --&gt; V, x: T): V
 </code></pre>
 <p>Returns the application of function <code>f</code> to value <code>x</code> (i.e. <code>apply(f, x) = f(x)</code>).</p>
+<pre><code class="language-essence">given isOdd function: int --&gt; bool
+letting a be image(isOdd, 3)
+$ a = true
+</code></pre>
 <h3 id="imageset"><a class="header" href="#imageset"><code>imageSet</code></a></h3>
 <pre><code class="language-rs">imageSet(f: function T --&gt; V, x: T): set of V
 </code></pre>
 <p>Applies function <code>f</code> to value <code>x</code>, returning the set of codomain values (i.e. set of possible output values of <code>f(x)</code>).</p>
 <p>Returns the empty set if <code>f(x)</code> is not defined.</p>
+<pre><code class="language-essence">given sqrt function: int --&gt; int
+letting a be imageSet(sqrt, 4)
+$ a = {2, -2}
+</code></pre>
 <h3 id="preimage"><a class="header" href="#preimage"><code>preImage</code></a></h3>
 <pre><code class="language-rs">preImage(f: Function T --&gt; V, x: V): set of T;
 </code></pre>
 <p>Applies the function <code>f</code> in reverse.</p>
 <p>Returns the set containing every value <code>y</code> for which <code>f(y) = x</code>.</p>
+<pre><code class="language-essence">given addOne function: int --&gt; int
+letting a be preImage(addOne, 5)
+$ a = 4
+</code></pre>
 <h3 id="inverse"><a class="header" href="#inverse"><code>inverse</code></a></h3>
 <pre><code class="language-rs">inverse(f1: function T --&gt; V, f2: function V --&gt; T): bool
 </code></pre>
 <p>Returns true if functions <code>f1</code> and <code>f2</code> are the inverse of each other.</p>
+<pre><code class="language-essence">given addOne function: int --&gt; int
+given subtractOne function: int --&gt; int
+letting a be inverse(addOne, subtractOne)
+$ a = true
+</code></pre>
 <h3 id="defined"><a class="header" href="#defined"><code>defined</code></a></h3>
 <pre><code class="language-rs">defined(f: function T --&gt; V): set of T
 </code></pre>
 <p>Returns the set of domain values for which function <code>f</code> is defined.</p>
+<pre><code class="language-essence">given openingHoursPerWeekday: int(1..7) --&gt; set of int
+letting a be defined(openingHoursPerWeekday)
+$ a = {1, 2, 3, 4, 5, 6, 7}
+</code></pre>
 <h3 id="range"><a class="header" href="#range"><code>range</code></a></h3>
 <pre><code class="language-rs">range(f: function T --&gt; V): set of V
 </code></pre>
 <p>Returns the set of codomain values which function <code>f</code> can output.</p>
+<pre><code class="language-essence">given daysInMonth: int(1..12) --&gt; int
+letting a be range(daysInMonth)
+$ a = {28, 30, 31}
+</code></pre>
 <h3 id="restrict"><a class="header" href="#restrict"><code>restrict</code></a></h3>
 <pre><code class="language-rs">restrict(f: function T --&gt; V, domain: domain in T): function T --&gt; V;
 </code></pre>
 <p>Returns a sub-function of <code>f</code> which has its mapping restricted to values in <code>domain</code>.</p>
+<pre><code class="language-essence">given sqrt: int(1..40) --&gt; int
+letting sqrtReduced be restrict(sqrt, int(1..10))
+
+letting a be sqrt(16)
+$ a = 4
+letting b be sqrtReduced(16)
+$ b = [undefined!]
+</code></pre>
+<h2 id="bnf-8"><a class="header" href="#bnf-8">BNF</a></h2>
+<pre><code class="language-bnf">&lt;FunctionDomain&gt; ::= "function" ["(" list(&lt;FunctionAttribute&gt;) ")"] &lt;Domain&gt; "--&gt;" &lt;Domain&gt;
+
+&lt;FunctionAttribute&gt; ::= "size" &lt;Expression.Integer&gt;
+                      | "minSize" &lt;Expression.Integer&gt;
+                      | "maxSize" &lt;Expression.Integer&gt;
+                      | "total"
+                      | "injective"
+                      | "surjective"
+                      | "bijective"
+
+&lt;FunctionLiteral&gt; ::= "function" "(" [list(&lt;FunctionLiteralPair&gt;)] ")"
+&lt;FunctionLiteralPair&gt; ::= &lt;Expression&gt; "--&gt;" &lt;Expression&gt;
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="relations"><a class="header" href="#relations">Relations</a></h1>
 <p>A relation is effectively a set of tuples which relate elements of different domains.</p>
@@ -1051,40 +1190,15 @@ find b: int(1..10) = myFunc(3)
 <li>If a relation is binary (arity 2) we can also add additional attributes to define properties of the relation.</li>
 </ul>
 <h2 id="relation-domains"><a class="header" href="#relation-domains">Relation Domains</a></h2>
-<pre><code class="language-bnf">&lt;RelationDomain&gt; ::= "relation" ["(" list(&lt;RelationAttribute&gt;) ")"] "of" "(" &lt;RelationDomainList&gt; ")"
-&lt;RelationDomainList&gt; ::= &lt;Domain&gt; [{ "*" &lt;Domain&gt; }]
-</code></pre>
+<p>Relations are declared using the <code>relation</code> specifier.</p>
 <pre><code class="language-essence">$ binary relations
-letting a be domain relation of (int * bool)
-letting b be domain relation (partialOrder) of (int(1..2) * int(1..2))"
+given a: relation of (int * bool)
+given b: relation (partialOrder) of (int(1..2) * int(1..2))"
 
 $ n-ary relation
-letting c be domain relation(int, int, int)
+given c: relation of (int * int * int)
 </code></pre>
-<h3 id="attributes-2"><a class="header" href="#attributes-2">Attributes</a></h3>
-<pre><code class="language-bnf">&lt;RelationAttribute&gt; ::= "size" &lt;Expression.Integer&gt;
-                      | "minSize" &lt;Expression.Integer&gt;
-                      | "maxSize" &lt;Expression.Integer&gt;
-                      | "reflexive"
-                      | "irreflexive"
-                      | "coreflexive"
-                      | "symmetric"
-                      | "antiSymmetric"
-                      | "aSymmetric"
-                      | "transitive"
-                      | "total"
-                      | "connex"
-                      | "Euclidean"
-                      | "serial"
-                      | "equivalence"
-                      | "partialOrder"
-                      | "leftTotal"
-                      | "rightTotal"
-                      | "linearOrder"
-                      | "weakOrder"
-                      | "preOrder"
-                      | "strictPartialOrder"
-</code></pre>
+<h3 id="relation-attributes"><a class="header" href="#relation-attributes">Relation Attributes</a></h3>
 <p><em>N.B.: in this section <code>A ~ B</code> denotes “<code>A</code> is related to <code>B</code>”, and <code>A !~ B</code> denotes <code>!(A ~ B)</code>.</em></p>
 <h4 id="size-1"><a class="header" href="#size-1">Size</a></h4>
 <div class="table-wrapper">
@@ -1146,29 +1260,53 @@ letting c be domain relation(int, int, int)
 </tbody>
 </table>
 </div>
-<h3 id="relation-literals"><a class="header" href="#relation-literals">Relation Literals</a></h3>
-<pre><code class="language-bnf">&lt;RelationLiteral&gt; ::= "relation" "(" [list(&lt;RelationLiteralTuple&gt;)] ")"
-&lt;RelationLiteralTuple&gt; ::= "(" list(&lt;Expression&gt;) ")"
-</code></pre>
+<h2 id="relation-literals"><a class="header" href="#relation-literals">Relation Literals</a></h2>
+<p>A relation literal is written as a list of tuples, which relates elements in the same tuple together.</p>
 <pre><code class="language-essence">$ binary relation domains
 letting a be relation ((1, 1, 0), (1, 0, 1), (0, 1, 1))
 letting b be relation ((true, false), (false, true))
+letting c be relation ((true, 3), (false, 5))
+</code></pre>
+<h2 id="bnf-9"><a class="header" href="#bnf-9">BNF</a></h2>
+<pre><code class="language-bnf">&lt;RelationDomain&gt; ::= "relation" ["(" list(&lt;RelationAttribute&gt;) ")"] "of" "(" &lt;RelationDomainList&gt; ")"
+&lt;RelationDomainList&gt; ::= &lt;Domain&gt; [{ "*" &lt;Domain&gt; }]
+
+&lt;RelationAttribute&gt; ::= "size" &lt;Expression.Integer&gt;
+                      | "minSize" &lt;Expression.Integer&gt;
+                      | "maxSize" &lt;Expression.Integer&gt;
+                      | "reflexive"
+                      | "irreflexive"
+                      | "coreflexive"
+                      | "symmetric"
+                      | "antiSymmetric"
+                      | "aSymmetric"
+                      | "transitive"
+                      | "total"
+                      | "connex"
+                      | "Euclidean"
+                      | "serial"
+                      | "equivalence"
+                      | "partialOrder"
+                      | "leftTotal"
+                      | "rightTotal"
+                      | "linearOrder"
+                      | "weakOrder"
+                      | "preOrder"
+                      | "strictPartialOrder"
+
+&lt;RelationLiteral&gt; ::= "relation" "(" [list(&lt;RelationLiteralTuple&gt;)] ")"
+&lt;RelationLiteralTuple&gt; ::= "(" list(&lt;Expression&gt;) ")"
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="sequences"><a class="header" href="#sequences">Sequences</a></h1>
 <p>A sequence is a datatype for storing a series of values, where values can occur multiple times and ordering is preserved.</p>
-<h2 id="sequence-domains"><a class="header" href="#sequence-domains">Sequence Domains</a></h2>
-<pre><code class="language-bnf">&lt;SequenceDomain&gt; ::= "sequence" ["(" list(&lt;SequenceAttribute&gt;) ")"] "of" &lt;Domain&gt;
-</code></pre>
 <p>Unlike <a href="#matrices">matrices</a>, sequences can have defined attributes; i.e. you can define a sequence to have varying lengths, and to restrict what values it can draw from it’s inner domain.</p>
-<h3 id="attributes-3"><a class="header" href="#attributes-3">Attributes</a></h3>
-<pre><code class="language-bnf">&lt;SequenceAttribute&gt; ::= "size" &lt;Expression.Integer&gt;
-                      | "minSize" &lt;Expression.Integer&gt;
-                      | "maxSize" &lt;Expression.Integer&gt;
-                      | "injective"
-                      | "surjective"
-                      | "bijective"
+<h2 id="sequence-domains"><a class="header" href="#sequence-domains">Sequence Domains</a></h2>
+<p>Sequences are declared using the <code>sequence</code> specifier.</p>
+<pre><code class="language-essence">given a: sequence (size 10) of int
+given b: sequence (minSize 3, surjective) of int(-5..5)
 </code></pre>
+<h3 id="sequence-attributes"><a class="header" href="#sequence-attributes">Sequence Attributes</a></h3>
 <h4 id="cardinality"><a class="header" href="#cardinality">Cardinality</a></h4>
 <div class="table-wrapper">
 <table>
@@ -1198,44 +1336,72 @@ letting b be relation ((true, false), (false, true))
 </div>
 <p>Using contradicting values for the attribute values may result in an empty domain.</p>
 <h2 id="sequence-literals"><a class="header" href="#sequence-literals">Sequence Literals</a></h2>
-<pre><code class="language-bnf">&lt;SequenceLiteral&gt; ::= "sequence" "(" [list(&lt;Expression&gt;)] ")"
+<p>Sequence literals simply list their values in order.</p>
+<pre><code class="language-essence">letting a be sequence (2, 3, 5, 7, 11, 13, 17, 19)
+letting b be sequence (true, false, true, true, false, false)
+</code></pre>
+<h2 id="sequence-operations"><a class="header" href="#sequence-operations">Sequence Operations</a></h2>
+<h3 id="substring"><a class="header" href="#substring"><code>substring</code></a></h3>
+<pre><code class="language-essence">TODO
+</code></pre>
+<h3 id="subsequence"><a class="header" href="#subsequence"><code>subsequence</code></a></h3>
+<pre><code class="language-essence">TODO
+</code></pre>
+<h2 id="bnf-10"><a class="header" href="#bnf-10">BNF</a></h2>
+<pre><code class="language-bnf">&lt;SequenceDomain&gt; ::= "sequence" ["(" list(&lt;SequenceAttribute&gt;) ")"] "of" &lt;Domain&gt;
+&lt;SequenceAttribute&gt; ::= "size" &lt;Expression.Integer&gt;
+                      | "minSize" &lt;Expression.Integer&gt;
+                      | "maxSize" &lt;Expression.Integer&gt;
+                      | "injective"
+                      | "surjective"
+                      | "bijective"
+
+&lt;SequenceLiteral&gt; ::= "sequence" "(" [list(&lt;Expression&gt;)] ")"
+
+&lt;SequenceComparison&gt; ::= &lt;Expression.Sequence&gt; ("substring"
+                                              | "subsequence") &lt;Expression.Sequence&gt;
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="records"><a class="header" href="#records">Records</a></h1>
-<p>A record is an unordered TODO list of key-value pairs.</p>
+<p>A record is an unordered list of key-value pairs.</p>
 <p>A record may not have duplicate keys.</p>
 <p>Other languages may refer to this concept as a “struct” (C, C++, Rust, etc.), “dataclass” (Python), or otherwise.</p>
 <h2 id="record-domains"><a class="header" href="#record-domains">Record Domains</a></h2>
+<p>Records are declared using the <code>record</code> specifier, and then declaring a list of name-domain pairs.</p>
+<pre><code class="language-essence">letting a be domain record {}
+letting b be domain record { A : int(0..1), B : int(0..2), C: set of bool }
+</code></pre>
+<h3 id="record-attributes"><a class="header" href="#record-attributes">Record Attributes</a></h3>
+<p>Records take no attributes.</p>
+<h2 id="record-literals"><a class="header" href="#record-literals">Record Literals</a></h2>
+<p>A record literal gives concrete values to each field in the record domain.</p>
+<pre><code class="language-essence">letting a be record { }
+letting b be record { A = 1, B = 0, C = {true, false} }
+</code></pre>
+<h2 id="bnf-11"><a class="header" href="#bnf-11">BNF</a></h2>
 <pre><code class="language-bnf">&lt;RecordDomain&gt; ::= "record" "{" list(&lt;NameDomainPair&gt;) "}"
 &lt;NameDomainPair&gt; ::= &lt;Identifier&gt; ":" &lt;Domain&gt;
-</code></pre>
-<pre><code class="language-essence">letting a be domain record {}
-letting b be domain record { A : int(0..1), B : int(0..2) }
-</code></pre>
-<h2 id="record-literals"><a class="header" href="#record-literals">Record Literals</a></h2>
-<pre><code class="language-bnf">&lt;RecordLiteral&gt; ::= "record" "{" list(&lt;NameValuePair&gt;) "}"
+
+&lt;RecordLiteral&gt; ::= "record" "{" list(&lt;NameValuePair&gt;) "}"
 &lt;NameValuePair&gt; ::= &lt;Identifier&gt; "=" &lt;Expression&gt;
-</code></pre>
-<pre><code class="language-essence">letting a be record { }
-letting b be record { A = 1, B = 0 }
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="variants"><a class="header" href="#variants">Variants</a></h1>
 <p>A variant domain stores named domain pair fields.</p>
-<p>However, unlike a [[record TODO]], a variant literal can only use one of these fields at once. This field is referred to as <strong>active</strong>.</p>
+<p>However, unlike a <a href="#records">record</a>, a variant literal can only use <em>one of these fields at once</em>. This field is referred to as <strong>active</strong>.</p>
 <h2 id="variant-domains"><a class="header" href="#variant-domains">Variant Domains</a></h2>
-<pre><code class="language-bnf">&lt;VariantDomain&gt; ::= "variant" "{" list(&lt;NameDomainPair&gt;) "}"
-&lt;NameDomainPair&gt; ::= &lt;Identifier&gt; ":" &lt;Domain&gt;
-</code></pre>
+<p>Variants are declared using the <code>variant</code> specifier, followed by the list of possible active fields.</p>
 <pre><code class="language-essence">given a: variant { first: bool, second: int(0..10), third: set of int }
 </code></pre>
-<h3 id="attributes-4"><a class="header" href="#attributes-4">Attributes</a></h3>
+<h3 id="attributes-1"><a class="header" href="#attributes-1">Attributes</a></h3>
 <p>Variants take no attributes.</p>
 <h2 id="variant-literals"><a class="header" href="#variant-literals">Variant Literals</a></h2>
-<pre><code class="language-bnf">&lt;VariantLiteral&gt; ::= "variant" "{" &lt;NameValuePair&gt; "}"
-&lt;NameValuePair&gt; ::= &lt;Identifier&gt; ":" &lt;Expression&gt;
-</code></pre>
+<p>Defining a variant literal involves specifying its active field.</p>
 <pre><code class="language-essence">letting a be variant { second: 5 }
+</code></pre>
+<p>However, note that this type has no non-active variants, unless they are specified by a domain annotation:</p>
+<pre><code class="language-essence">letting A be domain variant { first: bool, second: int(0..10), third: set of int }
+letting a: A be variant { second: 5 }
 </code></pre>
 <h2 id="operators"><a class="header" href="#operators">Operators</a></h2>
 <h3 id="active"><a class="header" href="#active">active</a></h3>
@@ -1251,20 +1417,22 @@ $ is_first_active = false
 letting is_second_active be active(a, second)
 $ is_second_active = true
 </code></pre>
+<h2 id="bnf-12"><a class="header" href="#bnf-12">BNF</a></h2>
+<pre><code class="language-bnf">&lt;VariantDomain&gt; ::= "variant" "{" list(&lt;NameDomainPair&gt;) "}"
+&lt;NameDomainPair&gt; ::= &lt;Identifier&gt; ":" &lt;Domain&gt;
+
+&lt;VariantLiteral&gt; ::= "variant" "{" &lt;NameValuePair&gt; "}"
+&lt;NameValuePair&gt; ::= &lt;Identifier&gt; ":" &lt;Expression&gt;
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="permutations"><a class="header" href="#permutations">Permutations</a></h1>
 <p>TODO what is a permutation?</p>
 <h2 id="permutation-domains"><a class="header" href="#permutation-domains">Permutation Domains</a></h2>
-<pre><code class="language-bnf">&lt;PermutationDomain&gt; ::= "permutation" ["(" list(&lt;PermutationAttribute&gt;) ")"] "of" &lt;Domain&gt;
-</code></pre>
+<p>Permutations are declared using the <code>permutation</code> specifier.</p>
 <pre><code class="language-essence">given a: permutation of int(1..3)
-given b: permutation of int(1..3)
+given b: permutation (minNumMoved 1, maxNumMoved 3) of int(1..3)
 </code></pre>
-<h3 id="attributes-5"><a class="header" href="#attributes-5">Attributes</a></h3>
-<pre><code class="language-bnf">&lt;PermutationAttribute&gt; ::= "numMoved" &lt;Expression.Integer&gt;
-                         | "minNumMoved" &lt;Expression.Integer&gt;
-                         | "maxNumMoved" &lt;Expression.Integer&gt;
-</code></pre>
+<h3 id="permutation-attributes"><a class="header" href="#permutation-attributes">Permutation Attributes</a></h3>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -1278,9 +1446,6 @@ given b: permutation of int(1..3)
 </table>
 </div>
 <h2 id="permutation-literals"><a class="header" href="#permutation-literals">Permutation Literals</a></h2>
-<pre><code class="language-bnf">&lt;PermutationLiteral&gt; ::= "permutation" "(" [list(&lt;PermutationLiteralCycle&gt;)] ")"
-&lt;PermutationLiteralCycle&gt; ::= "(" list(&lt;Expression&gt;) ")"
-</code></pre>
 <pre><code class="language-essence">letting a be permutation ((1, 2, 3), (2, 1, 3), (3, 2, 1))
 </code></pre>
 <h2 id="permutation-operations"><a class="header" href="#permutation-operations">Permutation Operations</a></h2>
@@ -1289,10 +1454,24 @@ given b: permutation of int(1..3)
 <pre><code class="language-rs">permInverse(p: permutation of T): permutation of T
 </code></pre>
 <p>Returns the inverse of permutation <code>p</code>.</p>
+<pre><code class="language-essence">TODO example
+</code></pre>
 <h3 id="compose"><a class="header" href="#compose"><code>compose</code></a></h3>
 <pre><code class="language-rs">compose(p1: permutation of T, p2: permutation of T) -&gt; permutation of T
 </code></pre>
 <p>Returns the composition of permutations <code>p1</code> and <code>p2</code>.</p>
+<pre><code class="language-essence">TODO example
+</code></pre>
+<h2 id="bnf-13"><a class="header" href="#bnf-13">BNF</a></h2>
+<pre><code class="language-bnf">&lt;PermutationDomain&gt; ::= "permutation" ["(" list(&lt;PermutationAttribute&gt;) ")"] "of" &lt;Domain&gt;
+
+&lt;PermutationAttribute&gt; ::= "numMoved" &lt;Expression.Integer&gt;
+                         | "minNumMoved" &lt;Expression.Integer&gt;
+                         | "maxNumMoved" &lt;Expression.Integer&gt;
+
+&lt;PermutationLiteral&gt; ::= "permutation" "(" [list(&lt;PermutationLiteralCycle&gt;)] ")"
+&lt;PermutationLiteralCycle&gt; ::= "(" list(&lt;Expression&gt;) ")"
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="enumerated-types"><a class="header" href="#enumerated-types">Enumerated Types</a></h1>
 <p>Enumerated types (enums) consist of a set of named values (members).</p>
@@ -1330,12 +1509,23 @@ $ a = Third
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="unnamed-types"><a class="header" href="#unnamed-types">Unnamed Types</a></h1>
-<p>Defines a new type of size <code>n</code>, but doesn’t give the modeller a way of referring to any of those values by name.</p>
-<p>This means that different elements of this type cannot be distinguished, hence these values form a symmetry group.</p>
-<p>TODO complete</p>
+<p>We can defines a new type of size <code>n</code>, but with no way of referring to any of those values by name.</p>
+<p><em>This type is an active area of research and implementation; this page is therefore incomplete.</em></p>
+<h2 id="unnamed-type-declaration-1"><a class="header" href="#unnamed-type-declaration-1">Unnamed Type Declaration</a></h2>
+<p>See <a href="#unnamed-type-declaration">unnamed type declaration</a> in the <code>letting</code> reference.</p>
+<pre><code class="language-essence">letting direction be new type of size 5
+</code></pre>
+<h2 id="unnamed-type-elements"><a class="header" href="#unnamed-type-elements">Unnamed Type Elements</a></h2>
+<p>Different elements of an unnamed type cannot be distinguished, hence these values form a symmetry group.</p>
 <div style="break-before: page; page-break-before: always;"></div>
-<h1 id="expressions-1"><a href="#expressions-1" class="header">Expressions</a></h1>
-<h2 id="expressions"><a class="header" href="#expressions">Expressions</a></h2>
+<h1 id="expressions"><a class="header" href="#expressions">Expressions</a></h1>
+<p>An expression is a unit of code which resolves to a <em>value</em>. This may either be:</p>
+<ul>
+<li>A value itself (e.g. <code>1</code>, <code>true</code>, <code>(1, 2, 3)</code>)</li>
+<li>A reference to a value (e.g. <code>a</code>, <code>b</code>)</li>
+<li>The computation of a value (e.g. <code>2 + 2</code>, <code>min([1, 2, 3])</code>)</li>
+</ul>
+<h2 id="bnf-14"><a class="header" href="#bnf-14">BNF</a></h2>
 <pre><code class="language-bnf">&lt;Expression&gt; ::= &lt;Literal&gt;
                | &lt;SubExpression&gt;
                | &lt;Comprehension&gt;
@@ -1350,18 +1540,8 @@ $ a = Third
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="boolean-expressions"><a class="header" href="#boolean-expressions">Boolean Expressions</a></h1>
-<pre><code class="language-bnf">&lt;BoolExpr&gt; ::= &lt;NotExpr&gt;
-| &lt;AndExpr&gt;
-| &lt;OrExpr&gt;
-| &lt;ImplicationExpr&gt;
-| &lt;IffExpr&gt;
-| &lt;FunctionalAndExpr&gt;
-| &lt;FunctionalOrExpr&gt;
-| &lt;QuantifierExpr&gt;
-</code></pre>
 <h2 id="not-expression"><a class="header" href="#not-expression">Not Expression</a></h2>
-<pre><code class="language-bnf">&lt;NotExpr&gt; ::= "!" &lt;Expression.Boolean&gt;
-</code></pre>
+<p><code>!a</code> is <code>true</code> iff <code>a</code> is <code>false</code>.</p>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -1374,9 +1554,7 @@ $ a = Third
 </table>
 </div>
 <h2 id="and-expression"><a class="header" href="#and-expression">And Expression</a></h2>
-<pre><code class="language-bnf">&lt;AndExpr&gt; ::= &lt;Expression.Boolean&gt; "/\" &lt;Expression.Boolean&gt;
-</code></pre>
-<p><code>a /\ b</code> is <code>true</code> only if both <code>a</code> and <code>b</code> are true.</p>
+<p><code>a /\ b</code> is <code>true</code> iff both <code>a</code> and <code>b</code> are <code>true</code>.</p>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -1391,9 +1569,7 @@ $ a = Third
 </table>
 </div>
 <h2 id="or-expression"><a class="header" href="#or-expression">Or Expression</a></h2>
-<pre><code class="language-bnf">&lt;OrExpr&gt; ::= &lt;Expression.Boolean&gt; "\/" &lt;Expression.Boolean&gt;
-</code></pre>
-<p><code>a \/ b</code> is <code>true</code> if <code>a</code> is <code>true</code> or <code>b</code> is <code>true</code>.</p>
+<p><code>a \/ b</code> is <code>true</code> iff <code>a</code> is <code>true</code> or <code>b</code> is <code>true</code>.</p>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -1408,9 +1584,7 @@ $ a = Third
 </table>
 </div>
 <h2 id="implication-expression"><a class="header" href="#implication-expression">Implication Expression</a></h2>
-<pre><code class="language-bnf">&lt;ImplicationExpr&gt; ::= &lt;Expression.Boolean&gt; "-&gt;" &lt;Expression.Boolean&gt;
-</code></pre>
-<p><code>a -&gt; b</code> is <code>true</code> if <code>a</code> is <code>false</code> or <code>b</code> is <code>true</code>.</p>
+<p><code>a -&gt; b</code> is <code>true</code> iff <code>a</code> is <code>false</code> or <code>b</code> is <code>true</code>.</p>
 <div class="table-wrapper">
 <table>
 <thead>
@@ -1425,9 +1599,7 @@ $ a = Third
 </table>
 </div>
 <h2 id="iff-expression"><a class="header" href="#iff-expression">Iff Expression</a></h2>
-<pre><code class="language-bnf">&lt;IffExpr&gt; ::= &lt;Expression.Boolean&gt; "&lt;-&gt;" &lt;Expression.Boolean&gt;
-</code></pre>
-<p><code>a &lt;-&gt; b</code> is <code>true</code> if both <code>a</code> and <code>b</code> are <code>true</code>, or both <code>a</code> and <code>b</code> are <code>false</code>.</p>
+<p><code>a &lt;-&gt; b</code> is <code>true</code> iff both <code>a</code> and <code>b</code> are <code>true</code>, or both <code>a</code> and <code>b</code> are <code>false</code>.</p>
 <p><code>a &lt;-&gt; b</code> is logically equivalent to <code>a = b</code>, but can <strong>only</strong> be applied to boolean expressions.</p>
 <div class="table-wrapper">
 <table>
@@ -1442,20 +1614,28 @@ $ a = Third
 </tbody>
 </table>
 </div>
+<h2 id="bnf-15"><a class="header" href="#bnf-15">BNF</a></h2>
+<pre><code class="language-bnf">&lt;BoolExpr&gt; ::= &lt;NotExpr&gt;
+| &lt;AndExpr&gt;
+| &lt;OrExpr&gt;
+| &lt;ImplicationExpr&gt;
+| &lt;IffExpr&gt;
+| &lt;FunctionalAndExpr&gt;
+| &lt;FunctionalOrExpr&gt;
+| &lt;QuantifierExpr&gt;
+
+&lt;NotExpr&gt; ::= "!" &lt;Expression.Boolean&gt;
+
+&lt;AndExpr&gt; ::= &lt;Expression.Boolean&gt; "/\" &lt;Expression.Boolean&gt;
+
+&lt;OrExpr&gt; ::= &lt;Expression.Boolean&gt; "\/" &lt;Expression.Boolean&gt;
+
+&lt;ImplicationExpr&gt; ::= &lt;Expression.Boolean&gt; "-&gt;" &lt;Expression.Boolean&gt;
+
+&lt;IffExpr&gt; ::= &lt;Expression.Boolean&gt; "&lt;-&gt;" &lt;Expression.Boolean&gt;
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="arithmetic-expressions"><a class="header" href="#arithmetic-expressions">Arithmetic Expressions</a></h1>
-<pre><code class="language-bnf">&lt;ArithmeticExpr&gt; ::= &lt;BinaryArithExpr&gt;
-                    | &lt;NegativeExpr&gt;
-                    | &lt;AbsValueExpr&gt;
-                    | &lt;FactorialExpr&gt;
-
-
-&lt;BinaryArithExpr&gt; = ::= &lt;Expression.Integer&gt; ("+" | "-" | "*" | "/" | "%" | "**") &lt;Expression.Integer&gt;
-&lt;NegativeExpr&gt; ::= "-" &lt;Expression.Integer&gt;
-&lt;AbsValueExpr&gt; ::= "|" &lt;Expression.Integer&gt; "|"
-&lt;FactorialExpr&gt; ::= &lt;Expression.Integer&gt; "!"
-                 | "factorial" "(" &lt;Expression.Integer&gt; ")"
-</code></pre>
 <h2 id="addition"><a class="header" href="#addition">Addition</a></h2>
 <p><code>a + b</code> returns the sum of <code>a</code> and <code>b</code>.</p>
 <h2 id="subtraction"><a class="header" href="#subtraction">Subtraction</a></h2>
@@ -1477,6 +1657,19 @@ $ a = Third
 <p><code>|a|</code> returns the absolute value of <code>a</code> (i.e. its distance from the value zero).</p>
 <h2 id="factorial"><a class="header" href="#factorial">Factorial</a></h2>
 <p><code>a!</code> or <code>factorial(a)</code> returns the factorial of <code>a</code> (i.e. the product of all integers from <code>1</code> to <code>a</code> inclusive).</p>
+<h2 id="bnf-16"><a class="header" href="#bnf-16">BNF</a></h2>
+<pre><code class="language-bnf">&lt;ArithmeticExpr&gt; ::= &lt;BinaryArithExpr&gt;
+                    | &lt;NegativeExpr&gt;
+                    | &lt;AbsValueExpr&gt;
+                    | &lt;FactorialExpr&gt;
+
+
+&lt;BinaryArithExpr&gt; = ::= &lt;Expression.Integer&gt; ("+" | "-" | "*" | "/" | "%" | "**") &lt;Expression.Integer&gt;
+&lt;NegativeExpr&gt; ::= "-" &lt;Expression.Integer&gt;
+&lt;AbsValueExpr&gt; ::= "|" &lt;Expression.Integer&gt; "|"
+&lt;FactorialExpr&gt; ::= &lt;Expression.Integer&gt; "!"
+                 | "factorial" "(" &lt;Expression.Integer&gt; ")"
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="comprehensions"><a class="header" href="#comprehensions">Comprehensions</a></h1>
 <pre><code class="language-bnf">&lt;Comprehension&gt; ::= "[" &lt;Expression&gt; "|" &lt;ComprehensionGenerator&gt; ["," list(&lt;Generator&gt;)] ["," list(&lt;ComprehensionLettingOrCondition&gt;)] "]"
@@ -1530,41 +1723,58 @@ $ g = [5, 11, 34, -6]
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="comparison-expressions"><a class="header" href="#comparison-expressions">Comparison Expressions</a></h1>
+<h2 id="equality-comparison"><a class="header" href="#equality-comparison">Equality Comparison</a></h2>
+<p>Equality simply determines whether two values are <strong>structurally</strong> identical.</p>
+<pre><code class="language-essence">1 = 1                    $ true
+{1, 2, 3} = {3, 2, 1}    $ true
+(false, 1) = (false, 1)  $ true
+2 + 2 = 5                $ false
+</code></pre>
+<p><code>a != b</code> is <code>true</code> if <code>!(a = b)</code>.</p>
+<h2 id="arithmetic-comparison"><a class="header" href="#arithmetic-comparison">Arithmetic Comparison</a></h2>
+<p>The standard arithmetic comparators operate over integers.</p>
+<pre><code class="language-essence">a &lt;= b
+a &gt;= b
+a &lt; b
+a &gt; b
+</code></pre>
+<h2 id="lexicographic-comparison"><a class="header" href="#lexicographic-comparison">Lexicographic Comparison</a></h2>
+<p>Lexicographic comparisons (e.g. <code>&lt;=lex</code>) operate over ordered collections.</p>
+<p>TODO complete</p>
+<h2 id="bnf-17"><a class="header" href="#bnf-17">BNF</a></h2>
 <pre><code class="language-bnf">&lt;ComparisonExpr&gt; ::= &lt;ArithmeticComparison&gt;
                    | &lt;LexComparison&gt;
                    | &lt;EqualityComparison&gt;
                    | &lt;SetComparison&gt;
                    | &lt;SequenceComparison&gt;
-</code></pre>
-<pre><code class="language-bnf">&lt;ArithmeticComparison&gt; ::= &lt;Expression.Integer&gt; ("&lt;=" | "&gt;=" | "&lt;" | "&gt;") &lt;Expression.Integer&gt;
+
+&lt;ArithmeticComparison&gt; ::= &lt;Expression.Integer&gt; ("&lt;=" | "&gt;=" | "&lt;" | "&gt;") &lt;Expression.Integer&gt;
+
 &lt;LexComparison&gt; ::= &lt;Expression.Lexical&gt; ("&lt;lex" | "&lt;=lex" | "&gt;lex" | "&gt;=lex") &lt;Expression.Lexical&gt;
-</code></pre>
-<p>; supported for all types</p>
-<pre><code class="language-bnf">&lt;EqualityComparison&gt; ::= &lt;Expression&gt; ("=" | "!=") &lt;Expression&gt;
+
+&lt;EqualityComparison&gt; ::= &lt;Expression&gt; ("=" | "!=") &lt;Expression&gt;
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div>
 <h1 id="aggregates-and-quantifiers"><a class="header" href="#aggregates-and-quantifiers">Aggregates and Quantifiers</a></h1>
 <p>Aggregates and quantifiers are idiomatic ways of expressing constraints over full collections or domains.</p>
 <ul>
-<li>Aggregates return an arithmetic answer (sum / min / max of collection).</li>
-<li>Quantifiers return a boolean answer (for all / there exists).</li>
+<li>Aggregates return an <em>arithmetic answer</em> (sum / min / max of collection).</li>
+<li>Quantifiers return a <em>boolean answer</em> (for all / there exists).</li>
 </ul>
+<p>These expressions are syntactic sugar for <a href="#comprehensions">comprehensions</a>.</p>
 <h2 id="syntax"><a class="header" href="#syntax">Syntax</a></h2>
-<pre><code class="language-bnf">&lt;AggregateExpr&gt; ::= &lt;AggregateType&gt; list(&lt;identifier&gt;
-                                       | &lt;tuple&gt;) ("in" &lt;Expression.Collection&gt;
-                                                 | ":" &lt;Domain&gt;) ." &lt;Expression.Boolean&gt;
-
-&lt;AggregateType&gt; ::= "forAll" | "exists" | "sum" | "min" | "max"
+<p>An aggregate/quantifier can act over a finite domain. The following example sums the powers of two from $2^1$ to $2^10$.</p>
+<pre><code class="language-essence">sum i: int(1..10) . 2 ** i
 </code></pre>
-<pre><code class="language-essence">sum i: int(1..10) . 2 ** i                 $ sums the integer powers of 2 from 1 to 10
-</code></pre>
-<pre><code>forAll j in {2, 4, 6, 9, 10} . j % 2 = 0   $ checks the set contains only even numbers (returns false here)
+<p>We can also iterate over a collection: the following example checks whether the set contains only even numbers:</p>
+<pre><code class="language-essence">forAll j in {2, 4, 6, 9, 10} . j % 2 = 0
+$ false
 </code></pre>
 <h2 id="quantifiers"><a class="header" href="#quantifiers">Quantifiers</a></h2>
 <p>There are two quantifiers: <code>forAll</code> and <code>exists</code>.</p>
 <ul>
-<li><code>forAll</code>: true iff the constraint holds for every element in the set, or every member of the domain.</li>
-<li><code>exists</code>: true iff the constraint holds for at least one element in the set, or at least one member of the domain.</li>
+<li><code>forAll</code>: true iff the constraint holds for every element.</li>
+<li><code>exists</code>: true iff the constraint holds for at least one element.</li>
 </ul>
 <pre><code class="language-essence">find a : bool such that a = forAll i in {0,1,2} . i=i*i $ false
 find b : bool such that b = exists i : int(0..4) . i*i=i $ true
@@ -1572,10 +1782,17 @@ find b : bool such that b = exists i : int(0..4) . i*i=i $ true
 <h2 id="aggregates"><a class="header" href="#aggregates">Aggregates</a></h2>
 <p>There are three aggregates: <code>sum</code>, <code>min</code> and <code>max</code>.</p>
 <ul>
-<li><code>sum</code>: returns the sum of values yielded by applying the expression to every element in the set, or every element of the domain.</li>
-<li><code>min</code>: returns the minimum value yielded by applying the expression to every element in the set, or every element of the domain.</li>
-<li><code>max</code>: returns the maximum value yielded by applying the expression to every element in the set, or every element of the domain.</li>
+<li><code>sum</code>: returns the sum of values yielded by applying the expression to every element.</li>
+<li><code>min</code>: returns the minimum value yielded by applying the expression to every element.</li>
+<li><code>max</code>: returns the maximum value yielded by applying the expression to every element.</li>
 </ul>
+<h2 id="bnf-18"><a class="header" href="#bnf-18">BNF</a></h2>
+<pre><code class="language-bnf">&lt;AggregateExpr&gt; ::= &lt;AggregateType&gt; list(&lt;identifier&gt;
+                                       | &lt;tuple&gt;) ("in" &lt;Expression.Collection&gt;
+                                                 | ":" &lt;Domain&gt;) ." &lt;Expression.Boolean&gt;
+
+&lt;AggregateType&gt; ::= "forAll" | "exists" | "sum" | "min" | "max"
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><!-- maturity: draft
 authors: Jamie Melton, Georgii Skorokhod, Özgür Akgün
 created: 24-10-25
@@ -2910,7 +3127,7 @@ let op_type = &amp;source_code[op.start_byte()..op.end_byte()];
 </code></pre>
 <h2 id="find-and-letting-statements"><a class="header" href="#find-and-letting-statements">Find and Letting Statements</a></h2>
 <p>Find and letting statements are parsed relatively intuitively. For find statements, the list of variables is iterated over and each is added to a hash map as the key. Then, the domain is parsed and added as the value for each variable it applies to. Once all variables and domains are parsed, the hash map is returned and the caller function iterates over it and adds each pair to the <code>SymbolTable</code>. For letting statements, a new <code>SymbolTable</code> is created. The variables are again iterated over and added to the table. Letting statements can either specify a domain or an expression for the variables so the type of node is checked and either parsed as an expression or domain before being added to the table. The <code>SymbolTable</code> is returned and the caller function adds it to the existing <code>SymbolTable</code> of the <code>Model</code>.</p>
-<h2 id="constraints"><a class="header" href="#constraints">Constraints</a></h2>
+<h2 id="constraints-1"><a class="header" href="#constraints-1">Constraints</a></h2>
 <p>Adding constraints to the overall constraints <code>Expression</code> requires nesting <code>Expression</code> objects in a consistent and clear manner. Each constraint is parsed using the <code>parse_expression</code> function, which returns an <code>Expression</code> object, and is then added to the model using the <code>add_constraints</code> function. The <code>parse_expression</code> function takes a node as a parameter and is recursive. It matches the node to its ‘kind’, recursively parses the children of the node, then returns an <code>Expression</code> object that correctly packages up the expressions returned from the parsing of the children nodes.</p>
 <p>This structure allows for easy addition of more complex constraints as the grammar evolves. As more rules are added to the grammar, the corresponding code block must be added to the match statement in the <code>parse_expression</code> function.</p>
 <h3 id="example-1"><a class="header" href="#example-1">Example</a></h3>
@@ -3443,7 +3660,7 @@ find a : bool such that a = (s[5] = t[1]) $ true
 <p>(Declaring aliases)</p>
 <p>Formats: <em>“letting”</em> <strong>Name</strong> <em>“be”</em> <strong>Expression</strong> | <em>“letting”</em> <strong>Name</strong> <em>“be”</em> <em>“domain”</em> <strong>Domain</strong></p>
 <p>Semantic Errors: All except Omitted Declaration</p>
-<h3 id="constraints-1"><a class="header" href="#constraints-1">Constraints</a></h3>
+<h3 id="constraints-2"><a class="header" href="#constraints-2">Constraints</a></h3>
 <p>Format: <em>“such that”</em> list(<strong>Expression</strong>, <em>“,”</em>)</p>
 <p>Semantic Errors: All except for Invalid Domain</p>
 <div style="break-before: page; page-break-before: always;"></div>
@@ -5841,7 +6058,7 @@ This guide outlines the process of creating support for those types to the AST. 
 <h2 id="what-are-multisets"><a class="header" href="#what-are-multisets">What Are Multisets</a></h2>
 <p>Please see the <a href="/reference/domains/multisets.html">Essence Reference</a>.</p>
 <p>A multiset can be defined for both <code>GroundDomain</code> and <code>UnresolvedDomain</code>.</p>
-<h2 id="attributes-6"><a class="header" href="#attributes-6">Attributes</a></h2>
+<h2 id="attributes-2"><a class="header" href="#attributes-2">Attributes</a></h2>
 <p>In the original conjure implementation, a multiset was <em>infinite</em> without <code>size</code>, <code>maxSize</code>, or <code>maxOccur</code>.
 In the new conjure-oxide implementation, a variable’s domain is <em>ground</em> if it is fully-bounded (i.e. has a <code>minSize</code> and <code>maxSize</code>).</p>
 <pre><code class="language-essence">$ Valid
@@ -5871,7 +6088,7 @@ find buzz: multiset (minSize 3) of int(1..10)   $ this is a lower bound, there i
 <p>Please see the <a href="/reference/domains/relations.html">Essence Reference</a>.</p>
 <p>Relations are defined for both <code>GroundDomain</code> and <code>UnresolvedDomain</code> as <code>Relation(RelAttr, Vec&lt;GroundDomain&gt;)</code>.</p>
 <p>The result of a relation is a list of tuples. As such the <code>AbstractLiteral</code> for relations is defined <code>Relation(Vec&lt;Vec&lt;T&gt;&gt;)</code>. This AbstractLiteral type means that relations can also be represented explicitly.</p>
-<h2 id="attributes-7"><a class="header" href="#attributes-7">Attributes</a></h2>
+<h2 id="attributes-3"><a class="header" href="#attributes-3">Attributes</a></h2>
 <p>Relations contain two types of attributes: size and binary attributes.</p>
 <p>Size attributes determine how many tuples are in the relation. Size attributes are converted to a <code>Range&lt;A&gt;</code> type in Conjure-Oxide. This size can be defined as:</p>
 <ul>
@@ -5916,7 +6133,7 @@ For example: <code>r(_,1,_)</code> converts r from a 3-component relation to a 2
 <h2 id="what-are-sequences"><a class="header" href="#what-are-sequences">What Are Sequences</a></h2>
 <p>Please see the <a href="/reference/domains/sequences.html">Essence Reference</a>.</p>
 <p>A sequence is a datatype for storing a series of values, where values can occur multiple times and ordering is preserved.</p>
-<h2 id="attributes-8"><a class="header" href="#attributes-8">Attributes</a></h2>
+<h2 id="attributes-4"><a class="header" href="#attributes-4">Attributes</a></h2>
 <ul>
 <li>A <strong>cardinality</strong> attribute, as a range; <code>size</code>, <code>minSize</code>, <code>maxSize</code>.</li>
 <li>A <strong>jectivity</strong> attribute, with three options; <code>injective</code>, <code>surjective</code>, <code>bijective</code>.</li>

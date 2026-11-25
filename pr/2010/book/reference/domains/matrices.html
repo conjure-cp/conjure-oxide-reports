@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../searchindex-dce2097e.js";
+            window.path_to_searchindex_js = "../../searchindex-8cf3fb48.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-e79b7e05.js"></script>
+        <script src="../../toc-83fae9fa.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -177,19 +177,31 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="matrices"><a class="header" href="#matrices">Matrices</a></h1>
+<p>A matrix is a homogeneous n-dimensional array of values.</p>
+<p>Unlike mathematical matrices, which are restricted to 2 dimensions and can only contain integers, Essence matrices can span any number of higher dimensions, be indexed by any primitive value (int or bool), and contain any type of value.</p>
 <h2 id="matrix-domains"><a class="header" href="#matrix-domains">Matrix Domains</a></h2>
-<pre><code class="language-bnf">&lt;MatrixDomain&gt; ::= "matrix" "indexed by" "[" list(&lt;Domain.IntBoolEnum&gt;) "]" "of" &lt;Domain&gt;
-</code></pre>
+<p>The dimensionality of a matrix is specified by the ‘indexed by’ parameter, where the number of indexing domains is equal to the dimensionality.</p>
+<p>A one dimensional ‘list’ of integers can be defined as follows:</p>
 <pre><code class="language-essence">letting x be domain matrix indexed by [int] of int
 </code></pre>
-<h2 id="matrix-literal"><a class="header" href="#matrix-literal">Matrix Literal</a></h2>
-<pre><code class="language-bnf">&lt;MatrixLiteral&gt; ::= "[" list(&lt;Expression&gt;) [";" &lt;Domain.IntBoolEnum&gt;] "]"
+<p>Similarly: a two dimensional matrix of booleans:</p>
+<pre><code class="language-essence">letting x be domain matrix indexed by [int, int] of bool
 </code></pre>
-<pre><code class="language-essence">letting x be [0,1]
+<p>It’s worth nothing that the indexing domains <em>do not have to be the same</em>, and <em>can be restricted</em>:</p>
+<pre><code class="language-essence">letting x be domain matrix indexed by [int(1..10), bool] of int
 </code></pre>
-<p>Matrices defined without an explicit index domain will default to <code>int</code>for 1D matrices, <code>int, int</code> for 2D matrices, etc.</p>
+<p>Matrices may also store other non-primitive literals (e.g. sets, sequences, other matrices).</p>
+<pre><code>letting x be domain matrix indexed by [int] of (set of bool)
+</code></pre>
+<h2 id="matrix-literals"><a class="header" href="#matrix-literals">Matrix Literals</a></h2>
+<p>Matrix literals are defined in square brackets, using nested square brackets to denote higher dimensions:</p>
+<pre><code class="language-essence">letting x be [0, 1] $ 1D matrix / list
+letting y be [[1, 2], [3, 4]] $ 2D matrix
+</code></pre>
+<p>Matrices defined without an explicit index domain will default to <code>int</code> for 1D matrices, <code>int, int</code> for 2D matrices, etc.</p>
 <p>Alternatively, define the index domain as follows:</p>
-<pre><code class="language-essence">letting y be [0,1; int(1..2)]
+<pre><code class="language-essence">letting x be [0,1; int(1..2)]
+letting y be [[1, 2], [3, 4]; int(1..2), int(1..2)]
 </code></pre>
 <h2 id="matrix-operations"><a class="header" href="#matrix-operations">Matrix Operations</a></h2>
 <h3 id="flatten"><a class="header" href="#flatten"><code>flatten</code></a></h3>
@@ -197,12 +209,24 @@
 </code></pre>
 <p>Returns a list containing the entries of a matrix with any number of dimensions.</p>
 <p>Listed in the lexicographic order of the tuples of indices specifying each entry.</p>
+<pre><code class="language-essence">letting x be [[1, 2], [3, 4]]
+letting a be flatten(x)
+a = [1, 2, 3, 4]
+</code></pre>
 <p><em>A depth-bounded version is also available:</em></p>
 <pre><code class="language-rs">flatten(n: int, m: matrix of T): matrix of T
 </code></pre>
 <p>Flattens the first <code>n+1</code> dimensions into one dimension.</p>
 <p>Argument <code>n</code> must be a constant integer.</p>
 <p>Note that <code>flatten(0,M) = M</code>.</p>
+<pre><code class="language-essence">letting x be [[[1, 2], [3, 4]], [[1, 2], [3, 4]]]
+letting a be flatten(1, x)
+a = [[1, 2, 3, 4], [5, 6, 7, 8]]
+</code></pre>
+<h2 id="bnf"><a class="header" href="#bnf">BNF</a></h2>
+<pre><code class="language-bnf">&lt;MatrixDomain&gt; ::= "matrix" "indexed by" "[" list(&lt;Domain.IntBoolEnum&gt;) "]" "of" &lt;Domain&gt;
+&lt;MatrixLiteral&gt; ::= "[" list(&lt;Expression&gt;) [";" &lt;Domain.IntBoolEnum&gt;] "]"
+</code></pre>
 
                     </main>
 

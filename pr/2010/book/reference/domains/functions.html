@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../searchindex-dce2097e.js";
+            window.path_to_searchindex_js = "../../searchindex-8cf3fb48.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-e79b7e05.js"></script>
+        <script src="../../toc-83fae9fa.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -179,20 +179,10 @@
                         <h1 id="functions"><a class="header" href="#functions">Functions</a></h1>
 <p>A function is a binary relation on two sets, from elements of an input domain to elements of an output codomain.</p>
 <h2 id="function-domains"><a class="header" href="#function-domains">Function Domains</a></h2>
-<pre><code class="language-bnf">&lt;FunctionDomain&gt; ::= "function" ["(" list(&lt;FunctionAttribute&gt;) ")"] &lt;Domain&gt; "--&gt;" &lt;Domain&gt;
-</code></pre>
 <pre><code class="language-essence">given a: function (injective) bool --&gt; bool
 given b: function (maxSize 10, surjective) int(0..) --&gt; set of int
 </code></pre>
 <h3 id="function-attributes"><a class="header" href="#function-attributes">Function Attributes</a></h3>
-<pre><code class="language-bnf">&lt;FunctionAttribute&gt; ::= "size" &lt;Expression.Integer&gt;
-                      | "minSize" &lt;Expression.Integer&gt;
-                      | "maxSize" &lt;Expression.Integer&gt;
-                      | "total"
-                      | "injective"
-                      | "surjective"
-                      | "bijective"
-</code></pre>
 <h4 id="size"><a class="header" href="#size">Size</a></h4>
 <div class="table-wrapper">
 <table>
@@ -232,45 +222,98 @@ given b: function (maxSize 10, surjective) int(0..) --&gt; set of int
 </table>
 </div>
 <h2 id="function-literals"><a class="header" href="#function-literals">Function Literals</a></h2>
-<pre><code class="language-bnf">&lt;FunctionLiteral&gt; ::= "function" "(" [list(&lt;FunctionLiteralPair&gt;)] ")"
-&lt;FunctionLiteralPair&gt; ::= &lt;Expression&gt; "--&gt;" &lt;Expression&gt;
+<p>Instead of being defined programmatically (e.g. <code>f(x) = x + 1</code>), functions are defined by providing a list of mappings from inputs to outputs.</p>
+<pre><code class="language-essence">letting factors be function(1 --&gt; {1}, 2 --&gt; {1, 2}, 3 --&gt; {1, 3}, 4 --&gt; {1, 2, 4})
+
+letting months be new type enum { ... }
+letting daysInMonth be function (January -&gt; 31, February -&gt; 28, March -&gt; 31, ...)
+</code></pre>
+<p>Functions may also supply more than one mapping per input:</p>
+<pre><code class="language-essence">letting sqrt be function(1 --&gt; 1, 1 --&gt; -1, 4 --&gt; 2, 4 --&gt; -2)
 </code></pre>
 <h2 id="function-operations"><a class="header" href="#function-operations">Function Operations</a></h2>
 <h3 id="function-application"><a class="header" href="#function-application">Function Application</a></h3>
 <p>User-defined functions can be applied just like built-in functions.</p>
-<pre><code class="language-essence">given myFunc: function int -&gt; int
+<pre><code class="language-essence">given myFunc: function int --&gt; int
 find b: int(1..10) = myFunc(3)
 </code></pre>
 <h3 id="image"><a class="header" href="#image"><code>image</code></a></h3>
 <pre><code class="language-rs">image(f: function T --&gt; V, x: T): V
 </code></pre>
 <p>Returns the application of function <code>f</code> to value <code>x</code> (i.e. <code>apply(f, x) = f(x)</code>).</p>
+<pre><code class="language-essence">given isOdd function: int --&gt; bool
+letting a be image(isOdd, 3)
+$ a = true
+</code></pre>
 <h3 id="imageset"><a class="header" href="#imageset"><code>imageSet</code></a></h3>
 <pre><code class="language-rs">imageSet(f: function T --&gt; V, x: T): set of V
 </code></pre>
 <p>Applies function <code>f</code> to value <code>x</code>, returning the set of codomain values (i.e. set of possible output values of <code>f(x)</code>).</p>
 <p>Returns the empty set if <code>f(x)</code> is not defined.</p>
+<pre><code class="language-essence">given sqrt function: int --&gt; int
+letting a be imageSet(sqrt, 4)
+$ a = {2, -2}
+</code></pre>
 <h3 id="preimage"><a class="header" href="#preimage"><code>preImage</code></a></h3>
 <pre><code class="language-rs">preImage(f: Function T --&gt; V, x: V): set of T;
 </code></pre>
 <p>Applies the function <code>f</code> in reverse.</p>
 <p>Returns the set containing every value <code>y</code> for which <code>f(y) = x</code>.</p>
+<pre><code class="language-essence">given addOne function: int --&gt; int
+letting a be preImage(addOne, 5)
+$ a = 4
+</code></pre>
 <h3 id="inverse"><a class="header" href="#inverse"><code>inverse</code></a></h3>
 <pre><code class="language-rs">inverse(f1: function T --&gt; V, f2: function V --&gt; T): bool
 </code></pre>
 <p>Returns true if functions <code>f1</code> and <code>f2</code> are the inverse of each other.</p>
+<pre><code class="language-essence">given addOne function: int --&gt; int
+given subtractOne function: int --&gt; int
+letting a be inverse(addOne, subtractOne)
+$ a = true
+</code></pre>
 <h3 id="defined"><a class="header" href="#defined"><code>defined</code></a></h3>
 <pre><code class="language-rs">defined(f: function T --&gt; V): set of T
 </code></pre>
 <p>Returns the set of domain values for which function <code>f</code> is defined.</p>
+<pre><code class="language-essence">given openingHoursPerWeekday: int(1..7) --&gt; set of int
+letting a be defined(openingHoursPerWeekday)
+$ a = {1, 2, 3, 4, 5, 6, 7}
+</code></pre>
 <h3 id="range"><a class="header" href="#range"><code>range</code></a></h3>
 <pre><code class="language-rs">range(f: function T --&gt; V): set of V
 </code></pre>
 <p>Returns the set of codomain values which function <code>f</code> can output.</p>
+<pre><code class="language-essence">given daysInMonth: int(1..12) --&gt; int
+letting a be range(daysInMonth)
+$ a = {28, 30, 31}
+</code></pre>
 <h3 id="restrict"><a class="header" href="#restrict"><code>restrict</code></a></h3>
 <pre><code class="language-rs">restrict(f: function T --&gt; V, domain: domain in T): function T --&gt; V;
 </code></pre>
 <p>Returns a sub-function of <code>f</code> which has its mapping restricted to values in <code>domain</code>.</p>
+<pre><code class="language-essence">given sqrt: int(1..40) --&gt; int
+letting sqrtReduced be restrict(sqrt, int(1..10))
+
+letting a be sqrt(16)
+$ a = 4
+letting b be sqrtReduced(16)
+$ b = [undefined!]
+</code></pre>
+<h2 id="bnf"><a class="header" href="#bnf">BNF</a></h2>
+<pre><code class="language-bnf">&lt;FunctionDomain&gt; ::= "function" ["(" list(&lt;FunctionAttribute&gt;) ")"] &lt;Domain&gt; "--&gt;" &lt;Domain&gt;
+
+&lt;FunctionAttribute&gt; ::= "size" &lt;Expression.Integer&gt;
+                      | "minSize" &lt;Expression.Integer&gt;
+                      | "maxSize" &lt;Expression.Integer&gt;
+                      | "total"
+                      | "injective"
+                      | "surjective"
+                      | "bijective"
+
+&lt;FunctionLiteral&gt; ::= "function" "(" [list(&lt;FunctionLiteralPair&gt;)] ")"
+&lt;FunctionLiteralPair&gt; ::= &lt;Expression&gt; "--&gt;" &lt;Expression&gt;
+</code></pre>
 
                     </main>
 

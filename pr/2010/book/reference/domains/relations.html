@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../searchindex-dce2097e.js";
+            window.path_to_searchindex_js = "../../searchindex-8cf3fb48.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-e79b7e05.js"></script>
+        <script src="../../toc-83fae9fa.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -183,40 +183,15 @@
 <li>If a relation is binary (arity 2) we can also add additional attributes to define properties of the relation.</li>
 </ul>
 <h2 id="relation-domains"><a class="header" href="#relation-domains">Relation Domains</a></h2>
-<pre><code class="language-bnf">&lt;RelationDomain&gt; ::= "relation" ["(" list(&lt;RelationAttribute&gt;) ")"] "of" "(" &lt;RelationDomainList&gt; ")"
-&lt;RelationDomainList&gt; ::= &lt;Domain&gt; [{ "*" &lt;Domain&gt; }]
-</code></pre>
+<p>Relations are declared using the <code>relation</code> specifier.</p>
 <pre><code class="language-essence">$ binary relations
-letting a be domain relation of (int * bool)
-letting b be domain relation (partialOrder) of (int(1..2) * int(1..2))"
+given a: relation of (int * bool)
+given b: relation (partialOrder) of (int(1..2) * int(1..2))"
 
 $ n-ary relation
-letting c be domain relation(int, int, int)
+given c: relation of (int * int * int)
 </code></pre>
-<h3 id="attributes"><a class="header" href="#attributes">Attributes</a></h3>
-<pre><code class="language-bnf">&lt;RelationAttribute&gt; ::= "size" &lt;Expression.Integer&gt;
-                      | "minSize" &lt;Expression.Integer&gt;
-                      | "maxSize" &lt;Expression.Integer&gt;
-                      | "reflexive"
-                      | "irreflexive"
-                      | "coreflexive"
-                      | "symmetric"
-                      | "antiSymmetric"
-                      | "aSymmetric"
-                      | "transitive"
-                      | "total"
-                      | "connex"
-                      | "Euclidean"
-                      | "serial"
-                      | "equivalence"
-                      | "partialOrder"
-                      | "leftTotal"
-                      | "rightTotal"
-                      | "linearOrder"
-                      | "weakOrder"
-                      | "preOrder"
-                      | "strictPartialOrder"
-</code></pre>
+<h3 id="relation-attributes"><a class="header" href="#relation-attributes">Relation Attributes</a></h3>
 <p><em>N.B.: in this section <code>A ~ B</code> denotes “<code>A</code> is related to <code>B</code>”, and <code>A !~ B</code> denotes <code>!(A ~ B)</code>.</em></p>
 <h4 id="size"><a class="header" href="#size">Size</a></h4>
 <div class="table-wrapper">
@@ -278,13 +253,42 @@ letting c be domain relation(int, int, int)
 </tbody>
 </table>
 </div>
-<h3 id="relation-literals"><a class="header" href="#relation-literals">Relation Literals</a></h3>
-<pre><code class="language-bnf">&lt;RelationLiteral&gt; ::= "relation" "(" [list(&lt;RelationLiteralTuple&gt;)] ")"
-&lt;RelationLiteralTuple&gt; ::= "(" list(&lt;Expression&gt;) ")"
-</code></pre>
+<h2 id="relation-literals"><a class="header" href="#relation-literals">Relation Literals</a></h2>
+<p>A relation literal is written as a list of tuples, which relates elements in the same tuple together.</p>
 <pre><code class="language-essence">$ binary relation domains
 letting a be relation ((1, 1, 0), (1, 0, 1), (0, 1, 1))
 letting b be relation ((true, false), (false, true))
+letting c be relation ((true, 3), (false, 5))
+</code></pre>
+<h2 id="bnf"><a class="header" href="#bnf">BNF</a></h2>
+<pre><code class="language-bnf">&lt;RelationDomain&gt; ::= "relation" ["(" list(&lt;RelationAttribute&gt;) ")"] "of" "(" &lt;RelationDomainList&gt; ")"
+&lt;RelationDomainList&gt; ::= &lt;Domain&gt; [{ "*" &lt;Domain&gt; }]
+
+&lt;RelationAttribute&gt; ::= "size" &lt;Expression.Integer&gt;
+                      | "minSize" &lt;Expression.Integer&gt;
+                      | "maxSize" &lt;Expression.Integer&gt;
+                      | "reflexive"
+                      | "irreflexive"
+                      | "coreflexive"
+                      | "symmetric"
+                      | "antiSymmetric"
+                      | "aSymmetric"
+                      | "transitive"
+                      | "total"
+                      | "connex"
+                      | "Euclidean"
+                      | "serial"
+                      | "equivalence"
+                      | "partialOrder"
+                      | "leftTotal"
+                      | "rightTotal"
+                      | "linearOrder"
+                      | "weakOrder"
+                      | "preOrder"
+                      | "strictPartialOrder"
+
+&lt;RelationLiteral&gt; ::= "relation" "(" [list(&lt;RelationLiteralTuple&gt;)] ")"
+&lt;RelationLiteralTuple&gt; ::= "(" list(&lt;Expression&gt;) ")"
 </code></pre>
 
                     </main>

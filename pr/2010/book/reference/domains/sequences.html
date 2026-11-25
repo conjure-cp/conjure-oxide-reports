@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../searchindex-dce2097e.js";
+            window.path_to_searchindex_js = "../../searchindex-8cf3fb48.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-e79b7e05.js"></script>
+        <script src="../../toc-83fae9fa.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -178,18 +178,13 @@
                     <main>
                         <h1 id="sequences"><a class="header" href="#sequences">Sequences</a></h1>
 <p>A sequence is a datatype for storing a series of values, where values can occur multiple times and ordering is preserved.</p>
-<h2 id="sequence-domains"><a class="header" href="#sequence-domains">Sequence Domains</a></h2>
-<pre><code class="language-bnf">&lt;SequenceDomain&gt; ::= "sequence" ["(" list(&lt;SequenceAttribute&gt;) ")"] "of" &lt;Domain&gt;
-</code></pre>
 <p>Unlike <a href="./matrices.html">matrices</a>, sequences can have defined attributes; i.e. you can define a sequence to have varying lengths, and to restrict what values it can draw from it’s inner domain.</p>
-<h3 id="attributes"><a class="header" href="#attributes">Attributes</a></h3>
-<pre><code class="language-bnf">&lt;SequenceAttribute&gt; ::= "size" &lt;Expression.Integer&gt;
-                      | "minSize" &lt;Expression.Integer&gt;
-                      | "maxSize" &lt;Expression.Integer&gt;
-                      | "injective"
-                      | "surjective"
-                      | "bijective"
+<h2 id="sequence-domains"><a class="header" href="#sequence-domains">Sequence Domains</a></h2>
+<p>Sequences are declared using the <code>sequence</code> specifier.</p>
+<pre><code class="language-essence">given a: sequence (size 10) of int
+given b: sequence (minSize 3, surjective) of int(-5..5)
 </code></pre>
+<h3 id="sequence-attributes"><a class="header" href="#sequence-attributes">Sequence Attributes</a></h3>
 <h4 id="cardinality"><a class="header" href="#cardinality">Cardinality</a></h4>
 <div class="table-wrapper">
 <table>
@@ -219,7 +214,30 @@
 </div>
 <p>Using contradicting values for the attribute values may result in an empty domain.</p>
 <h2 id="sequence-literals"><a class="header" href="#sequence-literals">Sequence Literals</a></h2>
-<pre><code class="language-bnf">&lt;SequenceLiteral&gt; ::= "sequence" "(" [list(&lt;Expression&gt;)] ")"
+<p>Sequence literals simply list their values in order.</p>
+<pre><code class="language-essence">letting a be sequence (2, 3, 5, 7, 11, 13, 17, 19)
+letting b be sequence (true, false, true, true, false, false)
+</code></pre>
+<h2 id="sequence-operations"><a class="header" href="#sequence-operations">Sequence Operations</a></h2>
+<h3 id="substring"><a class="header" href="#substring"><code>substring</code></a></h3>
+<pre><code class="language-essence">TODO
+</code></pre>
+<h3 id="subsequence"><a class="header" href="#subsequence"><code>subsequence</code></a></h3>
+<pre><code class="language-essence">TODO
+</code></pre>
+<h2 id="bnf"><a class="header" href="#bnf">BNF</a></h2>
+<pre><code class="language-bnf">&lt;SequenceDomain&gt; ::= "sequence" ["(" list(&lt;SequenceAttribute&gt;) ")"] "of" &lt;Domain&gt;
+&lt;SequenceAttribute&gt; ::= "size" &lt;Expression.Integer&gt;
+                      | "minSize" &lt;Expression.Integer&gt;
+                      | "maxSize" &lt;Expression.Integer&gt;
+                      | "injective"
+                      | "surjective"
+                      | "bijective"
+
+&lt;SequenceLiteral&gt; ::= "sequence" "(" [list(&lt;Expression&gt;)] ")"
+
+&lt;SequenceComparison&gt; ::= &lt;Expression.Sequence&gt; ("substring"
+                                              | "subsequence") &lt;Expression.Sequence&gt;
 </code></pre>
 
                     </main>

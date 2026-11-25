@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../searchindex-dce2097e.js";
+            window.path_to_searchindex_js = "../../searchindex-8cf3fb48.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-e79b7e05.js"></script>
+        <script src="../../toc-83fae9fa.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -179,35 +179,37 @@
                         <h1 id="tuples"><a class="header" href="#tuples">Tuples</a></h1>
 <p>A tuple is a collection of values of different domains.</p>
 <h2 id="tuple-domain"><a class="header" href="#tuple-domain">Tuple Domain</a></h2>
-<pre><code class="language-bnf">&lt;TupleDomain&gt; ::= "tuple" "(" list(&lt;Domain&gt;) ")"
-                | "(" list(&lt;Domain&gt;, min=2) ")"
-</code></pre>
-<pre><code class="language-essence">$ explicit syntax:
-given a: tuple (bool, int(0..5), bool)
+<p>A tuple can be explicitly declared using the <code>tuple</code> specifier.</p>
+<pre><code class="language-essence">given a: tuple (bool, int(0..5), bool)
 given b: tuple (int, tuple (bool, bool))
 given c: tuple (int)
-
-$ implicit syntax:
-given a: (bool, int(0..5), bool)
+</code></pre>
+<p>For tuples of at least two elements, a shorthand syntax can be used:</p>
+<pre><code>given a: (bool, int(0..5), bool)
 given b: (int, (bool, bool))
 </code></pre>
+<p>Tuples can contain any domain, including other tuples.</p>
 <h3 id="attributes"><a class="header" href="#attributes">Attributes</a></h3>
 <p>Tuples take no attributes.</p>
 <h2 id="tuple-literal"><a class="header" href="#tuple-literal">Tuple Literal</a></h2>
-<pre><code class="language-bnf">&lt;TupleLiteral&gt; ::= "tuple" "(" [list(&lt;Expression&gt;)] ")"
-                 | "(" list(&lt;Expression&gt;, min=2) ")"
-</code></pre>
-<pre><code class="language-essence">$ explicit syntax:
-letting a be tuple (true, 4, false)
+<p>Tuple literals can be declared in the same explicit fashion…</p>
+<pre><code class="language-essence">letting a be tuple (true, 4, false)
 letting b be tuple (10, tuple (true, true))
 letting c be tuple (9)
-
-$ implicit syntax:
-letting a be (true, 4, false)
+</code></pre>
+<p>…or using the shorthand if there are at least two elements.</p>
+<pre><code>letting a be (true, 4, false)
 letting b be (10, (true, true))
 </code></pre>
 <h2 id="tuple-operators"><a class="header" href="#tuple-operators">Tuple Operators</a></h2>
 <p>TODO</p>
+<h2 id="bnf"><a class="header" href="#bnf">BNF</a></h2>
+<pre><code class="language-bnf">&lt;TupleDomain&gt; ::= "tuple" "(" list(&lt;Domain&gt;) ")"
+                | "(" list(&lt;Domain&gt;, min=2) ")"
+
+&lt;TupleLiteral&gt; ::= "tuple" "(" [list(&lt;Expression&gt;)] ")"
+                 | "(" list(&lt;Expression&gt;, min=2) ")"
+</code></pre>
 
                     </main>
 

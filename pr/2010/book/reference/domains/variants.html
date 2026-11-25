@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../searchindex-dce2097e.js";
+            window.path_to_searchindex_js = "../../searchindex-8cf3fb48.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-e79b7e05.js"></script>
+        <script src="../../toc-83fae9fa.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -178,20 +178,20 @@
                     <main>
                         <h1 id="variants"><a class="header" href="#variants">Variants</a></h1>
 <p>A variant domain stores named domain pair fields.</p>
-<p>However, unlike a [[record TODO]], a variant literal can only use one of these fields at once. This field is referred to as <strong>active</strong>.</p>
+<p>However, unlike a <a href="./records.html">record</a>, a variant literal can only use <em>one of these fields at once</em>. This field is referred to as <strong>active</strong>.</p>
 <h2 id="variant-domains"><a class="header" href="#variant-domains">Variant Domains</a></h2>
-<pre><code class="language-bnf">&lt;VariantDomain&gt; ::= "variant" "{" list(&lt;NameDomainPair&gt;) "}"
-&lt;NameDomainPair&gt; ::= &lt;Identifier&gt; ":" &lt;Domain&gt;
-</code></pre>
+<p>Variants are declared using the <code>variant</code> specifier, followed by the list of possible active fields.</p>
 <pre><code class="language-essence">given a: variant { first: bool, second: int(0..10), third: set of int }
 </code></pre>
 <h3 id="attributes"><a class="header" href="#attributes">Attributes</a></h3>
 <p>Variants take no attributes.</p>
 <h2 id="variant-literals"><a class="header" href="#variant-literals">Variant Literals</a></h2>
-<pre><code class="language-bnf">&lt;VariantLiteral&gt; ::= "variant" "{" &lt;NameValuePair&gt; "}"
-&lt;NameValuePair&gt; ::= &lt;Identifier&gt; ":" &lt;Expression&gt;
-</code></pre>
+<p>Defining a variant literal involves specifying its active field.</p>
 <pre><code class="language-essence">letting a be variant { second: 5 }
+</code></pre>
+<p>However, note that this type has no non-active variants, unless they are specified by a domain annotation:</p>
+<pre><code class="language-essence">letting A be domain variant { first: bool, second: int(0..10), third: set of int }
+letting a: A be variant { second: 5 }
 </code></pre>
 <h2 id="operators"><a class="header" href="#operators">Operators</a></h2>
 <h3 id="active"><a class="header" href="#active">active</a></h3>
@@ -206,6 +206,13 @@ $ is_first_active = false
 
 letting is_second_active be active(a, second)
 $ is_second_active = true
+</code></pre>
+<h2 id="bnf"><a class="header" href="#bnf">BNF</a></h2>
+<pre><code class="language-bnf">&lt;VariantDomain&gt; ::= "variant" "{" list(&lt;NameDomainPair&gt;) "}"
+&lt;NameDomainPair&gt; ::= &lt;Identifier&gt; ":" &lt;Domain&gt;
+
+&lt;VariantLiteral&gt; ::= "variant" "{" &lt;NameValuePair&gt; "}"
+&lt;NameValuePair&gt; ::= &lt;Identifier&gt; ":" &lt;Expression&gt;
 </code></pre>
 
                     </main>

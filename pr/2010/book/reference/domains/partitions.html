@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../searchindex-dce2097e.js";
+            window.path_to_searchindex_js = "../../searchindex-8cf3fb48.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-e79b7e05.js"></script>
+        <script src="../../toc-83fae9fa.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -179,18 +179,11 @@
                         <h1 id="partitions"><a class="header" href="#partitions">Partitions</a></h1>
 <p>A partition is a datatype that splits some domain into parts.</p>
 <h2 id="partition-domains"><a class="header" href="#partition-domains">Partition Domains</a></h2>
-<pre><code class="language-bnf">&lt;PartitionDomain&gt; ::= "partition" ["(" list(&lt;PartitionAttribute&gt;) ")"] "from" &lt;Domain&gt;
-&lt;PartitionAttribute&gt; ::= "numParts" &lt;Expression.Integer&gt;
-                       | "minNumParts" &lt;Expression.Integer&gt;
-                       | "maxNumParts" &lt;Expression.Integer&gt;
-                       | "partSize" &lt;Expression.Integer&gt;
-                       | "minPartSize" &lt;Expression.Integer&gt;
-                       | "maxPartSize" &lt;Expression.Integer&gt;
-                       | "regular"
+<p>Partitions are declared using the <code>partition</code> specifier.</p>
+<pre><code class="language-essence">given a: partition from int(0..10)
+given b: partition (partSize 5, regular) from int(-10..20)
 </code></pre>
-<pre><code class="language-essence">letting a be domain partition (partSize 5, regular) from int(0..10)
-</code></pre>
-<h3 id="attributes"><a class="header" href="#attributes">Attributes</a></h3>
+<h3 id="partition-attributes"><a class="header" href="#partition-attributes">Partition Attributes</a></h3>
 <p>Certain attributes control the number of parts a partition may have.</p>
 <div class="table-wrapper">
 <table>
@@ -219,31 +212,62 @@
 </table>
 </div>
 <h2 id="partition-literals"><a class="header" href="#partition-literals">Partition Literals</a></h2>
-<pre><code class="language-bnf">&lt;PartitionLiteral&gt; ::= "partition" "(" [list(&lt;SetLiteral&gt;)] ")"
-</code></pre>
-<pre><code class="language-essence">letting a be partition({1, 2}, {3}, {4, 5, 6})
+<p>A partition consists of a list of parts, each of which is a set literal.</p>
+<pre><code class="language-essence">letting a be partition({1, 2}, {3}, {4, 5, 6}, {})
 </code></pre>
 <h2 id="partition-operations"><a class="header" href="#partition-operations">Partition Operations</a></h2>
 <h3 id="together"><a class="header" href="#together"><code>together</code></a></h3>
 <pre><code class="language-rs">together(s: set of T, p: partition from T): bool
 </code></pre>
 <p>Returns <code>true</code> if a list of elements are all in the same part of the partition.</p>
+<pre><code class="language-essence">letting x be partition({1, 2}, {3}, {4, 5, 6}, {})
+letting a be together({4, 6}, x)
+$ a = true
+</code></pre>
 <h3 id="apart"><a class="header" href="#apart"><code>apart</code></a></h3>
 <pre><code class="language-rs">apart(s: set of T, p: partition from T): bool
 </code></pre>
 <p>Returns <code>true</code> if a list of elements are <em>not</em> all contained in one part of the partition.</p>
+<pre><code class="language-essence">letting x be partition({1, 2}, {3}, {4, 5, 6}, {})
+letting a be apart({1, 4, 6}, x)
+$ a = true
+</code></pre>
 <h3 id="party"><a class="header" href="#party"><code>party</code></a></h3>
 <pre><code class="language-rs">party(e: T, p: partition of T): set of T
 </code></pre>
 <p>Returns the part of partition (as a set) that contains the specified element.</p>
+<pre><code class="language-essence">letting x be partition({1, 2}, {3}, {4, 5, 6}, {})
+letting a be party(1, x)
+$ a = {1, 2}
+</code></pre>
 <h3 id="parts"><a class="header" href="#parts"><code>parts</code></a></h3>
 <pre><code class="language-rs">parts(p: partition from T): set of (set of T);
 </code></pre>
 <p>Takes a partition and returns its set of parts.</p>
+<pre><code class="language-essence">letting x be partition({1, 2}, {3}, {4, 5, 6}, {})
+letting a be parts(x)
+$ a = {{1, 2}, {3}, {4, 5, 6}, {}}
+</code></pre>
 <h3 id="participants"><a class="header" href="#participants"><code>participants</code></a></h3>
 <pre><code class="language-rs">participants(p: partition from T): set of T;
 </code></pre>
 <p>Returns the union of all parts of a partition.</p>
+<pre><code class="language-essence">letting x be partition({1, 2}, {3}, {4, 5, 6}, {})
+letting a be participants(x)
+$ a = {1, 2, 3, 4, 5, 6}
+</code></pre>
+<h2 id="bnf"><a class="header" href="#bnf">BNF</a></h2>
+<pre><code class="language-bnf">&lt;PartitionDomain&gt; ::= "partition" ["(" list(&lt;PartitionAttribute&gt;) ")"] "from" &lt;Domain&gt;
+&lt;PartitionAttribute&gt; ::= "numParts" &lt;Expression.Integer&gt;
+                       | "minNumParts" &lt;Expression.Integer&gt;
+                       | "maxNumParts" &lt;Expression.Integer&gt;
+                       | "partSize" &lt;Expression.Integer&gt;
+                       | "minPartSize" &lt;Expression.Integer&gt;
+                       | "maxPartSize" &lt;Expression.Integer&gt;
+                       | "regular"
+
+&lt;PartitionLiteral&gt; ::= "partition" "(" [list(&lt;SetLiteral&gt;)] ")"
+</code></pre>
 
                     </main>
 

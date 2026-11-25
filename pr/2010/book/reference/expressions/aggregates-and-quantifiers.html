@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../searchindex-dce2097e.js";
+            window.path_to_searchindex_js = "../../searchindex-8cf3fb48.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-e79b7e05.js"></script>
+        <script src="../../toc-83fae9fa.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -179,25 +179,23 @@
                         <h1 id="aggregates-and-quantifiers"><a class="header" href="#aggregates-and-quantifiers">Aggregates and Quantifiers</a></h1>
 <p>Aggregates and quantifiers are idiomatic ways of expressing constraints over full collections or domains.</p>
 <ul>
-<li>Aggregates return an arithmetic answer (sum / min / max of collection).</li>
-<li>Quantifiers return a boolean answer (for all / there exists).</li>
+<li>Aggregates return an <em>arithmetic answer</em> (sum / min / max of collection).</li>
+<li>Quantifiers return a <em>boolean answer</em> (for all / there exists).</li>
 </ul>
+<p>These expressions are syntactic sugar for <a href="./comprehensions.html">comprehensions</a>.</p>
 <h2 id="syntax"><a class="header" href="#syntax">Syntax</a></h2>
-<pre><code class="language-bnf">&lt;AggregateExpr&gt; ::= &lt;AggregateType&gt; list(&lt;identifier&gt;
-                                       | &lt;tuple&gt;) ("in" &lt;Expression.Collection&gt;
-                                                 | ":" &lt;Domain&gt;) ." &lt;Expression.Boolean&gt;
-
-&lt;AggregateType&gt; ::= "forAll" | "exists" | "sum" | "min" | "max"
+<p>An aggregate/quantifier can act over a finite domain. The following example sums the powers of two from $2^1$ to $2^10$.</p>
+<pre><code class="language-essence">sum i: int(1..10) . 2 ** i
 </code></pre>
-<pre><code class="language-essence">sum i: int(1..10) . 2 ** i                 $ sums the integer powers of 2 from 1 to 10
-</code></pre>
-<pre><code>forAll j in {2, 4, 6, 9, 10} . j % 2 = 0   $ checks the set contains only even numbers (returns false here)
+<p>We can also iterate over a collection: the following example checks whether the set contains only even numbers:</p>
+<pre><code class="language-essence">forAll j in {2, 4, 6, 9, 10} . j % 2 = 0
+$ false
 </code></pre>
 <h2 id="quantifiers"><a class="header" href="#quantifiers">Quantifiers</a></h2>
 <p>There are two quantifiers: <code>forAll</code> and <code>exists</code>.</p>
 <ul>
-<li><code>forAll</code>: true iff the constraint holds for every element in the set, or every member of the domain.</li>
-<li><code>exists</code>: true iff the constraint holds for at least one element in the set, or at least one member of the domain.</li>
+<li><code>forAll</code>: true iff the constraint holds for every element.</li>
+<li><code>exists</code>: true iff the constraint holds for at least one element.</li>
 </ul>
 <pre><code class="language-essence">find a : bool such that a = forAll i in {0,1,2} . i=i*i $ false
 find b : bool such that b = exists i : int(0..4) . i*i=i $ true
@@ -205,10 +203,17 @@ find b : bool such that b = exists i : int(0..4) . i*i=i $ true
 <h2 id="aggregates"><a class="header" href="#aggregates">Aggregates</a></h2>
 <p>There are three aggregates: <code>sum</code>, <code>min</code> and <code>max</code>.</p>
 <ul>
-<li><code>sum</code>: returns the sum of values yielded by applying the expression to every element in the set, or every element of the domain.</li>
-<li><code>min</code>: returns the minimum value yielded by applying the expression to every element in the set, or every element of the domain.</li>
-<li><code>max</code>: returns the maximum value yielded by applying the expression to every element in the set, or every element of the domain.</li>
+<li><code>sum</code>: returns the sum of values yielded by applying the expression to every element.</li>
+<li><code>min</code>: returns the minimum value yielded by applying the expression to every element.</li>
+<li><code>max</code>: returns the maximum value yielded by applying the expression to every element.</li>
 </ul>
+<h2 id="bnf"><a class="header" href="#bnf">BNF</a></h2>
+<pre><code class="language-bnf">&lt;AggregateExpr&gt; ::= &lt;AggregateType&gt; list(&lt;identifier&gt;
+                                       | &lt;tuple&gt;) ("in" &lt;Expression.Collection&gt;
+                                                 | ":" &lt;Domain&gt;) ." &lt;Expression.Boolean&gt;
+
+&lt;AggregateType&gt; ::= "forAll" | "exists" | "sum" | "min" | "max"
+</code></pre>
 
                     </main>
 

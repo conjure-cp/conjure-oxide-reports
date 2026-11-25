@@ -37,10 +37,10 @@
             const path_to_root = "../../";
             const default_light_theme = "light";
             const default_dark_theme = "coal";
-            window.path_to_searchindex_js = "../../searchindex-dce2097e.js";
+            window.path_to_searchindex_js = "../../searchindex-8cf3fb48.js";
         </script>
         <!-- Start loading toc.js asap -->
-        <script src="../../toc-e79b7e05.js"></script>
+        <script src="../../toc-83fae9fa.js"></script>
     </head>
     <body>
     <div id="mdbook-help-container">
@@ -177,17 +177,36 @@
                 <div id="mdbook-content" class="content">
                     <main>
                         <h1 id="comparison-expressions"><a class="header" href="#comparison-expressions">Comparison Expressions</a></h1>
+<h2 id="equality-comparison"><a class="header" href="#equality-comparison">Equality Comparison</a></h2>
+<p>Equality simply determines whether two values are <strong>structurally</strong> identical.</p>
+<pre><code class="language-essence">1 = 1                    $ true
+{1, 2, 3} = {3, 2, 1}    $ true
+(false, 1) = (false, 1)  $ true
+2 + 2 = 5                $ false
+</code></pre>
+<p><code>a != b</code> is <code>true</code> if <code>!(a = b)</code>.</p>
+<h2 id="arithmetic-comparison"><a class="header" href="#arithmetic-comparison">Arithmetic Comparison</a></h2>
+<p>The standard arithmetic comparators operate over integers.</p>
+<pre><code class="language-essence">a &lt;= b
+a &gt;= b
+a &lt; b
+a &gt; b
+</code></pre>
+<h2 id="lexicographic-comparison"><a class="header" href="#lexicographic-comparison">Lexicographic Comparison</a></h2>
+<p>Lexicographic comparisons (e.g. <code>&lt;=lex</code>) operate over ordered collections.</p>
+<p>TODO complete</p>
+<h2 id="bnf"><a class="header" href="#bnf">BNF</a></h2>
 <pre><code class="language-bnf">&lt;ComparisonExpr&gt; ::= &lt;ArithmeticComparison&gt;
                    | &lt;LexComparison&gt;
                    | &lt;EqualityComparison&gt;
                    | &lt;SetComparison&gt;
                    | &lt;SequenceComparison&gt;
-</code></pre>
-<pre><code class="language-bnf">&lt;ArithmeticComparison&gt; ::= &lt;Expression.Integer&gt; ("&lt;=" | "&gt;=" | "&lt;" | "&gt;") &lt;Expression.Integer&gt;
+
+&lt;ArithmeticComparison&gt; ::= &lt;Expression.Integer&gt; ("&lt;=" | "&gt;=" | "&lt;" | "&gt;") &lt;Expression.Integer&gt;
+
 &lt;LexComparison&gt; ::= &lt;Expression.Lexical&gt; ("&lt;lex" | "&lt;=lex" | "&gt;lex" | "&gt;=lex") &lt;Expression.Lexical&gt;
-</code></pre>
-<p>; supported for all types</p>
-<pre><code class="language-bnf">&lt;EqualityComparison&gt; ::= &lt;Expression&gt; ("=" | "!=") &lt;Expression&gt;
+
+&lt;EqualityComparison&gt; ::= &lt;Expression&gt; ("=" | "!=") &lt;Expression&gt;
 </code></pre>
 
                     </main>
